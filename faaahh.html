@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cake lounge — Artisan Bakery & Patisserie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* =============================================
+       CSS CUSTOM PROPERTIES & RESET
+    ============================================= */
+    :root {
+      --cream:       #fdf6ee;
+      --cream-dark:  #f5e9d9;
+      --blush:       #f2c4b0;
+      --rose:        #e8917a;
+      --rose-deep:   #c9614a;
+      --brown:       #6b3a2a;
+      --brown-light: #9c6040;
+      --chocolate:   #3d1f10;
+      --gold:        #d4a45a;
+      --gold-light:  #f0d49a;
+      --text:        #2c1810;
+      --text-mid:    #6b4c3b;
+      --text-soft:   #a07860;
+      --white:       #ffffff;
+      --shadow-sm:   0 2px 12px rgba(60,20,10,.08);
+      --shadow-md:   0 6px 28px rgba(60,20,10,.13);
+      --shadow-lg:   0 16px 48px rgba(60,20,10,.18);
+      --radius-sm:   10px;
+      --radius-md:   18px;
+      --radius-lg:   28px;
+      --radius-xl:   40px;
+      --transition:  .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.25; }
+
+    img { display: block; max-width: 100%; }
+
+    a { text-decoration: none; color: inherit; }
+
+    ul { list-style: none; }
+
+    /* =============================================
+       UTILITY
+    ============================================= */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .section-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--chocolate);
+      line-height: 1.2;
+    }
+
+    .section-sub {
+      margin-top: 14px;
+      font-size: .95rem;
+      color: var(--text-soft);
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+
+    .btn-primary {
+      background: var(--rose-deep);
+      color: var(--white);
+      box-shadow: 0 6px 24px rgba(201,97,74,.35);
+    }
+    .btn-primary:hover {
+      background: var(--brown);
+      box-shadow: 0 8px 32px rgba(107,58,42,.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border-color: rgba(255,255,255,.7);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,.15);
+      border-color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    .btn-light {
+      background: var(--white);
+      color: var(--rose-deep);
+      border-color: var(--white);
+    }
+    .btn-light:hover {
+      background: var(--cream);
+      transform: translateY(-2px);
+    }
+
+    /* =============================================
+       CART BUBBLE
+    ============================================= */
+    #cart-bubble {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      background: var(--rose-deep);
+      color: var(--white);
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    #cart-bubble:hover { transform: scale(1.1); background: var(--brown); }
+    #cart-bubble .badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: var(--gold);
+      color: var(--chocolate);
+      font-size: .65rem;
+      font-weight: 700;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Cart toast */
+    #cart-toast {
+      position: fixed;
+      bottom: 100px;
+      right: 28px;
+      background: var(--chocolate);
+      color: var(--white);
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: .85rem;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+    }
+    #cart-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* =============================================
+       NAV
+    ============================================= */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      transition: background .4s, box-shadow .4s, padding .4s;
+    }
+    nav.scrolled {
+      background: rgba(253,246,238,.97);
+      box-shadow: var(--shadow-sm);
+      padding: 10px 0;
+      backdrop-filter: blur(12px);
+    }
+    nav .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--white);
+      transition: color .3s;
+    }
+    nav.scrolled .nav-logo { color: var(--chocolate); }
+    .nav-logo span { color: var(--blush); }
+    nav.scrolled .nav-logo span { color: var(--rose); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: .88rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.85);
+      transition: color .25s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 2px;
+      background: var(--blush);
+      border-radius: 2px;
+      transition: width .3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { width: 100%; }
+    nav.scrolled .nav-links a { color: var(--text-mid); }
+    nav.scrolled .nav-links a::after { background: var(--rose); }
+    nav.scrolled .nav-links a:hover { color: var(--chocolate); }
+
+    .nav-order {
+      background: var(--rose-deep);
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 50px;
+      font-size: .85rem;
+      font-weight: 600;
+      transition: var(--transition);
+      box-shadow: 0 4px 16px rgba(201,97,74,.3);
+    }
+    .nav-order:hover { background: var(--brown); transform: translateY(-1px); }
+
+    /* hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      width: 24px; height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    nav.scrolled .hamburger span { background: var(--chocolate); }
+
+    /* mobile menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--cream);
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--rose); }
+    .mobile-close {
+      position: absolute;
+      top: 24px; right: 24px;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      color: var(--chocolate);
+      cursor: pointer;
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #3d1f10 0%, #6b3a2a 40%, #9c6040 70%, #c9614a 100%);
+      z-index: 0;
+    }
+
+    /* Decorative blobs */
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: .25;
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    .hero-blob-1 { width: 400px; height: 400px; background: var(--gold); top: -80px; right: 120px; animation-delay: 0s; }
+    .hero-blob-2 { width: 280px; height: 280px; background: var(--blush); bottom: 60px; right: 60px; animation-delay: -3s; }
+    .hero-blob-3 { width: 200px; height: 200px; background: var(--rose); top: 50%; left: 40%; animation-delay: -5s; }
+
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(15px, -20px) scale(1.05); }
+      66% { transform: translate(-10px, 10px) scale(.95); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+
+    .hero-text { padding: 60px 0; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.25);
+      color: var(--gold-light);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+      animation: fadeUp .8s .1s both;
+    }
+    .hero-badge i { font-size: .9rem; }
+
+    .hero-title {
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.15;
+      animation: fadeUp .8s .25s both;
+    }
+    .hero-title em { color: var(--gold-light); font-style: italic; }
+
+    .hero-desc {
+      margin-top: 22px;
+      font-size: 1rem;
+      color: rgba(255,255,255,.75);
+      line-height: 1.75;
+      max-width: 440px;
+      animation: fadeUp .8s .4s both;
+    }
+
+    .hero-cta {
+      margin-top: 36px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      animation: fadeUp .8s .55s both;
+    }
+
+    .hero-stats {
+      margin-top: 56px;
+      display: flex;
+      gap: 40px;
+      animation: fadeUp .8s .7s both;
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: .78rem;
+      color: rgba(255,255,255,.6);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    /* Hero image collage */
+    .hero-visual {
+      position: relative;
+      height: 580px;
+      animation: fadeUp .9s .3s both;
+    }
+
+    .hero-img-card {
+      position: absolute;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .hero-img-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 6s ease;
+    }
+    .hero-img-card:hover img { transform: scale(1.05); }
+
+    .hic-1 { width: 260px; height: 340px; top: 40px; left: 40px; transform: rotate(-4deg); z-index: 2; }
+    .hic-2 { width: 230px; height: 290px; top: 20px; right: 40px; transform: rotate(3deg); z-index: 3; }
+    .hic-3 { width: 210px; height: 260px; bottom: 30px; left: 100px; transform: rotate(2deg); z-index: 4; }
+    .hic-4 { width: 180px; height: 220px; bottom: 60px; right: 60px; transform: rotate(-3deg); z-index: 2; }
+
+    /* floating tags */
+    .hero-tag {
+      position: absolute;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      box-shadow: var(--shadow-md);
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--chocolate);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      animation: tagFloat 4s ease-in-out infinite;
+    }
+    .hero-tag i { color: var(--rose); }
+    .hero-tag-1 { top: 10px; left: 20px; animation-delay: 0s; }
+    .hero-tag-2 { bottom: 10px; right: 20px; animation-delay: -2s; }
+
+    @keyframes tagFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* =============================================
+       OFFER BANNER (marquee)
+    ============================================= */
+    #offer-banner {
+      background: var(--brown);
+      overflow: hidden;
+      padding: 14px 0;
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marqueeScroll 22s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 48px;
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--gold-light);
+      white-space: nowrap;
+    }
+    .marquee-item i { color: var(--rose); font-size: .9rem; }
+    .marquee-item strong { color: var(--white); }
+
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       CATEGORIES
+    ============================================= */
+    #categories {
+      padding: 90px 0 70px;
+    }
+
+    .section-head { margin-bottom: 50px; }
+    .section-head.center { text-align: center; }
+    .section-head.center .section-sub { margin: 14px auto 0; }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .cat-card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 3/4;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .cat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .cat-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+    .cat-card:hover img { transform: scale(1.08); }
+    .cat-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(61,31,16,.85) 0%, transparent 60%);
+    }
+    .cat-info {
+      position: absolute;
+      bottom: 22px;
+      left: 0; right: 0;
+      text-align: center;
+      color: var(--white);
+    }
+    .cat-info h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .cat-info span {
+      font-size: .78rem;
+      color: var(--gold-light);
+      font-weight: 500;
+    }
+    .cat-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--rose-deep);
+      color: var(--white);
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    /* =============================================
+       FEATURED PRODUCTS
+    ============================================= */
+    #products {
+      padding: 80px 0;
+      background: var(--cream-dark);
+    }
+
+    .products-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 50px;
+    }
+    .view-all {
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--rose-deep);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap .25s;
+    }
+    .view-all:hover { gap: 12px; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .product-img {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+    }
+    .product-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .product-card:hover .product-img img { transform: scale(1.1); }
+
+    .product-wish {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 34px; height: 34px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-soft);
+      font-size: .9rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      border: none;
+    }
+    .product-wish:hover,
+    .product-wish.liked { color: var(--rose-deep); transform: scale(1.15); }
+
+    .product-tag-ribbon {
+      position: absolute;
+      top: 14px; left: -4px;
+      background: var(--rose-deep);
+      color: var(--white);
+      font-size: .68rem;
+      font-weight: 700;
+      padding: 4px 12px 4px 10px;
+      border-radius: 0 4px 4px 0;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .product-tag-ribbon::before {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      border-width: 0 4px 4px 0;
+      border-style: solid;
+      border-color: transparent var(--rose-deep) transparent transparent;
+    }
+
+    .product-body { padding: 16px 18px 18px; }
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--chocolate);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .product-flavor {
+      font-size: .78rem;
+      color: var(--text-soft);
+      margin-bottom: 10px;
+    }
+
+    .product-stars {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-bottom: 12px;
+      font-size: .8rem;
+      color: var(--gold);
+    }
+    .product-stars span {
+      color: var(--text-soft);
+      margin-left: 4px;
+      font-size: .75rem;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .product-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--rose-deep);
+    }
+    .product-price-old {
+      font-size: .78rem;
+      color: var(--text-soft);
+      text-decoration: line-through;
+      margin-left: 4px;
+    }
+
+    .add-to-cart {
+      background: var(--rose-deep);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      padding: 9px 18px;
+      font-family: 'Poppins', sans-serif;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .add-to-cart:hover {
+      background: var(--brown);
+      transform: scale(1.05);
+    }
+    .add-to-cart.added {
+      background: var(--brown);
+      animation: cartPop .3s ease;
+    }
+    @keyframes cartPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    /* =============================================
+       ABOUT
+    ============================================= */
+    #about {
+      padding: 100px 0;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-visual {
+      position: relative;
+    }
+    .about-main-img {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      aspect-ratio: 4/5;
+    }
+    .about-main-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .about-float-card {
+      position: absolute;
+      bottom: -24px;
+      right: -24px;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-md);
+      z-index: 2;
+      max-width: 200px;
+    }
+    .about-float-card .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--rose-deep);
+      line-height: 1;
+    }
+    .about-float-card p {
+      font-size: .8rem;
+      color: var(--text-soft);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .about-accent-blob {
+      position: absolute;
+      top: -20px; left: -20px;
+      width: 100px; height: 100px;
+      background: var(--gold-light);
+      border-radius: 50%;
+      z-index: 0;
+      opacity: .6;
+    }
+
+    .about-content .section-sub { max-width: 100%; }
+
+    .about-features {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .about-feat {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .about-feat-icon {
+      width: 44px; height: 44px;
+      min-width: 44px;
+      background: var(--cream-dark);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--rose-deep);
+      font-size: 1.1rem;
+    }
+    .about-feat-text h4 {
+      font-size: .95rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .about-feat-text p {
+      font-size: .82rem;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    /* =============================================
+       IMAGE SLIDER (auto-scroll)
+    ============================================= */
+    #gallery {
+      padding: 80px 0;
+      background: var(--chocolate);
+      overflow: hidden;
+    }
+
+    #gallery .section-label { color: var(--gold-light); }
+    #gallery .section-title { color: var(--white); text-align: center; }
+
+    .slider-wrapper {
+      margin-top: 44px;
+      position: relative;
+    }
+
+    .slider-track {
+      display: flex;
+      gap: 18px;
+      width: max-content;
+      animation: sliderScroll 30s linear infinite;
+    }
+    .slider-track:hover { animation-play-state: paused; }
+
+    @keyframes sliderScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .slide-item {
+      width: 280px;
+      height: 340px;
+      min-width: 280px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .slide-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+    }
+    .slide-item:hover img { transform: scale(1.08); }
+    .slide-item-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(61,31,16,.7) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .slide-item:hover .slide-item-overlay { opacity: 1; }
+    .slide-item-label {
+      position: absolute;
+      bottom: 20px;
+      left: 0; right: 0;
+      text-align: center;
+      color: var(--white);
+      font-size: .9rem;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .3s, transform .3s;
+    }
+    .slide-item:hover .slide-item-label { opacity: 1; transform: translateY(0); }
+
+    /* =============================================
+       TESTIMONIALS
+    ============================================= */
+    #testimonials {
+      padding: 100px 0;
+      background: var(--cream-dark);
+    }
+
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 50px;
+    }
+
+    .testi-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+    }
+    .testi-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .testi-card::before {
+      content: '\201C';
+      font-family: 'Playfair Display', serif;
+      font-size: 6rem;
+      color: var(--cream-dark);
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      line-height: 1;
+    }
+
+    .testi-stars {
+      display: flex;
+      gap: 3px;
+      color: var(--gold);
+      font-size: .9rem;
+      margin-bottom: 16px;
+    }
+
+    .testi-text {
+      font-size: .9rem;
+      color: var(--text-mid);
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 24px;
+    }
+
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .testi-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--blush);
+    }
+    .testi-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .testi-name { font-size: .9rem; font-weight: 600; color: var(--chocolate); }
+    .testi-tag  { font-size: .75rem; color: var(--text-soft); }
+
+    /* =============================================
+       CONTACT
+    ============================================= */
+    #contact {
+      padding: 100px 0;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .contact-info h2 { margin-bottom: 16px; }
+
+    .contact-details {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .contact-detail-icon {
+      width: 48px; height: 48px;
+      background: var(--cream-dark);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--rose-deep);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .contact-detail h4 {
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--chocolate);
+    }
+    .contact-detail p {
+      font-size: .82rem;
+      color: var(--text-soft);
+      margin-top: 2px;
+    }
+
+    /* Form */
+    .contact-form {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 44px 40px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+    .form-group label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: .88rem;
+      color: var(--text);
+      background: var(--cream);
+      transition: border-color .25s, box-shadow .25s;
+      outline: none;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(232,145,122,.15);
+    }
+    .form-group textarea { height: 120px; }
+
+    .form-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--rose-deep);
+      color: var(--white);
+      border: none;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .form-submit:hover {
+      background: var(--brown);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(107,58,42,.3);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: var(--chocolate);
+      color: rgba(255,255,255,.7);
+      padding: 70px 0 30px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 50px;
+    }
+
+    .footer-brand {}
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .footer-logo span { color: var(--blush); }
+    .footer-desc {
+      font-size: .85rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 24px;
+    }
+    .social-links {
+      display: flex;
+      gap: 12px;
+    }
+    .social-link {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,.7);
+      font-size: .9rem;
+      transition: var(--transition);
+    }
+    .social-link:hover {
+      background: var(--rose-deep);
+      color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    .footer-col h4 {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 18px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-size: .83rem;
+      color: rgba(255,255,255,.5);
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--blush); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: rgba(255,255,255,.35);
+    }
+    .footer-bottom a {
+      color: rgba(255,255,255,.45);
+      transition: color .2s;
+    }
+    .footer-bottom a:hover { color: var(--blush); }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 1024px) {
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-order { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-inner { grid-template-columns: 1fr; min-height: auto; padding: 120px 0 60px; }
+      .hero-visual { display: none; }
+      .hero-stats { gap: 24px; }
+
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual { display: none; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+      .products-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: 1fr; }
+      .hero-cta { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== MOBILE MENU ========== -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" onclick="closeMobileMenu()"><i class="fas fa-times"></i></button>
+    <a href="#hero"         onclick="closeMobileMenu()">Home</a>
+    <a href="#categories"   onclick="closeMobileMenu()">Categories</a>
+    <a href="#products"     onclick="closeMobileMenu()">Menu</a>
+    <a href="#about"        onclick="closeMobileMenu()">About</a>
+    <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
+    <a href="#contact"      onclick="closeMobileMenu()">Contact</a>
+  </div>
+
+  <!-- ========== NAV ========== -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#hero" class="nav-logo">La <span>Douceur</span></a>
+        <ul class="nav-links">
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="#products">Menu</a></li>
+          <li><a href="#about">Our Story</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="#products" class="nav-order">Order Now</a>
+        <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+
+    <div class="container">
+      <div class="hero-inner">
+        <!-- Text side -->
+        <div class="hero-text">
+          <div class="hero-badge">
+            <i class="fas fa-star"></i> Artisan Patisserie Since 2015
+          </div>
+          <h1 class="hero-title">
+            Exquisite Cakes<br><em>Delivered Fresh</em><br>to Your Door
+          </h1>
+          <p class="hero-desc">
+            Handcrafted with love using only the finest ingredients. Every bite is a moment of pure bliss — made just for you.
+          </p>
+          <div class="hero-cta">
+            <a href="#products" class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Order Now</a>
+            <a href="#categories" class="btn btn-outline"><i class="fas fa-layer-group"></i> View Menu</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-num">500+</div>
+              <div class="hero-stat-label">Cake Flavors</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">50k+</div>
+              <div class="hero-stat-label">Happy Customers</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">4.9★</div>
+              <div class="hero-stat-label">Average Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual collage -->
+        <div class="hero-visual">
+          <div class="hero-tag hero-tag-1"><i class="fas fa-leaf"></i> Fresh Every Day</div>
+
+          <div class="hero-img-card hic-1">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80" alt="Chocolate Cake" />
+          </div>
+          <div class="hero-img-card hic-2">
+            <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&q=80" alt="Birthday Cake" />
+          </div>
+          <div class="hero-img-card hic-3">
+            <img src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500&q=80" alt="Strawberry Cake" />
+          </div>
+          <div class="hero-img-card hic-4">
+            <img src="https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80" alt="Wedding Cake" />
+          </div>
+
+          <div class="hero-tag hero-tag-2"><i class="fas fa-truck"></i> Same Day Delivery</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== OFFER BANNER ========== -->
+  <div id="offer-banner">
+    <div class="marquee-track" id="marqueeTrack">
+      <!-- Items duplicated in JS -->
+    </div>
+  </div>
+
+  <!-- ========== CATEGORIES ========== -->
+  <section id="categories">
+    <div class="container">
+      <div class="section-head center">
+        <p class="section-label">Browse By Category</p>
+        <h2 class="section-title">What Are You Celebrating?</h2>
+        <p class="section-sub">From birthdays to weddings, we have the perfect cake for every special moment in your life.</p>
+      </div>
+
+      <div class="cat-grid">
+        <div class="cat-card">
+          <img src="https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=500&q=80" alt="Birthday Cakes" />
+          <div class="cat-overlay"></div>
+          <div class="cat-info">
+            <h3>Birthday Cakes</h3>
+            <span>80+ Designs</span>
+          </div>
+          <div class="cat-badge">Popular</div>
+        </div>
+        <div class="cat-card">
+          <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=500&q=80" alt="Wedding Cakes" />
+          <div class="cat-overlay"></div>
+          <div class="cat-info">
+            <h3>Wedding Cakes</h3>
+            <span>45+ Designs</span>
+          </div>
+        </div>
+        <div class="cat-card">
+          <img src="https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=500&q=80" alt="Chocolate Cakes" />
+          <div class="cat-overlay"></div>
+          <div class="cat-info">
+            <h3>Chocolate Cakes</h3>
+            <span>60+ Designs</span>
+          </div>
+          <div class="cat-badge">Bestseller</div>
+        </div>
+        <div class="cat-card">
+          <img src="https://images.unsplash.com/photo-1561758033-7e924f619b47?w=500&q=80" alt="Custom Cakes" />
+          <div class="cat-overlay"></div>
+          <div class="cat-info">
+            <h3>Custom Cakes</h3>
+            <span>Design Your Own</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FEATURED PRODUCTS ========== -->
+  <section id="products">
+    <div class="container">
+      <div class="products-header">
+        <div>
+          <p class="section-label">Our Bestsellers</p>
+          <h2 class="section-title">Featured Cakes</h2>
+        </div>
+        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+        <!-- Cards injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <!-- Visual -->
+        <div class="about-visual">
+          <div class="about-accent-blob"></div>
+          <div class="about-main-img">
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80" alt="Our Bakery" />
+          </div>
+          <div class="about-float-card">
+            <div class="num">10+</div>
+            <p>Years of crafting joyful memories with every cake</p>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="about-content">
+          <p class="section-label">Our Story</p>
+          <h2 class="section-title">Baked with Passion,<br>Served with Love</h2>
+          <p class="section-sub">
+            cake lounge was born from a grandmother's kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.
+          </p>
+          <div class="about-features">
+            <div class="about-feat">
+              <div class="about-feat-icon"><i class="fas fa-seedling"></i></div>
+              <div class="about-feat-text">
+                <h4>All-Natural Ingredients</h4>
+                <p>We source only the finest local produce — no artificial preservatives, ever.</p>
+              </div>
+            </div>
+            <div class="about-feat">
+              <div class="about-feat-icon"><i class="fas fa-hands"></i></div>
+              <div class="about-feat-text">
+                <h4>Handcrafted Daily</h4>
+                <p>Each cake is made fresh the morning of delivery by our master pastry chefs.</p>
+              </div>
+            </div>
+            <div class="about-feat">
+              <div class="about-feat-icon"><i class="fas fa-truck-fast"></i></div>
+              <div class="about-feat-text">
+                <h4>Guaranteed Freshness</h4>
+                <p>Express delivery in temperature-controlled packaging within 4 hours.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== IMAGE SLIDER ========== -->
+  <section id="gallery">
+    <div class="container">
+      <p class="section-label" style="text-align:center">Our Creations</p>
+      <h2 class="section-title">A Feast for the Eyes</h2>
+    </div>
+    <div class="slider-wrapper">
+      <div class="slider-track" id="sliderTrack">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-head center">
+        <p class="section-label">Happy Customers</p>
+        <h2 class="section-title">What People Are Saying</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testi-text">"Ordered a custom birthday cake for my daughter and I was absolutely blown away. The attention to detail was incredible — it looked exactly like the design I requested, and it tasted even better!"</p>
+          <div class="testi-author">
+            <div class="testi-avatar">
+              <img src="https://i.pravatar.cc/100?img=47" alt="Priya S." />
+            </div>
+            <div>
+              <div class="testi-name">Priya Sharma</div>
+              <div class="testi-tag">Loyal Customer · 3 yrs</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testi-text">"The Belgian chocolate truffle cake was an absolute showstopper at our anniversary dinner. Our guests couldn't stop talking about it. Delivery was on time and packaging was beautiful!"</p>
+          <div class="testi-author">
+            <div class="testi-avatar">
+              <img src="https://i.pravatar.cc/100?img=12" alt="Rohan M." />
+            </div>
+            <div>
+              <div class="testi-name">Rohan Mehta</div>
+              <div class="testi-tag">Verified Buyer</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="testi-text">"I've ordered from La Douceur 5 times now — red velvet, mango mousse, tiramisu — every single one is perfection. This is my go-to bakery for every celebration!"</p>
+          <div class="testi-author">
+            <div class="testi-avatar">
+              <img src="https://i.pravatar.cc/100?img=32" alt="Ananya K." />
+            </div>
+            <div>
+              <div class="testi-name">Ananya Kapoor</div>
+              <div class="testi-tag">Premium Member</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <p class="section-label">Get In Touch</p>
+          <h2 class="section-title">Let's Create Something Sweet Together</h2>
+          <p class="section-sub">Have a special order in mind? Want to know more about our bespoke cakes? We'd love to hear from you.</p>
+          <div class="contact-details">
+            <div class="contact-detail">
+              <div class="contact-detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div>
+                <h4>Find Us</h4>
+                <p>12, Rose Garden Lane, Connaught Place, New Delhi – 110001</p>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-icon"><i class="fas fa-phone"></i></div>
+              <div>
+                <h4>Call Us</h4>
+                <p>+91 7777788888 · Mon–Sun 8am–10pm</p>
+              </div>
+            </div>
+            <div class="contact-detail">
+              <div class="contact-detail-icon"><i class="fas fa-envelope"></i></div>
+              <div>
+                <h4>Email Us</h4>
+                <p>hello@cakeloungue.in</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <h3 style="margin-bottom:24px; font-size:1.4rem; color:var(--chocolate)">Send a Message</h3>
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" placeholder="e.g. Priya Sharma" />
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="you@example.com" />
+          </div>
+          <div class="form-group">
+            <label>Phone (optional)</label>
+            <input type="tel" placeholder="+91 98765 43210" />
+          </div>
+          <div class="form-group">
+            <label>Your Message</label>
+            <textarea placeholder="Tell us about your dream cake..."></textarea>
+          </div>
+          <button class="form-submit" onclick="handleFormSubmit(event)">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">La <span>Douceur</span></div>
+          <p class="footer-desc">Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.</p>
+          <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-pinterest-p"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <div class="footer-links">
+            <a href="#hero">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#products">Our Menu</a>
+            <a href="#about">Our Story</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Cake Types</h4>
+          <div class="footer-links">
+            <a href="#">Birthday Cakes</a>
+            <a href="#">Wedding Cakes</a>
+            <a href="#">Anniversary</a>
+            <a href="#">Photo Cakes</a>
+            <a href="#">Eggless Cakes</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Support</h4>
+          <div class="footer-links">
+            <a href="#">FAQs</a>
+            <a href="#">Track Order</a>
+            <a href="#">Return Policy</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Use</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 La Douceur Patisserie. All rights reserved.</span>
+        <span>Made with <i class="fas fa-heart" style="color:var(--rose)"></i> in India</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== FLOATING CART ========== -->
+  <div id="cart-bubble" onclick="showCartInfo()">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="badge" id="cartBadge">0</div>
+  </div>
+  <div id="cart-toast">🎂 Added to cart!</div>
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    /* ---- Product data ---- */
+    const products = [
+      { id:1, name:'Belgian Chocolate Truffle', flavor:'Rich Dark Chocolate', price:849, oldPrice:999, rating:5, reviews:238, tag:'Bestseller', img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80' },
+      { id:2, name:'Strawberry Dream Cake',    flavor:'Fresh Strawberry Cream', price:749, oldPrice:0,   rating:5, reviews:184, tag:'New',       img:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80' },
+      { id:3, name:'Red Velvet Fantasy',       flavor:'Cream Cheese Frosting',  price:799, oldPrice:949, rating:4, reviews:312, tag:'',          img:'https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=400&q=80' },
+      { id:4, name:'Mango Mousse Delight',     flavor:'Fresh Alphonso Mango',   price:899, oldPrice:0,   rating:5, reviews:167, tag:'Seasonal',  img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80' },
+      { id:5, name:'Classic Vanilla Bean',     flavor:'Madagascar Vanilla',     price:649, oldPrice:749, rating:4, reviews:421, tag:'',          img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
+      { id:6, name:'Black Forest Royale',      flavor:'Kirsch & Wild Cherry',   price:929, oldPrice:0,   rating:5, reviews:203, tag:'Premium',   img:'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=400&q=80' },
+      { id:7, name:'Tiramisu Cloud Cake',      flavor:'Espresso & Mascarpone',  price:999, oldPrice:1199,rating:5, reviews:145, tag:'Chef\'s Pick',img:'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=400&q=80'},
+      { id:8, name:'Lemon Drizzle Bliss',      flavor:'Zesty Lemon Curd',       price:729, oldPrice:0,   rating:4, reviews:98,  tag:'',          img:'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=400&q=80' },
+    ];
+
+    /* ---- Gallery images ---- */
+    const galleryImgs = [
+      { src:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80', label:'Chocolate Truffle' },
+      { src:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80', label:'Strawberry Dream' },
+      { src:'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400&q=80', label:'Birthday Special' },
+      { src:'https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=400&q=80', label:'Wedding Cake' },
+      { src:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', label:'Vanilla Delight' },
+      { src:'https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=400&q=80', label:'Red Velvet' },
+      { src:'https://images.unsplash.com/photo-1561758033-7e924f619b47?w=400&q=80', label:'Custom Creation' },
+      { src:'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=400&q=80', label:'Lemon Bliss' },
+    ];
+
+    /* ---- Marquee offers ---- */
+    const offers = [
+      '🎂 Use code <strong>SWEET20</strong> for 20% off your first order!',
+      '🚚 <strong>Free delivery</strong> on orders above ₹999',
+      '🎁 Custom cakes available — <strong>Order 2 days in advance</strong>',
+      '⭐ Rated <strong>#1 Bakery</strong> in Delhi NCR 2024',
+      '🍓 New Summer Flavours now available — <strong>Mango Sorbet & Lychee Rose</strong>',
+      '🎉 <strong>Same-day delivery</strong> in select areas — Order before 2 PM',
+    ];
+
+    /* ---- Cart state ---- */
+    let cartCount = 0;
+
+    /* ===== Build Marquee ===== */
+    (function buildMarquee() {
+      const track = document.getElementById('marqueeTrack');
+      // Double for seamless loop
+      const all = [...offers, ...offers];
+      track.innerHTML = all.map(o =>
+        `<span class="marquee-item"><i class="fas fa-circle-dot"></i> <span>${o}</span></span>`
+      ).join('');
+    })();
+
+    /* ===== Build Products ===== */
+    (function buildProducts() {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = products.map(p => {
+        const stars = '★'.repeat(p.rating) + '☆'.repeat(5 - p.rating);
+        const ribbon = p.tag ? `<div class="product-tag-ribbon">${p.tag}</div>` : '';
+        const oldPriceHTML = p.oldPrice ? `<span class="product-price-old">₹${p.oldPrice}</span>` : '';
+        return `
+          <div class="product-card">
+            <div class="product-img">
+              <img src="${p.img}" alt="${p.name}" loading="lazy" />
+              ${ribbon}
+              <button class="product-wish" onclick="toggleWish(this)" aria-label="Wishlist">
+                <i class="far fa-heart"></i>
+              </button>
+            </div>
+            <div class="product-body">
+              <div class="product-name">${p.name}</div>
+              <div class="product-flavor">${p.flavor}</div>
+              <div class="product-stars">
+                ${[1,2,3,4,5].map(s =>
+                  `<i class="fa${s <= p.rating ? 's' : 'r'} fa-star"></i>`
+                ).join('')}
+                <span>(${p.reviews})</span>
+              </div>
+              <div class="product-footer">
+                <div>
+                  <span class="product-price">₹${p.price}</span>
+                  ${oldPriceHTML}
+                </div>
+                <button class="add-to-cart" onclick="addToCart(this, '${p.name}')">
+                  <i class="fas fa-plus"></i> Add
+                </button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    })();
+
+    /* ===== Build Gallery Slider ===== */
+    (function buildSlider() {
+      const track = document.getElementById('sliderTrack');
+      // Double for seamless loop
+      const all = [...galleryImgs, ...galleryImgs];
+      track.innerHTML = all.map(g => `
+        <div class="slide-item">
+          <img src="${g.src}" alt="${g.label}" loading="lazy" />
+          <div class="slide-item-overlay"></div>
+          <div class="slide-item-label">${g.label}</div>
+        </div>
+      `).join('');
+    })();
+
+    /* ===== Cart Logic ===== */
+    function addToCart(btn, name) {
+      cartCount++;
+      document.getElementById('cartBadge').textContent = cartCount;
+      btn.classList.add('added');
+      btn.innerHTML = '<i class="fas fa-check"></i> Added';
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+      }, 1800);
+      showToast(`🎂 ${name} added!`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('cart-toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function showCartInfo() {
+      showToast(cartCount === 0 ? '🛒 Cart is empty' : `🛒 ${cartCount} item${cartCount > 1 ? 's' : ''} in cart`);
+    }
+
+    /* ===== Wishlist ===== */
+    function toggleWish(btn) {
+      btn.classList.toggle('liked');
+      const icon = btn.querySelector('i');
+      if (btn.classList.contains('liked')) {
+        icon.className = 'fas fa-heart';
+        showToast('❤️ Added to wishlist!');
+      } else {
+        icon.className = 'far fa-heart';
+      }
+    }
+
+    /* ===== Navbar scroll ===== */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ===== Mobile menu ===== */
+    function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); }
+    function closeMobileMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+    /* ===== Contact form ===== */
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      showToast('✉️ Message sent! We\'ll be in touch soon.');
+    }
+
+    /* ===== Scroll reveal (IntersectionObserver) ===== */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll(
+      '.cat-card, .product-card, .testi-card, .about-feat, .contact-detail'
+    ).forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = `opacity .6s ${i * 0.07}s ease, transform .6s ${i * 0.07}s ease`;
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
