@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - Cake Lounge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    :root {
+      --cream:       #fdf6ee;
+      --cream-dark:  #f5e9d9;
+      --blush:       #f2c4b0;
+      --rose:        #e8917a;
+      --rose-deep:   #c9614a;
+      --brown:       #6b3a2a;
+      --brown-light: #9c6040;
+      --chocolate:   #3d1f10;
+      --gold:        #d4a45a;
+      --gold-light:  #f0d49a;
+      --text:        #2c1810;
+      --text-mid:    #6b4c3b;
+      --text-soft:   #a07860;
+      --white:       #ffffff;
+      --shadow-sm:   0 2px 12px rgba(60,20,10,.08);
+      --shadow-md:   0 6px 28px rgba(60,20,10,.13);
+      --shadow-lg:   0 16px 48px rgba(60,20,10,.18);
+      --radius-sm:   10px;
+      --radius-md:   18px;
+      --radius-lg:   28px;
+      --radius-xl:   40px;
+      --transition:  .35s cubic-bezier(.4,0,.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.25; }
+
+    a { text-decoration: none; color: inherit; }
+
+    ul { list-style: none; }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    .header {
+      background: var(--white);
+      padding: 20px 0;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--rose-deep);
+    }
+
+    .header-back {
+      background: none;
+      border: none;
+      color: var(--rose-deep);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-back:hover { color: var(--chocolate); }
+
+    /* =============================================
+       MAIN CONTAINER
+    ============================================= */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .checkout-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 32px;
+    }
+
+    /* =============================================
+       FORM SECTION
+    ============================================= */
+    .checkout-form {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .form-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 28px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      font-size: .95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      transition: border-color var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--rose-deep);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* =============================================
+       SELECTION BUTTONS
+    ============================================= */
+    .selection-section {
+      margin-bottom: 36px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .selection-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .select-btn {
+      padding: 12px 24px;
+      border: 2px solid var(--cream-dark);
+      border-radius: 50px;
+      background: var(--white);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .95rem;
+    }
+
+    .select-btn:hover {
+      border-color: var(--rose-deep);
+      color: var(--rose-deep);
+    }
+
+    .select-btn.active {
+      background: var(--rose-deep);
+      color: var(--white);
+      border-color: var(--rose-deep);
+    }
+
+    /* =============================================
+       SELECTED ITEMS
+    ============================================= */
+    .selected-items {
+      background: var(--cream);
+      padding: 16px;
+      border-radius: var(--radius-md);
+      margin-top: 12px;
+      min-height: 50px;
+    }
+
+    .selected-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin: 4px;
+      font-size: .9rem;
+      color: var(--text);
+    }
+
+    .selected-item .remove {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--rose-deep);
+      margin-left: 4px;
+    }
+
+    /* =============================================
+       ORDER SUMMARY (SIDEBAR)
+    ============================================= */
+    .order-summary {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+    }
+
+    .summary-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--cream-dark);
+      font-size: .95rem;
+    }
+
+    .summary-item:last-of-type {
+      border-bottom: 2px solid var(--rose-deep);
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .summary-total {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--rose-deep);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .proceed-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 50px;
+      background: var(--rose-deep);
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+      box-shadow: 0 6px 24px rgba(201,97,74,.35);
+    }
+
+    .proceed-btn:hover {
+      background: var(--brown);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(107,58,42,.4);
+    }
+
+    .proceed-btn:disabled {
+      background: var(--text-soft);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* =============================================
+       MODAL
+    ============================================= */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      max-width: 700px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover { color: var(--rose-deep); }
+
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .item-card {
+      border: 2px solid var(--cream-dark);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .item-card:hover {
+      border-color: var(--rose-deep);
+      box-shadow: var(--shadow-md);
+    }
+
+    .item-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+
+    .item-name {
+      font-weight: 700;
+      color: var(--chocolate);
+      margin-bottom: 6px;
+      font-size: .95rem;
+    }
+
+    .item-description {
+      font-size: .8rem;
+      color: var(--text-soft);
+      margin-bottom: 12px;
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: var(--rose-deep);
+      font-size: 1rem;
+    }
+
+    .item-card.selected {
+      background: var(--cream);
+      border-color: var(--rose-deep);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 768px) {
+      .checkout-wrapper {
+        grid-template-columns: 1fr;
+      }
+
+      .order-summary {
+        position: static;
+      }
+
+      .checkout-form {
+        padding: 24px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .items-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <a href="faaahh.html" class="header-back">
+        <i class="fas fa-arrow-left"></i> Back to Menu
+      </a>
+      <div class="header-logo">🎂 CakeLounge</div>
+      <div style="width: 120px;"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+    <div class="checkout-wrapper">
+      <!-- CHECKOUT FORM -->
+      <form class="checkout-form" id="checkoutForm" onsubmit="handleCheckout(event)">
+        <h2 class="form-title">Place Your Order</h2>
+
+        <!-- Customer Details -->
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="customerName" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="customerEmail" required />
+          </div>
+          <div class="form-group">
+            <label>Phone Number *</label>
+            <input type="tel" id="customerPhone" pattern="[0-9]{10}" placeholder="10-digit number" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Delivery Date *</label>
+            <input type="date" id="deliveryDate" required />
+          </div>
+          <div class="form-group">
+            <label>Delivery Time *</label>
+            <input type="time" id="deliveryTime" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Address *</label>
+          <textarea id="deliveryAddress" rows="3" placeholder="Street, City, Postal Code" required></textarea>
+        </div>
+
+        <!-- Cake Selection -->
+        <div class="selection-section">
+          <div class="section-title">
+            <i class="fas fa-birthday-cake"></i> Select Your Cake
+          </div>
+          <button type="button" class="select-btn" onclick="openCakeSuggestions()">
+            <i class="fas fa-sparkles"></i> View Suggestions
+          </button>
+          <div class="selected-items" id="selectedCakes">
+            <small style="color: var(--text-soft);">No cake selected</small>
+          </div>
+        </div>
+
+        <!-- Decoration Selection -->
+        <div class="selection-section">
+          <div class="section-title">
+            <i class="fas fa-wand-magic-sparkles"></i> Add Decorations
+          </div>
+          <button type="button" class="select-btn" onclick="openDecorationSuggestions()">
+            <i class="fas fa-sparkles"></i> View Suggestions
+          </button>
+          <div class="selected-items" id="selectedDecorations">
+            <small style="color: var(--text-soft);">No decorations selected</small>
+          </div>
+        </div>
+
+        <!-- Special Requests -->
+        <div class="form-group">
+          <label>Special Requests / Dietary Info</label>
+          <textarea id="specialRequests" rows="2" placeholder="e.g., Allergies, custom message, special occasion..."></textarea>
+        </div>
+      </form>
+
+      <!-- ORDER SUMMARY SIDEBAR -->
+      <div class="order-summary">
+        <div class="summary-title">Order Summary</div>
+
+        <div class="summary-item">
+          <span>Cake:</span>
+          <span id="summaryChampagne">Not selected</span>
+        </div>
+        <div class="summary-item">
+          <span>Decorations:</span>
+          <span id="summaryDecorations">Not selected</span>
+        </div>
+        <div class="summary-item">
+          <span>Base Price:</span>
+          <span id="summaryPrice">₹0</span>
+        </div>
+
+        <div class="summary-total">
+          Total: <span id="totalAmount">₹0</span>
+        </div>
+
+        <button class="proceed-btn" onclick="handleCheckout(event)">Proceed to Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAKE SUGGESTIONS MODAL -->
+  <div class="modal" id="cakeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">🎂 Choose Your Cake</h3>
+        <button class="modal-close" onclick="closeCakeSuggestions()">✕</button>
+      </div>
+      <div class="items-grid" id="cakeGrid">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- DECORATION SUGGESTIONS MODAL -->
+  <div class="modal" id="decorationModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">✨ Add Decorations</h3>
+        <button class="modal-close" onclick="closeDecorationSuggestions()">✕</button>
+      </div>
+      <div class="items-grid" id="decorationGrid">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cakeSuggestions = [
+      { id: 'chocolate-drip', name: 'Chocolate Drip', description: 'Rich dark chocolate with glossy drip', icon: '🍫', price: 699 },
+      { id: 'red-velvet', name: 'Red Velvet', description: 'Elegant red velvet with cream cheese', icon: '❤️', price: 749 },
+      { id: 'strawberry-bliss', name: 'Strawberry Bliss', description: 'Fresh strawberry with whipped cream', icon: '🍓', price: 799 },
+      { id: 'black-forest', name: 'Black Forest', description: 'Classic German cake with cherries', icon: '🌲', price: 899 },
+      { id: 'vanilla-heaven', name: 'Vanilla Heaven', description: 'Fluffy vanilla with buttercream', icon: '🍦', price: 599 },
+      { id: 'marble-magic', name: 'Marble Magic', description: 'Swirled chocolate & vanilla', icon: '🎨', price: 749 },
+    ];
+
+    const decorationSuggestions = [
+      { id: 'gold-sprinkles', name: 'Gold Sprinkles', description: 'Luxe gold dust & edible glitter', icon: '✨', price: 150 },
+      { id: 'fresh-flowers', name: 'Fresh Flowers', description: 'Assorted fresh edible flowers', icon: '🌸', price: 250 },
+      { id: 'candles', name: 'Candles', description: 'Number & decorative candles set', icon: '🕯️', price: 100 },
+      { id: 'chocolate-shards', name: 'Chocolate Shards', description: 'Crispy chocolate pieces on top', icon: '🍫', price: 120 },
+      { id: 'macarons', name: 'Macaron Toppers', description: 'Colorful macarons on top', icon: '🎀', price: 200 },
+      { id: 'berries', name: 'Fresh Berries', description: 'Mix of fresh berries & mint', icon: '🫐', price: 180 },
+    ];
+
+    let selectedCake = null;
+    let selectedDecorations = [];
+    let existingCart = JSON.parse(localStorage.getItem('cakeLounge_cart')) || [];
+
+    function getExistingCartTotal() {
+      return existingCart.reduce((sum, item) => sum + Number(item.price || 0), 0);
+    }
+
+    function hasOrderItems() {
+      return existingCart.length > 0 || selectedCake;
+    }
+
+    // Build Cake Modal
+    function buildCakeModal() {
+      const grid = document.getElementById('cakeGrid');
+      grid.innerHTML = cakeSuggestions.map(cake => `
+        <div class="item-card ${selectedCake?.id === cake.id ? 'selected' : ''}" onclick="selectCake(${JSON.stringify(cake).replace(/"/g, '&quot;')})">
+          <div class="item-icon">${cake.icon}</div>
+          <div class="item-name">${cake.name}</div>
+          <div class="item-description">${cake.description}</div>
+          <div class="item-price">₹${cake.price}</div>
+        </div>
+      `).join('');
+    }
+
+    // Build Decoration Modal
+    function buildDecorationModal() {
+      const grid = document.getElementById('decorationGrid');
+      grid.innerHTML = decorationSuggestions.map(deco => `
+        <div class="item-card ${selectedDecorations.some(d => d.id === deco.id) ? 'selected' : ''}" onclick="toggleDecoration(${JSON.stringify(deco).replace(/"/g, '&quot;')})">
+          <div class="item-icon">${deco.icon}</div>
+          <div class="item-name">${deco.name}</div>
+          <div class="item-description">${deco.description}</div>
+          <div class="item-price">₹${deco.price}</div>
+        </div>
+      `).join('');
+    }
+
+    function openCakeSuggestions() {
+      buildCakeModal();
+      document.getElementById('cakeModal').classList.add('active');
+    }
+
+    function closeCakeSuggestions() {
+      document.getElementById('cakeModal').classList.remove('active');
+    }
+
+    function openDecorationSuggestions() {
+      buildDecorationModal();
+      document.getElementById('decorationModal').classList.add('active');
+    }
+
+    function closeDecorationSuggestions() {
+      document.getElementById('decorationModal').classList.remove('active');
+    }
+
+    function selectCake(cake) {
+      selectedCake = cake;
+      closeCakeSuggestions();
+      updateSummary();
+      displaySelectedCake();
+    }
+
+    function toggleDecoration(deco) {
+      const exists = selectedDecorations.find(d => d.id === deco.id);
+      if (exists) {
+        selectedDecorations = selectedDecorations.filter(d => d.id !== deco.id);
+      } else {
+        selectedDecorations.push(deco);
+      }
+      buildDecorationModal();
+      updateSummary();
+      displaySelectedDecorations();
+    }
+
+    function removeCake() {
+      selectedCake = null;
+      updateSummary();
+      displaySelectedCake();
+    }
+
+    function removeCartItem(index) {
+      existingCart.splice(index, 1);
+      localStorage.setItem('cakeLounge_cart', JSON.stringify(existingCart));
+      updateSummary();
+      displaySelectedCake();
+    }
+
+    function removeDecoration(id) {
+      selectedDecorations = selectedDecorations.filter(d => d.id !== id);
+      updateSummary();
+      displaySelectedDecorations();
+    }
+
+    function displaySelectedCake() {
+      const container = document.getElementById('selectedCakes');
+      if (!hasOrderItems()) {
+        container.innerHTML = '<small style="color: var(--text-soft);">No cake selected</small>';
+      } else {
+        if (existingCart.length > 0 && selectedCake) {
+          const cartItems = existingCart.map((item, index) => `
+            <div class="selected-item">
+              ${item.name} - ₹${item.price}
+              <span class="remove" onclick="removeCartItem(${index})">✕</span>
+            </div>
+          `).join('');
+          const checkoutCake = `
+            <div class="selected-item">
+              ${selectedCake.icon} ${selectedCake.name} - ₹${selectedCake.price}
+              <span class="remove" onclick="removeCake()">✕</span>
+            </div>
+          `;
+          container.innerHTML = cartItems + checkoutCake;
+          return;
+        }
+        if (existingCart.length > 0 && !selectedCake) {
+          container.innerHTML = existingCart.map((item, index) => `
+            <div class="selected-item">
+              ${item.name} - ₹${item.price}
+              <span class="remove" onclick="removeCartItem(${index})">✕</span>
+            </div>
+          `).join('');
+          return;
+        }
+        container.innerHTML = `
+          <div class="selected-item">
+            ${selectedCake.icon} ${selectedCake.name}
+            <span class="remove" onclick="removeCake()">✕</span>
+          </div>
+        `;
+      }
+    }
+
+    function displaySelectedDecorations() {
+      const container = document.getElementById('selectedDecorations');
+      if (selectedDecorations.length === 0) {
+        container.innerHTML = '<small style="color: var(--text-soft);">No decorations selected</small>';
+      } else {
+        container.innerHTML = selectedDecorations.map(deco => `
+          <div class="selected-item">
+            ${deco.icon} ${deco.name}
+            <span class="remove" onclick="removeDecoration('${deco.id}')">✕</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function updateSummary() {
+      const existingCartNames = existingCart.map(item => item.name).join(', ');
+      const selectedCakeName = selectedCake ? `${selectedCake.icon} ${selectedCake.name}` : '';
+      const cakeName = [existingCartNames, selectedCakeName].filter(Boolean).join(', ') || 'Not selected';
+      const cakePrice = selectedCake ? selectedCake.price : 0;
+
+      const decoNames = selectedDecorations.length > 0 
+        ? selectedDecorations.map(d => d.icon + ' ' + d.name).join(', ')
+        : 'None';
+      const decoPrice = selectedDecorations.reduce((sum, d) => sum + d.price, 0);
+
+      // Calculate existing cart total
+      const existingCartTotal = getExistingCartTotal();
+
+      const totalPrice = cakePrice + decoPrice + existingCartTotal;
+
+      document.getElementById('summaryChampagne').textContent = cakeName;
+      document.getElementById('summaryDecorations').textContent = decoNames;
+      document.getElementById('summaryPrice').textContent = `₹${totalPrice}`;
+      document.getElementById('totalAmount').textContent = `₹${totalPrice}`;
+    }
+
+    async function handleCheckout(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+      const date = document.getElementById('deliveryDate').value;
+      const time = document.getElementById('deliveryTime').value;
+      const address = document.getElementById('deliveryAddress').value.trim();
+
+      if (!hasOrderItems()) {
+        alert('❌ Please select a cake');
+        return;
+      }
+
+      if (!name || !email || !phone || !date || !time || !address) {
+        alert('❌ Please fill in all required fields');
+        return;
+      }
+
+      // Build order summary
+      const existingCartTotal = getExistingCartTotal();
+      const selectedItemsTotal = (selectedCake ? selectedCake.price : 0) + selectedDecorations.reduce((sum, d) => sum + d.price, 0);
+      const totalAmount = existingCartTotal + selectedItemsTotal;
+      
+      const orderDetails = {
+        customer: { name, email, phone },
+        delivery: { date, time, address },
+        existingItems: existingCart,
+        cake: selectedCake,
+        decorations: selectedDecorations,
+        totalAmount: totalAmount,
+        specialRequests: document.getElementById('specialRequests').value.trim(),
+        timestamp: new Date().toLocaleString(),
+      };
+
+      const orderItems = [
+        ...existingCart,
+        ...(selectedCake ? [{ name: selectedCake.name, price: selectedCake.price }] : []),
+        ...selectedDecorations.map(item => ({ name: item.name, price: item.price })),
+      ];
+
+      let razorpayOrder;
+      let razorpayKey = 'rzp_test_SnKyu6FLUmVKUj';
+      try {
+        const orderResponse = await fetch('http://127.0.0.1:5000/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: orderItems,
+            totalAmount,
+            customerName: name,
+            customerEmail: email,
+            customerPhone: phone,
+          }),
+        });
+
+        if (!orderResponse.ok) {
+          alert('Could not create payment order. Please make sure the backend is running.');
+          return;
+        }
+
+        const orderData = await orderResponse.json();
+        razorpayOrder = orderData.order;
+        razorpayKey = orderData.keyId || razorpayKey;
+      } catch (error) {
+        console.error('Order creation error:', error);
+        alert('Could not connect to payment server. Please make sure the backend is running.');
+        return;
+      }
+
+      if (typeof Razorpay === 'undefined') {
+        alert('Payment library could not load. Please check your internet connection and try again.');
+        return;
+      }
+
+      // Process Razorpay Payment
+      const options = {
+        key: razorpayKey,
+        amount: totalAmount * 100, // Amount in paise
+        currency: 'INR',
+        name: 'Cake Lounge',
+        description: selectedCake ? `Order: ${selectedCake.name}` : `Order: ${existingCart.length} cart item(s)`,
+        order_id: razorpayOrder.id,
+        handler: async function (response) {
+          try {
+            const verifyResponse = await fetch('http://127.0.0.1:5000/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            if (!verifyResponse.ok) {
+              alert('Payment verification failed. Please contact support.');
+              return;
+            }
+          } catch (error) {
+            console.error('Verification error:', error);
+            alert('Could not verify payment. Please contact support.');
+            return;
+          }
+
+          // Payment successful - send confirmation via WhatsApp
+          const existingItemsText = orderDetails.existingItems.length > 0 
+            ? orderDetails.existingItems.map(item => `• ${item.name} - ₹${item.price}`).join('\n')
+            : 'None';
+          const checkoutCakeText = orderDetails.cake
+            ? `Cake: ${orderDetails.cake.icon} ${orderDetails.cake.name} (₹${orderDetails.cake.price})`
+            : 'Cake: Selected from cart';
+          if (!orderDetails.cake) {
+            orderDetails.cake = { icon: '', name: 'Selected from cart', price: existingCartTotal };
+          }
+            
+          const confirmMessage = `
+✅ *PAYMENT SUCCESSFUL - ORDER CONFIRMED*
+
+*Payment ID:* ${response.razorpay_payment_id}
+*Order ID:* ${response.razorpay_order_id}
+
+*Customer Details:*
+Name: ${orderDetails.customer.name}
+Email: ${orderDetails.customer.email}
+Phone: ${orderDetails.customer.phone}
+
+*Delivery:*
+Date: ${orderDetails.delivery.date}
+Time: ${orderDetails.delivery.time}
+Address: ${orderDetails.delivery.address}
+
+*Order Items:*
+${existingItemsText ? 'From Cart:\n' + existingItemsText + '\n\n' : ''}Cake: ${orderDetails.cake.icon} ${orderDetails.cake.name} (₹${orderDetails.cake.price})
+Decorations: ${orderDetails.decorations.length > 0 ? orderDetails.decorations.map(d => d.icon + ' ' + d.name + ' (₹' + d.price + ')').join(', ') : 'None'}
+
+*Total Paid: ₹${totalAmount}*
+
+Special Requests: ${orderDetails.specialRequests || 'None'}
+
+Order Placed: ${orderDetails.timestamp}
+          `.trim();
+
+          const whatsappLink = `https://wa.me/?text=${encodeURIComponent(confirmMessage)}`;
+          window.open(whatsappLink, '_blank');
+
+          // Show success message
+          alert('✅ Payment successful! Your order has been placed. Check WhatsApp for confirmation.');
+          
+          // Clear cart from localStorage and redirect
+          localStorage.removeItem('cakeLounge_cart');
+          setTimeout(() => window.location.href = 'faaahh.html', 2000);
+          
+          // Reset form
+          document.getElementById('checkoutForm').reset();
+          selectedCake = null;
+          selectedDecorations = [];
+          existingCart = [];
+          updateSummary();
+          displaySelectedCake();
+          displaySelectedDecorations();
+        },
+        prefill: {
+          name: name,
+          email: email,
+          contact: phone,
+        },
+        theme: {
+          color: '#c9614a',
+        },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+
+    // Set minimum delivery date to today
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('deliveryDate').setAttribute('min', today);
+      displaySelectedCake();
+      displaySelectedDecorations();
+      updateSummary();
+    });
+
+    // Close modals on outside click
+    window.onclick = (event) => {
+      const cakeModal = document.getElementById('cakeModal');
+      const decoModal = document.getElementById('decorationModal');
+      if (event.target === cakeModal) closeCakeSuggestions();
+      if (event.target === decoModal) closeDecorationSuggestions();
+    };
+  </script>
+
+</body>
+</html>

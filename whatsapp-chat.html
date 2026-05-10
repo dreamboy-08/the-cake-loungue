@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat on WhatsApp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background: #f8f1eb;
+      color: #3d1f10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .page {
+      max-width: 600px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 18px 50px rgba(60,20,10,.12);
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 16px;
+      color: #6b3a2a;
+    }
+    p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #6b4c3b;
+      margin-bottom: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      border: none;
+      background: #25d366;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(37,211,102,.35);
+    }
+    .note {
+      margin-top: 22px;
+      font-size: .92rem;
+      color: #8c6f5a;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Chat on WhatsApp</h1>
+    <p>Welcome! Click the button below to open WhatsApp chat for orders and support. This page opens in a new tab from the category card.</p>
+    <a href="https://wa.me/+919910519242?text=Hello%20I%20want%20to%20order%20a%20cake" target="_blank" rel="noopener noreferrer" class="btn">
+      Open WhatsApp Chat
+    </a>
+    <p class="note">If WhatsApp does not open automatically, make sure your browser allows pop-ups or use the button again.</p>
+  </div>
+</body>
+</html>

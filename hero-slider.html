@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cake Shop – Hero Slider</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: #fdf8f4;
+    }
+
+    /* ── NAVBAR (demo) ── */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #c0392b;
+      letter-spacing: 1px;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #444;
+      margin-left: 28px;
+      font-size: .9rem;
+      font-weight: 400;
+      letter-spacing: .5px;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: #c0392b; }
+
+    /* ── HERO SLIDER ── */
+    .hero-slider {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      margin-top: 0;
+    }
+
+    .slides {
+      display: none;
+      width: 100%;
+      position: relative;
+    }
+    .slides:first-child {
+      display: block;
+    }
+
+    .slides img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Dark gradient overlay on each slide */
+    .slides::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.15) 0%,
+        rgba(0,0,0,.45) 100%
+      );
+    }
+
+    /* Slide caption */
+    .slide-caption {
+      position: absolute;
+      bottom: 80px;
+      left: 60px;
+      z-index: 2;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,.4);
+    }
+    .slide-caption h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .slide-caption p {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: .5px;
+      opacity: .9;
+    }
+
+    /* Prev / Next arrows */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(255,255,255,.22);
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background .25s, transform .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .arrow:hover {
+      background: rgba(192,57,43,.75);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .arrow-left  { left:  18px; }
+    .arrow-right { right: 18px; }
+
+    /* Fade animation */
+    .fade { animation: fadeEffect .9s ease; }
+    @keyframes fadeEffect {
+      from { opacity: .35; }
+      to   { opacity: 1; }
+    }
+
+    /* Dots */
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+    .dot {
+      height: 10px;
+      width: 10px;
+      margin: 0 5px;
+      background: rgba(255,255,255,.55);
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      transition: background .3s, transform .3s;
+    }
+    .dot:hover         { background: rgba(255,255,255,.85); }
+    .active-dot        { background: #ff0033; transform: scale(1.25); }
+
+    
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .slides img { height: 260px; }
+      .slide-caption { bottom: 56px; left: 20px; }
+      .slide-caption h2 { font-size: 1.5rem; }
+      .slide-caption p  { font-size: .85rem; }
+      .arrow { width: 36px; height: 36px; font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">🎂 CakeCraft</div>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Our Cakes</a>
+    <a href="#">Custom Orders</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO SLIDER -->
+<section class="hero-slider">
+
+  <!-- Slide 1 -->
+  <div class="slides fade">
+    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1400&q=80" alt="Chocolate Drip Cake">
+    <div class="slide-caption">
+      <h2>Decadent Chocolate<br>Drip Cakes</h2>
+      <p>Handcrafted with love, every single time.</p>
+    </div>
+  </div>
+
+
+  <!-- Slide 2 -->
+  <div class="slides fade">
+    <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=1400&q=80" alt="Wedding Cake">
+    <div class="slide-caption">
+      <h2>Elegant Wedding<br>Masterpieces</h2>
+      <p>Make your special day unforgettable.</p>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slides fade">
+    <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=1400&q=80" alt="Floral Cake">
+    <div class="slide-caption">
+      <h2>Floral & Pastel<br>Creations</h2>
+      <p>Blooming with beauty and flavour.</p>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slides fade">
+    <img src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=1400&q=80" alt="Birthday Cake">
+    <div class="slide-caption">
+      <h2>Birthday Cakes<br>Worth Celebrating</h2>
+      <p>From simple to showstopper — we do it all.</p>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slides fade">
+    <img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=1400&q=80" alt="Cupcakes">
+    <div class="slide-caption">
+      <h2>Gourmet Cupcakes<br>& Mini Treats</h2>
+      <p>Small bites, big smiles.</p>
+    </div>
+  </div>
+
+  <!-- Prev / Next Arrows -->
+  <button class="arrow arrow-left"  onclick="changeSlide(-1)">&#8592;</button>
+  <button class="arrow arrow-right" onclick="changeSlide(+1)">&#8594;</button>
+
+  <!-- Dots -->
+  <div class="slider-dots">
+    <span class="dot" onclick="goToSlide(1)"></span>
+    <span class="dot" onclick="goToSlide(2)"></span>
+    <span class="dot" onclick="goToSlide(3)"></span>
+    <span class="dot" onclick="goToSlide(4)"></span>
+    <span class="dot" onclick="goToSlide(5)"></span>
+  </div>
+
+</section>
+<!-- HERO SLIDER END -->
+
+<script>
+  let slideIndex = 0;
+  let autoTimer;
+  let slides;
+  let dots;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    slides = document.getElementsByClassName("slides");
+    dots   = document.getElementsByClassName("dot");
+    showSlide(0);
+    startAuto();
+  });
+
+  function showSlide(n) {
+    if (!slides || !dots || slides.length === 0) return;
+
+    // Wrap around
+    if (n >= slides.length) n = 0;
+    if (n < 0) n = slides.length - 1;
+    slideIndex = n;
+
+    for (let s of slides) s.style.display = "none";
+    for (let d of dots)   d.classList.remove("active-dot");
+
+    slides[slideIndex].style.display = "block";
+    slides[slideIndex].classList.remove("fade");
+    void slides[slideIndex].offsetWidth; // reflow to restart animation
+    slides[slideIndex].classList.add("fade");
+
+    dots[slideIndex].classList.add("active-dot");
+  }
+
+  function changeSlide(dir) {
+    resetAuto();
+    showSlide(slideIndex + dir);
+  }
+
+  function goToSlide(n) {
+    resetAuto();
+    showSlide(n - 1);
+  }
+
+  function startAuto() {
+    autoTimer = setInterval(() => showSlide(slideIndex + 1), 4000);
+  }
+
+  function resetAuto() {
+    clearInterval(autoTimer);
+    startAuto();
+  }
+</script>
+
+</body>
+</html>

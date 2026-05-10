@@ -153,6 +153,28 @@
       transition: var(--transition);
     }
     #cart-bubble:hover { transform: scale(1.1); background: var(--brown); }
+    #cart-bubble.cart-hit {
+      animation: cartHit .52s cubic-bezier(.18,.89,.32,1.28);
+    }
+    #whatsapp-bubble {
+      position: fixed;
+      bottom: 100px;
+      right: 28px;
+      z-index: 999;
+      background: #25d366;
+      color: var(--white);
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    #whatsapp-bubble:hover { transform: scale(1.1); background: #128c7e; }
     #cart-bubble .badge {
       position: absolute;
       top: 4px; right: 4px;
@@ -185,6 +207,49 @@
       pointer-events: none;
     }
     #cart-toast.show { opacity: 1; transform: translateY(0); }
+
+    .cart-flyer {
+      position: fixed;
+      z-index: 1200;
+      pointer-events: none;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 18px;
+      background: var(--white);
+      color: var(--chocolate);
+      box-shadow: 0 18px 45px rgba(61,31,16,.28);
+      opacity: 1;
+      transform: translate3d(0,0,0) scale(.72);
+      transition:
+        transform .78s cubic-bezier(.18,.86,.28,1),
+        opacity .18s ease .62s;
+      will-change: transform, opacity;
+    }
+    .cart-flyer.fly {
+      opacity: 0;
+      transform: translate3d(var(--fly-x), var(--fly-y), 0) scale(.18) rotate(12deg);
+    }
+    .cart-flyer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cart-flyer-text {
+      padding: 10px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    @keyframes cartHit {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.18); box-shadow: 0 18px 48px rgba(201,97,74,.42); }
+      100% { transform: scale(1); }
+    }
 
     /* =============================================
        NAV
@@ -477,6 +542,124 @@
       from { opacity: 0; transform: translateY(30px); }
       to   { opacity: 1; transform: translateY(0); }
     }
+
+    /* =============================================
+       HERO CAROUSEL SLIDER
+    ============================================= */
+    .hero-slider {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      margin-top: 0;
+    }
+
+    .slides {
+      display: none;
+      width: 100%;
+      position: relative;
+    }
+    .slides:first-child {
+      display: block;
+    }
+
+    .slides img {
+      width: 100%;
+      height: 520px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Dark gradient overlay on each slide */
+    .slides::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,.15) 0%,
+        rgba(0,0,0,.45) 100%
+      );
+    }
+
+    /* Slide caption */
+    .slide-caption {
+      position: absolute;
+      bottom: 80px;
+      left: 60px;
+      z-index: 2;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,.4);
+    }
+    .slide-caption h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      color: var(--white);
+    }
+    .slide-caption p {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: .5px;
+      opacity: .9;
+      color: var(--white);
+    }
+
+    /* Prev / Next arrows */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(255,255,255,.22);
+      border: none;
+      color: #fff;
+      font-size: 1.6rem;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background .25s, transform .25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .arrow:hover {
+      background: var(--rose-deep);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .arrow-left  { left:  18px; }
+    .arrow-right { right: 18px; }
+
+    /* Fade animation */
+    .fade { animation: fadeEffect .9s ease; }
+    @keyframes fadeEffect {
+      from { opacity: .35; }
+      to   { opacity: 1; }
+    }
+
+    /* Dots */
+    .slider-dots {
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+      text-align: center;
+      z-index: 10;
+    }
+    .dot {
+      height: 10px;
+      width: 10px;
+      margin: 0 5px;
+      background: rgba(255,255,255,.55);
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      transition: background .3s, transform .3s;
+    }
+    .dot:hover         { background: rgba(255,255,255,.85); }
+    .active-dot        { background: var(--rose); transform: scale(1.25); }
 
     /* =============================================
        OFFER BANNER (marquee)
@@ -921,6 +1104,80 @@
     }
     .slide-item:hover .slide-item-label { opacity: 1; transform: translateY(0); }
 
+    #how-it-works {
+  padding: 90px 0;
+  background: var(--cream);
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 54px;
+  position: relative;
+}
+
+/* connector line */
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 44px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: linear-gradient(to right, var(--blush), var(--rose), var(--blush));
+  z-index: 0;
+}
+
+.step-card {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-number {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--blush);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 1.8rem;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.step-card:hover .step-number {
+  background: var(--rose-deep);
+  border-color: var(--rose-deep);
+  transform: scale(1.1);
+}
+
+.step-card:hover .step-number i {
+  color: var(--white);
+}
+
+.step-number i {
+  color: var(--rose-deep);
+  transition: color .3s;
+}
+
+.step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--chocolate);
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-size: .82rem;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
     /* =============================================
        TESTIMONIALS
     ============================================= */
@@ -1118,7 +1375,6 @@
       margin-bottom: 50px;
     }
 
-    .footer-brand {}
     .footer-logo {
       font-family: 'Playfair Display', serif;
       font-size: 1.6rem;
@@ -1217,6 +1473,88 @@
       .hero-cta { flex-direction: column; }
       .footer-grid { grid-template-columns: 1fr; }
     }
+
+    /* =============================================
+       CART MODAL
+    ============================================= */
+    .cart-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-modal.show { display: flex; }
+    .cart-modal-content {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+    .cart-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid var(--cream);
+    }
+    .cart-modal-header h3 {
+      margin: 0;
+      color: var(--chocolate);
+    }
+    .cart-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--text-mid);
+      cursor: pointer;
+    }
+    .cart-items {
+      padding: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--cream);
+    }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-info h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--chocolate);
+    }
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--rose);
+    }
+    .cart-item-remove {
+      background: none;
+      border: none;
+      color: var(--rose);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .cart-footer {
+      padding: 20px;
+      border-top: 1px solid var(--cream);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cart-total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
   </style>
 </head>
 <body>
@@ -1227,6 +1565,7 @@
     <a href="#hero"         onclick="closeMobileMenu()">Home</a>
     <a href="#categories"   onclick="closeMobileMenu()">Categories</a>
     <a href="#products"     onclick="closeMobileMenu()">Menu</a>
+    <a href="checkout.html"     onclick="closeMobileMenu()">Order</a>
     <a href="#about"        onclick="closeMobileMenu()">About</a>
     <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
     <a href="#contact"      onclick="closeMobileMenu()">Contact</a>
@@ -1236,7 +1575,7 @@
   <nav id="navbar">
     <div class="container">
       <div class="nav-inner">
-        <a href="#hero" class="nav-logo">La <span>Douceur</span></a>
+        <a href="#hero" class="nav-logo">Cake <span>Lounge</span></a>
         <ul class="nav-links">
           <li><a href="#categories">Categories</a></li>
           <li><a href="#products">Menu</a></li>
@@ -1244,7 +1583,7 @@
           <li><a href="#testimonials">Reviews</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
-        <a href="#products" class="nav-order">Order Now</a>
+        <a href="checkout.html" class="nav-order">Order Now</a>
         <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
           <span></span><span></span><span></span>
         </button>
@@ -1315,6 +1654,67 @@
     </div>
   </section>
 
+  <!-- ========== HERO CAROUSEL SLIDER ========== -->
+  <section class="hero-slider">
+    <!-- Slide 1 -->
+    <div class="slides fade">
+      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=1400&q=80" alt="Chocolate Drip Cake">
+      <div class="slide-caption">
+        <h2>Decadent Chocolate<br>Drip Cakes</h2>
+        <p>Handcrafted with love, every single time.</p>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slides fade">
+      <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=1400&q=80" alt="Wedding Cake">
+      <div class="slide-caption">
+        <h2>Elegant Wedding<br>Masterpieces</h2>
+        <p>Make your special day unforgettable.</p>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slides fade">
+      <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=1400&q=80" alt="Floral Cake">
+      <div class="slide-caption">
+        <h2>Floral & Pastel<br>Creations</h2>
+        <p>Blooming with beauty and flavour.</p>
+      </div>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slides fade">
+      <img src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=1400&q=80" alt="Birthday Cake">
+      <div class="slide-caption">
+        <h2>Birthday Cakes<br>Worth Celebrating</h2>
+        <p>From simple to showstopper — we do it all.</p>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slides fade">
+      <img src="https://images.unsplash.com/photo-1621303837174-89787a7d4729?w=1400&q=80" alt="Cupcakes">
+      <div class="slide-caption">
+        <h2>Gourmet Cupcakes<br>& Mini Treats</h2>
+        <p>Small bites, big smiles.</p>
+      </div>
+    </div>
+
+    <!-- Prev / Next Arrows -->
+    <button class="arrow arrow-left"  onclick="changeSlide(-1)">&#8592;</button>
+    <button class="arrow arrow-right" onclick="changeSlide(+1)">&#8594;</button>
+
+    <!-- Dots -->
+    <div class="slider-dots">
+      <span class="dot" onclick="goToSlide(1)"></span>
+      <span class="dot" onclick="goToSlide(2)"></span>
+      <span class="dot" onclick="goToSlide(3)"></span>
+      <span class="dot" onclick="goToSlide(4)"></span>
+      <span class="dot" onclick="goToSlide(5)"></span>
+    </div>
+  </section>
+
   <!-- ========== OFFER BANNER ========== -->
   <div id="offer-banner">
     <div class="marquee-track" id="marqueeTrack">
@@ -1365,7 +1765,7 @@
             <h3>Custom Cakes</h3>
             <span>Design Your Own</span>
           </div>
-        </div>
+          <div class="cat-badge">Open</div>
       </div>
     </div>
   </section>
@@ -1451,6 +1851,61 @@
     </div>
   </section>
 
+  <!-- ========== HOW IT WORKS ========== -->
+<section id="how-it-works">
+  <div class="container">
+    <div class="section-head center">
+      <p class="section-label">Simple & Sweet</p>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub">Getting your dream cake delivered is as easy as 1-2-3-4.</p>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-number">
+          <i class="fas fa-search"></i>
+        </div>
+        <div class="step-title">1. Browse & Choose</div>
+        <p class="step-desc">
+          Explore our 500+ flavours and designs — birthday, wedding, custom and more.
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">
+          <i class="fas fa-pen-fancy"></i>
+        </div>
+        <div class="step-title">2. Personalise</div>
+        <p class="step-desc">
+          Add a message, choose size, flavour, and any custom decoration you'd like.
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">
+          <i class="fas fa-credit-card"></i>
+        </div>
+        <div class="step-title">3. Place Order</div>
+        <p class="step-desc">
+          Pay securely online or via WhatsApp.
+        </p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">
+          <i class="fas fa-truck-fast"></i>
+        </div>
+        <div class="step-title">4. Delivered Fresh</div>
+        <p class="step-desc">
+          Your cake arrives fresh and perfectly packed.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
   <!-- ========== TESTIMONIALS ========== -->
   <section id="testimonials">
     <div class="container">
@@ -1528,7 +1983,7 @@
               <div class="contact-detail-icon"><i class="fas fa-phone"></i></div>
               <div>
                 <h4>Call Us</h4>
-                <p>+91 7777788888 · Mon–Sun 8am–10pm</p>
+                <p>+91 99105 19242 · Mon–Sun 8am–10pm</p>
               </div>
             </div>
             <div class="contact-detail">
@@ -1572,7 +2027,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="footer-logo">La <span>Douceur</span></div>
+          <div class="footer-logo">Cake <span>Lounge</span></div>
           <p class="footer-desc">Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.</p>
           <div class="social-links">
             <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
@@ -1628,7 +2083,27 @@
     <i class="fas fa-shopping-cart"></i>
     <div class="badge" id="cartBadge">0</div>
   </div>
+  <a id="whatsapp-bubble" href="whatsapp-chat.html" target="_blank" rel="noopener noreferrer" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
   <div id="cart-toast">🎂 Added to cart!</div>
+
+  <!-- ========== CART MODAL ========== -->
+  <div id="cartModal" class="cart-modal">
+    <div class="cart-modal-content">
+      <div class="cart-modal-header">
+        <h3>Your Cart</h3>
+        <button class="cart-close" onclick="closeCartModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <!-- Items will be added here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">Total: ₹<span id="cartTotal">0</span></div>
+        <button class="btn btn-primary" onclick="checkoutCart()">Checkout</button>
+      </div>
+    </div>
+  </div>
 
   <!-- =============================================
        JAVASCRIPT
@@ -1646,6 +2121,9 @@
       { id:8, name:'Lemon Drizzle Bliss',      flavor:'Zesty Lemon Curd',       price:729, oldPrice:0,   rating:4, reviews:98,  tag:'',          img:'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=400&q=80' },
     ];
 
+    /* ---- Cart ---- */
+    let cart = JSON.parse(localStorage.getItem('cakeLounge_cart')) || [];
+    let cartCount = cart.length;
     /* ---- Gallery images ---- */
     const galleryImgs = [
       { src:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80', label:'Chocolate Truffle' },
@@ -1669,7 +2147,7 @@
     ];
 
     /* ---- Cart state ---- */
-    let cartCount = 0;
+  
 
     /* ===== Build Marquee ===== */
     (function buildMarquee() {
@@ -1711,7 +2189,7 @@
                   <span class="product-price">₹${p.price}</span>
                   ${oldPriceHTML}
                 </div>
-                <button class="add-to-cart" onclick="addToCart(this, '${p.name}')">
+                <button class="add-to-cart" onclick="addToCart(this, '${p.name}', ${p.price})">
                   <i class="fas fa-plus"></i> Add
                 </button>
               </div>
@@ -1735,16 +2213,63 @@
     })();
 
     /* ===== Cart Logic ===== */
-    function addToCart(btn, name) {
+    function addToCart(btn, name, price) {
+      animateToCart(btn, name);
+      cart.push({ name, price });
       cartCount++;
+      localStorage.setItem('cakeLounge_cart', JSON.stringify(cart));
       document.getElementById('cartBadge').textContent = cartCount;
-      btn.classList.add('added');
-      btn.innerHTML = '<i class="fas fa-check"></i> Added';
-      setTimeout(() => {
-        btn.classList.remove('added');
-        btn.innerHTML = '<i class="fas fa-plus"></i> Add';
-      }, 1800);
+      updateCartDisplay();
+      if (btn) {
+        btn.classList.add('added');
+        btn.innerHTML = '<i class="fas fa-check"></i> Added';
+        setTimeout(() => {
+          btn.classList.remove('added');
+          btn.innerHTML = '<i class="fas fa-plus"></i> Add';
+        }, 1800);
+      }
       showToast(`🎂 ${name} added!`);
+    }
+
+    function animateToCart(source, name) {
+      const cartBubble = document.getElementById('cart-bubble');
+      if (!source || !cartBubble || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const productCard = source.closest ? source.closest('.product-card') : null;
+      const productImg = productCard ? productCard.querySelector('.product-img img') : null;
+      const sourceRect = (productImg || source).getBoundingClientRect();
+      const cartRect = cartBubble.getBoundingClientRect();
+      const flyer = document.createElement('div');
+      const hasImage = Boolean(productImg && productImg.currentSrc);
+      const size = hasImage ? Math.min(118, Math.max(74, sourceRect.width * .42)) : 92;
+      const height = hasImage ? size : 42;
+
+      flyer.className = 'cart-flyer';
+      flyer.style.width = `${size}px`;
+      flyer.style.height = `${height}px`;
+      flyer.style.left = `${sourceRect.left + (sourceRect.width - size) / 2}px`;
+      flyer.style.top = `${sourceRect.top + (sourceRect.height - height) / 2}px`;
+      flyer.style.setProperty('--fly-x', `${cartRect.left + cartRect.width / 2 - sourceRect.left - sourceRect.width / 2}px`);
+      flyer.style.setProperty('--fly-y', `${cartRect.top + cartRect.height / 2 - sourceRect.top - sourceRect.height / 2}px`);
+
+      if (hasImage) {
+        const img = document.createElement('img');
+        img.src = productImg.currentSrc;
+        img.alt = name;
+        flyer.appendChild(img);
+      } else {
+        flyer.innerHTML = `<span class="cart-flyer-text"><i class="fas fa-cake-candles"></i> ${name}</span>`;
+      }
+
+      document.body.appendChild(flyer);
+      requestAnimationFrame(() => flyer.classList.add('fly'));
+
+      setTimeout(() => {
+        flyer.remove();
+        cartBubble.classList.remove('cart-hit');
+        void cartBubble.offsetWidth;
+        cartBubble.classList.add('cart-hit');
+      }, 820);
     }
 
     function showToast(msg) {
@@ -1755,7 +2280,107 @@
     }
 
     function showCartInfo() {
-      showToast(cartCount === 0 ? '🛒 Cart is empty' : `🛒 ${cartCount} item${cartCount > 1 ? 's' : ''} in cart`);
+      openCartModal();
+    }
+
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const cartBadge = document.getElementById('cartBadge');
+      cartItems.innerHTML = cart.map((item, index) => `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+          </div>
+          <div class="cart-item-price">₹${item.price}</div>
+          <button class="cart-item-remove" onclick="removeFromCart(${index})"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      cartTotal.textContent = total;
+      cartCount = cart.length;
+      cartBadge.textContent = cartCount;
+      updateCheckoutDisplay();
+    }
+
+    function updateCheckoutDisplay() {
+      // Only update checkout section if it exists (for pages that have it)
+      const checkoutCart = document.getElementById('checkoutCart');
+      const checkoutTotal = document.getElementById('checkoutTotal');
+      const razorpayButton = document.getElementById('razorpayButton');
+      const emptyMsg = document.getElementById('emptyCartMsg');
+      const checkoutDetails = document.getElementById('checkoutDetails');
+      
+      // If checkout elements don't exist, skip this function
+      if (!checkoutCart || !checkoutTotal) return;
+      
+      if (cart.length === 0) {
+        checkoutCart.innerHTML = '';
+        checkoutTotal.textContent = '0';
+        razorpayButton.style.display = 'none';
+        checkoutDetails.style.display = 'none';
+        emptyMsg.style.display = 'block';
+      } else {
+        checkoutCart.innerHTML = cart.map(item => `
+          <div class="checkout-item">
+            <h4>${item.name}</h4>
+            <div class="checkout-item-price">₹${item.price}</div>
+          </div>
+        `).join('');
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        checkoutTotal.textContent = total;
+        razorpayButton.style.display = 'inline-block';
+        checkoutDetails.style.display = 'block';
+        emptyMsg.style.display = 'none';
+      }
+    }
+
+    function openCartModal() {
+      document.getElementById('cartModal').classList.add('show');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.remove('show');
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      cartCount--;
+      localStorage.setItem('cakeLounge_cart', JSON.stringify(cart));
+      document.getElementById('cartBadge').textContent = cartCount;
+      updateCartDisplay();
+      showToast('Item removed from cart');
+    }
+
+    function addCakeFromMenu(btn) {
+      const select = document.getElementById('cakeMenuSelect');
+      if (!select) {
+        showToast('Cake menu is unavailable.');
+        return;
+      }
+      const value = select.value;
+      if (!value) {
+        showToast('Please select a cake!');
+        return;
+      }
+      const [name, price] = value.split('|');
+      animateToCart(select, name);
+      addToCart(null, name, parseInt(price));
+      if (btn) {
+        btn.classList.add('added');
+        setTimeout(() => btn.classList.remove('added'), 1000);
+      }
+      select.value = '';
+    }
+
+    function checkoutCart() {
+      if (cart.length === 0) {
+        showToast('Cart is empty!');
+        return;
+      }
+      closeCartModal();
+      // Redirect to checkout page
+      window.location.href = 'checkout.html';
     }
 
     /* ===== Wishlist ===== */
@@ -1804,6 +2429,174 @@
       el.style.transition = `opacity .6s ${i * 0.07}s ease, transform .6s ${i * 0.07}s ease`;
       observer.observe(el);
     });
+
+    /* ===== Checkout Select ===== */
+    // Removed - now using cart
+
+    /* ===== Initial updates ===== */
+    document.getElementById('cartBadge').textContent = cartCount;
+    updateCartDisplay();
+
+    /* ===== Razorpay Payment ===== */
+    const razorpayButton = document.getElementById('razorpayButton');
+    if (razorpayButton) {
+      razorpayButton.addEventListener('click', async () => {
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+
+      // Validate inputs
+      if (total === 0) {
+        showToast('Cart is empty!');
+        return;
+      }
+      if (!customerName || !customerEmail || !customerPhone) {
+        showToast('Please fill in all customer details!');
+        return;
+      }
+
+      try {
+        // Step 1: Create order on backend
+        const orderResponse = await fetch('http://localhost:5000/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: cart,
+            totalAmount: total,
+            customerName: customerName,
+            customerEmail: customerEmail,
+            customerPhone: customerPhone,
+          }),
+        });
+
+        if (!orderResponse.ok) {
+          showToast('Failed to create order. Please try again.');
+          return;
+        }
+
+        const orderData = await orderResponse.json();
+        const razorpayOrderId = orderData.order.id;
+
+        // Step 2: Open Razorpay checkout
+        const options = {
+          key: 'rzp_test_your_key_id', // Replace with your Razorpay test key
+          amount: total * 100, // Amount in paisa
+          currency: 'INR',
+          name: 'Cake Lounge',
+          description: `Order for ${cart.length} item${cart.length > 1 ? 's' : ''}`,
+          order_id: razorpayOrderId,
+          image: '', // Optional
+          handler: async function (response) {
+            try {
+              // Step 3: Verify payment on backend
+              const verifyResponse = await fetch('http://localhost:5000/api/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              });
+
+              if (verifyResponse.ok) {
+                showToast('🎉 Order placed successfully!');
+                // Clear cart
+                cart = [];
+                cartCount = 0;
+                document.getElementById('cartBadge').textContent = '0';
+                updateCartDisplay();
+                // Reset form
+                const cakeMenuSelect = document.getElementById('cakeMenuSelect');
+                const customerNameInput = document.getElementById('customerName');
+                const customerEmailInput = document.getElementById('customerEmail');
+                const customerPhoneInput = document.getElementById('customerPhone');
+                if (cakeMenuSelect) cakeMenuSelect.value = '';
+                if (customerNameInput) customerNameInput.value = '';
+                if (customerEmailInput) customerEmailInput.value = '';
+                if (customerPhoneInput) customerPhoneInput.value = '';
+                // Scroll to top
+                window.scrollTo(0, 0);
+              } else {
+                showToast('Payment verification failed!');
+              }
+            } catch (error) {
+              console.error('Verification error:', error);
+              showToast('Error verifying payment');
+            }
+          },
+          prefill: {
+            name: customerName,
+            email: customerEmail,
+            contact: customerPhone,
+          },
+          theme: {
+            color: '#c9614a',
+          },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        console.error('Order creation error:', error);
+        showToast('Failed to process order. Make sure backend is running!');
+      }
+      });
+    }
+
+    /* ===== HERO CAROUSEL SLIDER ===== */
+    let slideIndex = 0;
+    let autoTimer;
+    let slides;
+    let dots;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      slides = document.getElementsByClassName("slides");
+      dots   = document.getElementsByClassName("dot");
+      if (slides && slides.length > 0) {
+        showSlide(0);
+        startAuto();
+      }
+    });
+
+    function showSlide(n) {
+      if (!slides || !dots || slides.length === 0) return;
+
+      // Wrap around
+      if (n >= slides.length) n = 0;
+      if (n < 0) n = slides.length - 1;
+      slideIndex = n;
+
+      for (let s of slides) s.style.display = "none";
+      for (let d of dots)   d.classList.remove("active-dot");
+
+      slides[slideIndex].style.display = "block";
+      slides[slideIndex].classList.remove("fade");
+      void slides[slideIndex].offsetWidth; // reflow to restart animation
+      slides[slideIndex].classList.add("fade");
+
+      dots[slideIndex].classList.add("active-dot");
+    }
+
+    function changeSlide(dir) {
+      resetAuto();
+      showSlide(slideIndex + dir);
+    }
+
+    function goToSlide(n) {
+      resetAuto();
+      showSlide(n - 1);
+    }
+
+    function startAuto() {
+      autoTimer = setInterval(() => showSlide(slideIndex + 1), 4000);
+    }
+
+    function resetAuto() {
+      clearInterval(autoTimer);
+      startAuto();
+    }
   </script>
 </body>
 </html>
