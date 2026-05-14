@@ -3104,7 +3104,7 @@
 
       try {
         // Step 1: Create order on backend
-        const orderResponse = await fetch('https://the-cake-loungue.onrender.com/api/orders', {
+        const orderResponse = await fetch('https://the-cake-loungue.onrender.com/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -3136,7 +3136,7 @@
           handler: async function (response) {
             try {
               // Step 3: Verify payment on backend
-              const verifyResponse = await fetch('https://the-cake-loungue.onrender.com/api/verify-payment', {
+              const verifyResponse = await fetch('https://the-cake-loungue.onrender.com/verify-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
