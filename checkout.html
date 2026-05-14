@@ -443,7 +443,7 @@
   <!-- HEADER -->
   <div class="header">
     <div class="header-inner">
-      <a href="faaahh.html" class="header-back">
+      <a href="menu.html" class="header-back">
         <i class="fas fa-arrow-left"></i> Back to Menu
       </a>
       <div class="header-logo">🎂 CakeLounge</div>
@@ -697,6 +697,7 @@
         if (existingCart.length > 0 && selectedCake) {
           const cartItems = existingCart.map((item, index) => `
             <div class="selected-item">
+              ${item.img ? `<img src="${item.img}" alt="${item.name}" width="36" height="36" style="border-radius: 12px; object-fit: cover;" />` : ''}
               ${item.name} - ₹${item.price}
               <span class="remove" onclick="removeCartItem(${index})">✕</span>
             </div>
@@ -713,6 +714,7 @@
         if (existingCart.length > 0 && !selectedCake) {
           container.innerHTML = existingCart.map((item, index) => `
             <div class="selected-item">
+              ${item.img ? `<img src="${item.img}" alt="${item.name}" width="36" height="36" style="border-radius: 12px; object-fit: cover;" />` : ''}
               ${item.name} - ₹${item.price}
               <span class="remove" onclick="removeCartItem(${index})">✕</span>
             </div>
@@ -916,7 +918,7 @@ Order Placed: ${orderDetails.timestamp}
           
           // Clear cart from localStorage and redirect
           localStorage.removeItem('cakeLounge_cart');
-          setTimeout(() => window.location.href = 'faaahh.html', 2000);
+          setTimeout(() => window.location.href = 'index.html', 2000);
           
           // Reset form
           document.getElementById('checkoutForm').reset();

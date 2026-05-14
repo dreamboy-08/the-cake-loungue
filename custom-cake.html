@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Custom Cake Builder</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#fff7f8;
+  padding:30px;
+}
+
+.custom-cake-container{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:35px;
+}
+
+.preview-section,
+.form-section{
+  background:#fff;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+.preview-wrapper{
+  position:relative;
+  width:100%;
+  max-width:500px;
+  margin:auto;
+  overflow:hidden;
+}
+
+.cake-base{
+  width:100%;
+  display:block;
+  transition: transform .3s ease;
+}
+
+.user-photo{
+  position:absolute;
+  top:34%;
+  left:50%;
+  transform:translateX(-50%);
+  width:180px;
+  height:180px;
+  object-fit:cover;
+  border-radius:14px;
+  border:4px solid white;
+  z-index:2;
+  transition: transform .3s ease, opacity .3s ease;
+}
+
+.draggable-text{
+  position:absolute;
+  top:72%;
+  left:50%;
+  transform:translateX(-50%);
+  color:white;
+  font-size:24px;
+  font-weight:bold;
+  cursor:move;
+  text-shadow:0 2px 10px rgba(0,0,0,0.5);
+  z-index:3;
+  transition: transform .3s ease;
+}
+
+.preview-wrapper:hover .cake-base{
+  transform: scale(1.01);
+}
+
+.preview-wrapper:hover .user-photo{
+  transform: translateX(-50%) scale(1.05);
+}
+
+.preview-wrapper:hover .draggable-text{
+  transform:translateX(-50%) scale(1.02);
+}
+
+.form-group{
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  outline:none;
+}
+
+textarea{
+  resize:none;
+  height:100px;
+}
+
+.price-box{
+  background:#fff0f3;
+  padding:18px;
+  border-radius:14px;
+  margin-top:15px;
+  font-size:22px;
+  font-weight:700;
+  color:#ff2e63;
+}
+
+.btns{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  margin-top:20px;
+}
+
+button{
+  border:none;
+  padding:14px 22px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:15px;
+}
+
+.save-btn{
+  background:#ff4d6d;
+  color:white;
+}
+
+.cart-btn{
+  background:#111;
+  color:white;
+}
+
+.wa-btn{
+  background:#25D366;
+  color:white;
+}
+
+.pay-btn{
+  background:#3395ff;
+  color:white;
+}
+
+.gallery{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+  flex-wrap:wrap;
+}
+
+.gallery img{
+  width:70px;
+  height:70px;
+  border-radius:10px;
+  object-fit:cover;
+  cursor:pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.gallery img:hover{
+  transform: scale(1.1);
+  box-shadow:0 10px 20px rgba(0,0,0,0.15);
+}
+
+@media(max-width:900px){
+
+.custom-cake-container{
+  grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="custom-cake-container">
+
+  <!-- LEFT -->
+
+  <div class="preview-section">
+
+    <div class="preview-wrapper">
+
+      <img class="cake-base"
+      src="https://i.imgur.com/4AI6p5K.png">
+
+      <img
+      class="user-photo"
+      id="userPhoto"
+      src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800">
+
+      <div
+      class="draggable-text"
+      id="cakeText">
+      Your Text
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+
+  <div class="form-section">
+
+    <div class="form-group">
+
+      <label>Upload Photos</label>
+
+      <input
+      type="file"
+      id="photoUpload"
+      multiple
+      accept="image/*">
+
+      <div class="gallery" id="gallery"></div>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Cake Message</label>
+
+      <input
+      type="text"
+      id="messageInput"
+      placeholder="Happy Birthday Riya">
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Flavor</label>
+
+      <select id="flavor">
+
+        <option value="499">
+          Chocolate
+        </option>
+
+        <option value="599">
+          Vanilla
+        </option>
+
+        <option value="699">
+          Red Velvet
+        </option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Weight</label>
+
+      <select id="weight">
+
+        <option value="0">
+          0.5 KG
+        </option>
+
+        <option value="400">
+          1 KG
+        </option>
+
+        <option value="900">
+          2 KG
+        </option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Special Instructions</label>
+
+      <textarea
+      id="notes"></textarea>
+
+    </div>
+
+    <div class="price-box">
+
+      Total Price:
+      ₹<span id="price">499</span>
+
+    </div>
+
+    <div class="btns">
+
+      <button
+      class="save-btn"
+      onclick="saveDesign()">
+
+      Save Design
+
+      </button>
+
+      <button
+      class="cart-btn"
+      onclick="addToCart()">
+
+      Add To Cart
+
+      </button>
+
+      <button
+      class="wa-btn"
+      onclick="sendWhatsApp()">
+
+      WhatsApp
+
+      </button>
+
+      <button
+      class="pay-btn"
+      onclick="payNow()">
+
+      Pay Now
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+const upload =
+document.getElementById("photoUpload");
+
+const userPhoto =
+document.getElementById("userPhoto");
+
+const gallery =
+document.getElementById("gallery");
+
+upload.addEventListener("change",function(){
+
+  gallery.innerHTML = "";
+
+  const files = [...this.files];
+
+  files.forEach((file,index)=>{
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+      if(index === 0){
+
+        userPhoto.src = e.target.result;
+
+      }
+
+      const img =
+      document.createElement("img");
+
+      img.src = e.target.result;
+      img.alt = "Design preview";
+      img.addEventListener("click", () => {
+        userPhoto.src = e.target.result;
+      });
+
+      gallery.appendChild(img);
+
+    }
+
+    reader.readAsDataURL(file);
+
+  });
+
+});
+
+const messageInput =
+document.getElementById("messageInput");
+
+const cakeText =
+document.getElementById("cakeText");
+
+messageInput.addEventListener("input",()=>{
+
+  cakeText.innerText =
+  messageInput.value;
+
+});
+
+const flavor =
+document.getElementById("flavor");
+
+const weight =
+document.getElementById("weight");
+
+const price =
+document.getElementById("price");
+
+function updatePrice(){
+
+  let total =
+  Number(flavor.value) +
+  Number(weight.value);
+
+  if(upload.files.length > 0){
+
+    total += 150;
+
+  }
+
+  price.innerText = total;
+
+}
+
+flavor.addEventListener("change",updatePrice);
+weight.addEventListener("change",updatePrice);
+upload.addEventListener("change",updatePrice);
+
+function saveDesign(){
+
+  alert("Design Saved Successfully");
+
+}
+
+function addToCart(){
+
+  const item = {
+
+    image:userPhoto.src,
+
+    flavor:
+    flavor.options[
+    flavor.selectedIndex].text,
+
+    weight:
+    weight.options[
+    weight.selectedIndex].text,
+
+    message:
+    messageInput.value,
+
+    price:price.innerText
+
+  };
+
+  let cart =
+  JSON.parse(
+  localStorage.getItem("cart")
+  ) || [];
+
+  cart.push(item);
+
+  localStorage.setItem(
+  "cart",
+  JSON.stringify(cart)
+  );
+
+  alert("Added To Cart");
+
+}
+
+function sendWhatsApp(){
+
+  const text =
+
+`CUSTOM CAKE ORDER
+
+Flavor:
+${flavor.options[
+flavor.selectedIndex].text}
+
+Weight:
+${weight.options[
+weight.selectedIndex].text}
+
+Message:
+${messageInput.value}
+
+Price:
+₹${price.innerText}`;
+
+window.open(
+
+`https://wa.me/919910519242?text=${encodeURIComponent(text)}`,
+
+"_blank"
+
+);
+
+}
+
+function payNow(){
+
+  const options = {
+
+    key:"rzp_test_SnKyu6FLUmVKUj",
+
+    amount:
+    Number(price.innerText) * 100,
+
+    currency:"INR",
+
+    name:"Cake Lounge",
+
+    description:"Custom Cake Order",
+
+    handler:function(){
+
+      alert("Payment Successful");
+
+    }
+
+  };
+
+  const rzp =
+  new Razorpay(options);
+
+  rzp.open();
+
+}
+
+/* DRAG TEXT */
+
+let isDragging = false;
+
+let offsetX,offsetY;
+
+cakeText.addEventListener("mousedown",(e)=>{
+
+  isDragging = true;
+
+  offsetX =
+  e.clientX -
+  cakeText.offsetLeft;
+
+  offsetY =
+  e.clientY -
+  cakeText.offsetTop;
+
+});
+
+document.addEventListener("mousemove",(e)=>{
+
+  if(!isDragging) return;
+
+  cakeText.style.left =
+  (e.clientX - offsetX) + "px";
+
+  cakeText.style.top =
+  (e.clientY - offsetY) + "px";
+
+});
+
+document.addEventListener("mouseup",()=>{
+
+  isDragging = false;
+
+});
+
+</script>
+
+</body>
+</html>

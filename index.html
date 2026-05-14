@@ -298,6 +298,20 @@
       transition: color .25s;
       position: relative;
     }
+    .nav-link {
+      font-size: .95rem;
+      font-weight: 600;
+      color: rgba(255,255,255,.95);
+      text-decoration: none;
+      margin-right: 18px;
+      transition: color .25s;
+    }
+    .nav-link:hover {
+      color: var(--white);
+    }
+    nav.scrolled .nav-link {
+      color: var(--text-mid);
+    }
     .nav-links a::after {
       content: '';
       position: absolute;
@@ -949,6 +963,7 @@
     }
 
     .cat-card {
+      display: block;
       position: relative;
       border-radius: var(--radius-lg);
       overflow: hidden;
@@ -956,6 +971,8 @@
       aspect-ratio: 3/4;
       box-shadow: var(--shadow-sm);
       transition: transform var(--transition), box-shadow var(--transition);
+      text-decoration: none;
+      color: inherit;
     }
     .cat-card:hover {
       transform: translateY(-8px);
@@ -1031,7 +1048,7 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 22px;
     }
 
@@ -1041,6 +1058,9 @@
       overflow: hidden;
       box-shadow: var(--shadow-sm);
       transition: transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
     .product-card:hover {
       transform: translateY(-6px);
@@ -1050,14 +1070,22 @@
     .product-img {
       position: relative;
       overflow: hidden;
-      aspect-ratio: 1 / 1;
+      background: #f7efe6;
+      aspect-ratio: 4 / 3;
+      min-height: 240px;
+      max-height: 300px;
     }
     .product-img img {
-      width: 100%; height: 100%;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
       object-fit: cover;
+      object-position: center;
       transition: transform .5s ease;
     }
-    .product-card:hover .product-img img { transform: scale(1.1); }
+    .product-card:hover .product-img img { transform: scale(1.05); }
 
     .product-wish {
       position: absolute;
@@ -1099,7 +1127,7 @@
       border-color: transparent var(--rose-deep) transparent transparent;
     }
 
-    .product-body { padding: 16px 18px 18px; }
+    .product-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto; }
 
     .product-name {
       font-size: 1rem;
@@ -1107,6 +1135,7 @@
       color: var(--chocolate);
       margin-bottom: 4px;
       line-height: 1.3;
+      min-height: 3.4em;
     }
 
     .product-flavor {
@@ -1133,6 +1162,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+      flex-wrap: wrap;
     }
 
     .product-price {
@@ -1759,10 +1791,27 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       padding: 10px 0;
       border-bottom: 1px solid var(--cream);
     }
     .cart-item:last-child { border-bottom: none; }
+    .cart-item-image {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--white);
+      display: grid;
+      place-items: center;
+    }
+    .cart-item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
     .cart-item-info h4 {
       margin: 0;
       font-size: 1rem;
@@ -1801,7 +1850,8 @@
     <a href="#hero"         onclick="closeMobileMenu()">Home</a>
     <a href="#categories"   onclick="closeMobileMenu()">Categories</a>
     <a href="#categories"   onclick="closeMobileMenu()">Theme Cakes</a>
-    <a href="#products"     onclick="closeMobileMenu()">Menu</a>
+    <a href="menu.html"     onclick="closeMobileMenu()">Menu</a>
+    <a href="custom-cake.html" onclick="closeMobileMenu()">Custom Cake</a>
     <a href="checkout.html"     onclick="closeMobileMenu()">Order</a>
     <a href="#about"        onclick="closeMobileMenu()">About</a>
     <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
@@ -1813,6 +1863,7 @@
     <div class="container">
       <div class="nav-inner">
         <a href="#hero" class="nav-logo">Cake <span>Lounge</span></a>
+        <a href="custom-cake.html" class="nav-link">Custom Cake</a>
         <a href="checkout.html" class="nav-order">Order Now</a>
         <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
           <span></span><span></span><span></span>
@@ -1828,44 +1879,44 @@
 
         <!-- Mother's Day -->
         <li class="nav-item mega-parent">
-          <a href="#">Mother's Day</a>
+          <a href="menu.html#mothers-day-cakes">Mother's Day</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Popular</h4>
-              <a href="#">Mothers Day Cakes</a>
-              <a href="#">Floral Cakes</a>
-              <a href="#">Heart Cakes</a>
-              <a href="#">Designer Cakes</a>
-              <a href="#">Chocolate Cakes</a>
-              <a href="#">Fruit Cakes</a>
+              <a href="menu.html#mothers-day-cakes">Mother's Day Cakes</a>
+              <a href="menu.html#premium-cakes">Floral Cakes</a>
+              <a href="menu.html#heart-cakes">Heart Cakes</a>
+              <a href="menu.html#designer-cakes">Designer Cakes</a>
+              <a href="menu.html#chocolate-cakes">Chocolate Cakes</a>
+              <a href="menu.html#fruit-cakes">Fruit Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Special Cakes</h4>
-              <a href="#">Photo Cakes</a>
-              <a href="#">Bento Cakes</a>
-              <a href="#">Fondant Cakes</a>
-              <a href="#">Rose Cakes</a>
-              <a href="#">Premium Cakes</a>
+              <a href="menu.html#photo-cakes">Photo Cakes</a>
+              <a href="menu.html#bento-cakes">Bento Cakes</a>
+              <a href="menu.html#designer-cakes">Fondant Cakes</a>
+              <a href="menu.html#romantic-cakes">Rose Cakes</a>
+              <a href="menu.html#premium-cakes">Premium Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Flavours</h4>
-              <a href="#">Chocolate</a>
-              <a href="#">Vanilla</a>
-              <a href="#">Red Velvet</a>
-              <a href="#">Butterscotch</a>
-              <a href="#">Black Forest</a>
+              <a href="menu.html#chocolate-cakes">Chocolate</a>
+              <a href="menu.html#vanilla-cakes">Vanilla</a>
+              <a href="menu.html#red-velvet-cakes">Red Velvet</a>
+              <a href="menu.html#butterscotch-cakes">Butterscotch</a>
+              <a href="menu.html#black-forest-cakes">Black Forest</a>
             </div>
 
             <div class="mega-column">
               <h4>Combos</h4>
-              <a href="#">Cake & Flowers</a>
-              <a href="#">Cake & Chocolates</a>
-              <a href="#">Gift Hampers</a>
-              <a href="#">Gift Boxes</a>
+              <a href="menu.html#bakery-hampers">Cake & Flowers</a>
+              <a href="menu.html#bakery-hampers">Cake & Chocolates</a>
+              <a href="menu.html#bakery-hampers">Gift Hampers</a>
+              <a href="menu.html#bakery-hampers">Gift Boxes</a>
             </div>
 
           </div>
@@ -1873,44 +1924,44 @@
 
         <!-- Cakes -->
         <li class="nav-item mega-parent">
-          <a href="#">Cakes</a>
+          <a href="menu.html#birthday-cakes">Cakes</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Trending Cakes</h4>
-              <a href="#">Photo Cakes</a>
-              <a href="#">Pinata Cakes</a>
-              <a href="#">Pull Me Up Cakes</a>
-              <a href="#">Bomb Cakes</a>
-              <a href="#">Heart Shape Cakes</a>
-              <a href="#">Fire Cakes</a>
+              <a href="menu.html#photo-cakes">Photo Cakes</a>
+              <a href="menu.html#pinata-cakes">Pinata Cakes</a>
+              <a href="menu.html#pull-me-up-cakes">Pull Me Up Cakes</a>
+              <a href="menu.html#bomb-cakes">Bomb Cakes</a>
+              <a href="menu.html#heart-cakes">Heart Shape Cakes</a>
+              <a href="menu.html#trending-cakes">Fire Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>By Type</h4>
-              <a href="#">Eggless Cakes</a>
-              <a href="#">Designer Cakes</a>
-              <a href="#">Fondant Cakes</a>
-              <a href="#">Tier Cakes</a>
-              <a href="#">Half Cakes</a>
+              <a href="menu.html#eggless-cakes">Eggless Cakes</a>
+              <a href="menu.html#designer-cakes">Designer Cakes</a>
+              <a href="menu.html#designer-cakes">Fondant Cakes</a>
+              <a href="menu.html#wedding-cakes">Tier Cakes</a>
+              <a href="menu.html#custom-cakes">Half Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Flavours</h4>
-              <a href="#">Chocolate Cakes</a>
-              <a href="#">Vanilla Cakes</a>
-              <a href="#">Pineapple Cakes</a>
-              <a href="#">Oreo Cakes</a>
-              <a href="#">Kitkat Cakes</a>
+              <a href="menu.html#chocolate-cakes">Chocolate Cakes</a>
+              <a href="menu.html#vanilla-cakes">Vanilla Cakes</a>
+              <a href="menu.html#fruit-cakes">Pineapple Cakes</a>
+              <a href="menu.html#trending-cakes">Oreo Cakes</a>
+              <a href="menu.html#trending-cakes">Kitkat Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Occasions</h4>
-              <a href="#">Birthday Cakes</a>
-              <a href="#">Wedding Cakes</a>
-              <a href="#">Anniversary Cakes</a>
-              <a href="#">Baby Shower Cakes</a>
+              <a href="menu.html#birthday-cakes">Birthday Cakes</a>
+              <a href="menu.html#wedding-cakes">Wedding Cakes</a>
+              <a href="menu.html#anniversary-cakes">Anniversary Cakes</a>
+              <a href="menu.html#baby-shower-cakes">Baby Shower Cakes</a>
             </div>
 
           </div>
@@ -1918,40 +1969,40 @@
 
         <!-- Bento -->
         <li class="nav-item mega-parent">
-          <a href="#">Bento</a>
+          <a href="menu.html#bento-cakes">Bento</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Bento Cakes</h4>
-              <a href="#">Mini Bento Cakes</a>
-              <a href="#">Korean Bento Cakes</a>
-              <a href="#">Cute Bento Cakes</a>
-              <a href="#">Heart Bento Cakes</a>
-              <a href="#">Funny Bento Cakes</a>
+              <a href="menu.html#bento-cakes">Mini Bento Cakes</a>
+              <a href="menu.html#korean-cakes">Korean Bento Cakes</a>
+              <a href="menu.html#kids-cakes">Cute Bento Cakes</a>
+              <a href="menu.html#heart-cakes">Heart Bento Cakes</a>
+              <a href="menu.html#cartoon-cakes">Funny Bento Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Designs</h4>
-              <a href="#">Cartoon Bento</a>
-              <a href="#">Pastel Bento</a>
-              <a href="#">Minimal Bento</a>
-              <a href="#">Chocolate Bento</a>
+              <a href="menu.html#cartoon-cakes">Cartoon Bento</a>
+              <a href="menu.html#minimal-cakes">Pastel Bento</a>
+              <a href="menu.html#minimal-cakes">Minimal Bento</a>
+              <a href="menu.html#chocolate-cakes">Chocolate Bento</a>
             </div>
 
             <div class="mega-column">
               <h4>Flavours</h4>
-              <a href="#">Chocolate</a>
-              <a href="#">Red Velvet</a>
-              <a href="#">Vanilla</a>
-              <a href="#">Strawberry</a>
+              <a href="menu.html#chocolate-cakes">Chocolate</a>
+              <a href="menu.html#red-velvet-cakes">Red Velvet</a>
+              <a href="menu.html#vanilla-cakes">Vanilla</a>
+              <a href="menu.html#fruit-cakes">Strawberry</a>
             </div>
 
             <div class="mega-column">
               <h4>Combos</h4>
-              <a href="#">Bento + Cupcakes</a>
-              <a href="#">Bento + Flowers</a>
-              <a href="#">Bento Gift Box</a>
+              <a href="menu.html#cupcakes">Bento + Cupcakes</a>
+              <a href="menu.html#bakery-hampers">Bento + Flowers</a>
+              <a href="menu.html#bakery-hampers">Bento Gift Box</a>
             </div>
 
           </div>
@@ -1959,42 +2010,42 @@
 
         <!-- Theme Cakes -->
         <li class="nav-item mega-parent">
-          <a href="#">Theme Cakes</a>
+          <a href="menu.html#theme-cakes">Theme Cakes</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Kids Cakes</h4>
-              <a href="#">Cocomelon Cakes</a>
-              <a href="#">Frozen Cakes</a>
-              <a href="#">Unicorn Cakes</a>
-              <a href="#">Baby Shark Cakes</a>
-              <a href="#">Peppa Pig Cakes</a>
+              <a href="menu.html#kids-cakes">Cocomelon Cakes</a>
+              <a href="menu.html#kids-cakes">Frozen Cakes</a>
+              <a href="menu.html#kids-cakes">Unicorn Cakes</a>
+              <a href="menu.html#kids-cakes">Baby Shark Cakes</a>
+              <a href="menu.html#kids-cakes">Peppa Pig Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Character Cakes</h4>
-              <a href="#">Spiderman Cakes</a>
-              <a href="#">Batman Cakes</a>
-              <a href="#">Naruto Cakes</a>
-              <a href="#">Pokemon Cakes</a>
-              <a href="#">Avengers Cakes</a>
+              <a href="menu.html#cartoon-cakes">Spiderman Cakes</a>
+              <a href="menu.html#cartoon-cakes">Batman Cakes</a>
+              <a href="menu.html#anime-cakes">Naruto Cakes</a>
+              <a href="menu.html#anime-cakes">Pokemon Cakes</a>
+              <a href="menu.html#superhero-cakes">Avengers Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Girls Cakes</h4>
-              <a href="#">Barbie Cakes</a>
-              <a href="#">Princess Cakes</a>
-              <a href="#">Butterfly Cakes</a>
-              <a href="#">Pink Theme Cakes</a>
+              <a href="menu.html#romantic-cakes">Barbie Cakes</a>
+              <a href="menu.html#romantic-cakes">Princess Cakes</a>
+              <a href="menu.html#romantic-cakes">Butterfly Cakes</a>
+              <a href="menu.html#romantic-cakes">Pink Theme Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Boys Cakes</h4>
-              <a href="#">Car Cakes</a>
-              <a href="#">Football Cakes</a>
-              <a href="#">Cricket Cakes</a>
-              <a href="#">Bike Cakes</a>
+              <a href="menu.html#superhero-cakes">Car Cakes</a>
+              <a href="menu.html#superhero-cakes">Football Cakes</a>
+              <a href="menu.html#superhero-cakes">Cricket Cakes</a>
+              <a href="menu.html#superhero-cakes">Bike Cakes</a>
             </div>
 
           </div>
@@ -2002,38 +2053,38 @@
 
         <!-- By Relationship -->
         <li class="nav-item mega-parent">
-          <a href="#">By Relationship</a>
+          <a href="menu.html#couple-cakes">By Relationship</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Family</h4>
-              <a href="#">Mom Cakes</a>
-              <a href="#">Dad Cakes</a>
-              <a href="#">Brother Cakes</a>
-              <a href="#">Sister Cakes</a>
+              <a href="menu.html#mothers-day-cakes">Mom Cakes</a>
+              <a href="menu.html#fathers-day-cakes">Dad Cakes</a>
+              <a href="menu.html#custom-cakes">Brother Cakes</a>
+              <a href="menu.html#custom-cakes">Sister Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Couples</h4>
-              <a href="#">Husband Cakes</a>
-              <a href="#">Wife Cakes</a>
-              <a href="#">Boyfriend Cakes</a>
-              <a href="#">Girlfriend Cakes</a>
+              <a href="menu.html#couple-cakes">Husband Cakes</a>
+              <a href="menu.html#couple-cakes">Wife Cakes</a>
+              <a href="menu.html#couple-cakes">Boyfriend Cakes</a>
+              <a href="menu.html#couple-cakes">Girlfriend Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Friends</h4>
-              <a href="#">Best Friend Cakes</a>
-              <a href="#">Friendship Cakes</a>
-              <a href="#">Funny Cakes</a>
+              <a href="menu.html#friendship-cakes">Best Friend Cakes</a>
+              <a href="menu.html#friendship-cakes">Friendship Cakes</a>
+              <a href="menu.html#cartoon-cakes">Funny Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Special</h4>
-              <a href="#">Love Cakes</a>
-              <a href="#">Miss You Cakes</a>
-              <a href="#">Thank You Cakes</a>
+              <a href="menu.html#romantic-cakes">Love Cakes</a>
+              <a href="menu.html#romantic-cakes">Miss You Cakes</a>
+              <a href="menu.html#romantic-cakes">Thank You Cakes</a>
             </div>
 
           </div>
@@ -2041,37 +2092,37 @@
 
         <!-- Desserts -->
         <li class="nav-item mega-parent">
-          <a href="#">Desserts & Hampers</a>
+          <a href="menu.html#dessert-boxes">Desserts & Hampers</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Desserts</h4>
-              <a href="#">Cupcakes</a>
-              <a href="#">Brownies</a>
-              <a href="#">Pastries</a>
-              <a href="#">Jar Cakes</a>
+              <a href="menu.html#cupcakes">Cupcakes</a>
+              <a href="menu.html#brownies">Brownies</a>
+              <a href="menu.html#pastries">Pastries</a>
+              <a href="menu.html#jar-cakes">Jar Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Hampers</h4>
-              <a href="#">Chocolate Hampers</a>
-              <a href="#">Cake Hampers</a>
-              <a href="#">Gift Boxes</a>
+              <a href="menu.html#bakery-hampers">Chocolate Hampers</a>
+              <a href="menu.html#bakery-hampers">Cake Hampers</a>
+              <a href="menu.html#bakery-hampers">Gift Boxes</a>
             </div>
 
             <div class="mega-column">
               <h4>Combos</h4>
-              <a href="#">Cake + Flowers</a>
-              <a href="#">Cake + Teddy</a>
-              <a href="#">Cake + Chocolates</a>
+              <a href="menu.html#bakery-hampers">Cake + Flowers</a>
+              <a href="menu.html#bakery-hampers">Cake + Teddy</a>
+              <a href="menu.html#bakery-hampers">Cake + Chocolates</a>
             </div>
 
             <div class="mega-column">
               <h4>Premium</h4>
-              <a href="#">Luxury Hampers</a>
-              <a href="#">Custom Gifts</a>
-              <a href="#">Festival Hampers</a>
+              <a href="menu.html#luxury-cakes">Luxury Hampers</a>
+              <a href="menu.html#custom-cakes">Custom Gifts</a>
+              <a href="menu.html#festival-cakes">Festival Hampers</a>
             </div>
 
           </div>
@@ -2079,37 +2130,37 @@
 
         <!-- Birthday -->
         <li class="nav-item mega-parent">
-          <a href="#">Birthday</a>
+          <a href="menu.html#birthday-cakes">Birthday</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Birthday Cakes</h4>
-              <a href="#">Kids Birthday Cakes</a>
-              <a href="#">Adult Cakes</a>
-              <a href="#">Photo Cakes</a>
-              <a href="#">Number Cakes</a>
+              <a href="menu.html#kids-cakes">Kids Birthday Cakes</a>
+              <a href="menu.html#premium-cakes">Adult Cakes</a>
+              <a href="menu.html#photo-cakes">Photo Cakes</a>
+              <a href="menu.html#custom-cakes">Number Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Trending</h4>
-              <a href="#">Pinata Cakes</a>
-              <a href="#">Bomb Cakes</a>
-              <a href="#">Pull Me Up Cakes</a>
+              <a href="menu.html#pinata-cakes">Pinata Cakes</a>
+              <a href="menu.html#bomb-cakes">Bomb Cakes</a>
+              <a href="menu.html#pull-me-up-cakes">Pull Me Up Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Flavours</h4>
-              <a href="#">Chocolate</a>
-              <a href="#">Black Forest</a>
-              <a href="#">Red Velvet</a>
+              <a href="menu.html#chocolate-cakes">Chocolate</a>
+              <a href="menu.html#black-forest-cakes">Black Forest</a>
+              <a href="menu.html#red-velvet-cakes">Red Velvet</a>
             </div>
 
             <div class="mega-column">
               <h4>Combos</h4>
-              <a href="#">Cake + Balloons</a>
-              <a href="#">Cake + Gifts</a>
-              <a href="#">Cake + Flowers</a>
+              <a href="menu.html#bakery-hampers">Cake + Balloons</a>
+              <a href="menu.html#bakery-hampers">Cake + Gifts</a>
+              <a href="menu.html#bakery-hampers">Cake + Flowers</a>
             </div>
 
           </div>
@@ -2117,36 +2168,36 @@
 
         <!-- Anniversary -->
         <li class="nav-item mega-parent">
-          <a href="#">Anniversary</a>
+          <a href="menu.html#anniversary-cakes">Anniversary</a>
 
           <div class="mega-menu">
 
             <div class="mega-column">
               <h4>Romantic Cakes</h4>
-              <a href="#">Heart Cakes</a>
-              <a href="#">Red Velvet Cakes</a>
-              <a href="#">Rose Cakes</a>
+              <a href="menu.html#heart-cakes">Heart Cakes</a>
+              <a href="menu.html#red-velvet-cakes">Red Velvet Cakes</a>
+              <a href="menu.html#romantic-cakes">Rose Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Designer</h4>
-              <a href="#">Tier Cakes</a>
-              <a href="#">Photo Cakes</a>
-              <a href="#">Fondant Cakes</a>
+              <a href="menu.html#wedding-cakes">Tier Cakes</a>
+              <a href="menu.html#photo-cakes">Photo Cakes</a>
+              <a href="menu.html#designer-cakes">Fondant Cakes</a>
             </div>
 
             <div class="mega-column">
               <h4>Special Gifts</h4>
-              <a href="#">Cake + Flowers</a>
-              <a href="#">Cake + Chocolates</a>
-              <a href="#">Gift Hampers</a>
+              <a href="menu.html#bakery-hampers">Cake + Flowers</a>
+              <a href="menu.html#bakery-hampers">Cake + Chocolates</a>
+              <a href="menu.html#bakery-hampers">Gift Hampers</a>
             </div>
 
             <div class="mega-column">
               <h4>Premium</h4>
-              <a href="#">Luxury Cakes</a>
-              <a href="#">Custom Cakes</a>
-              <a href="#">Couple Cakes</a>
+              <a href="menu.html#luxury-cakes">Luxury Cakes</a>
+              <a href="menu.html#custom-cakes">Custom Cakes</a>
+              <a href="menu.html#couple-cakes">Couple Cakes</a>
             </div>
 
           </div>
@@ -2178,7 +2229,7 @@
           </p>
           <div class="hero-cta">
             <a href="#products" class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Order Now</a>
-            <a href="#categories" class="btn btn-outline"><i class="fas fa-layer-group"></i> View Menu</a>
+            <a href="menu.html" class="btn btn-outline"><i class="fas fa-layer-group"></i> View Menu</a>
           </div>
           <div class="hero-stats">
             <div>
@@ -2323,7 +2374,7 @@
           </div>
           <div class="cat-badge">Bestseller</div>
         </div>
-        <div class="cat-card">
+        <a href="custom-cake.html" class="cat-card custom-link">
           <img src="https://images.unsplash.com/photo-1561758033-7e924f619b47?w=500&q=80" alt="Custom Cakes" />
           <div class="cat-overlay"></div>
           <div class="cat-info">
@@ -2331,7 +2382,7 @@
             <span>Design Your Own</span>
           </div>
           <div class="cat-badge">Open</div>
-      </div>
+        </a>
     </div>
   </section>
 
@@ -2673,17 +2724,18 @@
   <!-- =============================================
        JAVASCRIPT
   ============================================= -->
+  <script src="./bakery-menu.js"></script>
   <script>
     /* ---- Product data ---- */
-    const products = [
-      { id:1, name:'Belgian Chocolate Truffle', flavor:'Rich Dark Chocolate', price:849, oldPrice:999, rating:5, reviews:238, tag:'Bestseller', img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80' },
-      { id:2, name:'Strawberry Dream Cake',    flavor:'Fresh Strawberry Cream', price:749, oldPrice:0,   rating:5, reviews:184, tag:'New',       img:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80' },
-      { id:3, name:'Red Velvet Fantasy',       flavor:'Cream Cheese Frosting',  price:799, oldPrice:949, rating:4, reviews:312, tag:'',          img:'https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=400&q=80' },
-      { id:4, name:'Mango Mousse Delight',     flavor:'Fresh Alphonso Mango',   price:899, oldPrice:0,   rating:5, reviews:167, tag:'Seasonal',  img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80' },
-      { id:5, name:'Classic Vanilla Bean',     flavor:'Madagascar Vanilla',     price:649, oldPrice:749, rating:4, reviews:421, tag:'',          img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
-      { id:6, name:'Black Forest Royale',      flavor:'Kirsch & Wild Cherry',   price:929, oldPrice:0,   rating:5, reviews:203, tag:'Premium',   img:'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=400&q=80' },
-      { id:7, name:'Tiramisu Cloud Cake',      flavor:'Espresso & Mascarpone',  price:999, oldPrice:1199,rating:5, reviews:145, tag:'Chef\'s Pick',img:'https://images.unsplash.com/photo-1568571780765-9276ac8b75a2?w=400&q=80'},
-      { id:8, name:'Lemon Drizzle Bliss',      flavor:'Zesty Lemon Curd',       price:729, oldPrice:0,   rating:4, reviews:98,  tag:'',          img:'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=400&q=80' },
+    var products = window.bakeryMenu || [
+      { id:1, name:'Belgian Chocolate Truffle', flavor:'Rich Dark Chocolate', price:849, oldPrice:999, rating:5, reviews:238, tag:'Bestseller', img:'https://source.unsplash.com/featured/1000x700/?chocolate+truffle+cake&sig=701' },
+      { id:2, name:'Strawberry Dream Cake',    flavor:'Fresh Strawberry Cream', price:749, oldPrice:0,   rating:5, reviews:184, tag:'New',       img:'https://source.unsplash.com/featured/1000x700/?strawberry+cream+cake&sig=702' },
+      { id:3, name:'Red Velvet Fantasy',       flavor:'Cream Cheese Frosting',  price:799, oldPrice:949, rating:4, reviews:312, tag:'',          img:'https://source.unsplash.com/featured/1000x700/?red+velvet+cake&sig=703' },
+      { id:4, name:'Mango Mousse Delight',     flavor:'Fresh Alphonso Mango',   price:899, oldPrice:0,   rating:5, reviews:167, tag:'Seasonal',  img:'https://source.unsplash.com/featured/1000x700/?mango+mousse+cake&sig=704' },
+      { id:5, name:'Classic Vanilla Bean',     flavor:'Madagascar Vanilla',     price:649, oldPrice:749, rating:4, reviews:421, tag:'',          img:'https://source.unsplash.com/featured/1000x700/?vanilla+bean+cake&sig=705' },
+      { id:6, name:'Black Forest Royale',      flavor:'Kirsch & Wild Cherry',   price:929, oldPrice:0,   rating:5, reviews:203, tag:'Premium',   img:'https://source.unsplash.com/featured/1000x700/?black+forest+cake&sig=706' },
+      { id:7, name:'Tiramisu Cloud Cake',      flavor:'Espresso & Mascarpone',  price:999, oldPrice:1199,rating:5, reviews:145, tag:'Chef\'s Pick',img:'https://source.unsplash.com/featured/1000x700/?tiramisu+cake&sig=707' },
+      { id:8, name:'Lemon Drizzle Bliss',      flavor:'Zesty Lemon Curd',       price:729, oldPrice:0,   rating:4, reviews:98,  tag:'',          img:'https://source.unsplash.com/featured/1000x700/?lemon+drizzle+cake&sig=708' },
     ];
 
     /* ---- Cart ---- */
@@ -2727,14 +2779,16 @@
     /* ===== Build Products ===== */
     (function buildProducts() {
       const grid = document.getElementById('productsGrid');
-      grid.innerHTML = products.map(p => {
+      const featuredProducts = products.slice(0, 8);
+      grid.innerHTML = featuredProducts.map(p => {
+        const imageUrl = p.img || p.image || 'https://images.unsplash.com/photo-1505253216373-cc6e4fa75551?auto=format&fit=crop&w=1000&q=80';
         const stars = '★'.repeat(p.rating) + '☆'.repeat(5 - p.rating);
         const ribbon = p.tag ? `<div class="product-tag-ribbon">${p.tag}</div>` : '';
         const oldPriceHTML = p.oldPrice ? `<span class="product-price-old">₹${p.oldPrice}</span>` : '';
         return `
           <div class="product-card">
             <div class="product-img">
-              <img src="${p.img}" alt="${p.name}" loading="lazy" />
+              <img src="${imageUrl}" alt="${p.name}" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1505253216373-cc6e4fa75551?auto=format&fit=crop&w=1000&q=80'" />
               ${ribbon}
               <button class="product-wish" onclick="toggleWish(this)" aria-label="Wishlist">
                 <i class="far fa-heart"></i>
@@ -2754,7 +2808,7 @@
                   <span class="product-price">₹${p.price}</span>
                   ${oldPriceHTML}
                 </div>
-                <button class="add-to-cart" onclick="addToCart(this, '${p.name}', ${p.price})">
+                <button class="add-to-cart" onclick='addToCart(this, ${JSON.stringify(p.name)}, ${p.price}, ${JSON.stringify(p.img)})'>
                   <i class="fas fa-plus"></i> Add
                 </button>
               </div>
@@ -2778,9 +2832,9 @@
     })();
 
     /* ===== Cart Logic ===== */
-    function addToCart(btn, name, price) {
+    function addToCart(btn, name, price, img = '') {
       animateToCart(btn, name);
-      cart.push({ name, price });
+      cart.push({ name, price, img });
       cartCount++;
       localStorage.setItem('cakeLounge_cart', JSON.stringify(cart));
       document.getElementById('cartBadge').textContent = cartCount;
@@ -2854,6 +2908,9 @@
       const cartBadge = document.getElementById('cartBadge');
       cartItems.innerHTML = cart.map((item, index) => `
         <div class="cart-item">
+          <div class="cart-item-image">
+            <img src="${item.img || 'https://via.placeholder.com/70?text=Cake'}" alt="${item.name}" loading="lazy" />
+          </div>
           <div class="cart-item-info">
             <h4>${item.name}</h4>
           </div>

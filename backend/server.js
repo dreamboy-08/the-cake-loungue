@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || '127.0.0.1';
+const HOST = '0.0.0.0';
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
