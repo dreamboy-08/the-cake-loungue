@@ -259,7 +259,10 @@
       top: 0; left: 0; right: 0;
       z-index: 100;
       padding: 18px 0;
-      transition: background .4s, box-shadow .4s, padding .4s;
+      transition: background .4s, box-shadow .4s, padding .4s, transform .4s ease;
+    }
+    nav.nav-hidden {
+      transform: translateY(-100%);
     }
     nav.scrolled {
       background: rgba(253,246,238,.97);
@@ -285,7 +288,7 @@
 
     .nav-links {
       display: flex;
-      gap: 32px;
+      gap: 24px;
       align-items: center;
     }
     .nav-links a {
@@ -309,6 +312,111 @@
     nav.scrolled .nav-links a { color: var(--text-mid); }
     nav.scrolled .nav-links a::after { background: var(--rose); }
     nav.scrolled .nav-links a:hover { color: var(--chocolate); }
+
+    /* CATEGORY BAR */
+    .category-bar{
+      position: fixed;
+      top: 72px;
+      left: 0;
+      width: 100%;
+
+      z-index: 99;
+
+      padding: 12px 0;
+      margin-bottom: 0;
+
+      background: transparent;
+
+      transition:
+        background .4s,
+        backdrop-filter .4s,
+        transform .4s ease,
+        opacity .4s ease;
+
+      opacity: 1;
+    }
+
+    /* navbar scroll hone ke baad */
+    nav.scrolled + .category-bar{
+      background: rgba(253,246,238,.97);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      padding: 12px 0;
+    }
+
+    /* hide effect */
+    .category-bar.category-hidden{
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+
+    /* links */
+    .category-bar a{
+      text-decoration: none;
+      color: rgba(255,255,255,.88);
+
+      font-size: 14px;
+      font-weight: 500;
+
+      transition: .3s ease;
+      white-space: nowrap;
+    }
+
+    /* navbar scrolled */
+    nav.scrolled + .category-bar a{
+      color: var(--text-mid);
+    }
+
+    .category-bar a:hover{
+      color: var(--blush);
+    }
+
+    .category-bar .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .category-bar .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: center;
+      width: 100%;
+      align-items: center;
+    }
+
+    .category-bar .nav-item {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+    }
+
+    .category-bar .nav-item > a {
+      padding: 10px 8px;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .category-bar .mega-menu {
+      width: 860px;
+      gap: 18px;
+      padding: 22px;
+      border-radius: 16px;
+      max-height: 380px;
+    }
+
+    .category-bar .mega-column h4 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .category-bar .mega-column a {
+      font-size: 13px;
+    }
 
     .nav-order {
       background: var(--rose-deep);
@@ -369,6 +477,134 @@
       border: none;
       color: var(--chocolate);
       cursor: pointer;
+    }
+
+    /* ===== NAV ITEM ===== */
+
+    .nav-item {
+      list-style: none;
+      position: static;
+    }
+
+    .nav-item > a {
+      text-decoration: none;
+      color: #111;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 8px;
+      display: block;
+    }
+
+    /* ===== MEGA MENU ===== */
+
+    .mega-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(15px);
+
+      width: min(860px, calc(100vw - 40px));
+      background: #fff;
+
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+
+      align-items: start;
+
+      gap: 18px;
+
+      padding: 20px;
+
+      border-radius: 14px;
+
+      box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition: 0.35s ease;
+
+      z-index: 999;
+
+      max-height: 420px;
+      overflow-y: auto;
+      justify-items: center;
+      text-align: center;
+    }
+
+    /* SCROLLBAR */
+
+    .mega-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .mega-menu::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
+    }
+
+    /* TOP & BOTTOM FADE EFFECT */
+
+    .mega-menu::before,
+    .mega-menu::after {
+      content: "";
+      position: sticky;
+      left: 0;
+
+      width: 100%;
+      height: 30px;
+
+      display: block;
+      z-index: 5;
+
+      pointer-events: none;
+    }
+
+    .mega-menu::before {
+      top: 0;
+      background: linear-gradient(to bottom, white, transparent);
+    }
+
+    .mega-menu::after {
+      bottom: 0;
+      background: linear-gradient(to top, white, transparent);
+    }
+
+    /* ===== HOVER EFFECT ===== */
+
+    .mega-parent:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== COLUMN ===== */
+
+    .mega-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+
+    .mega-column h4 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #d6001c;
+    }
+
+    .mega-column a {
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+
+      transition: 0.3s;
+    }
+
+    .mega-column a:hover {
+      color: #d6001c;
+      padding-left: 5px;
     }
 
     /* =============================================
@@ -1564,6 +1800,7 @@
     <button class="mobile-close" onclick="closeMobileMenu()"><i class="fas fa-times"></i></button>
     <a href="#hero"         onclick="closeMobileMenu()">Home</a>
     <a href="#categories"   onclick="closeMobileMenu()">Categories</a>
+    <a href="#categories"   onclick="closeMobileMenu()">Theme Cakes</a>
     <a href="#products"     onclick="closeMobileMenu()">Menu</a>
     <a href="checkout.html"     onclick="closeMobileMenu()">Order</a>
     <a href="#about"        onclick="closeMobileMenu()">About</a>
@@ -1572,17 +1809,10 @@
   </div>
 
   <!-- ========== NAV ========== -->
-  <nav id="navbar">
+  <nav id="navbar" class="navbar">
     <div class="container">
       <div class="nav-inner">
         <a href="#hero" class="nav-logo">Cake <span>Lounge</span></a>
-        <ul class="nav-links">
-          <li><a href="#categories">Categories</a></li>
-          <li><a href="#products">Menu</a></li>
-          <li><a href="#about">Our Story</a></li>
-          <li><a href="#testimonials">Reviews</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
         <a href="checkout.html" class="nav-order">Order Now</a>
         <button class="hamburger" onclick="openMobileMenu()" aria-label="Open menu">
           <span></span><span></span><span></span>
@@ -1590,6 +1820,341 @@
       </div>
     </div>
   </nav>
+
+  <!-- CATEGORY BAR -->
+  <div class="category-bar">
+    <div class="container">
+      <ul class="nav-links">
+
+        <!-- Mother's Day -->
+        <li class="nav-item mega-parent">
+          <a href="#">Mother's Day</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Popular</h4>
+              <a href="#">Mothers Day Cakes</a>
+              <a href="#">Floral Cakes</a>
+              <a href="#">Heart Cakes</a>
+              <a href="#">Designer Cakes</a>
+              <a href="#">Chocolate Cakes</a>
+              <a href="#">Fruit Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Special Cakes</h4>
+              <a href="#">Photo Cakes</a>
+              <a href="#">Bento Cakes</a>
+              <a href="#">Fondant Cakes</a>
+              <a href="#">Rose Cakes</a>
+              <a href="#">Premium Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Flavours</h4>
+              <a href="#">Chocolate</a>
+              <a href="#">Vanilla</a>
+              <a href="#">Red Velvet</a>
+              <a href="#">Butterscotch</a>
+              <a href="#">Black Forest</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Combos</h4>
+              <a href="#">Cake & Flowers</a>
+              <a href="#">Cake & Chocolates</a>
+              <a href="#">Gift Hampers</a>
+              <a href="#">Gift Boxes</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Cakes -->
+        <li class="nav-item mega-parent">
+          <a href="#">Cakes</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Trending Cakes</h4>
+              <a href="#">Photo Cakes</a>
+              <a href="#">Pinata Cakes</a>
+              <a href="#">Pull Me Up Cakes</a>
+              <a href="#">Bomb Cakes</a>
+              <a href="#">Heart Shape Cakes</a>
+              <a href="#">Fire Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>By Type</h4>
+              <a href="#">Eggless Cakes</a>
+              <a href="#">Designer Cakes</a>
+              <a href="#">Fondant Cakes</a>
+              <a href="#">Tier Cakes</a>
+              <a href="#">Half Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Flavours</h4>
+              <a href="#">Chocolate Cakes</a>
+              <a href="#">Vanilla Cakes</a>
+              <a href="#">Pineapple Cakes</a>
+              <a href="#">Oreo Cakes</a>
+              <a href="#">Kitkat Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Occasions</h4>
+              <a href="#">Birthday Cakes</a>
+              <a href="#">Wedding Cakes</a>
+              <a href="#">Anniversary Cakes</a>
+              <a href="#">Baby Shower Cakes</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Bento -->
+        <li class="nav-item mega-parent">
+          <a href="#">Bento</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Bento Cakes</h4>
+              <a href="#">Mini Bento Cakes</a>
+              <a href="#">Korean Bento Cakes</a>
+              <a href="#">Cute Bento Cakes</a>
+              <a href="#">Heart Bento Cakes</a>
+              <a href="#">Funny Bento Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Designs</h4>
+              <a href="#">Cartoon Bento</a>
+              <a href="#">Pastel Bento</a>
+              <a href="#">Minimal Bento</a>
+              <a href="#">Chocolate Bento</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Flavours</h4>
+              <a href="#">Chocolate</a>
+              <a href="#">Red Velvet</a>
+              <a href="#">Vanilla</a>
+              <a href="#">Strawberry</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Combos</h4>
+              <a href="#">Bento + Cupcakes</a>
+              <a href="#">Bento + Flowers</a>
+              <a href="#">Bento Gift Box</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Theme Cakes -->
+        <li class="nav-item mega-parent">
+          <a href="#">Theme Cakes</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Kids Cakes</h4>
+              <a href="#">Cocomelon Cakes</a>
+              <a href="#">Frozen Cakes</a>
+              <a href="#">Unicorn Cakes</a>
+              <a href="#">Baby Shark Cakes</a>
+              <a href="#">Peppa Pig Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Character Cakes</h4>
+              <a href="#">Spiderman Cakes</a>
+              <a href="#">Batman Cakes</a>
+              <a href="#">Naruto Cakes</a>
+              <a href="#">Pokemon Cakes</a>
+              <a href="#">Avengers Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Girls Cakes</h4>
+              <a href="#">Barbie Cakes</a>
+              <a href="#">Princess Cakes</a>
+              <a href="#">Butterfly Cakes</a>
+              <a href="#">Pink Theme Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Boys Cakes</h4>
+              <a href="#">Car Cakes</a>
+              <a href="#">Football Cakes</a>
+              <a href="#">Cricket Cakes</a>
+              <a href="#">Bike Cakes</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- By Relationship -->
+        <li class="nav-item mega-parent">
+          <a href="#">By Relationship</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Family</h4>
+              <a href="#">Mom Cakes</a>
+              <a href="#">Dad Cakes</a>
+              <a href="#">Brother Cakes</a>
+              <a href="#">Sister Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Couples</h4>
+              <a href="#">Husband Cakes</a>
+              <a href="#">Wife Cakes</a>
+              <a href="#">Boyfriend Cakes</a>
+              <a href="#">Girlfriend Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Friends</h4>
+              <a href="#">Best Friend Cakes</a>
+              <a href="#">Friendship Cakes</a>
+              <a href="#">Funny Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Special</h4>
+              <a href="#">Love Cakes</a>
+              <a href="#">Miss You Cakes</a>
+              <a href="#">Thank You Cakes</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Desserts -->
+        <li class="nav-item mega-parent">
+          <a href="#">Desserts & Hampers</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Desserts</h4>
+              <a href="#">Cupcakes</a>
+              <a href="#">Brownies</a>
+              <a href="#">Pastries</a>
+              <a href="#">Jar Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Hampers</h4>
+              <a href="#">Chocolate Hampers</a>
+              <a href="#">Cake Hampers</a>
+              <a href="#">Gift Boxes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Combos</h4>
+              <a href="#">Cake + Flowers</a>
+              <a href="#">Cake + Teddy</a>
+              <a href="#">Cake + Chocolates</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Premium</h4>
+              <a href="#">Luxury Hampers</a>
+              <a href="#">Custom Gifts</a>
+              <a href="#">Festival Hampers</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Birthday -->
+        <li class="nav-item mega-parent">
+          <a href="#">Birthday</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Birthday Cakes</h4>
+              <a href="#">Kids Birthday Cakes</a>
+              <a href="#">Adult Cakes</a>
+              <a href="#">Photo Cakes</a>
+              <a href="#">Number Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Trending</h4>
+              <a href="#">Pinata Cakes</a>
+              <a href="#">Bomb Cakes</a>
+              <a href="#">Pull Me Up Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Flavours</h4>
+              <a href="#">Chocolate</a>
+              <a href="#">Black Forest</a>
+              <a href="#">Red Velvet</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Combos</h4>
+              <a href="#">Cake + Balloons</a>
+              <a href="#">Cake + Gifts</a>
+              <a href="#">Cake + Flowers</a>
+            </div>
+
+          </div>
+        </li>
+
+        <!-- Anniversary -->
+        <li class="nav-item mega-parent">
+          <a href="#">Anniversary</a>
+
+          <div class="mega-menu">
+
+            <div class="mega-column">
+              <h4>Romantic Cakes</h4>
+              <a href="#">Heart Cakes</a>
+              <a href="#">Red Velvet Cakes</a>
+              <a href="#">Rose Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Designer</h4>
+              <a href="#">Tier Cakes</a>
+              <a href="#">Photo Cakes</a>
+              <a href="#">Fondant Cakes</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Special Gifts</h4>
+              <a href="#">Cake + Flowers</a>
+              <a href="#">Cake + Chocolates</a>
+              <a href="#">Gift Hampers</a>
+            </div>
+
+            <div class="mega-column">
+              <h4>Premium</h4>
+              <a href="#">Luxury Cakes</a>
+              <a href="#">Custom Cakes</a>
+              <a href="#">Couple Cakes</a>
+            </div>
+
+          </div>
+        </li>
+
+      </ul>
+    </div>
+  </div>
 
   <!-- ========== HERO ========== -->
   <section id="hero">
@@ -2396,10 +2961,34 @@
     }
 
     /* ===== Navbar scroll ===== */
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
-    }, { passive: true });
+    const navbar = document.getElementById("navbar");
+    const categoryBar = document.querySelector(".category-bar");
+
+    let lastScrollTop = 0;
+
+    window.addEventListener("scroll", () => {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      // navbar background
+      if (scrollTop > 50) {
+        navbar.classList.add("scrolled");
+      } else {
+        navbar.classList.remove("scrolled");
+      }
+
+      // hide on scroll down
+      if (scrollTop > lastScrollTop && scrollTop > 120) {
+        navbar.classList.add("nav-hidden");
+        categoryBar.classList.add("category-hidden");
+      }
+      // show on scroll up
+      else {
+        navbar.classList.remove("nav-hidden");
+        categoryBar.classList.remove("category-hidden");
+      }
+
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
 
     /* ===== Mobile menu ===== */
     function openMobileMenu()  { document.getElementById('mobileMenu').classList.add('open'); }
