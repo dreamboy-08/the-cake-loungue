@@ -3104,7 +3104,7 @@
 
       try {
         // Step 1: Create order on backend
-        const orderResponse = await fetch('https://the-cake-loungue.onrender.com/create-order', {
+        const orderResponse = await fetch('https://the-cake-loungue.onrender.com/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
