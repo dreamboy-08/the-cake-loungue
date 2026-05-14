@@ -852,7 +852,7 @@
         order_id: razorpayOrder.id,
         handler: async function (response) {
           try {
-            const verifyResponse = await fetch('http://127.0.0.1:5000/api/verify-payment', {
+            const verifyResponse = await fetch('https://the-cake-loungue.onrender.com/api/verify-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
