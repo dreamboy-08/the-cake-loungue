@@ -7,16 +7,33 @@ const Razorpay = require('razorpay');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: ['https://the-cake-loungue.vercel.app', 'http://127.0.0.1:5500', 'http://localhost:5500'],
+  methods: ['GET', 'POST'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+let razorpay;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+    console.log('Razorpay initialized successfully');
+  } else {
+    console.warn('Razorpay keys missing. Razorpay features will not work.');
+  }
+} catch (error) {
+  console.error('Failed to initialize Razorpay:', error.message);
+}
 
 function hasRazorpayKeys() {
   return Boolean(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
@@ -43,6 +60,9 @@ app.post('/create-order', async (req, res) => {
       receipt,
     };
 
+    if (!razorpay) {
+      return res.status(500).json({ error: 'Razorpay is not configured on the server' });
+    }
     const order = await razorpay.orders.create(options);
     res.json(order);
   } catch (error) {
