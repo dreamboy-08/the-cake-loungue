@@ -60,6 +60,40 @@
     .add-to-cart:hover { background: var(--brown-dark); }
     .back-note { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; color: var(--text-soft); }
     .back-note i { color: var(--rose-deep); }
+
+    /* CART BUBBLE */
+    #cart-bubble {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      background: var(--rose-deep);
+      color: var(--white);
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    #cart-bubble:hover { transform: scale(1.1); background: var(--brown); }
+    #cart-bubble .badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: #d4a45a;
+      color: #3d1f10;
+      font-size: .65rem;
+      font-weight: 700;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     @media (max-width: 700px) {
       .section-title { font-size: 2.4rem; }
       .product-footer { flex-direction: column; align-items: stretch; }
@@ -87,8 +121,39 @@
     </div>
   </main>
 
+  <!-- FLOATING CART -->
+  <div id="cart-bubble" onclick="window.location.href='checkout.html'">
+    <i class="fas fa-shopping-cart"></i>
+    <div class="badge" id="cartBadge">0</div>
+  </div>
+
   <script src="./bakery-menu.js"></script>
   <script>
+    /* ---- Cart Logic ---- */
+    let cart = JSON.parse(localStorage.getItem('cakeLounge_cart')) || [];
+
+    function addToCart(btn, name, price, img = '') {
+      cart.push({ name, price, img });
+      localStorage.setItem('cakeLounge_cart', JSON.stringify(cart));
+
+      // Update visual feedback
+      if (btn) {
+        const originalText = btn.innerText;
+        btn.innerHTML = '<i class="fas fa-check"></i> Added';
+        btn.style.backgroundColor = 'var(--brown-dark)';
+        setTimeout(() => {
+          btn.innerText = originalText;
+          btn.style.backgroundColor = '';
+        }, 1500);
+      }
+
+      // Update badge if exists
+      const badge = document.getElementById('cartBadge');
+      if (badge) {
+        badge.textContent = cart.length;
+      }
+    }
+
     const products = window.bakeryMenu || [];
     const menuContent = document.getElementById('menuContent');
     const categoryTabs = document.getElementById('categoryTabs');
@@ -141,7 +206,7 @@
                   <span class="product-price">₹${p.price}</span>
                   ${oldPriceHTML}
                 </div>
-                <button class="add-to-cart" onclick="window.location.href='checkout.html'">Order</button>
+                <button class="add-to-cart" onclick='addToCart(this, ${JSON.stringify(p.name).replace(/'/g, "&apos;")}, ${p.price}, ${JSON.stringify(p.img).replace(/'/g, "&apos;")})'>Order</button>
               </div>
             </div>
           </article>`;
@@ -162,6 +227,9 @@
     }
 
     buildMenu();
+
+    // Initial badge update
+    document.getElementById('cartBadge').textContent = cart.length;
   </script>
 </body>
 </html>

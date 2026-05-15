@@ -2808,7 +2808,7 @@
                   <span class="product-price">₹${p.price}</span>
                   ${oldPriceHTML}
                 </div>
-                <button class="add-to-cart" onclick='addToCart(this, ${JSON.stringify(p.name)}, ${p.price}, ${JSON.stringify(p.img)})'>
+                <button class="add-to-cart" onclick='addToCart(this, ${JSON.stringify(p.name).replace(/'/g, "&apos;")}, ${p.price}, ${JSON.stringify(p.img).replace(/'/g, "&apos;")})'>
                   <i class="fas fa-plus"></i> Add
                 </button>
               </div>
