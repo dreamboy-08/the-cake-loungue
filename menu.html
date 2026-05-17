@@ -36,7 +36,13 @@
     .section-label { font-size: .75rem; font-weight: 700; letter-spacing:.18em; text-transform: uppercase; color: var(--rose-deep); margin-bottom: 12px; }
     .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 4vw, 4rem); margin-bottom: 18px; }
     .section-sub { max-width: 700px; margin: 0 auto; color: var(--text-soft); font-size: 1rem; }
-    .category-tabs { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 0 auto 28px; }
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
     .category-pill { display: inline-flex; align-items: center; padding: 10px 18px; border-radius: 999px; background: rgba(201,97,74,.1); color: var(--brown-dark); font-size: .95rem; font-weight: 600; transition: var(--transition); }
     .category-pill:hover { transform: translateY(-1px); background: rgba(201,97,74,.18); }
     .category-section { margin-bottom: 64px; }
@@ -60,9 +66,39 @@
     .add-to-cart:hover { background: var(--brown-dark); }
     .back-note { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; color: var(--text-soft); }
     .back-note i { color: var(--rose-deep); }
-    @media (max-width: 700px) {
-      .section-title { font-size: 2.4rem; }
-      .product-footer { flex-direction: column; align-items: stretch; }
+    @media (max-width: 768px) {
+      .page-header { padding: 5px 0; }
+      .page-logo { font-size: 1.4rem; }
+      .btn-light { padding: 8px 16px; font-size: 0.85rem; }
+      .section-head { padding: 40px 0 20px; }
+      .section-title { font-size: 2.2rem; }
+      .category-tabs {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .category-pill { white-space: nowrap; font-size: 0.85rem; padding: 8px 14px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .product-body { padding: 12px; gap: 8px; }
+      .product-name { font-size: 0.9rem; }
+      .product-flavor { font-size: 0.8rem; }
+      .product-footer { flex-direction: column; align-items: stretch; gap: 8px; }
+      .product-price { font-size: 1rem; }
+      .add-to-cart { padding: 12px; font-size: 0.85rem; justify-content: center; min-height: 44px; }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block !important; }
+      .hide-mobile { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 15px; }
+      .section-title { font-size: 1.8rem; }
+      .products-grid { gap: 10px; }
+      .product-body { padding: 10px; }
     }
   </style>
 </head>
@@ -70,9 +106,23 @@
   <header class="page-header">
     <div class="container header-inner">
       <a href="index.html" class="page-logo">Cake <span>Lounge</span></a>
-      <a href="index.html" class="btn btn-light"><i class="fas fa-arrow-left"></i> Back to Home</a>
+      <div class="header-actions" style="display: flex; gap: 10px;">
+        <a href="index.html" class="btn btn-light"><i class="fas fa-arrow-left"></i> <span class="hide-mobile">Back to Home</span></a>
+        <button class="hamburger" onclick="toggleMobileMenu()" style="display: none; background: none; border: none; font-size: 1.5rem; color: var(--brown-dark); cursor: pointer;"><i class="fas fa-bars"></i></button>
+      </div>
     </div>
   </header>
+
+  <!-- Mobile Menu for Menu Page -->
+  <div class="mobile-menu" id="mobileMenu" style="display: none; position: fixed; inset: 0; background: var(--cream); z-index: 200; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+    <button onclick="toggleMobileMenu()" style="position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 2rem; color: var(--brown-dark);"><i class="fas fa-times"></i></button>
+    <a href="index.html" style="font-size: 1.5rem; font-weight: 700; font-family: 'Playfair Display', serif;">Home</a>
+    <a href="custom-cake.html" style="font-size: 1.5rem; font-weight: 700; font-family: 'Playfair Display', serif;">Custom Cake</a>
+    <a href="checkout.html" style="font-size: 1.5rem; font-weight: 700; font-family: 'Playfair Display', serif;">Checkout</a>
+    <div id="mobileCategories" style="display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 20px; overflow-y: auto; max-height: 50vh; width: 100%;">
+      <h4 style="color: var(--rose-deep); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8rem;">Categories</h4>
+    </div>
+  </div>
 
   <main class="container menu-page">
     <section class="section-head">
@@ -150,6 +200,23 @@
       return `${heading}<div class="products-grid">${cards}</div></div>`;
     }
 
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function buildMobileCategories() {
+      const container = document.getElementById('mobileCategories');
+      categoryNames.forEach(cat => {
+        const link = document.createElement('a');
+        link.href = `#${slugify(cat)}`;
+        link.textContent = cat;
+        link.style.cssText = 'font-size: 1.2rem; font-weight: 500; color: var(--brown-dark);';
+        link.onclick = toggleMobileMenu;
+        container.appendChild(link);
+      });
+    }
+
     function buildMenu() {
       if (!products.length) {
         menuContent.innerHTML = '<div style="text-align:center; padding:40px 0; color: var(--text-soft);">Menu data could not load.</div>';
@@ -157,6 +224,7 @@
       }
 
       buildCategoryTabs();
+      buildMobileCategories();
       const sections = categoryNames.map(name => buildCategorySection(name, categoryMap[name]));
       menuContent.innerHTML = sections.join('');
     }

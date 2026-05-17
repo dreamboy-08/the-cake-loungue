@@ -416,24 +416,38 @@
        RESPONSIVE
     ============================================= */
     @media (max-width: 768px) {
+      .header-inner { padding: 0 15px; }
+      .header-logo { font-size: 1.3rem; }
+      .header-back { font-size: 1rem; }
+      .container { padding: 20px 15px; }
+
       .checkout-wrapper {
         grid-template-columns: 1fr;
+        gap: 20px;
       }
 
       .order-summary {
         position: static;
+        padding: 20px;
       }
 
       .checkout-form {
-        padding: 24px;
+        padding: 24px 20px;
       }
+
+      .form-title { font-size: 1.5rem; margin-bottom: 24px; }
 
       .form-row {
         grid-template-columns: 1fr;
+        gap: 0;
       }
 
       .items-grid {
         grid-template-columns: 1fr;
+      }
+
+      .modal-content {
+        padding: 24px 20px;
       }
     }
   </style>
