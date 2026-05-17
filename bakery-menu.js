@@ -1,3 +1,19 @@
+/**
+ * @typedef {Object} BakeryProduct
+ * @property {number} id - Unique identifier for the product
+ * @property {string} name - Product display name
+ * @property {string} flavor - Main flavor profile
+ * @property {string} category - Product category (matches slugified navigation links)
+ * @property {number} price - Current selling price in INR
+ * @property {number} [oldPrice] - Original price for discount display (0 if no discount)
+ * @property {number} rating - Average star rating (1-5)
+ * @property {number} reviews - Number of customer reviews
+ * @property {string} tag - Marketing badge (e.g., 'Bestseller', 'Trending', 'New')
+ * @property {string} img - URL to product image
+ * @property {string} description - Long-form product description
+ */
+
+/** @type {BakeryProduct[]} */
 window.bakeryMenu = [
   {
     "id": 1,
