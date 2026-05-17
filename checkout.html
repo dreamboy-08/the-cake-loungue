@@ -6,6 +6,7 @@
   <title>Checkout - Cake Lounge</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
@@ -16,14 +17,9 @@
       --rose:        #e8917a;
       --rose-deep:   #c9614a;
       --brown:       #6b3a2a;
-      --brown-light: #9c6040;
       --chocolate:   #3d1f10;
-      --gold:        #d4a45a;
-      --gold-light:  #f0d49a;
-      --text:        #2c1810;
       --text-mid:    #6b4c3b;
       --text-soft:   #a07860;
-      --white:       #ffffff;
       --shadow-sm:   0 2px 12px rgba(60,20,10,.08);
       --shadow-md:   0 6px 28px rgba(60,20,10,.13);
       --shadow-lg:   0 16px 48px rgba(60,20,10,.18);
@@ -34,64 +30,7 @@
       --transition:  .35s cubic-bezier(.4,0,.2,1);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; font-size: 16px; }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--cream);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
-    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; line-height: 1.25; }
-
-    a { text-decoration: none; color: inherit; }
-
-    ul { list-style: none; }
-
-    /* =============================================
-       HEADER
-    ============================================= */
-    .header {
-      background: var(--white);
-      padding: 20px 0;
-      box-shadow: var(--shadow-sm);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .header-logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--rose-deep);
-    }
-
-    .header-back {
-      background: none;
-      border: none;
-      color: var(--rose-deep);
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .header-back:hover { color: var(--chocolate); }
+    body { background: var(--cream); }
 
     /* =============================================
        MAIN CONTAINER
@@ -416,54 +355,61 @@
        RESPONSIVE
     ============================================= */
     @media (max-width: 768px) {
-      .header-inner { padding: 0 15px; }
-      .header-logo { font-size: 1.3rem; }
-      .header-back { font-size: 1rem; }
-      .container { padding: 20px 15px; }
-
       .checkout-wrapper {
         grid-template-columns: 1fr;
-        gap: 20px;
       }
 
       .order-summary {
         position: static;
-        padding: 20px;
       }
 
       .checkout-form {
-        padding: 24px 20px;
+        padding: 24px;
       }
-
-      .form-title { font-size: 1.5rem; margin-bottom: 24px; }
 
       .form-row {
         grid-template-columns: 1fr;
-        gap: 0;
       }
 
       .items-grid {
         grid-template-columns: 1fr;
-      }
-
-      .modal-content {
-        padding: 24px 20px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-inner">
-      <a href="menu.html" class="header-back">
-        <i class="fas fa-arrow-left"></i> Back to Menu
-      </a>
-      <div class="header-logo">🎂 CakeLounge</div>
-      <div style="width: 120px;"></div>
+  <!-- ========== HEADER ========== -->
+  <header>
+    <a href="index.html" class="logo">Cake <span>Lounge</span></a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="custom-cake.html">Custom Cake</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="cart-btn" onclick="openCartModal()" aria-label="View Cart">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="menu-toggle" onclick="toggleMobileNav()" aria-label="Toggle Menu">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
-  </div>
+  </header>
+
+  <div class="overlay" id="overlay" onclick="toggleMobileNav()"></div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="index.html" onclick="toggleMobileNav()">Home</a>
+    <a href="menu.html" onclick="toggleMobileNav()">Menu</a>
+    <a href="custom-cake.html" onclick="toggleMobileNav()">Custom Cake</a>
+    <a href="index.html#about" onclick="toggleMobileNav()">About Story</a>
+    <a href="checkout.html" onclick="toggleMobileNav()">Checkout</a>
+  </nav>
 
   <!-- MAIN CONTAINER -->
   <div class="container">
@@ -590,7 +536,104 @@
     </div>
   </div>
 
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Cake <span>Lounge</span></h4>
+        <p>Your premium destination for artisan cakes and patisserie. Crafted with love, delivered with care.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="menu.html">Full Menu</a></li>
+          <li><a href="custom-cake.html">Custom Design</a></li>
+          <li><a href="checkout.html">My Cart</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="menu.html#birthday">Birthday Cakes</a></li>
+          <li><a href="menu.html#wedding">Wedding Cakes</a></li>
+          <li><a href="menu.html#bento">Bento Cakes</a></li>
+          <li><a href="menu.html#desserts">Desserts</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <ul>
+          <li><i class="fas fa-phone"></i> +91 99105 19242</li>
+          <li><i class="fas fa-envelope"></i> hello@cakelounge.in</li>
+          <li><i class="fas fa-map-marker-alt"></i> New Delhi, India</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 Cake Lounge Luxury Patisserie. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <a href="https://wa.me/919910519242" class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========== CART MODAL ========== -->
+  <div id="cartModal" class="cart-modal">
+    <div class="cart-modal-content">
+      <div class="cart-modal-header">
+        <h3>Your Cart</h3>
+        <button class="cart-close" onclick="closeCartModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <!-- Items will be added here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total">Total: ₹<span id="cartTotal">0</span></div>
+        <button class="btn btn-primary" onclick="checkoutCart()">Checkout</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    function toggleMobileNav() {
+      document.getElementById('mobileNav').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function openCartModal() {
+      document.getElementById('cartModal').classList.add('show');
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.remove('show');
+    }
+
+    function checkoutCart() {
+      closeCartModal();
+      window.location.reload();
+    }
+
     const cakeSuggestions = [
       { id: 'chocolate-drip', name: 'Chocolate Drip', description: 'Rich dark chocolate with glossy drip', icon: '🍫', price: 699 },
       { id: 'red-velvet', name: 'Red Velvet', description: 'Elegant red velvet with cream cheese', icon: '❤️', price: 749 },
@@ -695,6 +738,7 @@
       localStorage.setItem('cakeLounge_cart', JSON.stringify(existingCart));
       updateSummary();
       displaySelectedCake();
+      updateCartDisplay();
     }
 
     function removeDecoration(id) {
@@ -756,6 +800,29 @@
           </div>
         `).join('');
       }
+    }
+
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      const cartBadge = document.getElementById('cartBadge');
+
+      cartItems.innerHTML = existingCart.map((item, index) => `
+        <div class="cart-item">
+          <div class="cart-item-image">
+            <img src="${item.img || 'https://via.placeholder.com/70?text=Cake'}" alt="${item.name}" loading="lazy" />
+          </div>
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+          </div>
+          <div class="cart-item-price">₹${item.price}</div>
+          <button class="cart-item-remove" onclick="removeCartItem(${index})"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+
+      const total = existingCart.reduce((sum, item) => sum + item.price, 0);
+      if(cartTotal) cartTotal.textContent = total;
+      if(cartBadge) cartBadge.textContent = existingCart.length;
     }
 
     function updateSummary() {
@@ -964,6 +1031,7 @@ Order Placed: ${orderDetails.timestamp}
       displaySelectedCake();
       displaySelectedDecorations();
       updateSummary();
+      updateCartDisplay();
     });
 
     // Close modals on outside click
