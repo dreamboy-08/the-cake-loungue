@@ -9,7 +9,12 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: ['https://the-cake-loungue.vercel.app', 'http://127.0.0.1:5500', 'http://localhost:5500'],
+  origin: [
+  'https://www.thecakelounge.in',
+  'https://thecakelounge.in',
+  'http://127.0.0.1:5500',
+  'http://localhost:5500'
+],  
   methods: ['GET', 'POST'],
   credentials: true,
 };
