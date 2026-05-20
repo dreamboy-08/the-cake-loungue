@@ -1,4 +1,7 @@
-window.bakeryMenu = [
+import { Product } from '@/types';
+
+export const bakeryMenu: Product[] =
+[
   {
     "id": 1,
     "name": "Royal Raspberry Birthday Cake",
