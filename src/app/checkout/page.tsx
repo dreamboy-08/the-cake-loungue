@@ -16,9 +16,12 @@ import {
   type CheckoutFormData
 } from '@/components/checkout/CheckoutForm';
 import { useState } from 'react';
+import { loadRazorpay } from '@/utils/razorpay';
+import { useRouter } from 'next/navigation';
 
 const CheckoutPage = () => {
-  const { cart, cartCount, cartTotal, updateQuantity, removeFromCart } = useCart();
+  const router = useRouter();
+  const { cart, cartCount, cartTotal, updateQuantity, removeFromCart, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -35,14 +38,111 @@ const CheckoutPage = () => {
 
   const onSubmit = async (data: CheckoutFormData) => {
     setIsSubmitting(true);
-    console.log('Form Data:', data);
-    console.log('Cart Items:', cart);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      if (data.paymentMethod === 'cod') {
+        // Handle COD - in a real app, this would also call a backend API
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        alert('Order placed successfully with Cash on Delivery!');
+        clearCart();
+        router.push('/');
+        return;
+      }
 
-    alert('Order placed successfully! (Simulation)');
-    setIsSubmitting(false);
+      // Load Razorpay script
+      const isLoaded = await loadRazorpay();
+      if (!isLoaded) {
+        alert('Razorpay SDK failed to load. Are you online?');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+      // Create order on backend
+      const response = await fetch(`${apiUrl}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          totalAmount: grandTotal,
+          items: cart,
+          customerName: data.fullName,
+          customerEmail: data.email,
+          customerPhone: data.phone,
+        }),
+      });
+
+      const orderData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(orderData.error || 'Failed to create order');
+      }
+
+      const { order, keyId } = orderData;
+
+      const options = {
+        key: keyId,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'The Cake Lounge',
+        description: 'Order Payment',
+        order_id: order.id,
+        handler: async function (paymentResponse: any) {
+          try {
+            // Verify payment on backend
+            const verifyResponse = await fetch(`${apiUrl}/api/verify-payment`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyResponse.json();
+
+            if (verifyData.success) {
+              alert('Payment successful and verified!');
+              clearCart();
+              router.push('/');
+            } else {
+              alert('Payment verification failed: ' + verifyData.error);
+            }
+          } catch (err) {
+            console.error('Verification error:', err);
+            alert('An error occurred during payment verification.');
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: data.fullName,
+          email: data.email,
+          contact: data.phone,
+        },
+        theme: {
+          color: '#C9614A',
+        },
+        modal: {
+          ondismiss: function() {
+            setIsSubmitting(false);
+          }
+        }
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      alert('Checkout failed: ' + error.message);
+      setIsSubmitting(false);
+    }
   };
 
   const gst = Math.round(cartTotal * 0.18);
