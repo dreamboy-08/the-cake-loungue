@@ -10,12 +10,15 @@ const app = express();
 
 const corsOptions = {
   origin: [
-  'https://www.thecakelounge.in',
-  'https://thecakelounge.in',
-  'http://127.0.0.1:5500',
-  'http://localhost:5500',
-  'http://localhost:3000'
-],  
+    'https://www.thecakelounge.in',
+    'https://thecakelounge.in',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003'
+  ],
   methods: ['GET', 'POST'],
   credentials: true,
 };
@@ -35,7 +38,7 @@ try {
     });
     console.log('Razorpay initialized successfully');
   } else {
-    console.warn('Razorpay keys missing. Razorpay features will not work.');
+    console.error('CRITICAL ERROR: Razorpay keys are missing. Payment features will fail.');
   }
 } catch (error) {
   console.error('Failed to initialize Razorpay:', error.message);
@@ -50,30 +53,6 @@ app.get('/', (req, res) => {
     message: 'Cake Lounge backend is running',
     environment: process.env.NODE_ENV || 'development',
   });
-});
-
-app.post('/create-order', async (req, res) => {
-  try {
-    const { amount, currency = 'INR', receipt } = req.body;
-
-    if (!amount || !receipt) {
-      return res.status(400).json({ error: 'amount and receipt are required' });
-    }
-
-    const options = {
-      amount: Number(amount) * 100,
-      currency,
-      receipt,
-    };
-
-    if (!razorpay) {
-      return res.status(500).json({ error: 'Razorpay is not configured on the server' });
-    }
-    const order = await razorpay.orders.create(options);
-    res.json(order);
-  } catch (error) {
-    res.status(500).json({ error: error.message || 'Failed to create order' });
-  }
 });
 
 app.post('/api/orders', async (req, res) => {
@@ -97,7 +76,7 @@ app.post('/api/orders', async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-    res.json({ order, keyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_your_key_id' });
+    res.json({ order, keyId: process.env.RAZORPAY_KEY_ID });
   } catch (error) {
     res.status(500).json({ error: error.description || error.message || 'Failed to create order' });
   }
@@ -111,8 +90,12 @@ app.post('/api/verify-payment', (req, res) => {
       return res.status(400).json({ error: 'Missing payment verification fields' });
     }
 
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return res.status(500).json({ error: 'Razorpay secret is not configured' });
+    }
+
     const generatedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || 'rzp_test_your_key_secret')
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex');
 

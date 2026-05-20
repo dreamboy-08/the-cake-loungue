@@ -107,16 +107,16 @@ const CheckoutPage = () => {
             const verifyData = await verifyResponse.json();
 
             if (verifyData.success) {
-              alert('Payment successful and verified!');
+              alert('Payment successful and verified! Thank you for your order.');
               clearCart();
               router.push('/');
             } else {
-              alert('Payment verification failed: ' + verifyData.error);
+              alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+              setIsSubmitting(false);
             }
           } catch (err) {
             console.error('Verification error:', err);
-            alert('An error occurred during payment verification.');
-          } finally {
+            alert('An error occurred during payment verification. Please contact support if the amount was deducted.');
             setIsSubmitting(false);
           }
         },
@@ -131,11 +131,19 @@ const CheckoutPage = () => {
         modal: {
           ondismiss: function() {
             setIsSubmitting(false);
-          }
+          },
+          escape: false,
         }
       };
 
       const paymentObject = new (window as any).Razorpay(options);
+
+      paymentObject.on('payment.failed', function (response: any) {
+        console.error('Payment failed:', response.error);
+        alert(`Payment failed: ${response.error.description}`);
+        setIsSubmitting(false);
+      });
+
       paymentObject.open();
 
     } catch (error: any) {
