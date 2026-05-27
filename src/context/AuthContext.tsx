@@ -26,12 +26,21 @@ export interface Address {
   isDefault: boolean;
 }
 
+export interface UserData {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  createdAt: string;
+  role: 'user' | 'admin';
+  addresses: Address[];
+}
+
 interface AuthContextType {
   user: User | null;
   role: string | null;
   isAdmin: boolean;
   loading: boolean;
-  userData: any;
+  userData: UserData | null;
   logout: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -50,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [role, setRole] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -63,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         let userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          const newUserData = {
+          const newUserData: UserData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
@@ -76,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsAdmin(false);
           setUserData(newUserData);
         } else {
-          const data = userDoc.data();
+          const data = userDoc.data() as UserData;
           setRole(data?.role || 'user');
           setIsAdmin(data?.role === 'admin');
           setUserData(data);
@@ -116,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     // Create user document in Firestore
-    const newUserData = {
+    const newUserData: UserData = {
       uid: userCredential.user.uid,
       email: userCredential.user.email,
       displayName: name,
@@ -155,7 +164,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
 
       // Update local state immediately
-      setUserData({ ...userData, addresses: updatedAddresses });
+      if (userData) {
+        setUserData({ ...userData, addresses: updatedAddresses });
+      }
       console.log("Address added successfully:", newAddress.id);
     } catch (error) {
       console.error("Error adding address:", error);
