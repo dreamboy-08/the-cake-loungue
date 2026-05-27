@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, ShoppingCart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Menu, X, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import CartModal from './CartModal';
+import { MEGA_MENU } from '@/constants/navigation';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,7 +20,9 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -107,17 +111,38 @@ const Navbar = () => {
         isHidden && "translate-y-[-100%] opacity-0",
         isScrolled && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
       )}>
-        <div className="container mx-auto px-6 flex items-center justify-center gap-6 flex-wrap">
-          <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
-            {['Mother\'s Day', 'Cakes', 'Bento', 'Theme Cakes', 'By Relationship', 'Desserts', 'Birthday', 'Anniversary'].map((cat) => (
-              <li key={cat} className="group relative">
-                <Link href={`/menu#${cat.toLowerCase().replace(/ /g, '-')}`} className={cn(
-                  "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px]",
+        <div className="container mx-auto px-6 flex items-center justify-center">
+          <ul className="relative flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
+            {MEGA_MENU.map((item) => (
+              <li key={item.label} className="group static">
+                <Link href={item.href} className={cn(
+                  "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px] block",
                   isScrolled ? "text-text-mid hover:text-blush" : "text-[rgba(255,255,255,0.88)] hover:text-blush"
                 )}>
-                  {cat}
+                  {item.label}
                 </Link>
-                {/* Mega Menu logic can be added here as a dropdown if needed */}
+                {item.columns && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-350 z-[1000] w-full max-w-[860px]">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto">
+                      {item.columns.map((col, idx) => (
+                        <div key={idx} className="flex flex-col gap-4 text-center">
+                          <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
+                          <div className="flex flex-col gap-2">
+                            {col.items.map((sub, sIdx) => (
+                              <Link
+                                key={sIdx}
+                                href={sub.href}
+                                className="text-chocolate/80 hover:text-rose-deep hover:translate-x-1 transition-all duration-300 text-[13px] font-medium"
+                              >
+                                {sub.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -126,20 +151,62 @@ const Navbar = () => {
 
       {/* MOBILE MENU */}
       <div className={cn(
-        "fixed inset-0 bg-cream z-[200] flex-col items-center justify-center gap-8 transition-all duration-300",
+        "fixed inset-0 bg-cream z-[200] flex-col items-center overflow-y-auto py-20 px-6 transition-all duration-300",
         isMobileMenuOpen ? "flex" : "hidden"
       )}>
         <button
-          className="absolute top-6 right-6 text-[1.8rem] bg-none border-none text-chocolate cursor-pointer"
+          className="absolute top-6 right-6 text-chocolate"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           <X size={32} />
         </button>
-        <Link href="/" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-        <Link href="/menu" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Menu</Link>
-        <Link href="/checkout" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Order</Link>
-        <Link href="/#about" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-        <Link href="/#contact" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+
+        <div className="w-full max-w-sm flex flex-col gap-6">
+          <Link href="/" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose border-b border-rose/10 pb-2" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-rose-deep font-bold uppercase tracking-widest text-xs mb-2">Categories</p>
+            {MEGA_MENU.map((item) => (
+              <div key={item.label} className="border-b border-rose/5">
+                <div
+                  className="flex items-center justify-between py-3 cursor-pointer"
+                  onClick={() => item.columns ? setExpandedCategory(expandedCategory === item.label ? null : item.label) : (setIsMobileMenuOpen(false), router.push(item.href))}
+                >
+                  <span className="font-playfair text-[1.4rem] font-bold text-chocolate">{item.label}</span>
+                  {item.columns && (
+                    expandedCategory === item.label ? <ChevronUp size={20} className="text-rose" /> : <ChevronDown size={20} className="text-rose" />
+                  )}
+                </div>
+
+                {item.columns && expandedCategory === item.label && (
+                  <div className="pl-4 pb-4 grid grid-cols-2 gap-y-6 gap-x-4 animate-fade-up">
+                    {item.columns.map((col, idx) => (
+                      <div key={idx} className="flex flex-col gap-2">
+                        <p className="text-rose font-bold text-[11px] uppercase tracking-wider">{col.title}</p>
+                        {col.items.map((sub, sIdx) => (
+                          <Link
+                            key={sIdx}
+                            href={sub.href}
+                            className="text-chocolate/80 text-sm font-medium"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-4 pt-4 border-t border-rose/10">
+            <Link href="/menu" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Full Menu</Link>
+            <Link href="/#about" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+            <Link href="/#contact" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+          </div>
+        </div>
       </div>
 
       <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
