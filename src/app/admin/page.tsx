@@ -1,6 +1,11 @@
+"use client";
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const AdminDashboard = () => {
+  const router = useRouter();
+
   return (
     <div className="space-y-6">
       <header>
@@ -32,10 +37,16 @@ const AdminDashboard = () => {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-lg font-bold text-chocolate mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-4">
-            <button className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep">
+            <button
+              onClick={() => router.push('/admin/products')}
+              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep"
+            >
               <span className="text-sm font-medium">Add Product</span>
             </button>
-            <button className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep">
+            <button
+              onClick={() => router.push('/admin/categories')}
+              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep"
+            >
               <span className="text-sm font-medium">New Category</span>
             </button>
           </div>
