@@ -62,6 +62,7 @@ const Navbar = () => {
           "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
           isHidden && "translate-y-[-100%]",
           (isScrolled || isAuthPage) && "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"
+          isScrolled ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]" : "bg-black/10 backdrop-blur-sm"
         )}
       >
         <div className="container mx-auto px-6">
@@ -161,7 +162,7 @@ const Navbar = () => {
                   {item.label}
                 </Link>
                 {item.columns && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
+                  <div className="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px] pt-2">
                     <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto">
                       {item.columns.map((col, idx) => (
                         <div key={idx} className="flex flex-col gap-4 text-center">

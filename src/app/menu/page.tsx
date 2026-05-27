@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import SearchBar from '@/components/shop/SearchBar';
+import { filterProducts } from '@/utils/filterProducts';
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
-  const slugify = (text: string) => {
-    return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  };
-
-  const filteredProducts = activeCategory === 'All'
-    ? products
-    : products.filter(p => p.category === activeCategory);
+  const filteredProducts = useMemo(() => {
+    const categoryFiltered = products.filter(product =>
+      activeCategory === 'All' || product.category === activeCategory
+    );
+    return filterProducts(categoryFiltered, searchQuery);
+  }, [activeCategory, searchQuery]);
 
   const categoryMap = products.reduce((acc, product) => {
     const category = product.category || 'Other';
@@ -29,11 +29,14 @@ const MenuPage = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
-        <section className="text-center mb-16">
+        <section className="text-center mb-12">
           <p className="section-label">Full Bakery Menu</p>
           <h1 className="section-title text-4xl md:text-5xl mb-5">Explore Our Complete Collection</h1>
           <p className="section-sub mx-auto">Browse every cake, dessert and premium creation from our bakery catalogue — 300+ handcrafted items delivered fresh.</p>
         </section>
+
+        {/* Search Bar */}
+        <SearchBar onSearch={setSearchQuery} />
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-3 justify-center mb-12">
@@ -61,7 +64,8 @@ const MenuPage = () => {
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-text-soft">No products found in this category.</p>
+            <h3 className="text-2xl font-playfair font-bold text-chocolate mb-2">No cakes found</h3>
+            <p className="text-text-soft">Try adjusting your search or category filters.</p>
           </div>
         )}
       </div>
