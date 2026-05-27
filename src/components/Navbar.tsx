@@ -112,7 +112,7 @@ const Navbar = () => {
         isScrolled && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
       )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
-          <ul className="relative flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
+          <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
             {MEGA_MENU.map((item) => (
               <li key={item.label} className="group static">
                 <Link href={item.href} className={cn(
@@ -122,7 +122,7 @@ const Navbar = () => {
                   {item.label}
                 </Link>
                 {item.columns && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 translate-y-4 transition-all duration-350 z-[1000] w-full max-w-[860px]">
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
                     <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto">
                       {item.columns.map((col, idx) => (
                         <div key={idx} className="flex flex-col gap-4 text-center">
