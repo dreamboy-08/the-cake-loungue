@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react';
+import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import CartModal from './CartModal';
 import { MEGA_MENU } from '@/constants/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -21,9 +22,10 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -82,26 +84,84 @@ const Navbar = () => {
                 {!isAuthPage && (
                   <>
                     {user ? (
-                      <div className="flex items-center gap-3">
+                      <div className="relative">
                         <button
-                          onClick={() => logout()}
+                          onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
-                            "text-[0.85rem] font-semibold transition-colors",
-                            isScrolled ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
+                            "flex items-center gap-2 group p-1 rounded-full transition-all",
+                            (isScrolled || isAuthPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
                           )}
                         >
-                          Logout
+                          <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
+                            {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
+                          </div>
+                          <ChevronDown size={14} className={cn(
+                            "transition-transform duration-300",
+                            isUserMenuOpen && "rotate-180",
+                            (isScrolled || isAuthPage) ? "text-chocolate" : "text-white"
+                          )} />
                         </button>
-                        <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
-                          {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
-                        </div>
+
+                        <AnimatePresence>
+                          {isUserMenuOpen && (
+                            <>
+                              <div className="fixed inset-0 z-[-1]" onClick={() => setIsUserMenuOpen(false)} />
+                              <motion.div
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-cream overflow-hidden z-[101]"
+                              >
+                                <div className="p-4 border-b border-cream bg-cream/20">
+                                  <p className="text-xs font-bold text-rose-deep uppercase tracking-widest mb-1">Welcome</p>
+                                  <p className="text-sm font-bold text-chocolate truncate">{user.displayName || 'Member'}</p>
+                                </div>
+                                <div className="p-2">
+                                  <Link
+                                    href="/profile"
+                                    onClick={() => setIsUserMenuOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                  >
+                                    <User size={18} className="text-rose-deep" /> Profile
+                                  </Link>
+                                  <Link
+                                    href="/orders"
+                                    onClick={() => setIsUserMenuOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                  >
+                                    <ShoppingBag size={18} className="text-rose-deep" /> My Orders
+                                  </Link>
+                                  {isAdmin && (
+                                    <Link
+                                      href="/admin"
+                                      onClick={() => setIsUserMenuOpen(false)}
+                                      className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                    >
+                                      <Settings size={18} className="text-rose-deep" /> Admin Panel
+                                    </Link>
+                                  )}
+                                  <hr className="my-2 border-cream" />
+                                  <button
+                                    onClick={() => {
+                                      logout();
+                                      setIsUserMenuOpen(false);
+                                    }}
+                                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-xl transition-colors font-bold"
+                                  >
+                                    <LogOut size={18} /> Logout
+                                  </button>
+                                </div>
+                              </motion.div>
+                            </>
+                          )}
+                        </AnimatePresence>
                       </div>
                     ) : (
                       <Link
                         href="/login"
                         className={cn(
                           "text-[0.85rem] font-semibold transition-colors",
-                          isScrolled ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
+                          (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >
                         Login
@@ -124,9 +184,13 @@ const Navbar = () => {
                 >
                   <ShoppingCart size={24} />
                   {cartCount > 0 && (
-                    <div className="absolute top-1 right-1 bg-gold text-chocolate text-[0.65rem] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute top-1 right-1 bg-gold text-chocolate text-[0.65rem] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+                    >
                       {cartCount}
-                    </div>
+                    </motion.div>
                   )}
                 </button>
               </div>
@@ -152,7 +216,7 @@ const Navbar = () => {
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",
-          isScrolled && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
+          (isScrolled || isAuthPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
           <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
@@ -160,13 +224,13 @@ const Navbar = () => {
               <li key={item.label} className="group static">
                 <Link href={item.href} className={cn(
                   "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px] block",
-                  isScrolled ? "text-text-mid hover:text-blush" : "text-[rgba(255,255,255,0.88)] hover:text-blush"
+                  (isScrolled || isAuthPage) ? "text-text-mid hover:text-blush" : "text-[rgba(255,255,255,0.88)] hover:text-blush"
                 )}>
                   {item.label}
                 </Link>
                 {item.columns && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
                       {item.columns.map((col, idx) => (
                         <div key={idx} className="flex flex-col gap-4 text-center">
                           <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
@@ -257,6 +321,22 @@ const Navbar = () => {
                     <span className="text-xs text-chocolate/60 truncate max-w-[180px]">{user.email}</span>
                   </div>
                 </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/profile"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="bg-cream p-3 rounded-xl text-chocolate text-center text-sm font-bold border border-cream"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href="/orders"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="bg-cream p-3 rounded-xl text-chocolate text-center text-sm font-bold border border-cream"
+                  >
+                    My Orders
+                  </Link>
+                </div>
                 <button
                   onClick={() => {
                     logout();
@@ -283,7 +363,11 @@ const Navbar = () => {
         </div>
       </div>
 
-      <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
+      <AnimatePresence>
+        {isCartModalOpen && (
+          <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
+        )}
+      </AnimatePresence>
     </>
   );
 };
