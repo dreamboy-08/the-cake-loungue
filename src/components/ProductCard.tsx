@@ -1,11 +1,12 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, Heart, Plus } from 'lucide-react';
+import { Star, Heart, Plus, Check } from 'lucide-react';
 import { Product } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
@@ -13,16 +14,21 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       img: product.img,
     });
+
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
   };
 
   return (
@@ -80,9 +86,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
           <button
             onClick={handleAddToCart}
-            className="bg-rose-deep text-white border-none rounded-[50px] py-[9px] px-[18px] font-poppins text-[0.8rem] font-semibold cursor-pointer flex items-center gap-1.5 transition-all duration-350 hover:bg-brown hover:scale-105 active:scale-95"
+            className={`min-w-[90px] border-none rounded-[50px] py-[9px] px-[18px] font-poppins text-[0.8rem] font-semibold cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-350 ${
+              isAdded ? 'bg-green-600 text-white' : 'bg-rose-deep text-white hover:bg-brown hover:scale-105 active:scale-95'
+            }`}
           >
-            <Plus size={14} /> Add
+            <AnimatePresence mode="wait">
+              {isAdded ? (
+                <motion.div
+                  key="check"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="flex items-center gap-1.5"
+                >
+                  <Check size={14} /> Added
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="plus"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="flex items-center gap-1.5"
+                >
+                  <Plus size={14} /> Add
+                </motion.div>
+              )}
+            </AnimatePresence>
           </button>
         </div>
       </div>

@@ -2,24 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
+import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, Calendar, Clock, MapPin, Sparkles } from 'lucide-react';
+import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import AddressManager from '@/components/shop/AddressManager';
+import { doc, collection, addDoc, setDoc } from 'firebase/firestore';
+import { db } from '@/utils/firebase';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const CheckoutPage = () => {
   const { cart, cartTotal, clearCart } = useCart();
+  const { user, userData } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    date: '',
-    time: '',
-    address: '',
-    specialRequests: '',
-  });
+  // Set default address if available
+  useEffect(() => {
+    if (userData?.addresses && !selectedAddress) {
+      const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
+      if (defaultAddr) setSelectedAddress(defaultAddr);
+    }
+  }, [userData, selectedAddress]);
 
   useEffect(() => {
     // Dynamically load Razorpay script
@@ -32,31 +38,33 @@ const CheckoutPage = () => {
     };
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
+  const shippingFee = cartTotal > 1000 ? 0 : 50;
+  const finalTotal = cartTotal + shippingFee;
 
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCheckout = async () => {
     if (cart.length === 0) {
       alert('Your cart is empty!');
       return;
     }
+    if (!selectedAddress) {
+      alert('Please select or add a delivery address.');
+      return;
+    }
 
     setLoading(true);
+    setPaymentStatus('processing');
 
     try {
-      // Step 1: Create order on backend
+      // Step 1: Create order on backend (simulated for now or using Render API)
       const orderResponse = await fetch('https://the-cake-loungue.onrender.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          totalAmount: finalTotal,
           items: cart,
-          totalAmount: cartTotal,
-          customerName: formData.name,
-          customerEmail: formData.email,
-          customerPhone: formData.phone,
+          customerName: selectedAddress.name,
+          customerEmail: user?.email || 'guest@example.com',
+          customerPhone: selectedAddress.phone,
         }),
       });
 
@@ -69,11 +77,11 @@ const CheckoutPage = () => {
 
       // Step 2: Open Razorpay
       const options = {
-        key: keyId || 'rzp_test_SnKyu6FLUmVKUj',
-        amount: cartTotal * 100,
+        key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SnKyu6FLUmVKUj',
+        amount: finalTotal * 100,
         currency: 'INR',
         name: 'Cake Lounge',
-        description: `Order for ${cart.length} item(s)`,
+        description: `Order for ${cartCountText(cart.length)}`,
         order_id: order.id,
         handler: async (response: any) => {
           try {
@@ -88,25 +96,55 @@ const CheckoutPage = () => {
             });
 
             if (verifyResponse.ok) {
-              alert('🎉 Order placed successfully!');
-              clearCart();
-              router.push('/');
+              // Step 3: Save order to Firestore
+              const orderDoc = {
+                userId: user?.uid || 'guest',
+                customer: {
+                  name: selectedAddress.name,
+                  email: user?.email || 'guest@example.com',
+                  phone: selectedAddress.phone,
+                },
+                shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+                items: cart,
+                totalAmount: finalTotal,
+                shippingFee,
+                subtotal: cartTotal,
+                status: 'Confirmed',
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                createdAt: new Date().toISOString(),
+              };
+
+              await addDoc(collection(db, 'orders'), orderDoc);
+
+              setPaymentStatus('success');
+              setTimeout(() => {
+                clearCart();
+                router.push('/orders');
+              }, 2000);
             } else {
+              setPaymentStatus('error');
               alert('Payment verification failed!');
             }
           } catch (error) {
             console.error('Verification error:', error);
-            alert('Error verifying payment');
+            setPaymentStatus('error');
           }
         },
         prefill: {
-          name: formData.name,
-          email: formData.email,
-          contact: formData.phone,
+          name: selectedAddress.name,
+          email: user?.email || '',
+          contact: selectedAddress.phone,
         },
         theme: {
           color: '#c9614a',
         },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            setPaymentStatus('idle');
+          }
+        }
       };
 
       const rzp = new (window as any).Razorpay(options);
@@ -114,93 +152,142 @@ const CheckoutPage = () => {
     } catch (error) {
       console.error('Checkout error:', error);
       alert('Checkout failed. Please try again.');
+      setPaymentStatus('error');
     } finally {
       setLoading(false);
     }
   };
 
+  const cartCountText = (count: number) => `${count} item${count > 1 ? 's' : ''}`;
+
+  if (paymentStatus === 'success') {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-md w-full border-2 border-green-100"
+        >
+          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+            <CheckCircle2 size={48} />
+          </div>
+          <h2 className="text-3xl font-bold font-playfair text-chocolate mb-2">Order Confirmed!</h2>
+          <p className="text-text-soft mb-8">Thank you for your order. We're getting your cakes ready!</p>
+          <div className="animate-pulse flex items-center justify-center gap-2 text-rose-deep font-bold">
+            <Loader2 className="animate-spin" size={20} />
+            Redirecting to your orders...
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
-        <Link href="/menu" className="inline-flex items-center gap-2 text-rose-deep font-semibold mb-8 hover:text-chocolate transition-colors">
-          <ArrowLeft size={20} /> Back to Menu
-        </Link>
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Main Content */}
+          <div className="flex-1 space-y-8">
+            <div>
+              <Link href="/menu" className="inline-flex items-center gap-2 text-rose-deep font-bold mb-4 hover:text-chocolate transition-colors group">
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                Back to Menu
+              </Link>
+              <h1 className="text-4xl font-bold font-playfair text-chocolate">Secure Checkout</h1>
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
-          {/* Form */}
-          <div className="bg-white rounded-lg p-10 shadow-sm">
-            <h2 className="text-3xl font-bold text-chocolate mb-8">Place Your Order</h2>
-            <form onSubmit={handleCheckout} className="space-y-6">
-              <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-semibold text-text">Full Name *</label>
-                <input type="text" id="name" required value={formData.name} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none" />
-              </div>
+            {/* Address Selection */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-cream">
+              <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-semibold text-text">Email *</label>
-                  <input type="email" id="email" required value={formData.email} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none" />
+            {/* Payment Method */}
+            <div className="bg-white rounded-3xl p-8 shadow-sm border border-cream">
+              <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
+                <CreditCard size={20} className="text-rose-deep" />
+                Payment Method
+              </h3>
+              <div className="p-4 rounded-2xl border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
+                <div className="w-10 h-10 bg-rose-deep rounded-full flex items-center justify-center text-white">
+                  <CheckCircle2 size={24} />
                 </div>
-                <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-sm font-semibold text-text">Phone Number *</label>
-                  <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="10-digit number" value={formData.phone} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label htmlFor="date" className="block text-sm font-semibold text-text">Delivery Date *</label>
-                  <input type="date" id="date" required value={formData.date} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none" />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="time" className="block text-sm font-semibold text-text">Delivery Time *</label>
-                  <input type="time" id="time" required value={formData.time} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none" />
+                <div>
+                  <p className="font-bold text-chocolate">Secure Online Payment</p>
+                  <p className="text-xs text-text-soft">UPI, Cards, NetBanking via Razorpay</p>
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <label htmlFor="address" className="block text-sm font-semibold text-text">Delivery Address *</label>
-                <textarea id="address" rows={3} required placeholder="Street, City, Postal Code" value={formData.address} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none resize-none" />
-              </div>
-
-              <div className="space-y-2">
-                <label htmlFor="specialRequests" className="block text-sm font-semibold text-text">Special Requests / Dietary Info</label>
-                <textarea id="specialRequests" rows={2} placeholder="e.g., Allergies, custom message..." value={formData.specialRequests} onChange={handleInputChange} className="w-full p-3 border-2 border-cream-dark rounded-sm focus:border-rose-deep outline-none resize-none" />
-              </div>
-
-              <button type="submit" disabled={loading} className="hidden lg:block w-full py-4 bg-rose-deep text-white rounded-full font-bold text-lg shadow-md hover:bg-brown hover:-translate-y-0.5 transition-all disabled:bg-text-soft disabled:cursor-not-allowed">
-                {loading ? 'Processing...' : 'Proceed to Payment'}
-              </button>
-            </form>
+            </div>
           </div>
 
           {/* Sidebar Summary */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg p-7 shadow-sm sticky top-32 h-fit">
-              <h3 className="text-xl font-bold text-chocolate mb-5 text-center border-b border-cream-dark pb-4">Order Summary</h3>
+          <div className="lg:w-[400px]">
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-cream sticky top-32">
+              <h3 className="text-xl font-bold font-playfair text-chocolate mb-6 flex items-center gap-2">
+                <ShoppingBag size={20} className="text-rose-deep" />
+                Order Summary
+              </h3>
 
-              <div className="max-h-60 overflow-y-auto mb-5 space-y-3">
+              <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex justify-between text-sm">
-                    <span className="text-text-mid flex-1 pr-2 line-clamp-1">{item.name} x {item.quantity}</span>
-                    <span className="font-bold">₹{item.price * item.quantity}</span>
+                  <div key={item.id} className="flex gap-4">
+                    <div className="w-16 h-16 rounded-xl bg-cream overflow-hidden flex-shrink-0">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
+                      <p className="text-xs text-text-soft">Qty: {item.quantity}</p>
+                      <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t-2 border-rose-deep pt-4 mt-4 space-y-4">
-                <div className="flex justify-between items-center text-xl font-bold text-rose-deep">
-                  <span>Total</span>
-                  <span>₹{cartTotal}</span>
+              <div className="space-y-3 border-t border-cream pt-6">
+                <div className="flex justify-between text-text-mid">
+                  <span>Subtotal</span>
+                  <span className="font-bold">₹{cartTotal}</span>
                 </div>
-                <button
-                  onClick={handleCheckout}
-                  disabled={loading || cart.length === 0}
-                  className="w-full py-4 bg-rose-deep text-white rounded-full font-bold text-lg shadow-md hover:bg-brown hover:-translate-y-0.5 transition-all disabled:bg-text-soft disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Processing...' : 'Proceed to Payment'}
-                </button>
+                <div className="flex justify-between text-text-mid">
+                  <span>Delivery Fee</span>
+                  <span className="font-bold">{shippingFee === 0 ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
+                </div>
+                {shippingFee > 0 && (
+                  <p className="text-[10px] text-rose-deep font-medium italic">Add ₹{1000 - cartTotal} more for free delivery!</p>
+                )}
+                <div className="flex justify-between items-center pt-3 border-t-2 border-chocolate mt-3">
+                  <span className="text-lg font-bold text-chocolate">Total Amount</span>
+                  <span className="text-3xl font-black text-rose-deep">₹{finalTotal}</span>
+                </div>
               </div>
+
+              <button
+                onClick={handleCheckout}
+                disabled={loading || cart.length === 0 || !selectedAddress}
+                className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={24} />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={24} />
+                    Place Order
+                  </>
+                )}
+              </button>
+
+              {!selectedAddress && cart.length > 0 && (
+                <div className="mt-4 flex items-center gap-2 text-rose-deep text-xs font-bold justify-center bg-rose/5 p-2 rounded-lg">
+                  <AlertCircle size={14} />
+                  Please select a delivery address
+                </div>
+              )}
+
+              <p className="text-[10px] text-center text-text-soft mt-6 uppercase tracking-widest font-bold">
+                100% Secure Checkout
+              </p>
             </div>
           </div>
         </div>

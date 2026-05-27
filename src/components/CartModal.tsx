@@ -1,10 +1,11 @@
 "use client";
 
 import React from 'react';
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -12,59 +13,123 @@ interface CartModalProps {
 }
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
-  const { cart, removeFromCart, cartTotal } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, cartCount } = useCart();
   const router = useRouter();
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-[500px] max-h-[80vh] overflow-hidden flex flex-col shadow-lg">
-        <div className="flex justify-between items-center p-5 border-b border-cream">
-          <h3 className="m-0 text-chocolate font-bold text-lg">Your Cart</h3>
-          <button onClick={onClose} className="bg-none border-none text-xl text-text-mid cursor-pointer p-1">
+    <div className="fixed inset-0 bg-black/60 z-[1000] flex items-center justify-end">
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="bg-white h-full w-full max-w-[450px] flex flex-col shadow-2xl"
+      >
+        <div className="flex justify-between items-center p-6 border-b border-cream bg-white sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <ShoppingBag className="text-rose-deep" size={24} />
+            <h3 className="m-0 text-chocolate font-bold text-xl font-playfair">Your Cart ({cartCount})</h3>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-cream rounded-full transition-colors text-text-soft">
             <X size={24} />
           </button>
         </div>
 
-        <div className="p-5 overflow-y-auto flex-1">
+        <div className="p-6 overflow-y-auto flex-1 bg-cream/10">
           {cart.length === 0 ? (
-            <p className="text-center text-text-soft py-10">Your cart is empty.</p>
-          ) : (
-            cart.map((item) => (
-              <div key={item.id} className="flex justify-between items-center gap-3 py-3 border-b border-cream last:border-b-0">
-                <div className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-white border border-cream relative">
-                  <Image src={item.img} alt={item.name} fill className="object-cover" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="m-0 text-sm font-semibold text-chocolate line-clamp-1">{item.name}</h4>
-                  <div className="text-rose font-bold text-sm">₹{item.price} x {item.quantity}</div>
-                </div>
-                <button
-                  onClick={() => removeFromCart(item.id)}
-                  className="bg-none border-none text-rose cursor-pointer p-2 hover:bg-cream rounded-full transition-colors"
-                >
-                  <Trash2 size={18} />
-                </button>
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+              <div className="w-20 h-20 bg-cream rounded-full flex items-center justify-center text-rose/30">
+                <ShoppingBag size={40} />
               </div>
-            ))
+              <p className="text-chocolate font-medium">Your cart is feeling light...</p>
+              <button
+                onClick={onClose}
+                className="text-rose-deep font-bold text-sm hover:underline"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <AnimatePresence>
+                {cart.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-white rounded-2xl p-4 flex gap-4 shadow-sm border border-cream/50 group"
+                  >
+                    <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream">
+                      <Image src={item.img} alt={item.name} fill className="object-cover" />
+                    </div>
+
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="m-0 text-[0.95rem] font-bold text-chocolate line-clamp-1 leading-tight">{item.name}</h4>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-text-soft hover:text-rose-deep transition-colors shrink-0"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                        <p className="text-xs text-text-soft mt-1">{item.flavor || 'Standard'}</p>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-2">
+                        <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
+
+                        <div className="flex items-center gap-3 bg-cream/50 rounded-full px-2 py-1 border border-cream">
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="text-sm font-bold text-chocolate min-w-[1.2rem] text-center">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           )}
         </div>
 
-        <div className="p-5 border-t border-cream flex justify-between items-center bg-cream/30">
-          <div className="text-lg font-bold text-chocolate">Total: ₹{cartTotal}</div>
+        <div className="p-8 border-t border-cream bg-white space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-text-soft font-medium">Subtotal</span>
+            <span className="text-2xl font-bold text-chocolate">₹{cartTotal}</span>
+          </div>
+
           <button
             onClick={() => {
               onClose();
               router.push('/checkout');
             }}
             disabled={cart.length === 0}
-            className="btn btn-primary px-8"
+            className="w-full py-4 bg-rose-deep text-white rounded-full font-bold text-lg shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none"
           >
-            Checkout
+            Checkout Now
           </button>
+
+          <p className="text-[0.7rem] text-center text-text-soft">
+            Shipping and taxes calculated at checkout
+          </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
