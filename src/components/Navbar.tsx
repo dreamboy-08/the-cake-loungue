@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useCart } from '@/context/CartContext';
+import CartModal from './CartModal';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,6 +17,8 @@ const Navbar = () => {
   const [isHidden, setIsHidden] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,27 +64,39 @@ const Navbar = () => {
               Cake <span className={isScrolled ? "text-rose" : "text-blush"}>Lounge</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-6">
-              <Link href="/custom-cake" className={cn(
-                "text-[0.95rem] font-semibold transition-colors duration-250",
-                isScrolled ? "text-text-mid" : "text-[rgba(255,255,255,0.95)]"
-              )}>
-                Custom Cake
-              </Link>
-              <Link href="/checkout" className="bg-rose-deep text-white px-6 py-[10px] rounded-[50px] text-[0.85rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown hover:translate-y-[-1px]">
-                Order Now
-              </Link>
-            </div>
+            <div className="flex items-center gap-4 md:gap-6">
+              <div className="flex items-center gap-3 md:gap-6">
+                <Link href="/checkout" className="bg-rose-deep text-white px-4 md:px-6 py-[8px] md:py-[10px] rounded-[50px] text-[0.75rem] md:text-[0.85rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown hover:translate-y-[-1px]">
+                  Order Now
+                </Link>
 
-            <button
-              className="md:hidden flex flex-col gap-[5px] p-1 bg-none border-none cursor-pointer"
-              onClick={toggleMobileMenu}
-              aria-label="Open menu"
-            >
-              <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
-              <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
-              <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
-            </button>
+                <button
+                  onClick={() => setIsCartModalOpen(true)}
+                  className={cn(
+                    "relative p-2 rounded-full transition-all duration-300",
+                    isScrolled ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                  )}
+                  aria-label="View Cart"
+                >
+                  <ShoppingCart size={24} />
+                  {cartCount > 0 && (
+                    <div className="absolute top-1 right-1 bg-gold text-chocolate text-[0.65rem] font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                      {cartCount}
+                    </div>
+                  )}
+                </button>
+              </div>
+
+              <button
+                className="md:hidden flex flex-col gap-[5px] p-1 bg-none border-none cursor-pointer"
+                onClick={toggleMobileMenu}
+                aria-label="Open menu"
+              >
+                <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
+                <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
+                <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", isScrolled ? "bg-chocolate" : "bg-white")}></span>
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -121,11 +137,12 @@ const Navbar = () => {
         </button>
         <Link href="/" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
         <Link href="/menu" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Menu</Link>
-        <Link href="/custom-cake" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Custom Cake</Link>
         <Link href="/checkout" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Order</Link>
         <Link href="/#about" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
         <Link href="/#contact" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
       </div>
+
+      <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
     </>
   );
 };
