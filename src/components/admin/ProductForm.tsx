@@ -16,7 +16,7 @@ import {
   uploadBytes,
   getDownloadURL
 } from 'firebase/storage';
-import { X, Upload, Loader2, Plus, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Loader2, Plus, Image as ImageIcon, Link as LinkIcon, AlertCircle } from 'lucide-react';
 
 interface ProductFormProps {
   product?: any;
@@ -40,6 +40,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     tag: product?.tag || '',
     rating: product?.rating || 5,
     reviews: product?.reviews || 0,
+    imageUrl: product?.img || '',
   });
 
   useEffect(() => {
@@ -56,6 +57,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       const file = e.target.files[0];
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
+      setFormData(prev => ({ ...prev, imageUrl: '' }));
     }
   };
 
@@ -64,19 +66,36 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setLoading(true);
 
     try {
-      let imageUrl = product?.img || '';
+      let finalImageUrl = formData.imageUrl || product?.img || '';
 
       if (imageFile) {
-        const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-        const uploadResult = await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(uploadResult.ref);
+        try {
+          const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+          const uploadResult = await uploadBytes(storageRef, imageFile);
+          finalImageUrl = await getDownloadURL(uploadResult.ref);
+        } catch (storageError: any) {
+          console.error("Storage upload failed:", storageError);
+          if (storageError.code === 'storage/unauthorized' || storageError.code === 'storage/retry-limit-exceeded') {
+            alert("Firebase Storage is unavailable or restricted. Please provide a direct Image URL instead.");
+            setLoading(false);
+            return;
+          }
+          throw storageError;
+        }
       }
 
+      if (!finalImageUrl) {
+        alert("Please upload an image or provide an image URL.");
+        setLoading(false);
+        return;
+      }
+
+      const { imageUrl, ...restData } = formData;
       const productData = {
-        ...formData,
+        ...restData,
         price: Number(formData.price),
         oldPrice: Number(formData.oldPrice),
-        img: imageUrl,
+        img: finalImageUrl,
         updatedAt: new Date().toISOString(),
       };
 
@@ -113,14 +132,21 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Image Upload Section */}
             <div className="space-y-4">
-              <label className="block text-sm font-bold text-chocolate uppercase tracking-wider">Product Image</label>
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-bold text-chocolate uppercase tracking-wider">Product Image</label>
+                <div className="flex items-center gap-1 text-[10px] font-bold text-rose-deep bg-rose/5 px-2 py-0.5 rounded uppercase">
+                  <AlertCircle size={10} />
+                  <span>Storage Fallback Active</span>
+                </div>
+              </div>
+
               <div
                 className="relative aspect-square rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-rose-deep/50 group cursor-pointer"
                 onClick={() => document.getElementById('image-upload')?.click()}
               >
-                {imagePreview ? (
+                {(imagePreview || formData.imageUrl) ? (
                   <>
-                    <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <img src={imagePreview || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <Upload className="text-white" size={32} />
                     </div>
@@ -128,8 +154,8 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                 ) : (
                   <div className="text-center p-6">
                     <ImageIcon className="mx-auto text-gray-300 mb-4" size={48} />
-                    <p className="text-sm text-gray-500 font-medium">Click to upload product image</p>
-                    <p className="text-xs text-gray-400 mt-1">PNG, JPG or WebP (Max 2MB)</p>
+                    <p className="text-sm text-gray-500 font-medium">Click to upload image</p>
+                    <p className="text-xs text-gray-400 mt-1">or provide URL below</p>
                   </div>
                 )}
                 <input
@@ -139,6 +165,25 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   onChange={handleImageChange}
                   className="hidden"
                 />
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest">
+                  <LinkIcon size={12} />
+                  <span>Image URL (Fallback)</span>
+                </label>
+                <input
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={(e) => {
+                    setFormData({ ...formData, imageUrl: e.target.value });
+                    setImagePreview('');
+                    setImageFile(null);
+                  }}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-xs"
+                />
+                <p className="text-[10px] text-gray-400 italic">Use this if image upload fails or is unavailable.</p>
               </div>
             </div>
 
