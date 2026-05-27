@@ -28,6 +28,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password';
+  const isAdminPage = pathname.startsWith('/admin');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,10 +61,11 @@ const Navbar = () => {
         id="navbar"
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
-          isHidden && "translate-y-[-100%]",
+          (isHidden || isAdminPage) && "translate-y-[-100%]",
           (isScrolled || isAuthPage)
             ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"
-            : "bg-black/10 backdrop-blur-sm"
+            : "bg-black/10 backdrop-blur-sm",
+          isAdminPage && "hidden"
         )}
       >
         <div className="container mx-auto px-6">
@@ -146,7 +148,7 @@ const Navbar = () => {
       </nav>
 
       {/* CATEGORY BAR (Desktop) */}
-      {!isAuthPage && (
+      {!isAuthPage && !isAdminPage && (
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",

@@ -17,6 +17,8 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
+  role: string | null;
+  isAdmin: boolean;
   loading: boolean;
   logout: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -29,28 +31,41 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setLoading(true);
       setUser(firebaseUser);
-      setLoading(false);
 
       if (firebaseUser) {
         // Ensure user document exists in Firestore (especially for Google Sign-In)
         const userDocRef = doc(db, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userDocRef);
+        let userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
-          await setDoc(userDocRef, {
+          const userData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
             createdAt: new Date().toISOString(),
             role: 'user'
-          });
+          };
+          await setDoc(userDocRef, userData);
+          setRole('user');
+          setIsAdmin(false);
+        } else {
+          const data = userDoc.data();
+          setRole(data?.role || 'user');
+          setIsAdmin(data?.role === 'admin');
         }
+      } else {
+        setRole(null);
+        setIsAdmin(false);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -92,6 +107,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <AuthContext.Provider value={{
       user,
+      role,
+      isAdmin,
       loading,
       logout,
       signInWithGoogle,
