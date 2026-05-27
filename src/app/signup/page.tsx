@@ -40,8 +40,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream pt-32 pb-20 flex items-center justify-center px-6">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-xl overflow-hidden">
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-[100px] lg:pt-0">
+      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
         <div className="bg-rose-deep py-8 px-6 text-center">
           <h1 className="font-playfair text-3xl font-bold text-white">Create Account</h1>
           <p className="text-white/80 mt-2">Join the Cake Lounge family today</p>

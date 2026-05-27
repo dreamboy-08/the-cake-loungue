@@ -44,7 +44,16 @@ The following collections are used:
 
 ### Seeding Data
 
-You can use the `seedFirestore` function in `src/utils/seedFirestore.ts` to populate your Firestore instance with initial products and categories.
+You can use the `seedFirestore` function in `src/utils/seedFirestore.ts` to populate your Firestore instance with initial products and categories. Currently, this is a utility function that you can call from a temporary admin route or a useEffect in a protected page during initial setup.
+
+## Troubleshooting: "Invalid API Key"
+
+If you see a `Firebase: Error (auth/api-key-not-valid)` error:
+
+1. **Environment Variables**: Ensure all `NEXT_PUBLIC_FIREBASE_*` variables are set in your deployment environment (e.g., Vercel Project Settings > Environment Variables).
+2. **Prefix**: In Next.js, client-side environment variables **must** start with `NEXT_PUBLIC_`.
+3. **Re-deployment**: After adding environment variables in Vercel, you must trigger a new deployment for them to take effect.
+4. **Local Testing**: Create a `.env.local` file for local development.
 
 ## Implementation Details
 
