@@ -1,4 +1,18 @@
-window.bakeryMenu = [
+export interface Product {
+  id: number;
+  name: string;
+  flavor: string;
+  category: string;
+  price: number;
+  oldPrice: number;
+  rating: number;
+  reviews: number;
+  tag: string;
+  img: string;
+  description: string;
+}
+
+export const products: Product[] = [
   {
     "id": 1,
     "name": "Royal Raspberry Birthday Cake",
@@ -4445,4 +4459,4 @@ window.bakeryMenu = [
     "img": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
     "description": "Corporate Bakery Hamper crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   }
-]
+];
