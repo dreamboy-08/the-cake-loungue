@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { products } from '@/constants/products';
+import { Product, products } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
-import SearchBar from './SearchBar';
-import { filterProducts } from '@/utils/filterProducts';
 
 interface CategoryPageProps {
   category: string;
@@ -16,12 +14,7 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = ({ category, title, description, subtitle }: CategoryPageProps) => {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredProducts = useMemo(() => {
-    const categoryFiltered = products.filter((product) => product.category === category);
-    return filterProducts(categoryFiltered, searchQuery);
-  }, [category, searchQuery]);
+  const filteredProducts = products.filter((p) => p.category === category);
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
@@ -31,7 +24,7 @@ const CategoryPage = ({ category, title, description, subtitle }: CategoryPagePr
           Back to Home
         </Link>
 
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-rose font-bold text-sm uppercase tracking-widest mb-4 block animate-fade-in">
             {subtitle}
           </span>
@@ -43,20 +36,11 @@ const CategoryPage = ({ category, title, description, subtitle }: CategoryPagePr
           </p>
         </div>
 
-        <SearchBar onSearch={setSearchQuery} placeholder={`Search in ${title}...`} />
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-20">
-            <h3 className="text-2xl font-playfair font-bold text-chocolate mb-2">No cakes found</h3>
-            <p className="text-text-soft">Try adjusting your search query.</p>
-          </div>
-        )}
       </div>
     </div>
   );
