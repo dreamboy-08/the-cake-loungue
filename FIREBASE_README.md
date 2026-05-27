@@ -55,6 +55,14 @@ If you see a `Firebase: Error (auth/api-key-not-valid)` error:
 3. **Re-deployment**: After adding environment variables in Vercel, you must trigger a new deployment for them to take effect.
 4. **Local Testing**: Create a `.env.local` file for local development.
 
+## Troubleshooting: "Unauthorized Domain"
+
+If you see a `Firebase: Error (auth/unauthorized-domain)` error when using Google Sign-In or other popup-based authentication:
+
+1. **Authorized Domains**: Go to **Firebase Console > Authentication > Settings > Authorized Domains**.
+2. **Add Domain**: Add your Vercel preview URLs (e.g., `cake-lounge-xyz.vercel.app`) and your production domains (`thecakelounge.in`) to this list.
+3. **Wait**: It can take a few minutes for domain authorization changes to propagate.
+
 ## Implementation Details
 
 - **AuthContext**: Global authentication state managed via `src/context/AuthContext.tsx`.
