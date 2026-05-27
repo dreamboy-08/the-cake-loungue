@@ -7,6 +7,7 @@ import { Menu, X, ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import CartModal from './CartModal';
 import { MEGA_MENU } from '@/constants/navigation';
 
@@ -22,6 +23,7 @@ const Navbar = () => {
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -70,7 +72,34 @@ const Navbar = () => {
 
             <div className="flex items-center gap-4 md:gap-6">
               <div className="flex items-center gap-3 md:gap-6">
-                <Link href="/checkout" className="bg-rose-deep text-white px-4 md:px-6 py-[8px] md:py-[10px] rounded-[50px] text-[0.75rem] md:text-[0.85rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown hover:translate-y-[-1px]">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => logout()}
+                      className={cn(
+                        "text-[0.85rem] font-semibold transition-colors",
+                        isScrolled ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
+                      )}
+                    >
+                      Logout
+                    </button>
+                    <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
+                      {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className={cn(
+                      "text-[0.85rem] font-semibold transition-colors",
+                      isScrolled ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
+                    )}
+                  >
+                    Login
+                  </Link>
+                )}
+
+                <Link href="/checkout" className="hidden sm:block bg-rose-deep text-white px-4 md:px-6 py-[8px] md:py-[10px] rounded-[50px] text-[0.75rem] md:text-[0.85rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown hover:translate-y-[-1px]">
                   Order Now
                 </Link>
 
@@ -202,6 +231,36 @@ const Navbar = () => {
           </div>
 
           <div className="flex flex-col gap-4 pt-4 border-t border-rose/10">
+            {user ? (
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-rose/5">
+                  <div className="w-12 h-12 rounded-full bg-rose-deep flex items-center justify-center text-white text-xl font-bold">
+                    {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-bold text-chocolate">{user.displayName || 'User'}</span>
+                    <span className="text-xs text-chocolate/60 truncate max-w-[180px]">{user.email}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full bg-rose/10 text-rose font-bold py-3 rounded-xl hover:bg-rose/20 transition-all text-center"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="w-full bg-rose-deep text-white font-bold py-4 rounded-xl shadow-lg shadow-rose-deep/20 text-center"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Login / Sign Up
+              </Link>
+            )}
             <Link href="/menu" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Full Menu</Link>
             <Link href="/#about" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
             <Link href="/#contact" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
