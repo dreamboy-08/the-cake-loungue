@@ -129,74 +129,102 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addAddress = async (address: Omit<Address, 'id'>) => {
-    if (!user) return;
-    const userDocRef = doc(db, 'users', user.uid);
-    const newAddress = {
-      ...address,
-      id: Math.random().toString(36).substring(2, 9)
-    };
+    if (!user) throw new Error("User not authenticated");
 
-    // If it's the first address or set as default, handle default logic
-    const currentAddresses = userData?.addresses || [];
-    if (newAddress.isDefault || currentAddresses.length === 0) {
-      newAddress.isDefault = true;
-      const updatedAddresses = currentAddresses.map((a: Address) => ({ ...a, isDefault: false }));
-      await updateDoc(userDocRef, {
-        addresses: [...updatedAddresses, newAddress]
-      });
-    } else {
-      await updateDoc(userDocRef, {
-        addresses: arrayUnion(newAddress)
-      });
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      const newAddress = {
+        ...address,
+        id: Math.random().toString(36).substring(2, 9)
+      };
+
+      // If it's the first address or set as default, handle default logic
+      const currentAddresses = userData?.addresses || [];
+      let updatedAddresses: Address[] = [];
+
+      if (newAddress.isDefault || currentAddresses.length === 0) {
+        newAddress.isDefault = true;
+        updatedAddresses = [
+          ...currentAddresses.map((a: Address) => ({ ...a, isDefault: false })),
+          newAddress
+        ];
+      } else {
+        updatedAddresses = [...currentAddresses, newAddress];
+      }
+
+      await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
+
+      // Update local state immediately
+      setUserData({ ...userData, addresses: updatedAddresses });
+      console.log("Address added successfully:", newAddress.id);
+    } catch (error) {
+      console.error("Error adding address:", error);
+      throw error;
     }
-
-    // Refresh user data
-    const updatedDoc = await getDoc(userDocRef);
-    setUserData(updatedDoc.data());
   };
 
   const updateAddress = async (id: string, updatedFields: Partial<Address>) => {
-    if (!user || !userData) return;
-    const userDocRef = doc(db, 'users', user.uid);
+    if (!user || !userData) throw new Error("User not authenticated or data missing");
 
-    let updatedAddresses = userData.addresses.map((addr: Address) => {
-      if (addr.id === id) {
-        return { ...addr, ...updatedFields };
-      }
-      if (updatedFields.isDefault && addr.id !== id) {
-        return { ...addr, isDefault: false };
-      }
-      return addr;
-    });
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      const updatedAddresses = userData.addresses.map((addr: Address) => {
+        if (addr.id === id) {
+          return { ...addr, ...updatedFields };
+        }
+        if (updatedFields.isDefault && addr.id !== id) {
+          return { ...addr, isDefault: false };
+        }
+        return addr;
+      });
 
-    await updateDoc(userDocRef, { addresses: updatedAddresses });
-    setUserData({ ...userData, addresses: updatedAddresses });
+      await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
+      setUserData({ ...userData, addresses: updatedAddresses });
+      console.log("Address updated successfully:", id);
+    } catch (error) {
+      console.error("Error updating address:", error);
+      throw error;
+    }
   };
 
   const deleteAddress = async (id: string) => {
-    if (!user || !userData) return;
-    const userDocRef = doc(db, 'users', user.uid);
-    const updatedAddresses = userData.addresses.filter((addr: Address) => addr.id !== id);
+    if (!user || !userData) throw new Error("User not authenticated or data missing");
 
-    // If we deleted the default, set the first remaining as default if any
-    if (updatedAddresses.length > 0 && !updatedAddresses.some((a: Address) => a.isDefault)) {
-      updatedAddresses[0].isDefault = true;
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      let updatedAddresses = userData.addresses.filter((addr: Address) => addr.id !== id);
+
+      // If we deleted the default, set the first remaining as default if any
+      if (updatedAddresses.length > 0 && !updatedAddresses.some((a: Address) => a.isDefault)) {
+        updatedAddresses[0].isDefault = true;
+      }
+
+      await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
+      setUserData({ ...userData, addresses: updatedAddresses });
+      console.log("Address deleted successfully:", id);
+    } catch (error) {
+      console.error("Error deleting address:", error);
+      throw error;
     }
-
-    await updateDoc(userDocRef, { addresses: updatedAddresses });
-    setUserData({ ...userData, addresses: updatedAddresses });
   };
 
   const setDefaultAddress = async (id: string) => {
-    if (!user || !userData) return;
-    const userDocRef = doc(db, 'users', user.uid);
-    const updatedAddresses = userData.addresses.map((addr: Address) => ({
-      ...addr,
-      isDefault: addr.id === id
-    }));
+    if (!user || !userData) throw new Error("User not authenticated or data missing");
 
-    await updateDoc(userDocRef, { addresses: updatedAddresses });
-    setUserData({ ...userData, addresses: updatedAddresses });
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      const updatedAddresses = userData.addresses.map((addr: Address) => ({
+        ...addr,
+        isDefault: addr.id === id
+      }));
+
+      await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
+      setUserData({ ...userData, addresses: updatedAddresses });
+      console.log("Default address set successfully:", id);
+    } catch (error) {
+      console.error("Error setting default address:", error);
+      throw error;
+    }
   };
 
   return (

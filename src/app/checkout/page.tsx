@@ -19,13 +19,26 @@ const CheckoutPage = () => {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
 
-  // Set default address if available
+  // Set default address if available and ensure selectedAddress is valid
   useEffect(() => {
-    if (userData?.addresses && !selectedAddress) {
-      const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
-      if (defaultAddr) setSelectedAddress(defaultAddr);
+    if (userData?.addresses) {
+      // If no address selected, try to set default
+      if (!selectedAddress) {
+        const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
+        if (defaultAddr) setSelectedAddress(defaultAddr);
+      } else {
+        // Verify currently selected address still exists in user's list
+        const stillExists = userData.addresses.find((a: Address) => a.id === selectedAddress.id);
+        if (!stillExists) {
+          const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
+          setSelectedAddress(defaultAddr || null);
+        } else {
+          // Keep it updated if changed (e.g. name or phone update)
+          setSelectedAddress(stillExists);
+        }
+      }
     }
-  }, [userData, selectedAddress]);
+  }, [userData?.addresses, selectedAddress?.id]);
 
   useEffect(() => {
     // Dynamically load Razorpay script

@@ -10,6 +10,8 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null); // To track which address action is loading
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<Omit<Address, 'id'>>({
     name: '',
@@ -32,6 +34,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       if (editingId) {
         await updateAddress(editingId, formData);
@@ -49,8 +52,9 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
         zipCode: '',
         isDefault: false
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving address:", error);
+      setError(error.message || "Failed to save address. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,12 +103,19 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
             <div className="flex justify-between items-center mb-6">
               <h4 className="font-bold text-chocolate">{editingId ? 'Edit Address' : 'Add New Address'}</h4>
               <button
-                onClick={() => { setIsAdding(false); setEditingId(null); }}
+                onClick={() => { setIsAdding(false); setEditingId(null); setError(null); }}
                 className="text-text-soft hover:text-chocolate"
               >
                 <X size={20} />
               </button>
             </div>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm flex items-center gap-2">
+                <CheckCircle2 size={16} className="rotate-45" /> {error}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
@@ -217,16 +228,34 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                     <Edit2 size={14} /> Edit
                   </button>
                   <button
-                    onClick={(e) => { e.stopPropagation(); deleteAddress(address.id); }}
-                    className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-600"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      setActionLoading(address.id);
+                      try {
+                        await deleteAddress(address.id);
+                      } catch (err) {}
+                      setActionLoading(null);
+                    }}
+                    disabled={!!actionLoading}
+                    className="flex items-center gap-1 text-xs font-bold text-red-500 hover:text-red-600 disabled:opacity-50"
                   >
-                    <Trash2 size={14} /> Delete
+                    {actionLoading === address.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={14} />}
+                    Delete
                   </button>
                   {!address.isDefault && (
                     <button
-                      onClick={(e) => { e.stopPropagation(); setDefaultAddress(address.id); }}
-                      className="flex items-center gap-1 text-xs font-bold text-rose-deep hover:underline ml-auto"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        setActionLoading(address.id);
+                        try {
+                          await setDefaultAddress(address.id);
+                        } catch (err) {}
+                        setActionLoading(null);
+                      }}
+                      disabled={!!actionLoading}
+                      className="flex items-center gap-1 text-xs font-bold text-rose-deep hover:underline ml-auto disabled:opacity-50"
                     >
+                      {actionLoading === address.id && <Loader2 size={12} className="animate-spin" />}
                       Set Default
                     </button>
                   )}
