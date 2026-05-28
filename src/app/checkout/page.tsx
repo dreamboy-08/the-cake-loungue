@@ -41,6 +41,16 @@ const CheckoutPage = () => {
     }
   }, [userData?.addresses, selectedAddress?.id]);
 
+  // Warm up backend to handle Render cold starts
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
+    fetch(backendUrl)
+      .then(res => {
+        if (res.ok) console.log('Backend warmed up successfully');
+      })
+      .catch(err => console.warn('Backend warm up failed (expected if server is spin-down):', err.message));
+  }, []);
+
   useEffect(() => {
     // Dynamically load Razorpay script
     const script = document.createElement('script');
@@ -75,9 +85,11 @@ const CheckoutPage = () => {
     setErrorMessage(null);
 
     try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
       console.log('Initiating checkout for amount:', finalTotal);
       // Step 1: Create order on backend
-      const orderResponse = await fetch(`${API_URL}/api/orders`, {
+      console.log('Step 1: Creating order on backend...');
+      const orderResponse = await fetch(`${backendUrl}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -92,13 +104,15 @@ const CheckoutPage = () => {
       const orderData = await orderResponse.json();
 
       if (!orderResponse.ok) {
-        throw new Error(orderData.error || 'Failed to initialize payment');
+        const errorData = await orderResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Backend server is currently unavailable. Please try again in a moment.');
       }
 
       const { order, keyId } = orderData;
       console.log('Backend order created:', order.id);
 
       // Step 2: Open Razorpay
+      console.log('Step 2: Opening Razorpay modal...');
       const options = {
         key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
@@ -109,8 +123,8 @@ const CheckoutPage = () => {
         handler: async (response: any) => {
           setPaymentStatus('verifying');
           try {
-            console.log('Razorpay payment successful, verifying...', response.razorpay_payment_id);
-            const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
+            console.log('Step 3: Razorpay payment successful, verifying...', response.razorpay_payment_id);
+            const verifyResponse = await fetch(`${backendUrl}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -120,53 +134,44 @@ const CheckoutPage = () => {
               }),
             });
 
-            const verifyData = await verifyResponse.json();
-
-            if (verifyResponse.ok && verifyData.success) {
+            if (verifyResponse.ok) {
               console.log('Payment verified successfully');
-              // Step 3: Save order to Firestore with idempotency
-              const orderId = response.razorpay_order_id;
-              const orderRef = doc(db, 'orders', orderId);
+              // Step 4: Save order to Firestore
+              console.log('Step 4: Saving order to Firestore...');
+              const orderDoc = {
+                userId: user?.uid || 'guest',
+                customer: {
+                  name: selectedAddress.name,
+                  email: user?.email || 'guest@example.com',
+                  phone: selectedAddress.phone,
+                },
+                shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+                items: cart,
+                totalAmount: finalTotal,
+                shippingFee,
+                subtotal: cartTotal,
+                status: 'Confirmed',
+                paymentId: response.razorpay_payment_id,
+                orderId: response.razorpay_order_id,
+                createdAt: new Date().toISOString(),
+              };
 
-              // Check if order already exists to prevent duplicates
-              const existingOrder = await getDoc(orderRef);
-              if (!existingOrder.exists()) {
-                const orderDoc = {
-                  userId: user?.uid || 'guest',
-                  customer: {
-                    name: selectedAddress.name,
-                    email: user?.email || 'guest@example.com',
-                    phone: selectedAddress.phone,
-                  },
-                  shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
-                  items: cart,
-                  totalAmount: finalTotal,
-                  shippingFee,
-                  subtotal: cartTotal,
-                  status: 'Confirmed',
-                  paymentStatus: 'Paid',
-                  paymentId: response.razorpay_payment_id,
-                  razorpayOrderId: response.razorpay_order_id,
-                  paymentSignature: response.razorpay_signature,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                };
-
-                await setDoc(orderRef, orderDoc);
-                console.log('Order saved to Firestore successfully');
-              }
+              await addDoc(collection(db, 'orders'), orderDoc);
+              console.log('Order saved to Firestore successfully');
 
               setPaymentStatus('success');
               clearCart();
               router.push(`/checkout/success?orderId=${orderId}&paymentId=${response.razorpay_payment_id}`);
             } else {
-              throw new Error(verifyData.error || 'Payment verification failed');
+              const errorData = await verifyResponse.json().catch(() => ({}));
+              console.error('Verification failed:', errorData.error);
+              setPaymentStatus('error');
+              alert(`Payment verification failed: ${errorData.error || 'Please contact support.'}`);
             }
           } catch (error: any) {
             console.error('Verification error:', error);
             setPaymentStatus('error');
-            setErrorMessage(error.message || 'Payment verification failed. Please contact support.');
-            router.push(`/checkout/failure?error=${encodeURIComponent(error.message || 'Verification failed')}`);
+            alert(`Error during payment verification: ${error.message}`);
           }
         },
         prefill: {
@@ -194,7 +199,7 @@ const CheckoutPage = () => {
       rzp.open();
     } catch (error: any) {
       console.error('Checkout error:', error);
-      setErrorMessage(error.message || 'Checkout failed. Please try again.');
+      alert(`Checkout failed: ${error.message}`);
       setPaymentStatus('error');
       setLoading(false);
     }
