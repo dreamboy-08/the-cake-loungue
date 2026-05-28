@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/utils/firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
-import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search } from 'lucide-react';
+import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCard, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -63,7 +63,7 @@ const OrdersPage = () => {
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
-      <div className="container mx-auto px-6 max-w-4xl">
+      <div className="container mx-auto px-6 max-w-5xl">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-4xl font-bold font-playfair text-chocolate mb-2">Order History</h1>
@@ -103,7 +103,7 @@ const OrdersPage = () => {
                 key={order.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-3xl p-6 shadow-sm border border-cream hover:shadow-md transition-shadow"
+                className="bg-white rounded-[40px] p-6 md:p-8 shadow-sm border border-cream hover:shadow-md transition-shadow relative overflow-hidden"
               >
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-cream/50">
                   <div className="flex items-center gap-4">
@@ -111,15 +111,21 @@ const OrdersPage = () => {
                       <Package size={24} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-text-soft uppercase tracking-widest">Order ID</p>
+                      <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest">Order ID</p>
                       <p className="font-mono font-bold text-chocolate">#{order.id.slice(-8).toUpperCase()}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(order.status)}`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusColor(order.status)}`}>
                       {order.status}
                     </div>
+                    {order.paymentStatus === 'Paid' && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-green-100">
+                        <CheckCircle2 size={12} />
+                        Paid
+                      </div>
+                    )}
                     <Link
                       href={`/orders/${order.id}`}
                       className="p-2 bg-cream/30 hover:bg-rose-deep hover:text-white rounded-full transition-all text-chocolate"
@@ -129,36 +135,42 @@ const OrdersPage = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-text-soft text-sm">
+                    <div className="flex items-center gap-2 text-text-soft text-sm font-medium">
                       <Calendar size={16} />
                       {new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
                     </div>
                     <div className="flex -space-x-3 overflow-hidden">
-                      {order.items.slice(0, 3).map((item: any, idx: number) => (
-                        <div key={idx} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-cream">
+                      {order.items.slice(0, 4).map((item: any, idx: number) => (
+                        <div key={idx} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-cream shadow-sm">
                           <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                         </div>
                       ))}
-                      {order.items.length > 3 && (
+                      {order.items.length > 4 && (
                         <div className="w-10 h-10 rounded-full border-2 border-white bg-chocolate text-white text-[10px] font-bold flex items-center justify-center">
-                          +{order.items.length - 3}
+                          +{order.items.length - 4}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-xs font-bold text-text-soft uppercase tracking-widest mb-1">Items</p>
-                    <p className="text-sm text-chocolate font-medium line-clamp-2">
+                  <div className="md:col-span-2">
+                    <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-2">Items Ordered</p>
+                    <p className="text-sm text-chocolate font-medium leading-relaxed">
                       {order.items.map((i: any) => `${i.name} (x${i.quantity})`).join(', ')}
                     </p>
                   </div>
 
                   <div className="text-right">
-                    <p className="text-xs font-bold text-text-soft uppercase tracking-widest mb-1">Total Amount</p>
-                    <p className="text-2xl font-black text-rose-deep">₹{order.totalAmount}</p>
+                    <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Total Amount</p>
+                    <p className="text-3xl font-black text-rose-deep">₹{order.totalAmount}</p>
+                    {order.paymentId && (
+                      <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-text-soft font-mono">
+                        <CreditCard size={12} />
+                        {order.paymentId.slice(0, 12)}...
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>

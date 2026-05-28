@@ -39,11 +39,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-[100px] lg:pt-0">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
-        <div className="bg-rose-deep py-8 px-6 text-center">
-          <h1 className="font-playfair text-3xl font-bold text-white">Welcome Back</h1>
-          <p className="text-white/80 mt-2">Login to your Cake Lounge account</p>
+    <div className="min-h-screen bg-cream flex items-center justify-center px-6 py-20 md:py-32">
+      <div className="max-w-md w-full bg-white rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
+        <div className="bg-rose-deep pt-12 pb-10 px-8 text-center">
+          <h1 className="font-playfair text-4xl font-bold text-white leading-tight">Welcome Back</h1>
+          <p className="text-white/80 mt-2 font-medium">Login to your Cake Lounge account</p>
         </div>
 
         <div className="p-8">

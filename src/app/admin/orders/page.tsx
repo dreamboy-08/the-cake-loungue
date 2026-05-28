@@ -24,7 +24,8 @@ import {
   Calendar,
   Loader2,
   Filter,
-  ArrowUpRight
+  ArrowUpRight,
+  ShieldCheck
 } from 'lucide-react';
 
 const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'];
@@ -75,7 +76,8 @@ const AdminOrders = () => {
     const matchesSearch =
       o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (o.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (o.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+      (o.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (o.paymentId || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
 
@@ -99,7 +101,7 @@ const AdminOrders = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Order Management</h1>
-          <p className="text-gray-500 mt-1">Track and manage customer cake orders.</p>
+          <p className="text-gray-500 mt-1">Track and manage customer cake orders and payments.</p>
         </div>
         <button
           onClick={fetchOrders}
@@ -116,7 +118,7 @@ const AdminOrders = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
-              placeholder="Search by order ID, customer name or email..."
+              placeholder="Search by ID, name, email or payment ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
@@ -148,12 +150,12 @@ const AdminOrders = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Order ID</th>
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Customer</th>
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Date</th>
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Total</th>
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100 text-right">Actions</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Order ID</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Customer</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Payment</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Total</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Status</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -179,21 +181,25 @@ const AdminOrders = () => {
                 filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
-                      <span className="font-mono text-xs font-bold text-rose-deep bg-rose/5 px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
+                      <span className="font-mono text-[10px] font-bold text-rose-deep bg-rose/5 px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
                       <div className="flex flex-col">
                         <span className="font-bold text-chocolate text-sm">{order.customer?.name || 'Guest'}</span>
-                        <span className="text-xs text-gray-400">{order.customer?.email}</span>
+                        <span className="text-[10px] text-gray-400">{order.customer?.email}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
-                      <span className="text-xs text-gray-500 font-medium">
-                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${order.paymentStatus === 'Paid' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-orange-50 text-orange-600 border-orange-100'}`}>
+                          {order.paymentStatus === 'Paid' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                          {order.paymentStatus || 'Pending'}
+                        </span>
+                        <span className="text-[9px] font-mono text-gray-400 truncate max-w-[100px]">{order.paymentId || 'N/A'}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
-                      <span className="font-bold text-chocolate text-sm">₹{order.totalAmount || order.total}</span>
+                      <span className="font-bold text-chocolate text-sm">₹{order.totalAmount}</span>
                     </td>
                     <td className="px-6 py-4">
                       <select
@@ -225,7 +231,7 @@ const AdminOrders = () => {
             <div className="p-8 border-b flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
                 <h2 className="text-2xl font-bold font-playfair text-chocolate">Order Details</h2>
-                <p className="text-xs text-gray-400 mt-1">Status and items for #{selectedOrder.id.toUpperCase()}</p>
+                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest font-bold">#{selectedOrder.id.toUpperCase()}</p>
               </div>
               <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <XCircle size={28} className="text-gray-400" />
@@ -254,11 +260,11 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-rose-deep">
                     <User size={18} />
-                    <h3 className="font-bold text-sm uppercase tracking-wider">Customer Info</h3>
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Customer Info</h3>
                   </div>
                   <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50">
                     <p className="font-bold text-chocolate mb-1">{selectedOrder.customer?.name}</p>
@@ -269,7 +275,7 @@ const AdminOrders = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-rose-deep">
                     <MapPin size={18} />
-                    <h3 className="font-bold text-sm uppercase tracking-wider">Shipping Address</h3>
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Shipping Address</h3>
                   </div>
                   <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 min-h-[100px]">
                     <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
@@ -280,7 +286,7 @@ const AdminOrders = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-rose-deep">
                   <ShoppingBag size={18} />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Order Items</h3>
+                  <h3 className="font-bold text-xs uppercase tracking-wider">Order Items</h3>
                 </div>
                 <div className="space-y-3">
                   {(selectedOrder.items || []).map((item: any, idx: number) => (
@@ -291,7 +297,7 @@ const AdminOrders = () => {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>
-                          <span className="text-xs text-gray-400">₹{item.price} × {item.quantity}</span>
+                          <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
                         </div>
                       </div>
                       <span className="text-sm font-bold text-chocolate">₹{item.quantity * item.price}</span>
@@ -303,26 +309,42 @@ const AdminOrders = () => {
               <div className="pt-6 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-rose-deep mb-4">
                   <CreditCard size={18} />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">Payment & Total</h3>
+                  <h3 className="font-bold text-xs uppercase tracking-wider">Payment Details</h3>
                 </div>
                 <div className="bg-chocolate text-white p-8 rounded-[35px] shadow-xl relative overflow-hidden">
-                  <div className="relative z-10 space-y-3">
-                    <div className="flex justify-between text-white/60 text-sm">
-                      <span>Subtotal</span>
-                      <span>₹{selectedOrder.subtotal || selectedOrder.totalAmount - (selectedOrder.shippingFee || 0)}</span>
-                    </div>
-                    <div className="flex justify-between text-white/60 text-sm">
-                      <span>Delivery Fee</span>
-                      <span>₹{selectedOrder.shippingFee || 0}</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-4 border-t border-white/10 mt-4">
-                      <div>
-                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Total Received</p>
-                        <p className="text-3xl font-black text-blush">₹{selectedOrder.totalAmount}</p>
+                  <div className="relative z-10 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment Status</p>
+                        <div className="flex items-center gap-2">
+                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${selectedOrder.paymentStatus === 'Paid' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-orange-500/20 text-orange-400 border-orange-500/30'}`}>
+                              {selectedOrder.paymentStatus || 'Pending'}
+                           </span>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Payment ID</p>
-                        <p className="text-xs font-mono text-white/70">{selectedOrder.paymentId || 'N/A'}</p>
+                      <div className="space-y-1 text-right">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment ID</p>
+                        <p className="text-[10px] font-mono text-white/70 truncate">{selectedOrder.paymentId || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10">
+                      <div className="flex justify-between text-white/60 text-xs mb-2">
+                        <span>Subtotal</span>
+                        <span>₹{selectedOrder.subtotal || selectedOrder.totalAmount - (selectedOrder.shippingFee || 0)}</span>
+                      </div>
+                      <div className="flex justify-between text-white/60 text-xs mb-4">
+                        <span>Delivery Fee</span>
+                        <span>₹{selectedOrder.shippingFee || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-4 border-t border-white/10">
+                        <div>
+                          <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Total Amount</p>
+                          <p className="text-4xl font-black text-blush">₹{selectedOrder.totalAmount}</p>
+                        </div>
+                        <div className="text-right">
+                           <ShieldCheck className="text-white/20 inline-block" size={40} />
+                        </div>
                       </div>
                     </div>
                   </div>
