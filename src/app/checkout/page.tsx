@@ -40,6 +40,16 @@ const CheckoutPage = () => {
     }
   }, [userData?.addresses, selectedAddress?.id]);
 
+  // Warm up backend to handle Render cold starts
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
+    fetch(backendUrl)
+      .then(res => {
+        if (res.ok) console.log('Backend warmed up successfully');
+      })
+      .catch(err => console.warn('Backend warm up failed (expected if server is spin-down):', err.message));
+  }, []);
+
   useEffect(() => {
     // Dynamically load Razorpay script
     const script = document.createElement('script');
@@ -68,8 +78,11 @@ const CheckoutPage = () => {
     setPaymentStatus('processing');
 
     try {
-      // Step 1: Create order on backend (simulated for now or using Render API)
-      const orderResponse = await fetch('https://the-cake-loungue.onrender.com/api/orders', {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
+      console.log('Initiating checkout for amount:', finalTotal);
+      // Step 1: Create order on backend
+      console.log('Step 1: Creating order on backend...');
+      const orderResponse = await fetch(`${backendUrl}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -82,13 +95,16 @@ const CheckoutPage = () => {
       });
 
       if (!orderResponse.ok) {
-        throw new Error('Failed to create order');
+        const errorData = await orderResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Backend server is currently unavailable. Please try again in a moment.');
       }
 
       const orderData = await orderResponse.json();
       const { order, keyId } = orderData;
+      console.log('Backend order created:', order.id);
 
       // Step 2: Open Razorpay
+      console.log('Step 2: Opening Razorpay modal...');
       const options = {
         key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SnKyu6FLUmVKUj',
         amount: finalTotal * 100,
@@ -98,7 +114,8 @@ const CheckoutPage = () => {
         order_id: order.id,
         handler: async (response: any) => {
           try {
-            const verifyResponse = await fetch('https://the-cake-loungue.onrender.com/api/verify-payment', {
+            console.log('Step 3: Razorpay payment successful, verifying...', response.razorpay_payment_id);
+            const verifyResponse = await fetch(`${backendUrl}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -109,7 +126,9 @@ const CheckoutPage = () => {
             });
 
             if (verifyResponse.ok) {
-              // Step 3: Save order to Firestore
+              console.log('Payment verified successfully');
+              // Step 4: Save order to Firestore
+              console.log('Step 4: Saving order to Firestore...');
               const orderDoc = {
                 userId: user?.uid || 'guest',
                 customer: {
@@ -129,6 +148,7 @@ const CheckoutPage = () => {
               };
 
               await addDoc(collection(db, 'orders'), orderDoc);
+              console.log('Order saved to Firestore successfully');
 
               setPaymentStatus('success');
               setTimeout(() => {
@@ -136,12 +156,15 @@ const CheckoutPage = () => {
                 router.push('/orders');
               }, 2000);
             } else {
+              const errorData = await verifyResponse.json().catch(() => ({}));
+              console.error('Verification failed:', errorData.error);
               setPaymentStatus('error');
-              alert('Payment verification failed!');
+              alert(`Payment verification failed: ${errorData.error || 'Please contact support.'}`);
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('Verification error:', error);
             setPaymentStatus('error');
+            alert(`Error during payment verification: ${error.message}`);
           }
         },
         prefill: {
@@ -162,9 +185,9 @@ const CheckoutPage = () => {
 
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error);
-      alert('Checkout failed. Please try again.');
+      alert(`Checkout failed: ${error.message}`);
       setPaymentStatus('error');
     } finally {
       setLoading(false);
