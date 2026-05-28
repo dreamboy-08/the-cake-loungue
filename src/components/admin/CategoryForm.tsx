@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { db } from '@/utils/firebase';
-import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, setDoc, updateDoc, doc } from 'firebase/firestore';
 import { X, Loader2 } from 'lucide-react';
 
 interface CategoryFormProps {
@@ -33,7 +33,8 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
       if (category?.id) {
         await updateDoc(doc(db, 'categories', category.id), categoryData);
       } else {
-        await addDoc(collection(db, 'categories'), {
+        const newDocRef = doc(collection(db, 'categories'));
+        await setDoc(newDocRef, {
           ...categoryData,
           createdAt: new Date().toISOString(),
         });

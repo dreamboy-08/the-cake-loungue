@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { db, storage } from '@/utils/firebase';
 import {
   collection,
-  addDoc,
+  setDoc,
   updateDoc,
   doc,
   getDocs,
@@ -102,7 +102,8 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       if (product?.id) {
         await updateDoc(doc(db, 'products', product.id), productData);
       } else {
-        await addDoc(collection(db, 'products'), {
+        const newDocRef = doc(collection(db, 'products'));
+        await setDoc(newDocRef, {
           ...productData,
           createdAt: new Date().toISOString(),
         });
