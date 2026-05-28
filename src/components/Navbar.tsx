@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings } from 'lucide-react';
+import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings, Search } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import CartModal from './CartModal';
+import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,6 +24,7 @@ const Navbar = () => {
   const [lastScrollTop, setLastScrollTop] = useState(0);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
   const { user, logout, isAdmin } = useAuth();
@@ -55,6 +57,11 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollTop]);
 
+  // Close search when pathname changes
+  useEffect(() => {
+    setIsSearchOpen(false);
+  }, [pathname]);
+
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
@@ -83,6 +90,18 @@ const Navbar = () => {
               <div className="flex items-center gap-3 md:gap-6">
                 {!isAuthPage && (
                   <>
+                    {/* Search Toggle */}
+                    <button
+                      onClick={() => setIsSearchOpen(!isSearchOpen)}
+                      className={cn(
+                        "p-2 rounded-full transition-all duration-300",
+                        (isScrolled || isAuthPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                      )}
+                      aria-label="Toggle search"
+                    >
+                      {isSearchOpen ? <X size={24} /> : <Search size={24} />}
+                    </button>
+
                     {user ? (
                       <div className="relative">
                         <button
@@ -210,6 +229,25 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+
+      {/* SEARCH AREA (Expandable) */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={cn(
+              "fixed left-0 right-0 z-[98] pt-32 pb-8 px-6 backdrop-blur-md shadow-lg",
+              (isScrolled || isAuthPage) ? "bg-cream/95" : "bg-black/40"
+            )}
+          >
+            <div className="container mx-auto">
+              <SearchBar onSearch={() => {}} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* CATEGORY BAR (Desktop) */}
       {!isAuthPage && !isAdminPage && (

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import AddressManager from '@/components/shop/AddressManager';
-import { doc, collection, addDoc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/utils/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -52,7 +52,7 @@ const CheckoutPage = () => {
     };
   }, []);
 
-  // Warm up the backend
+  // Warm up the backend to handle Render cold starts
   useEffect(() => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
@@ -75,6 +75,7 @@ const CheckoutPage = () => {
     setErrorMessage(null);
 
     try {
+      console.log('Initiating checkout for amount:', finalTotal);
       // Step 1: Create order on backend
       const orderResponse = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
@@ -95,6 +96,7 @@ const CheckoutPage = () => {
       }
 
       const { order, keyId } = orderData;
+      console.log('Backend order created:', order.id);
 
       // Step 2: Open Razorpay
       const options = {
@@ -107,6 +109,7 @@ const CheckoutPage = () => {
         handler: async (response: any) => {
           setPaymentStatus('verifying');
           try {
+            console.log('Razorpay payment successful, verifying...', response.razorpay_payment_id);
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -120,6 +123,7 @@ const CheckoutPage = () => {
             const verifyData = await verifyResponse.json();
 
             if (verifyResponse.ok && verifyData.success) {
+              console.log('Payment verified successfully');
               // Step 3: Save order to Firestore with idempotency
               const orderId = response.razorpay_order_id;
               const orderRef = doc(db, 'orders', orderId);
@@ -149,6 +153,7 @@ const CheckoutPage = () => {
                 };
 
                 await setDoc(orderRef, orderDoc);
+                console.log('Order saved to Firestore successfully');
               }
 
               setPaymentStatus('success');
