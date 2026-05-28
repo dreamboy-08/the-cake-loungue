@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import AddressManager from '@/components/shop/AddressManager';
-import { doc, collection, addDoc, setDoc } from 'firebase/firestore';
+import { doc, collection, addDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '@/utils/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,23 +17,24 @@ const CheckoutPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
+  const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Get API URL from environment variables with fallback
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
 
   // Set default address if available and ensure selectedAddress is valid
   useEffect(() => {
     if (userData?.addresses) {
-      // If no address selected, try to set default
       if (!selectedAddress) {
         const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
         if (defaultAddr) setSelectedAddress(defaultAddr);
       } else {
-        // Verify currently selected address still exists in user's list
         const stillExists = userData.addresses.find((a: Address) => a.id === selectedAddress.id);
         if (!stillExists) {
           const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
           setSelectedAddress(defaultAddr || null);
         } else {
-          // Keep it updated if changed (e.g. name or phone update)
           setSelectedAddress(stillExists);
         }
       }
@@ -51,25 +52,31 @@ const CheckoutPage = () => {
     };
   }, []);
 
+  // Warm up the backend
+  useEffect(() => {
+    fetch(API_URL).catch(() => {});
+  }, [API_URL]);
+
   const shippingFee = cartTotal > 1000 ? 0 : 50;
   const finalTotal = cartTotal + shippingFee;
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
-      alert('Your cart is empty!');
+      setErrorMessage('Your cart is empty!');
       return;
     }
     if (!selectedAddress) {
-      alert('Please select or add a delivery address.');
+      setErrorMessage('Please select or add a delivery address.');
       return;
     }
 
     setLoading(true);
     setPaymentStatus('processing');
+    setErrorMessage(null);
 
     try {
-      // Step 1: Create order on backend (simulated for now or using Render API)
-      const orderResponse = await fetch('https://the-cake-loungue.onrender.com/api/orders', {
+      // Step 1: Create order on backend
+      const orderResponse = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -81,24 +88,26 @@ const CheckoutPage = () => {
         }),
       });
 
+      const orderData = await orderResponse.json();
+
       if (!orderResponse.ok) {
-        throw new Error('Failed to create order');
+        throw new Error(orderData.error || 'Failed to initialize payment');
       }
 
-      const orderData = await orderResponse.json();
       const { order, keyId } = orderData;
 
       // Step 2: Open Razorpay
       const options = {
-        key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_SnKyu6FLUmVKUj',
-        amount: finalTotal * 100,
-        currency: 'INR',
+        key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
         name: 'Cake Lounge',
-        description: `Order for ${cartCountText(cart.length)}`,
+        description: `Order for ${cart.length} item${cart.length > 1 ? 's' : ''}`,
         order_id: order.id,
         handler: async (response: any) => {
+          setPaymentStatus('verifying');
           try {
-            const verifyResponse = await fetch('https://the-cake-loungue.onrender.com/api/verify-payment', {
+            const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -108,40 +117,51 @@ const CheckoutPage = () => {
               }),
             });
 
-            if (verifyResponse.ok) {
-              // Step 3: Save order to Firestore
-              const orderDoc = {
-                userId: user?.uid || 'guest',
-                customer: {
-                  name: selectedAddress.name,
-                  email: user?.email || 'guest@example.com',
-                  phone: selectedAddress.phone,
-                },
-                shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
-                items: cart,
-                totalAmount: finalTotal,
-                shippingFee,
-                subtotal: cartTotal,
-                status: 'Confirmed',
-                paymentId: response.razorpay_payment_id,
-                orderId: response.razorpay_order_id,
-                createdAt: new Date().toISOString(),
-              };
+            const verifyData = await verifyResponse.json();
 
-              await addDoc(collection(db, 'orders'), orderDoc);
+            if (verifyResponse.ok && verifyData.success) {
+              // Step 3: Save order to Firestore with idempotency
+              const orderId = response.razorpay_order_id;
+              const orderRef = doc(db, 'orders', orderId);
+
+              // Check if order already exists to prevent duplicates
+              const existingOrder = await getDoc(orderRef);
+              if (!existingOrder.exists()) {
+                const orderDoc = {
+                  userId: user?.uid || 'guest',
+                  customer: {
+                    name: selectedAddress.name,
+                    email: user?.email || 'guest@example.com',
+                    phone: selectedAddress.phone,
+                  },
+                  shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+                  items: cart,
+                  totalAmount: finalTotal,
+                  shippingFee,
+                  subtotal: cartTotal,
+                  status: 'Confirmed',
+                  paymentStatus: 'Paid',
+                  paymentId: response.razorpay_payment_id,
+                  razorpayOrderId: response.razorpay_order_id,
+                  paymentSignature: response.razorpay_signature,
+                  createdAt: new Date().toISOString(),
+                  updatedAt: new Date().toISOString(),
+                };
+
+                await setDoc(orderRef, orderDoc);
+              }
 
               setPaymentStatus('success');
-              setTimeout(() => {
-                clearCart();
-                router.push('/orders');
-              }, 2000);
+              clearCart();
+              router.push(`/checkout/success?orderId=${orderId}&paymentId=${response.razorpay_payment_id}`);
             } else {
-              setPaymentStatus('error');
-              alert('Payment verification failed!');
+              throw new Error(verifyData.error || 'Payment verification failed');
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('Verification error:', error);
             setPaymentStatus('error');
+            setErrorMessage(error.message || 'Payment verification failed. Please contact support.');
+            router.push(`/checkout/failure?error=${encodeURIComponent(error.message || 'Verification failed')}`);
           }
         },
         prefill: {
@@ -161,34 +181,42 @@ const CheckoutPage = () => {
       };
 
       const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function (response: any) {
+        setPaymentStatus('error');
+        setErrorMessage(response.error.description);
+        router.push(`/checkout/failure?error=${encodeURIComponent(response.error.description)}`);
+      });
       rzp.open();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error);
-      alert('Checkout failed. Please try again.');
+      setErrorMessage(error.message || 'Checkout failed. Please try again.');
       setPaymentStatus('error');
-    } finally {
       setLoading(false);
     }
   };
 
-  const cartCountText = (count: number) => `${count} item${count > 1 ? 's' : ''}`;
-
-  if (paymentStatus === 'success') {
+  if (paymentStatus === 'verifying' || paymentStatus === 'success') {
     return (
       <div className="min-h-screen bg-cream flex items-center justify-center p-6">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-md w-full border-2 border-green-100"
+          className="bg-white p-10 rounded-[40px] shadow-xl text-center max-w-md w-full border-2 border-rose-100"
         >
-          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
-            <CheckCircle2 size={48} />
+          <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-deep">
+            <Loader2 className="animate-spin" size={48} />
           </div>
-          <h2 className="text-3xl font-bold font-playfair text-chocolate mb-2">Order Confirmed!</h2>
-          <p className="text-text-soft mb-8">Thank you for your order. We're getting your cakes ready!</p>
-          <div className="animate-pulse flex items-center justify-center gap-2 text-rose-deep font-bold">
-            <Loader2 className="animate-spin" size={20} />
-            Redirecting to your orders...
+          <h2 className="text-3xl font-bold font-playfair text-chocolate mb-2">
+            {paymentStatus === 'verifying' ? 'Verifying Payment' : 'Order Successful!'}
+          </h2>
+          <p className="text-text-soft mb-8">
+            {paymentStatus === 'verifying'
+              ? "Please don't refresh or close the page while we verify your transaction."
+              : "Hang tight, we're redirecting you to your order confirmation."}
+          </p>
+          <div className="flex items-center justify-center gap-2 text-rose-deep font-bold">
+            <ShieldCheck size={20} />
+            Secure Transaction
           </div>
         </motion.div>
       </div>
@@ -210,31 +238,34 @@ const CheckoutPage = () => {
             </div>
 
             {/* Address Selection */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-cream">
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
               <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
             </div>
 
             {/* Payment Method */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-cream">
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
               <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
                 <CreditCard size={20} className="text-rose-deep" />
                 Payment Method
               </h3>
-              <div className="p-4 rounded-2xl border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
-                <div className="w-10 h-10 bg-rose-deep rounded-full flex items-center justify-center text-white">
+              <div className="p-6 rounded-[30px] border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
+                <div className="w-12 h-12 bg-rose-deep rounded-full flex items-center justify-center text-white shrink-0">
                   <CheckCircle2 size={24} />
                 </div>
                 <div>
                   <p className="font-bold text-chocolate">Secure Online Payment</p>
-                  <p className="text-xs text-text-soft">UPI, Cards, NetBanking via Razorpay</p>
+                  <p className="text-sm text-text-soft">UPI, Cards, NetBanking via Razorpay</p>
+                </div>
+                <div className="ml-auto hidden sm:block">
+                  <ShieldCheck className="text-rose-deep/30" size={32} />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Sidebar Summary */}
-          <div className="lg:w-[400px]">
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-cream sticky top-32">
+          <div className="lg:w-[450px]">
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-xl border border-cream sticky top-32">
               <h3 className="text-xl font-bold font-playfair text-chocolate mb-6 flex items-center gap-2">
                 <ShoppingBag size={20} className="text-rose-deep" />
                 Order Summary
@@ -242,41 +273,60 @@ const CheckoutPage = () => {
 
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <div className="w-16 h-16 rounded-xl bg-cream overflow-hidden flex-shrink-0">
+                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream/20 rounded-2xl transition-colors">
+                    <div className="w-20 h-20 rounded-2xl bg-cream overflow-hidden flex-shrink-0 border border-cream">
                       <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
-                      <p className="text-xs text-text-soft">Qty: {item.quantity}</p>
+                      <p className="text-xs text-text-soft mt-1">Quantity: {item.quantity}</p>
                       <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-3 border-t border-cream pt-6">
+              <div className="space-y-4 border-t border-cream pt-6">
                 <div className="flex justify-between text-text-mid">
-                  <span>Subtotal</span>
-                  <span className="font-bold">₹{cartTotal}</span>
+                  <span className="text-sm">Subtotal</span>
+                  <span className="font-bold text-chocolate">₹{cartTotal}</span>
                 </div>
                 <div className="flex justify-between text-text-mid">
-                  <span>Delivery Fee</span>
+                  <span className="text-sm">Delivery Fee</span>
                   <span className="font-bold">{shippingFee === 0 ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
                 </div>
                 {shippingFee > 0 && (
-                  <p className="text-[10px] text-rose-deep font-medium italic">Add ₹{1000 - cartTotal} more for free delivery!</p>
+                  <div className="bg-rose/5 p-3 rounded-xl">
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{1000 - cartTotal} more for FREE delivery!</p>
+                  </div>
                 )}
-                <div className="flex justify-between items-center pt-3 border-t-2 border-chocolate mt-3">
-                  <span className="text-lg font-bold text-chocolate">Total Amount</span>
-                  <span className="text-3xl font-black text-rose-deep">₹{finalTotal}</span>
+                <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
+                  <span className="text-lg font-bold text-chocolate uppercase tracking-wider">Total Amount</span>
+                  <div className="text-right">
+                    <span className="text-4xl font-black text-rose-deep">₹{finalTotal}</span>
+                    <p className="text-[10px] text-text-soft font-bold uppercase tracking-widest mt-1">Inclusive of all taxes</p>
+                  </div>
                 </div>
               </div>
+
+              <AnimatePresence>
+                {errorMessage && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold flex items-center gap-2 border border-red-100"
+                  >
+                    <AlertCircle size={16} className="shrink-0" />
+                    {errorMessage}
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <button
                 onClick={handleCheckout}
                 disabled={loading || cart.length === 0 || !selectedAddress}
-                className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+                className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
                   <>
@@ -285,21 +335,25 @@ const CheckoutPage = () => {
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 size={24} />
-                    Place Order
+                    <ShieldCheck size={24} />
+                    Pay Now
                   </>
                 )}
               </button>
 
               {!selectedAddress && cart.length > 0 && (
-                <div className="mt-4 flex items-center gap-2 text-rose-deep text-xs font-bold justify-center bg-rose/5 p-2 rounded-lg">
-                  <AlertCircle size={14} />
-                  Please select a delivery address
-                </div>
+                <p className="mt-4 text-rose-deep text-xs font-bold text-center">
+                  * Please select a delivery address to proceed
+                </p>
               )}
 
-              <p className="text-[10px] text-center text-text-soft mt-6 uppercase tracking-widest font-bold">
-                100% Secure Checkout
+              <div className="mt-8 pt-8 border-t border-cream flex items-center justify-center gap-6 grayscale opacity-50">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />
+              </div>
+              <p className="text-[10px] text-center text-text-soft mt-4 uppercase tracking-widest font-bold">
+                100% Secure SSL Encrypted Checkout
               </p>
             </div>
           </div>
