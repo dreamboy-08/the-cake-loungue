@@ -401,11 +401,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <AnimatePresence>
-        {isCartModalOpen && (
-          <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
-        )}
-      </AnimatePresence>
+      <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
     </>
   );
 };

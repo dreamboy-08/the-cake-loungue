@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
-import { doc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/utils/firebase';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 export interface CartItem {
   id: number;
@@ -22,8 +22,8 @@ interface CartContextType {
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
-  cartCount: number;
   cartTotal: number;
+  cartCount: number;
   isLoading: boolean;
 }
 
@@ -34,75 +34,94 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
-  // Load cart from localStorage or Firestore
+  const isInitialMount = useRef(true);
+  const isUpdatingFromServer = useRef(false);
+
+  // Persistence helper
+  const persistCart = async (newCart: CartItem[]) => {
+    if (!user) {
+      localStorage.setItem('cakeLounge_cart', JSON.stringify(newCart));
+      return;
+    }
+
+    try {
+      await setDoc(doc(db, 'carts', user.uid), {
+        items: newCart,
+        updatedAt: new Date().toISOString(),
+      }, { merge: true });
+    } catch (error) {
+      console.error('Error persisting cart:', error);
+    }
+  };
+
+  // Sync with Firestore or LocalStorage
   useEffect(() => {
     let unsubscribe: () => void;
 
-    const loadCart = async () => {
+    const syncCart = async () => {
       setIsLoading(true);
       if (user) {
-        // If logged in, sync with Firestore
-        const cartDocRef = doc(db, 'carts', user.uid);
+        const cartRef = doc(db, 'carts', user.uid);
+        unsubscribe = onSnapshot(cartRef, { includeMetadataChanges: true }, (docSnap) => {
+          // If the change came from our own local write, ignore it to prevent loops
+          if (docSnap.metadata.hasPendingWrites) return;
 
-        // Listen for real-time updates
-        unsubscribe = onSnapshot(cartDocRef, (doc) => {
-          if (doc.exists()) {
-            setCart(doc.data().items || []);
+          if (docSnap.exists()) {
+            isUpdatingFromServer.current = true;
+            setCart(docSnap.data().items || []);
+            isUpdatingFromServer.current = false;
           } else {
-            // If no firestore cart, try to migrate from local storage
-            const savedCart = localStorage.getItem('cakeLounge_cart');
-            if (savedCart) {
+            // If no Firestore cart, try to migrate from localStorage
+            const localCart = localStorage.getItem('cakeLounge_cart');
+            if (localCart) {
               try {
-                const items = JSON.parse(savedCart);
-                setCart(items);
-                // Save to firestore immediately
-                setDoc(cartDocRef, { items, updatedAt: new Date().toISOString() });
+                const parsedCart = JSON.parse(localCart);
+                setCart(parsedCart);
+                persistCart(parsedCart);
+                localStorage.removeItem('cakeLounge_cart');
               } catch (e) {
-                console.error("Failed to parse cart from localStorage", e);
+                console.error("Failed to migrate cart", e);
               }
             }
           }
           setIsLoading(false);
+        }, (error) => {
+          console.error("Error listening to cart:", error);
+          setIsLoading(false);
         });
       } else {
-        // If not logged in, use localStorage
-        const savedCart = localStorage.getItem('cakeLounge_cart');
-        if (savedCart) {
+        // Guest: Load from LocalStorage
+        const localCart = localStorage.getItem('cakeLounge_cart');
+        if (localCart) {
           try {
-            setCart(JSON.parse(savedCart));
+            setCart(JSON.parse(localCart));
           } catch (e) {
-            console.error("Failed to parse cart from localStorage", e);
+            console.error("Failed to parse local cart", e);
           }
         }
         setIsLoading(false);
       }
     };
 
-    loadCart();
+    syncCart();
 
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [user]);
 
-  // Save cart to localStorage/Firestore whenever it changes
+  // Handle persistence whenever cart changes, but avoid feedback loops
   useEffect(() => {
-    if (!user) {
-      localStorage.setItem('cakeLounge_cart', JSON.stringify(cart));
-    } else {
-      // For logged in users, sync with Firestore
-      // We use a small delay or debouncing here if needed, but for now simple setDoc
-      const syncCart = async () => {
-        const cartDocRef = doc(db, 'carts', user.uid);
-        await setDoc(cartDocRef, {
-          items: cart,
-          updatedAt: new Date().toISOString()
-        }, { merge: true });
-      };
-
-      syncCart();
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, [cart, user]);
+
+    // Only persist if the update was NOT from the server
+    if (!isUpdatingFromServer.current && !isLoading) {
+      persistCart(cart);
+    }
+  }, [cart, isLoading]);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     setCart((prevCart) => {
@@ -121,7 +140,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateQuantity = (id: number, quantity: number) => {
-    if (quantity <= 0) {
+    if (quantity < 1) {
       removeFromCart(id);
       return;
     }
@@ -134,25 +153,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = () => {
     setCart([]);
-    if (!user) {
-      localStorage.removeItem('cakeLounge_cart');
-    }
   };
 
-  const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{
-      cart,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      cartCount,
-      cartTotal,
-      isLoading
-    }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        cartTotal,
+        cartCount,
+        isLoading
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Star, Heart, Plus, Check } from 'lucide-react';
@@ -13,8 +13,12 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToCart } = useCart();
-  const [isAdded, setIsAdded] = useState(false);
+  const { cart, addToCart } = useCart();
+  const [localAdded, setLocalAdded] = useState(false);
+
+  // Derive global added state from cart
+  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,8 +31,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       img: product.img,
     });
 
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
+    setLocalAdded(true);
+    setTimeout(() => setLocalAdded(false), 2000);
   };
 
   return (
