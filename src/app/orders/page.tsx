@@ -89,7 +89,7 @@ const OrdersPage = () => {
                 <ShoppingBag size={40} />
               </div>
               <h3 className="text-xl font-bold text-chocolate mb-2">No orders found</h3>
-              <p className="text-text-soft mb-8">You haven't placed any orders yet.</p>
+              <p className="text-text-soft mb-8">You haven&apos;t placed any orders yet.</p>
               <Link
                 href="/menu"
                 className="inline-block bg-rose-deep text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-brown transition-all"
