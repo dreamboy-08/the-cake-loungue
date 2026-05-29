@@ -7,11 +7,13 @@ import { Star, Heart, ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCcw, C
 import Link from 'next/link';
 import { products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
+import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { cart, addToCart, isLoading } = useCart();
+  const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
 
   const product = products.find((p) => p.id === Number(id));
@@ -23,7 +25,10 @@ const ProductDetail = () => {
   const isGloballyAdded = cart.some(item => item.id === product.id);
   const isAdded = isGloballyAdded || localAdded;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    flyToCart(rect, product.img);
+
     addToCart({
       id: product.id,
       name: product.name,
