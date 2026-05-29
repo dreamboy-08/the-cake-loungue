@@ -1,22 +1,27 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Star, Heart, ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCcw } from 'lucide-react';
+import { Star, Heart, ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { addToCart } = useCart();
+  const { cart, addToCart, isLoading } = useCart();
+  const [localAdded, setLocalAdded] = useState(false);
 
   const product = products.find((p) => p.id === Number(id));
 
   if (!product) {
     notFound();
   }
+
+  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = () => {
     addToCart({
@@ -25,6 +30,8 @@ const ProductDetail = () => {
       price: product.price,
       img: product.img,
     });
+    setLocalAdded(true);
+    setTimeout(() => setLocalAdded(false), 2000);
   };
 
   return (
@@ -106,9 +113,45 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 btn btn-primary py-4 justify-center"
+                disabled={isLoading}
+                className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
+                  isLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
+                }`}
               >
-                <ShoppingCart size={20} className="mr-2" /> Add to Cart
+                <AnimatePresence mode="wait">
+                  {isLoading ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center"
+                    >
+                      <Loader2 size={20} className="mr-2 animate-spin" /> Loading...
+                    </motion.div>
+                  ) : isAdded ? (
+                    <motion.div
+                      key="check"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center"
+                    >
+                      <Check size={20} className="mr-2" /> Added to Cart
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="cart"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="flex items-center"
+                    >
+                      <ShoppingCart size={20} className="mr-2" /> Add to Cart
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </button>
               <Link
                 href="/custom-cake"
