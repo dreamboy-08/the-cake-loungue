@@ -30,7 +30,7 @@ const CheckoutPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Get API URL from environment variables with fallback
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com';
+  const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
 
   // Set default address if available and ensure selectedAddress is valid
   useEffect(() => {

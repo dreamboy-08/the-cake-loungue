@@ -11,6 +11,8 @@ const app = express();
 const corsOptions = {
   origin: [
     'https://the-cake-loungue.vercel.app',
+    'https://thecakelounge.in',
+    'https://www.thecakelounge.in',
     'http://localhost:3000',
     'http://localhost:3001',
     'http://localhost:3002',
