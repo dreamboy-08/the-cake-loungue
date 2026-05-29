@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Star, Heart, Plus, Check } from 'lucide-react';
 import { Product } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
+import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductCardProps {
@@ -14,6 +15,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { cart, addToCart } = useCart();
+  const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
 
   // Derive global added state from cart
@@ -23,6 +25,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    flyToCart(rect, product.img);
 
     addToCart({
       id: product.id,

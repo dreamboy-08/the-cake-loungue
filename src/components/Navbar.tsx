@@ -8,6 +8,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useFlyToCart } from '@/context/FlyToCartContext';
 import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
@@ -28,6 +29,7 @@ const Navbar = () => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
   const { user, logout, isAdmin } = useAuth();
+  const { bounceCount } = useFlyToCart();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -194,6 +196,7 @@ const Navbar = () => {
                 )}
 
                 <button
+                  id="cart-icon-main"
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
                     "relative p-2 rounded-full transition-all duration-300",
@@ -201,7 +204,16 @@ const Navbar = () => {
                   )}
                   aria-label="View Cart"
                 >
-                  <ShoppingCart size={24} />
+                  <motion.div
+                    animate={bounceCount > 0 ? {
+                      scale: [1, 1.2, 0.9, 1.1, 1],
+                      rotate: [0, -10, 10, -5, 0]
+                    } : {}}
+                    transition={{ duration: 0.5 }}
+                    key={bounceCount}
+                  >
+                    <ShoppingCart size={24} />
+                  </motion.div>
                   {cartCount > 0 && (
                     <motion.div
                       initial={{ scale: 0 }}
