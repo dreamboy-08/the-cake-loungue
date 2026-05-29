@@ -63,7 +63,7 @@ const OrderDetailsPage = () => {
           <Package size={40} />
         </div>
         <h2 className="text-2xl font-bold text-chocolate">Order Not Found</h2>
-        <p className="text-text-soft max-w-xs">The order you're looking for doesn't exist or you don't have permission to view it.</p>
+        <p className="text-text-soft max-w-xs">The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
         <Link href="/orders" className="bg-rose-deep text-white px-8 py-3 rounded-full font-bold shadow-lg">
           Back to Orders
         </Link>

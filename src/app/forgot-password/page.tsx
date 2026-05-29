@@ -32,7 +32,7 @@ export default function ForgotPasswordPage() {
       <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
         <div className="bg-rose-deep py-8 px-6 text-center">
           <h1 className="font-playfair text-3xl font-bold text-white">Reset Password</h1>
-          <p className="text-white/80 mt-2">We'll help you get back into your account</p>
+          <p className="text-white/80 mt-2">We&apos;ll help you get back into your account</p>
         </div>
 
         <div className="p-8">

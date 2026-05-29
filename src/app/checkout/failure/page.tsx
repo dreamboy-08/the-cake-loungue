@@ -24,7 +24,7 @@ const FailureContent = () => {
 
           <h1 className="text-3xl md:text-4xl font-bold font-playfair text-chocolate mb-4">Payment Failed</h1>
           <p className="text-text-soft text-lg mb-8">
-            We couldn't process your payment at this time.
+            We couldn&apos;t process your payment at this time.
           </p>
 
           <div className="bg-red-50/50 p-6 rounded-3xl border border-red-100 text-left mb-10">
