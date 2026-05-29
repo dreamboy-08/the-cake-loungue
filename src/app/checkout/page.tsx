@@ -1,13 +1,22 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
-import AddressManager from '@/components/shop/AddressManager';
+import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
+
+const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-40 flex items-center justify-center">
+      <Loader2 className="animate-spin text-rose-deep" size={32} />
+    </div>
+  )
+});
 import { db } from '@/utils/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -57,8 +66,8 @@ const CheckoutPage = () => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
 
-  const shippingFee = cartTotal > 1000 ? 0 : 50;
-  const finalTotal = cartTotal + shippingFee;
+  const shippingFee = useMemo(() => cartTotal > 1000 ? 0 : 50, [cartTotal]);
+  const finalTotal = useMemo(() => cartTotal + shippingFee, [cartTotal, shippingFee]);
 
   const handleCheckout = async () => {
     if (cart.length === 0) {

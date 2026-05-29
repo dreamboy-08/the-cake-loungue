@@ -35,10 +35,6 @@ const Hero = () => {
             </div>
             <div className="mt-[56px] flex gap-10 animate-fade-up [animation-delay:0.7s]">
               <div>
-                <div className="font-playfair text-[2rem] font-bold text-gold-light leading-none">500+</div>
-                <div className="text-[0.78rem] text-white/60 mt-1 uppercase tracking-[0.1em]">Cake Flavors</div>
-              </div>
-              <div>
                 <div className="font-playfair text-[2rem] font-bold text-gold-light leading-none">50k+</div>
                 <div className="text-[0.78rem] text-white/60 mt-1 uppercase tracking-[0.1em]">Happy Customers</div>
               </div>
