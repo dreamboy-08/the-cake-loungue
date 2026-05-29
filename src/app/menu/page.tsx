@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
+import { ArrowLeft } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
 import { filterProducts } from '@/utils/filterProducts';
 
@@ -32,20 +33,31 @@ const MenuPage = () => {
         <SearchBar onSearch={setSearchQuery} />
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap gap-3 justify-center mb-12">
-          {categories.map((cat) => (
+        <div className="flex flex-wrap gap-4 justify-center mb-12 items-center">
+          {activeCategory !== 'All' && (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border-none cursor-pointer ${
-                activeCategory === cat
-                  ? 'bg-rose-deep text-white shadow-md'
-                  : 'bg-rose-deep/10 text-brown-dark hover:bg-rose-deep/20'
-              }`}
+              onClick={() => setActiveCategory('All')}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-chocolate text-white hover:bg-brown transition-all duration-300 shadow-md group"
             >
-              {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              Show All Categories
             </button>
-          ))}
+          )}
+          {categories
+            .filter(cat => activeCategory === 'All' || cat === activeCategory)
+            .map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border-none cursor-pointer ${
+                  activeCategory === cat
+                    ? 'bg-rose-deep text-white shadow-md'
+                    : 'bg-rose-deep/10 text-brown-dark hover:bg-rose-deep/20'
+                }`}
+              >
+                {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}
+              </button>
+            ))}
         </div>
 
         {/* Dynamic Grid */}

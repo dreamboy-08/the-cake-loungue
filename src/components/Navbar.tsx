@@ -250,7 +250,7 @@ const Navbar = () => {
       </AnimatePresence>
 
       {/* CATEGORY BAR (Desktop) */}
-      {!isAuthPage && !isAdminPage && (
+      {!isAuthPage && !isAdminPage && pathname !== '/checkout' && (
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",

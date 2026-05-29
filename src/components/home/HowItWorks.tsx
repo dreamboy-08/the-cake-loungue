@@ -3,7 +3,7 @@ import { Search, PenTool as PenFancy, CreditCard, Truck } from 'lucide-react';
 
 const HowItWorks = () => {
   const steps = [
-    { icon: <Search size={32} />, title: "1. Browse & Choose", desc: "Explore our 500+ flavours and designs — birthday, wedding, custom and more." },
+    { icon: <Search size={32} />, title: "1. Browse & Choose", desc: "Explore our exquisite flavours and designs — birthday, wedding, custom and more." },
     { icon: <PenFancy size={32} />, title: "2. Personalise", desc: "Add a message, choose size, flavour, and any custom decoration you'd like." },
     { icon: <CreditCard size={32} />, title: "3. Place Order", desc: "Pay securely online or via WhatsApp." },
     { icon: <Truck size={32} />, title: "4. Delivered Fresh", desc: "Your cake arrives fresh and perfectly packed." },

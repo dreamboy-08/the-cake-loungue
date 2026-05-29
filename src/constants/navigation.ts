@@ -16,10 +16,6 @@ export interface MegaMenuItem {
 
 export const MEGA_MENU: MegaMenuItem[] = [
   {
-    label: "Mother's Day",
-    href: "/menu#mothers-day-cakes",
-  },
-  {
     label: "Cakes",
     href: "/menu#cakes",
     columns: [
