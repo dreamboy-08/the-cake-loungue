@@ -23,7 +23,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 63,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
     "description": "Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -75,7 +75,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 75,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
     "description": "Chocolate Crown Birthday Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -101,7 +101,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 81,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Silk Anniversary Romance Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -114,7 +114,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 84,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Eternal Love Anniversary Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -127,7 +127,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 87,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Pearl Lace Anniversary Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -140,7 +140,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 90,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Velvet Duo Anniversary Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -166,7 +166,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 96,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Milestone Memory Anniversary Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -335,7 +335,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 135,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Galaxy Party Theme Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -361,7 +361,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 141,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Vintage Paris Theme Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -387,7 +387,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 147,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Bollywood Masala Theme Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -400,7 +400,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 150,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Rustic Garden Theme Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -413,7 +413,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 153,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Golden Frame Photo Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -426,7 +426,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 156,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Memories Collage Photo Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -465,7 +465,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 165,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Rose Petal Photo Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -530,7 +530,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 180,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
     "description": "Chocolate Volcano Pinata Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -582,7 +582,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 192,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Caramel Drip Pull Me Up Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -595,7 +595,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 195,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Rose Gold Pull Me Up Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -608,7 +608,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 198,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Praline Pull Me Up Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -621,7 +621,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 201,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Bliss Pull Me Up Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -634,7 +634,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 204,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Midnight Chocolate Pull Me Up Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -647,7 +647,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 207,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Hazelnut Bomb Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -660,7 +660,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 210,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Golden Crunch Bomb Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -673,7 +673,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 213,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Caramel Bombastic Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -699,7 +699,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 219,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Layered Truffle Bomb Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -738,7 +738,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 228,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Sculpted Bloom Designer Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -751,7 +751,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 231,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Gold Leaf Designer Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1115,7 +1115,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 315,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Moonlight Romance Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1167,7 +1167,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 327,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Petal Promise Romance Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1219,7 +1219,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 339,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Harmony Pair Couple Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1232,7 +1232,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 342,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Sunset Duo Couple Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1297,7 +1297,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 357,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Rosy Heart Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1310,7 +1310,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 360,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Velvet Heart Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1336,7 +1336,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 366,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Iced Heart Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1414,7 +1414,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 384,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Royal Berry Premium Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1427,7 +1427,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 387,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Platinum Orchid Luxury Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1583,7 +1583,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 423,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Hazelnut Truffle Indulgence crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1609,7 +1609,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 429,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Caramel Truffle Royale crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1622,7 +1622,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 432,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Dark Truffle Elegance crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1635,7 +1635,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 435,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Rose Truffle Velvet crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1648,7 +1648,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 438,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Espresso Truffle Dream crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1687,7 +1687,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 447,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
     "description": "Tropical Mango Fruit Cake crafted with fresh mango cream, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1739,7 +1739,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 459,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Salted Caramel Butterscotch Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1752,7 +1752,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 462,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Honeycomb Butterscotch Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1765,7 +1765,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 465,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Pecan Butterscotch Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1778,7 +1778,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 468,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Maple Butterscotch Wonder crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1791,7 +1791,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 471,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Vanilla Butterscotch Dream crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1804,7 +1804,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 474,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Crunchy Butterscotch Layer Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1830,7 +1830,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 60,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Silk Vanilla Bean Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1856,7 +1856,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 66,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Vanilla Rose Garden Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1869,7 +1869,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 69,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Vanilla Berry Whisper Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1882,7 +1882,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 72,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Creamy Vanilla Elegance crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1921,7 +1921,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 81,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Silk Black Forest Layers crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1934,7 +1934,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 84,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Chocolate Cherry Black Forest crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1960,7 +1960,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 90,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
     "description": "Cream Cloud Black Forest crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -1999,7 +1999,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 99,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Creamy Red Velvet Delight crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2025,7 +2025,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 105,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Scarlet Silk Red Velvet Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2038,7 +2038,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 108,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Kiss Red Velvet Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2129,7 +2129,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 129,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Crunchy Biscoff Layer Cake crafted with lotus biscoff crunch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2142,7 +2142,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 132,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Lotus Biscoff Caramel Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2155,7 +2155,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 135,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Coffee Biscoff Delight crafted with lotus biscoff crunch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2168,7 +2168,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 138,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Biscoff Praline Dream crafted with lotus biscoff crunch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2181,7 +2181,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 141,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Biscoff Mousse Fusion crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2207,7 +2207,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 147,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "New York Classic Cheesecake crafted with creamy cheesecake, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2220,7 +2220,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 150,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Blueberry Brûlée Cheesecake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2233,7 +2233,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 153,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Salted Caramel Cheesecake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2246,7 +2246,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 156,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Exotic Mango Cheesecake crafted with fresh mango cream, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2259,7 +2259,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 159,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Oreo Velvet Cheesecake crafted with creamy cheesecake, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2272,7 +2272,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 162,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Pistachio Rose Cheesecake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2285,7 +2285,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 165,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Bliss Jar Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2298,7 +2298,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 168,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Chocolate Ganache Jar Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2337,7 +2337,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 177,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Caramel Crunch Jar Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2441,7 +2441,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 201,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
     "description": "Velvet Pearl Cupcake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2480,7 +2480,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 210,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
     "description": "Strawberry Bliss Cupcake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2493,7 +2493,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 213,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
     "description": "Salted Caramel Cupcake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2675,7 +2675,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 255,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Earl Grey Tea Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2727,7 +2727,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 267,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Cardamom Rose Tea Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2740,7 +2740,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 270,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Orange Blossom Tea Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2766,7 +2766,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 276,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Mousse Elegance crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2805,7 +2805,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 285,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Espresso Mousse Delight crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2818,7 +2818,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 288,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "White Chocolate Mousse Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2831,7 +2831,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 291,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Orange Cranberry Dry Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2870,7 +2870,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 300,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Date Walnut Dry Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2922,7 +2922,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 312,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Eggless Mango Cream Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2935,7 +2935,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 315,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Eggless Vanilla Bean Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2948,7 +2948,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 318,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Eggless Red Velvet Cake crafted with eggless almond sponge, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2974,7 +2974,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 324,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Eggless Black Forest Cake crafted with eggless almond sponge, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -2987,7 +2987,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 327,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Personalized Name Plaque Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3000,7 +3000,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 330,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Monogrammed Signature Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3013,7 +3013,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 333,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Custom Flavor Fusion Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3026,7 +3026,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 336,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Bespoke Palette Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3078,7 +3078,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 348,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
     "description": "Holi Colorburst Festival Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3104,7 +3104,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 354,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
     "description": "Ganesh Chaturthi Sweet Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3169,7 +3169,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 369,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Rose Garden Mother's Day Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3195,7 +3195,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 375,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Love Mother's Day Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3221,7 +3221,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 381,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Gentleman's Choice Father's Day Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3234,7 +3234,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 384,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Coffee Caramel Father's Day Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3260,7 +3260,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 390,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Whiskey Barrel Father's Day Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3312,7 +3312,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 402,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Rose Petal Valentine Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3338,7 +3338,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 408,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Heart Melody Valentine Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3351,7 +3351,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 411,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Strawberry Kiss Valentine Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3364,7 +3364,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 414,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
     "description": "Passion Berry Valentine Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3403,7 +3403,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 423,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Fruit Cake Noel crafted with seasonal fresh fruits, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3442,7 +3442,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 432,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
     "description": "Cranberry Holly Christmas Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3520,7 +3520,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 450,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
     "description": "New Dawn New Year Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3533,7 +3533,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 453,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
     "description": "BFF Berry Friendship Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3624,7 +3624,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 474,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
     "description": "Stork Surprise Baby Shower Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3689,7 +3689,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 69,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Promise Ring Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3702,7 +3702,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 72,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Diamond Spark Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3715,7 +3715,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 75,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Forever Begins Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3728,7 +3728,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 78,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Royal Vow Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3741,7 +3741,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 81,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Hearts United Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3754,7 +3754,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 84,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Silk Ribbon Engagement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3793,7 +3793,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 93,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Legacy Lane Retirement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3832,7 +3832,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 102,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
     "description": "Peaceful Journey Retirement Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3845,7 +3845,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 105,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Executive Elegance Corporate Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3858,7 +3858,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 108,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Team Triumph Corporate Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3936,7 +3936,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 126,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "New Chapter Farewell Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -3975,7 +3975,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 135,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Memory Lane Farewell Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4040,7 +4040,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 150,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
     "description": "Achievement Medal Graduation Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4079,7 +4079,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 159,
     "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Pure White Minimal Cake crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4105,7 +4105,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 165,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Textured Linen Minimal Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4131,7 +4131,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 171,
     "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Monochrome Minimal Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4144,7 +4144,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 174,
     "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Quiet Luxury Minimal Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4170,7 +4170,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 180,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Matcha Layer Korean Cake crafted with matcha green tea, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4183,7 +4183,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 183,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
     "description": "Bingsu Berry Korean Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4274,7 +4274,7 @@ export const products: Product[] = [
     "rating": 5,
     "reviews": 204,
     "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
     "description": "Geode Sparkle Trending Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4326,7 +4326,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 216,
     "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Chocolate Indulgence Dessert Box crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
@@ -4339,7 +4339,7 @@ export const products: Product[] = [
     "rating": 4,
     "reviews": 219,
     "tag": "New",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "img": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
     "description": "Berry Delight Dessert Box crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
