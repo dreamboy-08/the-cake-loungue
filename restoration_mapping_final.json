@@ -1,0 +1,3080 @@
+[
+  {
+    "id": 1,
+    "name": "Royal Raspberry Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 2,
+    "name": "Champagne Velvet Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 3,
+    "name": "Golden Confetti Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 4,
+    "name": "Pearl Blossom Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 5,
+    "name": "Chocolate Crown Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 6,
+    "name": "Sunrise Celebration Birthday Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Birthday Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 7,
+    "name": "Silk Anniversary Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 8,
+    "name": "Eternal Love Anniversary Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 9,
+    "name": "Pearl Lace Anniversary Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 10,
+    "name": "Velvet Duo Anniversary Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 11,
+    "name": "Rose Quartz Anniversary Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 12,
+    "name": "Milestone Memory Anniversary Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anniversary Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 13,
+    "name": "Ivory Lace Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 14,
+    "name": "Diamond Satin Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 15,
+    "name": "Garden Romance Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 16,
+    "name": "Classic Blanc Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 17,
+    "name": "Royal Pearl Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 18,
+    "name": "Starlight Wedding Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Wedding Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 19,
+    "name": "Mini Berry Bento Celebration",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 20,
+    "name": "Chocolate Luxe Bento Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 21,
+    "name": "Caramel Dream Bento Slice",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 22,
+    "name": "Vanilla Berry Bento Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 23,
+    "name": "Lotus Blossom Bento Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Lotus Biscoff Crunch"
+  },
+  {
+    "id": 24,
+    "name": "Hazelnut Fudge Bento Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bento Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 25,
+    "name": "Galaxy Party Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 26,
+    "name": "Safari Adventure Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 27,
+    "name": "Vintage Paris Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 28,
+    "name": "Mermaid Lagoon Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 29,
+    "name": "Bollywood Masala Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 30,
+    "name": "Rustic Garden Theme Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Theme Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 31,
+    "name": "Golden Frame Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 32,
+    "name": "Memories Collage Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 33,
+    "name": "Vintage Portrait Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 34,
+    "name": "Sparkle Moment Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 35,
+    "name": "Rose Petal Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 36,
+    "name": "Silver Screen Photo Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Photo Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 37,
+    "name": "Candy Burst Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 38,
+    "name": "Jewel Treasure Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 39,
+    "name": "Rainbow Surprise Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 40,
+    "name": "Chocolate Volcano Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 41,
+    "name": "Unicorn Dream Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 42,
+    "name": "Treasure Chest Pinata Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pinata Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 43,
+    "name": "Velvet Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 44,
+    "name": "Caramel Drip Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 45,
+    "name": "Rose Gold Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 46,
+    "name": "Praline Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 47,
+    "name": "Berry Bliss Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 48,
+    "name": "Midnight Chocolate Pull Me Up Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pull Me Up Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 49,
+    "name": "Hazelnut Bomb Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 50,
+    "name": "Golden Crunch Bomb Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 51,
+    "name": "Caramel Bombastic Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 52,
+    "name": "Biscoff Blast Bomb Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 53,
+    "name": "Layered Truffle Bomb Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 54,
+    "name": "Nutella Explosion Bomb Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bomb Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 55,
+    "name": "Artisan Marble Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 56,
+    "name": "Sculpted Bloom Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 57,
+    "name": "Gold Leaf Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 58,
+    "name": "Minimalist Muse Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 59,
+    "name": "Emerald Jewel Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 60,
+    "name": "Silk Ribbon Designer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Designer Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 61,
+    "name": "Candy Cloud Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 62,
+    "name": "Princess Garden Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 63,
+    "name": "Dino Delight Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 64,
+    "name": "Rocket Adventure Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 65,
+    "name": "Paw Patrol Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 66,
+    "name": "Fiesta Fun Kids Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Kids Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 67,
+    "name": "Magical Unicorn Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 68,
+    "name": "Super Panda Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 69,
+    "name": "Happy Minion Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 70,
+    "name": "Toy Story Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 71,
+    "name": "Frozen Princess Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 72,
+    "name": "SpongeBob Cartoon Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cartoon Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 73,
+    "name": "Cherry Blossom Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 74,
+    "name": "Ninja Star Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 75,
+    "name": "Galaxy Hero Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 76,
+    "name": "Dragon Flame Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 77,
+    "name": "Sakura Dream Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 78,
+    "name": "Samurai Moon Anime Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Anime Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 79,
+    "name": "Galaxy Guardian Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 80,
+    "name": "Crimson Crusader Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 81,
+    "name": "Golden Shield Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 82,
+    "name": "Mystic Hero Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 83,
+    "name": "Thunder Strike Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 84,
+    "name": "Quantum Leap Superhero Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Superhero Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 85,
+    "name": "Moonlight Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 86,
+    "name": "Silk Rose Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 87,
+    "name": "Velvet Whisper Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 88,
+    "name": "Champagne Kisses Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 89,
+    "name": "Petal Promise Romance Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 90,
+    "name": "Midnight Lovers Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Romantic Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 91,
+    "name": "Dual Heart Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 92,
+    "name": "Together Forever Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 93,
+    "name": "Harmony Pair Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 94,
+    "name": "Sunset Duo Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 95,
+    "name": "Eternal Bond Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 96,
+    "name": "Dream Date Couple Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Couple Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 97,
+    "name": "Charcoal Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 98,
+    "name": "Golden Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 99,
+    "name": "Rosy Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 100,
+    "name": "Velvet Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 101,
+    "name": "Fruit Burst Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 102,
+    "name": "Iced Heart Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Heart Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 103,
+    "name": "Opulent Velvet Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 104,
+    "name": "Signature Gold Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 105,
+    "name": "Pearl Mist Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 106,
+    "name": "Elite Truffle Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 107,
+    "name": "Silk Almond Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 108,
+    "name": "Royal Berry Premium Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Premium Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 109,
+    "name": "Platinum Orchid Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Luxury Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 110,
+    "name": "Crystal Pearl Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Luxury Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 111,
+    "name": "Champagne Dream Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Luxury Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 112,
+    "name": "Velvet Jewel Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Luxury Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 113,
+    "name": "Lotus Crown Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "low",
+    "category": "Luxury Cakes",
+    "flavor": "Lotus Biscoff Crunch"
+  },
+  {
+    "id": 114,
+    "name": "Caviar Red Luxury Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Luxury Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 115,
+    "name": "Midnight Chocolate Symphony",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 116,
+    "name": "Belgian Elegance Chocolate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 117,
+    "name": "Mocha Velvet Chocolate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 118,
+    "name": "Chocolate Fudge Cascade",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 119,
+    "name": "Praline Chocolate Layers",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 120,
+    "name": "Silken Chocolate Truffle Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Chocolate Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 121,
+    "name": "Hazelnut Truffle Indulgence",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 122,
+    "name": "Berry Truffle Fantasy",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 123,
+    "name": "Caramel Truffle Royale",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 124,
+    "name": "Dark Truffle Elegance",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 125,
+    "name": "Rose Truffle Velvet",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 126,
+    "name": "Espresso Truffle Dream",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Truffle Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 127,
+    "name": "Citrus Orchard Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 128,
+    "name": "Berry Fusion Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 129,
+    "name": "Tropical Mango Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Fresh Mango Cream"
+  },
+  {
+    "id": 130,
+    "name": "Pineapple Breeze Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 131,
+    "name": "Apple Cinnamon Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 132,
+    "name": "Mixed Berry Jubilee",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Fruit Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 133,
+    "name": "Salted Caramel Butterscotch Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 134,
+    "name": "Honeycomb Butterscotch Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 135,
+    "name": "Pecan Butterscotch Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 136,
+    "name": "Maple Butterscotch Wonder",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 137,
+    "name": "Vanilla Butterscotch Dream",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 138,
+    "name": "Crunchy Butterscotch Layer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Butterscotch Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 139,
+    "name": "French Vanilla Cloud Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 140,
+    "name": "Silk Vanilla Bean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 141,
+    "name": "Almond Vanilla Lace Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 142,
+    "name": "Vanilla Rose Garden Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 143,
+    "name": "Vanilla Berry Whisper Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 144,
+    "name": "Creamy Vanilla Elegance",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Vanilla Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 145,
+    "name": "Classic Black Forest Indulgence",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 146,
+    "name": "Cherry Noir Black Forest Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 147,
+    "name": "Silk Black Forest Layers",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 148,
+    "name": "Chocolate Cherry Black Forest",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 149,
+    "name": "Midnight Woods Black Forest Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 150,
+    "name": "Cream Cloud Black Forest",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Black Forest Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 151,
+    "name": "Velvet Rose Red Velvet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 152,
+    "name": "Ruby Charm Red Velvet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 153,
+    "name": "Creamy Red Velvet Delight",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 154,
+    "name": "Red Velvet Symphony",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 155,
+    "name": "Scarlet Silk Red Velvet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 156,
+    "name": "Berry Kiss Red Velvet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Red Velvet Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 157,
+    "name": "Royal Rasmalai Delight",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 158,
+    "name": "Saffron Rasmalai Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 159,
+    "name": "Almond Rasmalai Dream",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 160,
+    "name": "Cardamom Rasmalai Whisper",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 161,
+    "name": "Kulfi Rasmalai Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 162,
+    "name": "Rose Rasmalai Indulgence",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Rasmalai Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 163,
+    "name": "Crunchy Biscoff Layer Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Lotus Biscoff Crunch"
+  },
+  {
+    "id": 164,
+    "name": "Lotus Biscoff Caramel Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 165,
+    "name": "Coffee Biscoff Delight",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Lotus Biscoff Crunch"
+  },
+  {
+    "id": 166,
+    "name": "Biscoff Praline Dream",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Lotus Biscoff Crunch"
+  },
+  {
+    "id": 167,
+    "name": "Biscoff Mousse Fusion",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 168,
+    "name": "Creamy Biscoff Symphony",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Biscoff Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 169,
+    "name": "New York Classic Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Creamy Cheesecake"
+  },
+  {
+    "id": 170,
+    "name": "Blueberry Brûlée Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 171,
+    "name": "Salted Caramel Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 172,
+    "name": "Exotic Mango Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Fresh Mango Cream"
+  },
+  {
+    "id": 173,
+    "name": "Oreo Velvet Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Creamy Cheesecake"
+  },
+  {
+    "id": 174,
+    "name": "Pistachio Rose Cheesecake",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cheesecakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 175,
+    "name": "Berry Bliss Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 176,
+    "name": "Chocolate Ganache Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 177,
+    "name": "Tiramisu Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 178,
+    "name": "Pistachio Rose Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 179,
+    "name": "Caramel Crunch Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 180,
+    "name": "Lemon Meringue Jar Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Jar Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 181,
+    "name": "Almond Croissant Pastry",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 182,
+    "name": "Chocolate Éclair Pastry",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 183,
+    "name": "Berry Tart Pastry",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 184,
+    "name": "Vanilla Millefeuille Pastry",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 185,
+    "name": "Pistachio Cream Pastry",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 186,
+    "name": "Caramel Apple Danish",
+    "currentImg": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Pastries",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 187,
+    "name": "Velvet Pearl Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 188,
+    "name": "Choco Hazelnut Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1599785209707-a456fc1337bb?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 189,
+    "name": "Mango Cream Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 190,
+    "name": "Strawberry Bliss Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 191,
+    "name": "Salted Caramel Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 192,
+    "name": "Lemon Zest Cupcake",
+    "currentImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cupcakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 193,
+    "name": "Walnut Fudge Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 194,
+    "name": "Salted Caramel Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 195,
+    "name": "Red Velvet Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 196,
+    "name": "Triple Chocolate Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 197,
+    "name": "Oreo Cheesecake Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 198,
+    "name": "Nutella Swirl Brownie",
+    "currentImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Brownies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 199,
+    "name": "Butter Almond Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 200,
+    "name": "Chocolate Chunk Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 201,
+    "name": "Rose Pistachio Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 202,
+    "name": "Salted Caramel Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 203,
+    "name": "Espresso Biscotti Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Signature Coffee Espresso"
+  },
+  {
+    "id": 204,
+    "name": "Orange Zest Cookie",
+    "currentImg": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Cookies",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 205,
+    "name": "Earl Grey Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 206,
+    "name": "Lemon Poppy Seed Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 207,
+    "name": "Masala Chai Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 208,
+    "name": "Darjeeling Dream Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 209,
+    "name": "Cardamom Rose Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 210,
+    "name": "Orange Blossom Tea Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Tea Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 211,
+    "name": "Chocolate Hazelnut Mousse Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 212,
+    "name": "Berry Mousse Elegance",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 213,
+    "name": "Mango Passion Mousse Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 214,
+    "name": "Vanilla Almond Mousse Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 215,
+    "name": "Espresso Mousse Delight",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 216,
+    "name": "White Chocolate Mousse Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mousse Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 217,
+    "name": "Orange Cranberry Dry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 218,
+    "name": "Almond Fig Dry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 219,
+    "name": "Walnut Spice Dry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 220,
+    "name": "Date Walnut Dry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 221,
+    "name": "Pistachio Dry Fruit Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 222,
+    "name": "Coconut Crunch Dry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dry Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 223,
+    "name": "Eggless Chocolate Truffle Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 224,
+    "name": "Eggless Mango Cream Cake",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 225,
+    "name": "Eggless Vanilla Bean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 226,
+    "name": "Eggless Red Velvet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Eggless Almond Sponge"
+  },
+  {
+    "id": 227,
+    "name": "Eggless Butterscotch Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 228,
+    "name": "Eggless Black Forest Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Eggless Cakes",
+    "flavor": "Eggless Almond Sponge"
+  },
+  {
+    "id": 229,
+    "name": "Personalized Name Plaque Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 230,
+    "name": "Monogrammed Signature Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 231,
+    "name": "Custom Flavor Fusion Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 232,
+    "name": "Bespoke Palette Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 233,
+    "name": "Tailored Celebration Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 234,
+    "name": "Custom Artistry Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Custom Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 235,
+    "name": "Diwali Gold Festival Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 236,
+    "name": "Holi Colorburst Festival Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 237,
+    "name": "Eid Celebration Festival Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 238,
+    "name": "Ganesh Chaturthi Sweet Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 239,
+    "name": "Navratri Delight Festival Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 240,
+    "name": "Pongal Harvest Festival Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Festival Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 241,
+    "name": "Queen Mom Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 242,
+    "name": "Blossom Heart Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 243,
+    "name": "Rose Garden Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 244,
+    "name": "Silk Ribbon Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 245,
+    "name": "Berry Love Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 246,
+    "name": "Honey Almond Mother's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Mother's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 247,
+    "name": "Gentleman's Choice Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 248,
+    "name": "Coffee Caramel Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 249,
+    "name": "Dark Chocolate Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 250,
+    "name": "Whiskey Barrel Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 251,
+    "name": "Maple Crunch Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 252,
+    "name": "Classic Leather Father's Day Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Father's Day Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 253,
+    "name": "Cupid's Velvet Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 254,
+    "name": "Rose Petal Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Saffron Rasmalai"
+  },
+  {
+    "id": 255,
+    "name": "Chocolate Love Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 256,
+    "name": "Heart Melody Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 257,
+    "name": "Strawberry Kiss Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 258,
+    "name": "Passion Berry Valentine Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Valentine Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 259,
+    "name": "Winter Spice Christmas Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 260,
+    "name": "Gingerbread Santa Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 261,
+    "name": "Fruit Cake Noel",
+    "currentImg": "https://images.unsplash.com/photo-1589119908995-c6837fa14848?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Seasonal Fresh Fruits"
+  },
+  {
+    "id": 262,
+    "name": "Peppermint Sleigh Christmas Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 263,
+    "name": "Frosted Pine Christmas Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 264,
+    "name": "Cranberry Holly Christmas Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Christmas Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 265,
+    "name": "Sparkling Midnight New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 266,
+    "name": "Champagne Toast New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 267,
+    "name": "Golden Countdown New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 268,
+    "name": "Firework Celebration New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 269,
+    "name": "Vintage Times New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 270,
+    "name": "New Dawn New Year Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "New Year Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 271,
+    "name": "BFF Berry Friendship Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 272,
+    "name": "Circle of Friends Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 273,
+    "name": "Sunset Squad Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 274,
+    "name": "Laugh & Love Friendship Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 275,
+    "name": "Golden Memories Friendship Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 276,
+    "name": "Sparkle Bond Friendship Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Friendship Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 277,
+    "name": "Tiny Toes Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 278,
+    "name": "Stork Surprise Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 279,
+    "name": "Blush Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 280,
+    "name": "Twinkle Little Star Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 281,
+    "name": "Welcome Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 282,
+    "name": "Cherub Dream Baby Shower Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Baby Shower Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 283,
+    "name": "Promise Ring Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 284,
+    "name": "Diamond Spark Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 285,
+    "name": "Forever Begins Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 286,
+    "name": "Royal Vow Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 287,
+    "name": "Hearts United Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 288,
+    "name": "Silk Ribbon Engagement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Engagement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 289,
+    "name": "Golden Years Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 290,
+    "name": "Relaxation Retreat Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 291,
+    "name": "Legacy Lane Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 292,
+    "name": "Sunset Meritage Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 293,
+    "name": "Champagne Cheers Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 294,
+    "name": "Peaceful Journey Retirement Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Retirement Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 295,
+    "name": "Executive Elegance Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 296,
+    "name": "Team Triumph Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 297,
+    "name": "Brand Celebration Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 298,
+    "name": "Conference Luxe Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 299,
+    "name": "Milestone Achievement Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 300,
+    "name": "Premium Logo Corporate Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Corporate Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 301,
+    "name": "Bon Voyage Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 302,
+    "name": "New Chapter Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 303,
+    "name": "Golden Goodbye Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 304,
+    "name": "Thank You Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 305,
+    "name": "Memory Lane Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 306,
+    "name": "Final Toast Farewell Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Farewell Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 307,
+    "name": "Crown Scholar Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 308,
+    "name": "Class of Excellence Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 309,
+    "name": "Future Star Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 310,
+    "name": "Achievement Medal Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 311,
+    "name": "Cap & Scroll Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 312,
+    "name": "Dream Big Graduation Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Graduation Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 313,
+    "name": "Pure White Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 314,
+    "name": "Subtle Elegance Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 315,
+    "name": "Textured Linen Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 316,
+    "name": "Soft Blossom Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 317,
+    "name": "Monochrome Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 318,
+    "name": "Quiet Luxury Minimal Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Minimal Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 319,
+    "name": "Seoul Velvet Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Korean Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 320,
+    "name": "Matcha Layer Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "low",
+    "category": "Korean Cakes",
+    "flavor": "Matcha Green Tea"
+  },
+  {
+    "id": 321,
+    "name": "Bingsu Berry Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Korean Cakes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 322,
+    "name": "Yuzu Cloud Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Korean Cakes",
+    "flavor": "Fresh Mango Cream"
+  },
+  {
+    "id": 323,
+    "name": "Honeydew Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Korean Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 324,
+    "name": "Peach Blossom Korean Cake",
+    "currentImg": "https://images.unsplash.com/photo-1616031037011-087000171abe?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Korean Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 325,
+    "name": "Mirror Glaze Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 326,
+    "name": "Activated Charcoal Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 327,
+    "name": "Galaxy Glitter Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 328,
+    "name": "Geode Sparkle Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 329,
+    "name": "Rustic Drip Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1559620192-032c4bc4674e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 330,
+    "name": "Textured Ombre Trending Cake",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Trending Cakes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 331,
+    "name": "Gourmet Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 332,
+    "name": "Chocolate Indulgence Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Rich Belgian Chocolate"
+  },
+  {
+    "id": 333,
+    "name": "Berry Delight Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1621303837174-89787a7d4729?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Mixed Berry Ganache"
+  },
+  {
+    "id": 334,
+    "name": "Tea Time Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 335,
+    "name": "Nuts & Caramel Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Caramel Butterscotch"
+  },
+  {
+    "id": 336,
+    "name": "Mini Celebration Dessert Box",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Dessert Boxes",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 337,
+    "name": "Luxury Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 338,
+    "name": "Tea Time Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Classic French Vanilla"
+  },
+  {
+    "id": 339,
+    "name": "Festive Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 340,
+    "name": "Sweet Celebration Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 341,
+    "name": "Premium Gift Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Premium Vanilla Almond"
+  },
+  {
+    "id": 342,
+    "name": "Corporate Bakery Hamper",
+    "currentImg": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
+    "proposedImg": "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=80",
+    "confidence": "high",
+    "category": "Bakery Hampers",
+    "flavor": "Premium Vanilla Almond"
+  }
+]
