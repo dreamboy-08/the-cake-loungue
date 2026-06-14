@@ -21,6 +21,7 @@ import {
   Package,
   AlertCircle
 } from 'lucide-react';
+import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
 
 const AdminProducts = () => {
@@ -136,8 +137,14 @@ const AdminProducts = () => {
                   <tr key={p.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm bg-gray-50">
-                          <img src={p.img} alt={p.name} className="w-full h-full object-cover" />
+                        <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 border border-gray-100 shadow-sm bg-gray-50">
+                          <Image
+                            src={p.img}
+                            alt={p.name}
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                          />
                         </div>
                         <div className="flex flex-col overflow-hidden">
                           <span className="font-bold text-chocolate text-sm truncate max-w-[200px]">{p.name}</span>

@@ -91,11 +91,14 @@ Price: ₹${price}`;
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-9">
           {/* Preview Section */}
           <div className="bg-white rounded-[22px] p-6 shadow-sm">
-            <div className="relative w-full max-w-[500px] mx-auto overflow-hidden group">
-              <img
-                className="w-full block transition-transform duration-300 group-hover:scale-[1.01]"
+            <div className="relative w-full max-w-[500px] mx-auto overflow-hidden group aspect-[500/404]">
+              <Image
                 src="https://i.imgur.com/4AI6p5K.png"
                 alt="Cake Base"
+                fill
+                sizes="(max-width: 500px) 100vw, 500px"
+                className="object-contain transition-transform duration-300 group-hover:scale-[1.01]"
+                priority
               />
               <div className="absolute top-[34%] left-1/2 -translate-x-1/2 w-[180px] h-[180px] rounded-xe overflow-hidden border-4 border-white z-[2] transition-all duration-300 group-hover:scale-[1.05]">
                 <Image src={selectedPhoto} alt="User Photo" fill className="object-cover" />

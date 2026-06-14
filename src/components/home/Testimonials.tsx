@@ -48,7 +48,7 @@ const Testimonials = () => {
               </p>
               <div className="flex items-center gap-[14px]">
                 <div className="w-[46px] h-[46px] rounded-full overflow-hidden border-2 border-blush relative">
-                  <Image src={review.avatar} alt={review.name} fill className="object-cover" />
+                  <Image src={review.avatar} alt={review.name} fill sizes="46px" className="object-cover" />
                 </div>
                 <div>
                   <div className="text-[0.9rem] font-semibold text-chocolate">{review.name}</div>

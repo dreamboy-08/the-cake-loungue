@@ -51,16 +51,50 @@ const Hero = () => {
             </div>
 
             <div className="absolute rounded-lg overflow-hidden shadow-lg w-[260px] h-[340px] top-10 left-10 -rotate-4 z-[2] transition-transform duration-[6s] hover:scale-105">
-              <Image src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80" alt="Chocolate Cake" fill className="object-cover" />
+              <Image
+                src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80"
+                alt="Chocolate Cake"
+                fill
+                sizes="260px"
+                className="object-cover"
+                priority
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+              />
             </div>
             <div className="absolute rounded-lg overflow-hidden shadow-lg w-[230px] h-[290px] top-5 right-10 rotate-3 z-[3] transition-transform duration-[6s] hover:scale-105">
-              <Image src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&q=80" alt="Birthday Cake" fill className="object-cover" />
+              <Image
+                src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&q=80"
+                alt="Birthday Cake"
+                fill
+                sizes="230px"
+                className="object-cover"
+                priority
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+              />
             </div>
             <div className="absolute rounded-lg overflow-hidden shadow-lg w-[210px] h-[260px] bottom-[30px] left-[100px] rotate-2 z-[4] transition-transform duration-[6s] hover:scale-105">
-              <Image src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500&q=80" alt="Strawberry Cake" fill className="object-cover" />
+              <Image
+                src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500&q=80"
+                alt="Strawberry Cake"
+                fill
+                sizes="210px"
+                className="object-cover"
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+              />
             </div>
             <div className="absolute rounded-lg overflow-hidden shadow-lg w-[180px] h-[220px] bottom-[60px] right-[60px] -rotate-3 z-[2] transition-transform duration-[6s] hover:scale-105">
-              <Image src="https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80" alt="Wedding Cake" fill className="object-cover" />
+              <Image
+                src="https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80"
+                alt="Wedding Cake"
+                fill
+                sizes="180px"
+                className="object-cover"
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+              />
             </div>
 
             <div className="absolute bg-white rounded-md px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float [animation-delay:-2s] bottom-[10px] right-5">

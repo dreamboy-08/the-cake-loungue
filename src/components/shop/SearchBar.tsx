@@ -92,6 +92,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
                       src={product.img}
                       alt={product.name}
                       fill
+                      sizes="48px"
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                 </div>
