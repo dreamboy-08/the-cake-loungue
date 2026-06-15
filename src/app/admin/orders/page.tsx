@@ -4,12 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { db } from '@/utils/firebase';
 import {
   collection,
-  getDocs,
   query,
   orderBy,
   updateDoc,
   doc,
-  where
+  onSnapshot
 } from 'firebase/firestore';
 import {
   ShoppingBag,
@@ -39,21 +38,19 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      let q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchOrders();
+    setLoading(true);
+    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setLoading(false);
+    }, (error) => {
+      console.error("Error listening to orders:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
@@ -104,13 +101,10 @@ const AdminOrders = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Order Management</h1>
           <p className="text-gray-500 mt-1">Track and manage customer cake orders and payments.</p>
         </div>
-        <button
-          onClick={fetchOrders}
-          className="flex items-center justify-center gap-2 bg-white text-chocolate px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100 hover:bg-gray-50 transition-all"
-        >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : <Clock size={20} />}
-          <span>Refresh Orders</span>
-        </button>
+        <div className="flex items-center justify-center gap-2 bg-white text-chocolate px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100">
+          {loading ? <Loader2 className="animate-spin" size={20} /> : <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
+          <span>{loading ? 'Syncing...' : 'Live Orders'}</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

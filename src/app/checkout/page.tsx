@@ -45,11 +45,14 @@ const CheckoutPage = () => {
           const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
           setSelectedAddress(defaultAddr || null);
         } else {
-          setSelectedAddress(stillExists);
+          // Sync with the latest address data from profile
+          if (JSON.stringify(stillExists) !== JSON.stringify(selectedAddress)) {
+            setSelectedAddress(stillExists);
+          }
         }
       }
     }
-  }, [userData?.addresses, selectedAddress?.id]);
+  }, [userData?.addresses, selectedAddress]);
 
   useEffect(() => {
     // Dynamically load Razorpay script
@@ -120,6 +123,23 @@ const CheckoutPage = () => {
           setPaymentStatus('verifying');
           try {
             console.log('Razorpay payment successful, verifying...', response.razorpay_payment_id);
+
+            const orderDetails = {
+              userId: user?.uid || 'guest',
+              customer: {
+                name: selectedAddress.name,
+                email: user?.email || 'guest@example.com',
+                phone: selectedAddress.phone,
+              },
+              shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+              items: cart,
+              totalAmount: finalTotal,
+              shippingFee,
+              subtotal: cartTotal,
+              status: 'Confirmed',
+              createdAt: new Date().toISOString(),
+            };
+
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -127,44 +147,15 @@ const CheckoutPage = () => {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                orderDetails
               }),
             });
 
             const verifyData = await verifyResponse.json();
 
             if (verifyResponse.ok && verifyData.success) {
-              console.log('Payment verified successfully');
-              // Step 3: Save order to Firestore with idempotency
+              console.log('Payment verified and order stored successfully');
               const orderId = response.razorpay_order_id;
-              const orderRef = doc(db, 'orders', orderId);
-
-              // Check if order already exists to prevent duplicates
-              const existingOrder = await getDoc(orderRef);
-              if (!existingOrder.exists()) {
-                const orderDoc = {
-                  userId: user?.uid || 'guest',
-                  customer: {
-                    name: selectedAddress.name,
-                    email: user?.email || 'guest@example.com',
-                    phone: selectedAddress.phone,
-                  },
-                  shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
-                  items: cart,
-                  totalAmount: finalTotal,
-                  shippingFee,
-                  subtotal: cartTotal,
-                  status: 'Confirmed',
-                  paymentStatus: 'Paid',
-                  paymentId: response.razorpay_payment_id,
-                  razorpayOrderId: response.razorpay_order_id,
-                  paymentSignature: response.razorpay_signature,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString(),
-                };
-
-                await setDoc(orderRef, orderDoc);
-                console.log('Order saved to Firestore successfully');
-              }
 
               setPaymentStatus('success');
               clearCart();
