@@ -3,8 +3,32 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
+const admin = require('firebase-admin');
 
 dotenv.config();
+
+// Initialize Firebase Admin
+try {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('Firebase Admin initialized via service account');
+  } else if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    });
+    console.log('Firebase Admin initialized via application default credentials');
+  } else {
+    console.warn('Firebase Admin not initialized: Missing credentials');
+  }
+} catch (error) {
+  console.error('Firebase Admin initialization error:', error.message);
+}
+
+const db = admin.apps && admin.apps.length > 0 ? admin.firestore() : null;
 
 const app = express();
 
@@ -87,10 +111,15 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-// Verify Payment Signature
-app.post('/api/verify-payment', (req, res) => {
+// Verify Payment Signature and Store Order
+app.post('/api/verify-payment', async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      orderDetails
+    } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({
@@ -113,9 +142,57 @@ app.post('/api/verify-payment', (req, res) => {
 
     if (generatedSignature === razorpay_signature) {
       console.log('Payment verified successfully:', razorpay_payment_id);
+
+      // Store order in Firestore if db is initialized
+      if (db && orderDetails) {
+        try {
+          const orderRef = db.collection('orders').doc(razorpay_order_id);
+          const doc = await orderRef.get();
+
+          if (!doc.exists) {
+            const orderDoc = {
+              ...orderDetails,
+              paymentId: razorpay_payment_id,
+              razorpayOrderId: razorpay_order_id,
+              paymentSignature: razorpay_signature,
+              paymentStatus: 'Paid',
+              status: orderDetails.status || 'Confirmed',
+              createdAt: orderDetails.createdAt || new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+
+            await orderRef.set(orderDoc);
+            console.log('Order stored successfully in Firestore:', razorpay_order_id);
+
+            // SIMULATED OWNER NOTIFICATION
+            console.log('-------------------------------------------');
+            console.log('NEW ORDER RECEIVED - OWNER NOTIFICATION');
+            console.log('Order ID:', razorpay_order_id);
+            console.log('Customer:', orderDetails.customer?.name);
+            console.log('Phone:', orderDetails.customer?.phone);
+            console.log('Total Amount: ₹', orderDetails.totalAmount);
+            console.log('Items:', orderDetails.items?.map(i => `${i.name} (x${i.quantity})`).join(', '));
+            console.log('Address:', orderDetails.shippingAddress);
+            console.log('-------------------------------------------');
+          }
+        } catch (dbError) {
+          console.error('Error storing order in Firestore:', dbError);
+          return res.status(500).json({
+            success: false,
+            error: 'Payment verified but failed to save order. Please contact support.'
+          });
+        }
+      } else if (!db) {
+        console.error('Firestore not initialized, cannot store order');
+        return res.status(500).json({
+          success: false,
+          error: 'Backend configuration error: Database not reachable'
+        });
+      }
+
       return res.json({
         success: true,
-        message: 'Payment verified successfully'
+        message: 'Payment verified and order stored successfully'
       });
     }
 

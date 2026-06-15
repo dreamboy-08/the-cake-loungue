@@ -75,7 +75,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   <AnimatePresence>
                     {cart.map((item) => (
                       <motion.div
-                        key={item.id}
+                        key={item.cartItemId}
                         layout
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -91,7 +91,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                             <div className="flex justify-between items-start gap-2">
                               <h4 className="m-0 text-[0.95rem] font-bold text-chocolate line-clamp-1 leading-tight">{item.name}</h4>
                               <button
-                                onClick={() => removeFromCart(item.id)}
+                                onClick={() => removeFromCart(item.cartItemId)}
                                 className="text-text-soft hover:text-rose-deep transition-colors shrink-0"
                                 aria-label={`Remove ${item.name} from cart`}
                               >
@@ -106,14 +106,14 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
                             <div className="flex items-center gap-3 bg-cream/50 rounded-full px-2 py-1 border border-cream">
                               <button
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
                                 className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
                               >
                                 <Minus size={14} />
                               </button>
                               <span className="text-sm font-bold text-chocolate min-w-[1.2rem] text-center">{item.quantity}</span>
                               <button
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
                                 className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
                               >
                                 <Plus size={14} />
