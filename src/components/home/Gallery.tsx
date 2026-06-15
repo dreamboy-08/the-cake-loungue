@@ -24,7 +24,13 @@ const Gallery = () => {
         <div className="flex gap-[18px] w-max animate-slider hover:[animation-play-state:paused]">
           {[...galleryImgs, ...galleryImgs].map((img, i) => (
             <div key={i} className="w-[280px] h-[340px] min-w-[280px] rounded-lg overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group">
-              <Image src={img.src} alt={img.label} fill className="object-cover transition-transform duration-500 group-hover:scale-108" />
+              <Image
+                src={img.src}
+                alt={img.label}
+                fill
+                sizes="280px"
+                className="object-cover transition-transform duration-500 group-hover:scale-108"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(61,31,16,0.7)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
               <div className="absolute bottom-5 left-0 right-0 text-center text-white text-[0.9rem] font-semibold opacity-0 translate-y-2.5 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
                 {img.label}

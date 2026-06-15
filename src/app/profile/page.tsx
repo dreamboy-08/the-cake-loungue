@@ -6,6 +6,7 @@ import { db } from '@/utils/firebase';
 import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { User, Mail, Phone, Calendar, ShoppingBag, MapPin, ChevronRight, Loader2, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 const ProfilePage = () => {
@@ -156,8 +157,14 @@ const ProfilePage = () => {
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 rounded-2xl bg-cream overflow-hidden">
-                          <img src={order.items[0].img} alt={order.items[0].name} className="w-full h-full object-cover" />
+                        <div className="relative w-16 h-16 rounded-2xl bg-cream overflow-hidden">
+                          <Image
+                            src={order.items[0].img}
+                            alt={order.items[0].name}
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                          />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">

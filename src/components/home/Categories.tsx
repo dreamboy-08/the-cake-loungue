@@ -31,6 +31,7 @@ const Categories = () => {
                 src={cat.img}
                 alt={cat.name}
                 fill
+                sizes="(max-width: 640px) 50vw, 25vw"
                 className="object-cover transition-transform duration-600 group-hover:scale-108"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(61,31,16,0.85)] to-transparent opacity-100 transition-opacity duration-300"></div>

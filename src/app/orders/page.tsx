@@ -6,6 +6,7 @@ import { db } from '@/utils/firebase';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCard, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 const OrdersPage = () => {
@@ -143,8 +144,14 @@ const OrdersPage = () => {
                     </div>
                     <div className="flex -space-x-3 overflow-hidden">
                       {order.items.slice(0, 4).map((item: any, idx: number) => (
-                        <div key={idx} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-cream shadow-sm">
-                          <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                        <div key={idx} className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-cream shadow-sm">
+                          <Image
+                            src={item.img}
+                            alt={item.name}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                          />
                         </div>
                       ))}
                       {order.items.length > 4 && (

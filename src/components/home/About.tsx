@@ -11,7 +11,13 @@ const About = () => {
           <div className="relative hidden lg:block">
             <div className="absolute top-[-20px] left-[-20px] w-[100px] h-[100px] bg-gold-light rounded-full z-0 opacity-60"></div>
             <div className="rounded-xl overflow-hidden shadow-lg aspect-[4/5] relative">
-              <Image src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80" alt="Our Bakery" fill className="object-cover" />
+              <Image
+                src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80"
+                alt="Our Bakery"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
             </div>
             <div className="absolute bottom-[-24px] right-[-24px] bg-white rounded-md p-6 shadow-md z-[2] max-w-[200px]">
               <div className="font-playfair text-[2.2rem] font-bold text-rose-deep leading-none">10+</div>

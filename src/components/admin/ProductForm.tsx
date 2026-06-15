@@ -17,6 +17,7 @@ import {
   getDownloadURL
 } from 'firebase/storage';
 import { X, Upload, Loader2, Plus, Image as ImageIcon, Link as LinkIcon, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
 interface ProductFormProps {
   product?: any;
@@ -146,7 +147,12 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
               >
                 {(imagePreview || formData.imageUrl) ? (
                   <>
-                    <img src={imagePreview || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <Image
+                      src={imagePreview || formData.imageUrl}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <Upload className="text-white" size={32} />
                     </div>

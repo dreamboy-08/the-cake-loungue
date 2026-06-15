@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useLayoutEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import Image from 'next/image';
 
 interface FlyAnimation {
   id: number;
@@ -105,7 +106,13 @@ const FlyingThumbnail = ({
       onAnimationComplete={onComplete}
       className="fixed top-0 left-0 w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-2xl z-[10000]"
     >
-      <img src={animation.image} alt="" className="w-full h-full object-cover" />
+      <Image
+        src={animation.image}
+        alt=""
+        fill
+        unoptimized
+        className="object-cover"
+      />
     </motion.div>
   );
 };

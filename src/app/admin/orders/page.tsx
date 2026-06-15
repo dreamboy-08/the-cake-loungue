@@ -27,6 +27,7 @@ import {
   ArrowUpRight,
   ShieldCheck
 } from 'lucide-react';
+import Image from 'next/image';
 
 const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
@@ -292,8 +293,14 @@ const AdminOrders = () => {
                   {(selectedOrder.items || []).map((item: any, idx: number) => (
                     <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-gray-50 bg-white shadow-sm">
                       <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
-                          <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="relative w-14 h-14 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
+                          <Image
+                            src={item.img}
+                            alt={item.name}
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                          />
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>

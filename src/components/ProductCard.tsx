@@ -11,9 +11,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductCardProps {
   product: Product;
+  priority?: boolean;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) => {
   const { cart, addToCart } = useCart();
   const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
@@ -50,7 +51,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           src={product.img}
           alt={product.name}
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+          priority={priority}
         />
         {product.tag && (
           <div className="absolute top-[14px] left-[-4px] bg-rose-deep text-white text-[0.68rem] font-bold py-1 px-3 rounded-r-[4px] uppercase tracking-wider before:content-[''] before:absolute before:bottom-[-4px] before:left-0 before:border-[4px] before:border-transparent before:border-r-rose-deep">

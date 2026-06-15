@@ -6,6 +6,7 @@ import { db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { ArrowLeft, Package, MapPin, CreditCard, Calendar, Clock, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -132,8 +133,14 @@ const OrderDetailsPage = () => {
               <div className="space-y-4">
                 {order.items.map((item: any, idx: number) => (
                   <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-cream/20 border border-cream/50">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0">
+                      <Image
+                        src={item.img}
+                        alt={item.name}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-chocolate line-clamp-1">{item.name}</h4>

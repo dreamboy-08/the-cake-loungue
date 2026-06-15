@@ -6,6 +6,7 @@ import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 
@@ -288,8 +289,14 @@ const CheckoutPage = () => {
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
                   <div key={item.id} className="flex gap-4 p-2 hover:bg-cream/20 rounded-2xl transition-colors">
-                    <div className="w-20 h-20 rounded-2xl bg-cream overflow-hidden flex-shrink-0 border border-cream">
-                      <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                    <div className="relative w-20 h-20 rounded-2xl bg-cream overflow-hidden flex-shrink-0 border border-cream">
+                      <Image
+                        src={item.img}
+                        alt={item.name}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
@@ -362,9 +369,15 @@ const CheckoutPage = () => {
               )}
 
               <div className="mt-8 pt-8 border-t border-cream flex items-center justify-center gap-6 grayscale opacity-50">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-6" />
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />
+                <div className="relative h-4 w-16">
+                  <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" fill className="object-contain" />
+                </div>
+                <div className="relative h-6 w-12">
+                  <Image src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" fill className="object-contain" />
+                </div>
+                <div className="relative h-4 w-12">
+                  <Image src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" fill className="object-contain" />
+                </div>
               </div>
               <p className="text-[10px] text-center text-text-soft mt-4 uppercase tracking-widest font-bold">
                 100% Secure SSL Encrypted Checkout
