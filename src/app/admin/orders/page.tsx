@@ -8,7 +8,7 @@ import {
   orderBy,
   updateDoc,
   doc,
-  onSnapshot
+  getDocs
 } from 'firebase/firestore';
 import {
   ShoppingBag,
@@ -24,7 +24,8 @@ import {
   Loader2,
   Filter,
   ArrowUpRight,
-  ShieldCheck
+  ShieldCheck,
+  RefreshCw
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -38,19 +39,22 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+  const fetchOrders = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    try {
+      const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    }, (error) => {
-      console.error("Error listening to orders:", error);
-      setLoading(false);
-    });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
 
-    return () => unsubscribe();
+  useEffect(() => {
+    fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
@@ -58,9 +62,10 @@ const AdminOrders = () => {
     try {
       const orderRef = doc(db, 'orders', orderId);
       await updateDoc(orderRef, { status: newStatus });
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      // Refresh local data to ensure consistency
+      await fetchOrders(false);
       if (selectedOrder?.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
+        setSelectedOrder(prev => ({ ...prev, status: newStatus }));
       }
     } catch (error) {
       console.error("Error updating status:", error);
@@ -101,9 +106,18 @@ const AdminOrders = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Order Management</h1>
           <p className="text-gray-500 mt-1">Track and manage customer cake orders and payments.</p>
         </div>
-        <div className="flex items-center justify-center gap-2 bg-white text-chocolate px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100">
-          {loading ? <Loader2 className="animate-spin" size={20} /> : <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
-          <span>{loading ? 'Syncing...' : 'Live Orders'}</span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => fetchOrders(true)}
+            className="flex items-center justify-center gap-2 bg-white text-chocolate px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100 hover:bg-gray-50 transition-all"
+          >
+            <RefreshCw className={loading ? "animate-spin" : ""} size={20} />
+            <span>Refresh</span>
+          </button>
+          <div className="flex items-center justify-center gap-2 bg-white text-chocolate px-6 py-3 rounded-2xl font-bold shadow-sm border border-gray-100">
+            {loading ? <Loader2 className="animate-spin" size={20} /> : <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
+            <span>{loading ? 'Syncing...' : 'Live Orders'}</span>
+          </div>
         </div>
       </div>
 

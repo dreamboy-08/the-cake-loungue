@@ -36,16 +36,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { user } = useAuth();
 
   const isInitialMount = useRef(true);
-  const isUpdatingFromServer = useRef(false);
+  const cartRefForSync = useRef<CartItem[]>([]);
+  const lastFetchedCartStr = useRef<string>('');
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    cartRefForSync.current = cart;
+  }, [cart]);
 
   // Persistence helper
   const persistCart = async (newCart: CartItem[]) => {
+    const cartStr = JSON.stringify(newCart);
+
+    // Only persist if different from what we last got from or sent to server
+    if (cartStr === lastFetchedCartStr.current) return;
+
     if (!user) {
       localStorage.setItem('cakeLounge_cart', JSON.stringify(newCart));
       return;
     }
 
     try {
+      lastFetchedCartStr.current = cartStr;
       await setDoc(doc(db, 'carts', user.uid), {
         items: newCart,
         updatedAt: new Date().toISOString(),
@@ -68,9 +80,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (docSnap.metadata.hasPendingWrites) return;
 
           if (docSnap.exists()) {
-            isUpdatingFromServer.current = true;
-            setCart(docSnap.data().items || []);
-            isUpdatingFromServer.current = false;
+            const serverItems = docSnap.data().items || [];
+            const serverItemsStr = JSON.stringify(serverItems);
+
+            // Only update local state if it's actually different from what we have
+            if (serverItemsStr !== JSON.stringify(cartRefForSync.current)) {
+              lastFetchedCartStr.current = serverItemsStr;
+              setCart(serverItems);
+            }
           } else {
             // If no Firestore cart, try to migrate from localStorage
             const localCart = localStorage.getItem('cakeLounge_cart');
@@ -95,7 +112,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const localCart = localStorage.getItem('cakeLounge_cart');
         if (localCart) {
           try {
-            setCart(JSON.parse(localCart));
+            const parsed = JSON.parse(localCart);
+            lastFetchedCartStr.current = localCart;
+            setCart(parsed);
           } catch (e) {
             console.error("Failed to parse local cart", e);
           }
@@ -109,6 +128,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       if (unsubscribe) unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Handle persistence whenever cart changes, but avoid feedback loops
@@ -118,10 +138,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    // Only persist if the update was NOT from the server
-    if (!isUpdatingFromServer.current && !isLoading) {
+    if (!isLoading) {
       persistCart(cart);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart, isLoading]);
 
   const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>) => {

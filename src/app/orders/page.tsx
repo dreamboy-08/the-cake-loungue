@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/utils/firebase';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCard, CheckCircle2 } from 'lucide-react';
+import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCard, CheckCircle2, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -16,29 +16,33 @@ const OrdersPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
+  const fetchOrders = async (showLoading = true) => {
     if (!user) {
       setOrders([]);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
-    const q = query(
-      collection(db, 'orders'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
+    if (showLoading) setLoading(true);
+    try {
+      const q = query(
+        collection(db, 'orders'),
+        where('userId', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const snapshot = await getDocs(q);
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    }, (error) => {
+    } catch (error) {
       console.error("Error fetching orders:", error);
-      setLoading(false);
-    });
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
 
-    return () => unsubscribe();
+  useEffect(() => {
+    fetchOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const filteredOrders = orders.filter(o =>
@@ -72,9 +76,18 @@ const OrdersPage = () => {
         <BackButton fallbackRoute="/profile" ariaLabel="Go back to profile" />
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div>
-            <h1 className="text-4xl font-bold font-playfair text-chocolate mb-2">Order History</h1>
-            <p className="text-text-soft">Manage and track your recent cake orders.</p>
+          <div className="flex items-center gap-4">
+            <div>
+              <h1 className="text-4xl font-bold font-playfair text-chocolate mb-2">Order History</h1>
+              <p className="text-text-soft">Manage and track your recent cake orders.</p>
+            </div>
+            <button
+              onClick={() => fetchOrders(true)}
+              className="p-3 bg-white rounded-2xl text-rose-deep shadow-sm hover:shadow-md transition-all border border-cream"
+              title="Refresh Orders"
+            >
+              <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
+            </button>
           </div>
 
           <div className="relative">
