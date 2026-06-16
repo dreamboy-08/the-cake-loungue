@@ -1,10 +1,46 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { db } from '@/utils/firebase';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 
 const AdminDashboard = () => {
   const router = useRouter();
+  const [stats, setStats] = useState({
+    products: 0,
+    categories: 0,
+    orders: 0,
+    revenue: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [prodSnap, catSnap, orderSnap] = await Promise.all([
+          getDocs(collection(db, 'products')),
+          getDocs(collection(db, 'categories')),
+          getDocs(collection(db, 'orders'))
+        ]);
+
+        const orders = orderSnap.docs.map(doc => doc.data());
+        const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+
+        setStats({
+          products: prodSnap.size,
+          categories: catSnap.size,
+          orders: orderSnap.size,
+          revenue: totalRevenue
+        });
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -15,10 +51,10 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: 'Total Products', value: '0', sub: '+0 from last month', color: 'bg-blue-500' },
-          { label: 'Categories', value: '0', sub: 'Active categories', color: 'bg-purple-500' },
-          { label: 'Recent Orders', value: '0', sub: 'Pending fulfillment', color: 'bg-orange-500' },
-          { label: 'Total Revenue', value: '₹0', sub: 'Last 30 days', color: 'bg-green-500' },
+          { label: 'Total Products', value: stats.products.toString(), sub: 'In catalog', color: 'bg-blue-500' },
+          { label: 'Categories', value: stats.categories.toString(), sub: 'Active categories', color: 'bg-purple-500' },
+          { label: 'Recent Orders', value: stats.orders.toString(), sub: 'Lifetime total', color: 'bg-orange-500' },
+          { label: 'Total Revenue', value: `₹${stats.revenue.toLocaleString()}`, sub: 'Lifetime total', color: 'bg-green-500' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 transition-hover duration-300 hover:shadow-md">
             <div className="flex items-center justify-between mb-4">

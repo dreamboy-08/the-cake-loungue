@@ -1,24 +1,51 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
-import { products, Product } from '@/constants/products';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
 import { filterProducts } from '@/utils/filterProducts';
+import { db } from '@/utils/firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 const MenuPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(q);
+        const productsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as unknown as Product[];
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const categories = useMemo(() =>
+    ['All', ...Array.from(new Set(products.map(p => p.category)))],
+    [products]
+  );
 
   const filteredProducts = useMemo(() => {
     const categoryFiltered = products.filter(product =>
       activeCategory === 'All' || product.category === activeCategory
     );
     return filterProducts(categoryFiltered, searchQuery);
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, products]);
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
@@ -61,17 +88,24 @@ const MenuPage = () => {
         </div>
 
         {/* Dynamic Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              priority={index < 4}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="animate-spin text-rose-deep" size={40} />
+            <p className="text-text-soft font-medium">Loading our bakery collection...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                priority={index < 4}
+              />
+            ))}
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-20">
             <h3 className="text-2xl font-playfair font-bold text-chocolate mb-2">No cakes found</h3>
             <p className="text-text-soft">Try adjusting your search or category filters.</p>

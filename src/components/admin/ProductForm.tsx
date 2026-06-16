@@ -39,6 +39,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     category: product?.category || '',
     flavor: product?.flavor || '',
     tag: product?.tag || '',
+    weight: product?.weight || '',
     rating: product?.rating || 5,
     reviews: product?.reviews || 0,
     imageUrl: product?.img || '',
@@ -56,6 +57,17 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+
+      // Verification: mime-type and size (max 5MB)
+      if (!file.type.startsWith('image/')) {
+        alert("Please upload a valid image file.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image file size should be less than 5MB.");
+        return;
+      }
+
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
       setFormData(prev => ({ ...prev, imageUrl: '' }));
@@ -64,6 +76,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Required field checks
+    if (!formData.name || !formData.category || !formData.price) {
+      alert("Please fill in all required fields (Name, Category, Price).");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -95,7 +114,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       const productData = {
         ...restData,
         price: Number(formData.price),
-        oldPrice: Number(formData.oldPrice),
+        oldPrice: Number(formData.oldPrice) || 0,
         img: finalImageUrl,
         updatedAt: new Date().toISOString(),
       };
@@ -250,15 +269,27 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Flavor</label>
-                <input
-                  type="text"
-                  value={formData.flavor}
-                  onChange={(e) => setFormData({ ...formData, flavor: e.target.value })}
-                  placeholder="e.g. Mixed Berry Ganache"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Flavor</label>
+                  <input
+                    type="text"
+                    value={formData.flavor}
+                    onChange={(e) => setFormData({ ...formData, flavor: e.target.value })}
+                    placeholder="e.g. Mixed Berry Ganache"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Weight/Size</label>
+                  <input
+                    type="text"
+                    value={formData.weight}
+                    onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
+                    placeholder="e.g. 500g, 1kg"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  />
+                </div>
               </div>
             </div>
           </div>

@@ -20,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
   const [localAdded, setLocalAdded] = useState(false);
 
   // Derive global added state from cart
-  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const isGloballyAdded = cart.some(item => item.id.toString() === product.id.toString());
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
     flyToCart(rect, product.img);
 
     addToCart({
-      id: product.id,
+      id: product.id as any,
       name: product.name,
       price: product.price,
       img: product.img,

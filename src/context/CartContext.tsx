@@ -6,7 +6,7 @@ import { db } from '@/utils/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 export interface CartItem {
-  id: number;
+  id: number | string;
   cartItemId: string; // Unique identifier for items with different options
   name: string;
   price: number;
@@ -39,7 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isUpdatingFromServer = useRef(false);
 
   // Persistence helper
-  const persistCart = async (newCart: CartItem[]) => {
+  const persistCart = React.useCallback(async (newCart: CartItem[]) => {
     if (!user) {
       localStorage.setItem('cakeLounge_cart', JSON.stringify(newCart));
       return;
@@ -53,7 +53,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error persisting cart:', error);
     }
-  };
+  }, [user]);
 
   // Sync with Firestore or LocalStorage
   useEffect(() => {

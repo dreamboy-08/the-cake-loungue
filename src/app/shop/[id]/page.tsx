@@ -1,36 +1,67 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Star, Heart, ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { products } from '@/constants/products';
+import { Product } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { db } from '@/utils/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { cart, addToCart, isLoading } = useCart();
+  const { cart, addToCart, isLoading: cartLoading } = useCart();
   const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = products.find((p) => p.id === Number(id));
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const docRef = doc(db, 'products', id as string);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setProduct({ id: docSnap.id, ...docSnap.data() } as unknown as Product);
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-rose-deep" size={48} />
+        <p className="text-chocolate font-bold">Loading product details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     notFound();
   }
 
-  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const isGloballyAdded = cart.some(item => item.id.toString() === product.id.toString());
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    if (!product) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
     addToCart({
-      id: product.id,
+      id: product.id as any, // Cast to any to handle mixed id types in cart
       name: product.name,
       price: product.price,
       img: product.img,
@@ -121,14 +152,14 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                disabled={isLoading}
+                disabled={cartLoading}
                 className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  isLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
                   isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                 }`}
               >
                 <AnimatePresence mode="wait">
-                  {isLoading ? (
+                  {cartLoading ? (
                     <motion.div
                       key="loading"
                       initial={{ opacity: 0 }}

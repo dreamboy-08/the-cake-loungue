@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import { products, Product } from '@/constants/products';
+import { Product } from '@/constants/products';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { filterProducts } from '@/utils/filterProducts';
+import { db } from '@/utils/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -16,12 +18,25 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'products'));
+        setAllProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as unknown as Product[]);
+      } catch (error) {
+        console.error("Error fetching products for search:", error);
+      }
+    };
+    fetchAllProducts();
+  }, []);
+
+  useEffect(() => {
     if (query.trim().length > 1) {
-      const filtered = filterProducts(products, query).slice(0, 8);
+      const filtered = filterProducts(allProducts, query).slice(0, 8);
       setSuggestions(filtered);
       setShowSuggestions(true);
     } else {
@@ -46,7 +61,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
     onSearch('');
   };
 
-  const handleSuggestionClick = (productId: number) => {
+  const handleSuggestionClick = (productId: string | number) => {
     setShowSuggestions(false);
     router.push(`/shop/${productId}`);
   };

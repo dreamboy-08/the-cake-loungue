@@ -23,14 +23,28 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
+import BulkImportModal from '@/components/admin/BulkImportModal';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const fetchCategories = async () => {
+    try {
+      const q = query(collection(db, 'categories'), orderBy('name'));
+      const snapshot = await getDocs(q);
+      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -47,6 +61,7 @@ const AdminProducts = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -60,10 +75,12 @@ const AdminProducts = () => {
     }
   };
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = (p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category?.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="space-y-8 animate-fade-up">
@@ -72,16 +89,25 @@ const AdminProducts = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Product Management</h1>
           <p className="text-gray-500 mt-1">Manage your bakery inventory and catalog.</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedProduct(null);
-            setIsFormOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto"
-        >
-          <Plus size={20} />
-          <span>Add New Product</span>
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <button
+            onClick={() => setIsImportOpen(true)}
+            className="flex items-center justify-center gap-2 bg-chocolate text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-chocolate/10 hover:bg-brown hover:-translate-y-0.5 transition-all flex-1 sm:flex-none"
+          >
+            <Package size={20} />
+            <span>Bulk Import</span>
+          </button>
+          <button
+            onClick={() => {
+              setSelectedProduct(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all flex-1 sm:flex-none"
+          >
+            <Plus size={20} />
+            <span>Add New Product</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
@@ -95,10 +121,19 @@ const AdminProducts = () => {
             className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
           />
         </div>
-        <button className="flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-gray-50 text-gray-500 font-medium hover:bg-gray-100 transition-all">
-          <Filter size={18} />
-          <span>Filters</span>
-        </button>
+        <div className="relative">
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <select
+            value={activeCategory}
+            onChange={(e) => setActiveCategory(e.target.value)}
+            className="pl-12 pr-10 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm appearance-none font-medium text-gray-600 min-w-[200px]"
+          >
+            <option value="All">All Categories</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.name}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -231,6 +266,13 @@ const AdminProducts = () => {
         <ProductForm
           product={selectedProduct}
           onClose={() => setIsFormOpen(false)}
+          onSuccess={fetchProducts}
+        />
+      )}
+
+      {isImportOpen && (
+        <BulkImportModal
+          onClose={() => setIsImportOpen(false)}
           onSuccess={fetchProducts}
         />
       )}

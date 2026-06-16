@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  id: number | string;
   name: string;
   flavor: string;
   category: string;
@@ -10,6 +10,7 @@ export interface Product {
   tag: string;
   img: string;
   description: string;
+  weight?: string;
 }
 
 export const products: Product[] = [

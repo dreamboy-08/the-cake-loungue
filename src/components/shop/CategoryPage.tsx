@@ -1,10 +1,12 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { Product, products } from '@/constants/products';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
+import { db } from '@/utils/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 interface CategoryPageProps {
   category: string;
@@ -14,7 +16,23 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = ({ category, title, description, subtitle }: CategoryPageProps) => {
-  const filteredProducts = products.filter((p) => p.category === category);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const q = query(collection(db, 'products'), where('category', '==', category));
+        const snapshot = await getDocs(q);
+        setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as unknown as Product[]);
+      } catch (error) {
+        console.error("Error fetching category products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [category]);
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
@@ -36,11 +54,18 @@ const CategoryPage = ({ category, title, description, subtitle }: CategoryPagePr
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="animate-spin text-rose-deep" size={40} />
+            <p className="text-text-soft font-medium">Loading {title}...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
