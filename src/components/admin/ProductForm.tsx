@@ -16,8 +16,9 @@ import {
   uploadBytes,
   getDownloadURL
 } from 'firebase/storage';
-import { X, Upload, Loader2, Plus, Image as ImageIcon, Link as LinkIcon, AlertCircle } from 'lucide-react';
+import { X, Upload, Loader2, Plus, Image as ImageIcon, Link as LinkIcon, AlertCircle, Trash2, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductFormProps {
   product?: any;
@@ -30,6 +31,8 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(product?.img || '');
   const [categories, setCategories] = useState<any[]>([]);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: product?.name || '',
@@ -43,6 +46,11 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     reviews: product?.reviews || 0,
     imageUrl: product?.img || '',
   });
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -59,6 +67,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
       setFormData(prev => ({ ...prev, imageUrl: '' }));
+      setUploadError(null);
     }
   };
 
@@ -71,22 +80,22 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
 
       if (imageFile) {
         try {
+          setUploadError(null);
           const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
           const uploadResult = await uploadBytes(storageRef, imageFile);
           finalImageUrl = await getDownloadURL(uploadResult.ref);
         } catch (storageError: any) {
           console.error("Storage upload failed:", storageError);
-          if (storageError.code === 'storage/unauthorized' || storageError.code === 'storage/retry-limit-exceeded') {
-            alert("Firebase Storage is unavailable or restricted. Please provide a direct Image URL instead.");
-            setLoading(false);
-            return;
-          }
-          throw storageError;
+          const errorMsg = "Image upload failed. Please use the fallback URL below.";
+          setUploadError(errorMsg);
+          showToast(errorMsg, "error");
+          setLoading(false);
+          return;
         }
       }
 
       if (!finalImageUrl) {
-        alert("Please upload an image or provide an image URL.");
+        showToast("Please upload an image or provide an image URL.", "error");
         setLoading(false);
         return;
       }
@@ -113,7 +122,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       onClose();
     } catch (error) {
       console.error("Error saving product:", error);
-      alert("Failed to save product. Check console for details.");
+      showToast("Failed to save product. Check console for details.", "error");
     } finally {
       setLoading(false);
     }
@@ -121,6 +130,22 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm ${
+              toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            {toast.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-up">
         <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white">
           <h2 className="text-xl font-bold font-playfair">{product ? 'Edit Product' : 'Add New Product'}</h2>
@@ -142,7 +167,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
               </div>
 
               <div
-                className="relative aspect-square rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center overflow-hidden transition-all hover:border-rose-deep/50 group cursor-pointer"
+                className={`relative aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all group cursor-pointer ${
+                  uploadError ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-rose-deep/50'
+                }`}
                 onClick={() => document.getElementById('image-upload')?.click()}
               >
                 {(imagePreview || formData.imageUrl) ? (
@@ -153,8 +180,25 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Upload className="text-white" size={32} />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                      <div className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors">
+                        <Upload size={24} />
+                      </div>
+                      {(imageFile || formData.imageUrl) && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setImageFile(null);
+                            setImagePreview('');
+                            setFormData({ ...formData, imageUrl: '' });
+                            setUploadError(null);
+                          }}
+                          className="p-3 bg-red-500/80 backdrop-blur-md rounded-full text-white hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 size={24} />
+                        </button>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -173,6 +217,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                 />
               </div>
 
+              {uploadError && (
+                <div className="flex items-center gap-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100 animate-shake">
+                  <AlertCircle size={14} />
+                  <span>{uploadError}</span>
+                </div>
+              )}
+
               <div className="space-y-2 pt-2">
                 <label className="flex items-center gap-2 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest">
                   <LinkIcon size={12} />
@@ -185,6 +236,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                     setFormData({ ...formData, imageUrl: e.target.value });
                     setImagePreview('');
                     setImageFile(null);
+                    setUploadError(null);
                   }}
                   placeholder="https://images.unsplash.com/..."
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-xs"
