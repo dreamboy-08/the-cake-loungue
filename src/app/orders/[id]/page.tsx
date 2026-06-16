@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { ArrowLeft, Package, MapPin, CreditCard, Calendar, Clock, Loader2, CheckCircle2 } from 'lucide-react';
+import { Package, MapPin, CreditCard, Calendar, Clock, Loader2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import BackButton from '@/components/BackButton';
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
@@ -77,10 +78,7 @@ const OrderDetailsPage = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
-        <Link href="/orders" className="inline-flex items-center gap-2 text-rose-deep font-bold mb-8 hover:text-chocolate transition-colors group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Orders
-        </Link>
+        <BackButton fallbackRoute="/orders" ariaLabel="Go back to order history" />
 
         <div className="bg-white rounded-[40px] shadow-sm border border-cream overflow-hidden">
           {/* Header */}

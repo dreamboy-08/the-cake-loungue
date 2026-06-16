@@ -1,10 +1,9 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { Product, products } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
+import BackButton from '@/components/BackButton';
 
 interface CategoryPageProps {
   category: string;
@@ -19,10 +18,7 @@ const CategoryPage = ({ category, title, description, subtitle }: CategoryPagePr
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
-        <Link href="/" className="inline-flex items-center gap-2 text-text-soft hover:text-rose-deep transition-colors mb-8 group">
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Home
-        </Link>
+        <BackButton fallbackRoute="/menu" ariaLabel="Go back to menu" />
 
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-rose font-bold text-sm uppercase tracking-widest mb-4 block animate-fade-in">

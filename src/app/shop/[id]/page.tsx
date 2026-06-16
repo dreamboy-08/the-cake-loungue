@@ -3,12 +3,13 @@
 import React, { useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Star, Heart, ShoppingCart, ArrowLeft, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
 import { products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from '@/components/BackButton';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -42,10 +43,7 @@ const ProductDetail = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
-        <Link href="/menu" className="inline-flex items-center gap-2 text-text-soft hover:text-rose-deep transition-colors mb-8 group">
-          <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          Back to Menu
-        </Link>
+        <BackButton fallbackRoute="/menu" />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white p-8 rounded-2xl shadow-sm">
           {/* Image Section */}

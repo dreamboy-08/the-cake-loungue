@@ -4,11 +4,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
+import { CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
+import BackButton from '@/components/BackButton';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -236,10 +236,7 @@ const CheckoutPage = () => {
           {/* Main Content */}
           <div className="flex-1 space-y-8">
             <div>
-              <Link href="/menu" className="inline-flex items-center gap-2 text-rose-deep font-bold mb-4 hover:text-chocolate transition-colors group">
-                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                Back to Menu
-              </Link>
+              <BackButton fallbackRoute="/shop/birthday-cakes" />
               <h1 className="text-4xl font-bold font-playfair text-chocolate">Secure Checkout</h1>
             </div>
 

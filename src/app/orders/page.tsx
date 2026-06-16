@@ -8,6 +8,7 @@ import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCa
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import BackButton from '@/components/BackButton';
 
 const OrdersPage = () => {
   const { user } = useAuth();
@@ -68,6 +69,8 @@ const OrdersPage = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-5xl">
+        <BackButton fallbackRoute="/profile" ariaLabel="Go back to profile" />
+        
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-4xl font-bold font-playfair text-chocolate mb-2">Order History</h1>

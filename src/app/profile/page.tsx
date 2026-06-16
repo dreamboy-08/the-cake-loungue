@@ -8,6 +8,7 @@ import { User, Mail, Phone, Calendar, ShoppingBag, MapPin, ChevronRight, Loader2
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import BackButton from '@/components/BackButton';
 
 const ProfilePage = () => {
   const { user, userData, logout } = useAuth();
@@ -51,6 +52,8 @@ const ProfilePage = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-5xl">
+        <BackButton fallbackRoute="/" ariaLabel="Go back to home" />
+        
         <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-10">
           {/* Sidebar - Profile Card */}
           <div className="space-y-6">
