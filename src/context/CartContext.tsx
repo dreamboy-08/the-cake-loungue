@@ -46,6 +46,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      // Avoid redundant writes if cart is empty and was already empty
+      if (newCart.length === 0 && cart.length === 0 && !isInitialMount.current) return;
+
       await setDoc(doc(db, 'carts', user.uid), {
         items: newCart,
         updatedAt: new Date().toISOString(),
@@ -68,9 +71,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (docSnap.metadata.hasPendingWrites) return;
 
           if (docSnap.exists()) {
-            isUpdatingFromServer.current = true;
-            setCart(docSnap.data().items || []);
-            isUpdatingFromServer.current = false;
+            const serverItems = docSnap.data().items || [];
+
+            setCart(prevCart => {
+              // Deep compare to avoid unnecessary state updates and loops
+              if (JSON.stringify(serverItems) === JSON.stringify(prevCart)) {
+                return prevCart;
+              }
+
+              isUpdatingFromServer.current = true;
+              // Resetting ref after React has processed the state change
+              setTimeout(() => { isUpdatingFromServer.current = false; }, 0);
+              return serverItems;
+            });
           } else {
             // If no Firestore cart, try to migrate from localStorage
             const localCart = localStorage.getItem('cakeLounge_cart');
