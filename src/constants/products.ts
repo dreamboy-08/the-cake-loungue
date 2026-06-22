@@ -1574,19 +1574,6 @@ export const products: Product[] = [
     "description": "Silken Chocolate Truffle Cake crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 121,
-    "name": "Hazelnut Truffle Indulgence",
-    "flavor": "Rich Belgian Chocolate",
-    "category": "Truffle Cakes",
-    "price": 1499,
-    "oldPrice": 1619,
-    "rating": 4,
-    "reviews": 423,
-    "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
-    "description": "Hazelnut Truffle Indulgence crafted with rich belgian chocolate, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 122,
     "name": "Berry Truffle Fantasy",
     "flavor": "Rich Belgian Chocolate",
@@ -1665,19 +1652,6 @@ export const products: Product[] = [
     "description": "Citrus Orchard Fruit Cake crafted with seasonal fresh fruits, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 128,
-    "name": "Berry Fusion Fruit Cake",
-    "flavor": "Mixed Berry Ganache",
-    "category": "Fruit Cakes",
-    "price": 1579,
-    "oldPrice": 1699,
-    "rating": 5,
-    "reviews": 444,
-    "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
-    "description": "Berry Fusion Fruit Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 129,
     "name": "Tropical Mango Fruit Cake",
     "flavor": "Fresh Mango Cream",
@@ -1689,45 +1663,6 @@ export const products: Product[] = [
     "tag": "New",
     "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
     "description": "Tropical Mango Fruit Cake crafted with fresh mango cream, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 130,
-    "name": "Pineapple Breeze Fruit Cake",
-    "flavor": "Seasonal Fresh Fruits",
-    "category": "Fruit Cakes",
-    "price": 1639,
-    "oldPrice": 1759,
-    "rating": 4,
-    "reviews": 450,
-    "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
-    "description": "Pineapple Breeze Fruit Cake crafted with seasonal fresh fruits, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 131,
-    "name": "Apple Cinnamon Fruit Cake",
-    "flavor": "Seasonal Fresh Fruits",
-    "category": "Fruit Cakes",
-    "price": 1669,
-    "oldPrice": 1789,
-    "rating": 4,
-    "reviews": 453,
-    "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=800&q=80",
-    "description": "Apple Cinnamon Fruit Cake crafted with seasonal fresh fruits, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 132,
-    "name": "Mixed Berry Jubilee",
-    "flavor": "Mixed Berry Ganache",
-    "category": "Fruit Cakes",
-    "price": 1699,
-    "oldPrice": 1819,
-    "rating": 4,
-    "reviews": 456,
-    "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80",
-    "description": "Mixed Berry Jubilee crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 133,
@@ -1780,32 +1715,6 @@ export const products: Product[] = [
     "tag": "Seasonal",
     "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Maple Butterscotch Wonder crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 137,
-    "name": "Vanilla Butterscotch Dream",
-    "flavor": "Classic French Vanilla",
-    "category": "Butterscotch Cakes",
-    "price": 1719,
-    "oldPrice": 1839,
-    "rating": 5,
-    "reviews": 471,
-    "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
-    "description": "Vanilla Butterscotch Dream crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 138,
-    "name": "Crunchy Butterscotch Layer Cake",
-    "flavor": "Caramel Butterscotch",
-    "category": "Butterscotch Cakes",
-    "price": 1749,
-    "oldPrice": 1869,
-    "rating": 5,
-    "reviews": 474,
-    "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
-    "description": "Crunchy Butterscotch Layer Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 139,
@@ -1886,19 +1795,6 @@ export const products: Product[] = [
     "description": "Creamy Vanilla Elegance crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 145,
-    "name": "Classic Black Forest Indulgence",
-    "flavor": "Premium Vanilla Almond",
-    "category": "Black Forest Cakes",
-    "price": 1699,
-    "oldPrice": 1819,
-    "rating": 5,
-    "reviews": 75,
-    "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
-    "description": "Classic Black Forest Indulgence crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 146,
     "name": "Cherry Noir Black Forest Cake",
     "flavor": "Premium Vanilla Almond",
@@ -1910,19 +1806,6 @@ export const products: Product[] = [
     "tag": "Trending",
     "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
     "description": "Cherry Noir Black Forest Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 147,
-    "name": "Silk Black Forest Layers",
-    "flavor": "Premium Vanilla Almond",
-    "category": "Black Forest Cakes",
-    "price": 1759,
-    "oldPrice": 1879,
-    "rating": 5,
-    "reviews": 81,
-    "tag": "New",
-    "img": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=800&q=80",
-    "description": "Silk Black Forest Layers crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 148,
@@ -1951,32 +1834,6 @@ export const products: Product[] = [
     "description": "Midnight Woods Black Forest Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 150,
-    "name": "Cream Cloud Black Forest",
-    "flavor": "Classic French Vanilla",
-    "category": "Black Forest Cakes",
-    "price": 1849,
-    "oldPrice": 1969,
-    "rating": 4,
-    "reviews": 90,
-    "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "description": "Cream Cloud Black Forest crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 151,
-    "name": "Velvet Rose Red Velvet Cake",
-    "flavor": "Saffron Rasmalai",
-    "category": "Red Velvet Cakes",
-    "price": 1749,
-    "oldPrice": 1869,
-    "rating": 4,
-    "reviews": 93,
-    "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
-    "description": "Velvet Rose Red Velvet Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 152,
     "name": "Ruby Charm Red Velvet Cake",
     "flavor": "Premium Vanilla Almond",
@@ -2003,45 +1860,6 @@ export const products: Product[] = [
     "description": "Creamy Red Velvet Delight crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 154,
-    "name": "Red Velvet Symphony",
-    "flavor": "Premium Vanilla Almond",
-    "category": "Red Velvet Cakes",
-    "price": 1839,
-    "oldPrice": 1959,
-    "rating": 5,
-    "reviews": 102,
-    "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
-    "description": "Red Velvet Symphony crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 155,
-    "name": "Scarlet Silk Red Velvet Cake",
-    "flavor": "Premium Vanilla Almond",
-    "category": "Red Velvet Cakes",
-    "price": 1869,
-    "oldPrice": 1989,
-    "rating": 5,
-    "reviews": 105,
-    "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=800&q=80",
-    "description": "Scarlet Silk Red Velvet Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 156,
-    "name": "Berry Kiss Red Velvet Cake",
-    "flavor": "Mixed Berry Ganache",
-    "category": "Red Velvet Cakes",
-    "price": 1899,
-    "oldPrice": 2019,
-    "rating": 5,
-    "reviews": 108,
-    "tag": "Premium",
-    "img": "https://images.unsplash.com/photo-1535141192574-5d4897c12636?auto=format&fit=crop&w=800&q=80",
-    "description": "Berry Kiss Red Velvet Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 157,
     "name": "Royal Rasmalai Delight",
     "flavor": "Saffron Rasmalai",
@@ -2053,19 +1871,6 @@ export const products: Product[] = [
     "tag": "Bestseller",
     "img": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
     "description": "Royal Rasmalai Delight crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 158,
-    "name": "Saffron Rasmalai Cake",
-    "flavor": "Saffron Rasmalai",
-    "category": "Rasmalai Cakes",
-    "price": 1829,
-    "oldPrice": 1949,
-    "rating": 5,
-    "reviews": 114,
-    "tag": "Trending",
-    "img": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80",
-    "description": "Saffron Rasmalai Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 159,
@@ -2092,19 +1897,6 @@ export const products: Product[] = [
     "tag": "Seasonal",
     "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Cardamom Rasmalai Whisper crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 161,
-    "name": "Kulfi Rasmalai Cake",
-    "flavor": "Saffron Rasmalai",
-    "category": "Rasmalai Cakes",
-    "price": 1919,
-    "oldPrice": 2039,
-    "rating": 4,
-    "reviews": 123,
-    "tag": "Luxury",
-    "img": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
-    "description": "Kulfi Rasmalai Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 162,
@@ -2146,19 +1938,6 @@ export const products: Product[] = [
     "description": "Lotus Biscoff Caramel Cake crafted with caramel butterscotch, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 165,
-    "name": "Coffee Biscoff Delight",
-    "flavor": "Lotus Biscoff Crunch",
-    "category": "Biscoff Cakes",
-    "price": 1909,
-    "oldPrice": 2029,
-    "rating": 5,
-    "reviews": 135,
-    "tag": "New",
-    "img": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
-    "description": "Coffee Biscoff Delight crafted with lotus biscoff crunch, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
     "id": 166,
     "name": "Biscoff Praline Dream",
     "flavor": "Lotus Biscoff Crunch",
@@ -2196,19 +1975,6 @@ export const products: Product[] = [
     "tag": "Premium",
     "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
     "description": "Creamy Biscoff Symphony crafted with classic french vanilla, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 169,
-    "name": "New York Classic Cheesecake",
-    "flavor": "Creamy Cheesecake",
-    "category": "Cheesecakes",
-    "price": 1899,
-    "oldPrice": 2019,
-    "rating": 5,
-    "reviews": 147,
-    "tag": "Bestseller",
-    "img": "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=800&q=80",
-    "description": "New York Classic Cheesecake crafted with creamy cheesecake, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 170,
@@ -2313,19 +2079,6 @@ export const products: Product[] = [
     "tag": "New",
     "img": "https://images.unsplash.com/photo-1561758033-7e924f619b47?auto=format&fit=crop&w=800&q=80",
     "description": "Tiramisu Jar Cake crafted with premium vanilla almond, premium toppings and a modern bakery finish for a luxurious celebration."
-  },
-  {
-    "id": 178,
-    "name": "Pistachio Rose Jar Cake",
-    "flavor": "Saffron Rasmalai",
-    "category": "Jar Cakes",
-    "price": 2039,
-    "oldPrice": 2159,
-    "rating": 5,
-    "reviews": 174,
-    "tag": "Seasonal",
-    "img": "https://images.unsplash.com/photo-1557925923-33b27f891f88?auto=format&fit=crop&w=800&q=80",
-    "description": "Pistachio Rose Jar Cake crafted with saffron rasmalai, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
     "id": 179,
