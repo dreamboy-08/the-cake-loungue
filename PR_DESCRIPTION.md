@@ -1,95 +1,20 @@
-# Pull Request: Consistent Back Navigation System
+# Product Image Migration to Local Assets
+
+This PR migrates 114 product images from external Unsplash URLs to local assets stored in \`public/images/products/\`.
+
+## Changes
+- Updated \`src/constants/products.ts\` with local image paths for 114 matched products.
+- Updated \`src/constants/proposed_images.json\` to reflect the new local assets.
+- Generated a comprehensive \`IMAGE_RESTORATION_REPORT.md\` detailing the mapping results.
 
 ## Summary
-Implement a reusable back navigation system across the website with smart fallback routing, full accessibility support, and premium design consistency.
+- **Total Products Matched:** 114
+- **Unmatched Products:** 228
+- **Confidence:** All matches are high-confidence exact name matches.
 
-## Changes Made
+## Verification
+- Verified on local development server (\`npm run dev\`).
+- Playwright tests (\`tests/cart-sync.spec.ts\`) passing.
+- Visual verification confirmed local images load correctly on Home and Menu pages.
 
-### New Component
-- **`src/components/BackButton.tsx`** - Reusable back button component
-  - Smart fallback routing based on current page context
-  - Router.back() integration for browser history
-  - Full keyboard accessibility (Tab, Enter, Space)
-  - ARIA labels for accessibility
-  - Smooth animations and hover effects
-  - Mobile responsive design
-
-### Pages Updated
-1. **`src/app/shop/[id]/page.tsx`** - Product detail pages
-   - Added BackButton component
-   - Fallback route: `/menu`
-
-2. **`src/components/shop/CategoryPage.tsx`** - Category pages
-   - Added BackButton component
-   - Applies to: Birthday Cakes, Chocolate Cakes, Wedding Cakes
-   - Fallback route: `/menu`
-
-3. **`src/app/checkout/page.tsx`** - Checkout page
-   - Added BackButton component
-   - Fallback route: Shopping area
-
-4. **`src/app/orders/page.tsx`** - Order history page
-   - Added BackButton component
-   - Fallback route: `/profile`
-
-5. **`src/app/orders/[id]/page.tsx`** - Order details page
-   - Added BackButton component
-   - Fallback route: `/orders`
-
-6. **`src/app/profile/page.tsx`** - Profile page
-   - Added BackButton component
-   - Fallback route: `/`
-
-## Key Features
-
-✅ **Smart Routing**
-- Detects current page and provides intelligent fallback routes
-- Product/Category pages → Menu
-- Checkout → Shopping area
-- Orders → Profile
-- Profile → Home
-
-✅ **Accessibility**
-- WCAG 2.1 Level AA compliant
-- Keyboard navigation (Tab, Enter, Space)
-- Proper ARIA labels
-- Screen reader compatible
-- Visible focus states
-
-✅ **Design**
-- Clean, minimal styling
-- Premium rose-deep accent color
-- Smooth hover animations
-- Icon + text label (← Back)
-- Mobile friendly
-
-✅ **No Breaking Changes**
-- Pure UI enhancement
-- All existing business logic unchanged
-- Cart, checkout, orders functionality preserved
-- Backward compatible
-
-## Testing
-
-✅ **Build**: Passes without errors
-✅ **Lint**: No new issues (only pre-existing CartContext warnings)
-✅ **Pages Updated**: 6 pages verified
-✅ **Functionality**: Back button works on all pages
-✅ **Accessibility**: Keyboard and screen reader tested
-✅ **Mobile**: Responsive design verified
-
-## Files Changed
-- **1 new file**: `src/components/BackButton.tsx`
-- **6 modified files**: Product, category, checkout, orders, and profile pages
-- **Total changes**: ~8 KB
-
-## Browser Support
-- ✅ Chrome, Firefox, Safari, Edge
-- ✅ Mobile browsers (iOS Safari, Chrome Android)
-- ✅ All modern browsers
-
-## Deployment
-- Ready for immediate deployment
-- No dependencies to install
-- No configuration changes required
-- No database migrations needed
+*Note: Products without matching local images continue to use their existing external URLs to ensure no broken images.*
