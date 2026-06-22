@@ -1,14 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { db } from '@/utils/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const Categories = () => {
-  const cats = [
-    { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: 'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=500&q=80', href: '/shop/birthday-cakes' },
-    { name: 'Wedding Cakes', designs: '45+', tag: null, img: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&q=80', href: '/shop/wedding-cakes' },
-    { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: 'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=500&q=80', href: '/shop/chocolate-cakes' },
-    { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: 'https://images.unsplash.com/photo-1561758033-7e924f619b47?w=500&q=80', href: '/custom-cake' },
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const q = query(collection(db, 'categories'), where('isVisible', '==', true));
+      const snapshot = await getDocs(q);
+      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    };
+    fetchCategories();
+  }, []);
+
+  const defaultCats = [
+    { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', image: 'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=500&q=80', href: '/shop/birthday-cakes' },
+    { name: 'Wedding Cakes', designs: '45+', tag: null, image: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&q=80', href: '/shop/wedding-cakes' },
+    { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', image: 'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=500&q=80', href: '/shop/chocolate-cakes' },
+    { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', image: 'https://images.unsplash.com/photo-1561758033-7e924f619b47?w=500&q=80', href: '/custom-cake' },
   ];
+
+  const cats = categories.length > 0 ? categories.map(c => ({
+    name: c.name,
+    designs: 'Explore',
+    tag: null,
+    image: c.image || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80',
+    href: `/menu?category=${c.name}`
+  })) : defaultCats;
 
   return (
     <section id="categories" className="py-[90px] bg-cream">
@@ -28,7 +49,7 @@ const Categories = () => {
               style={{ animationDelay: `${i * 0.1}s` }}
             >
               <Image
-                src={cat.img}
+                src={cat.image}
                 alt={cat.name}
                 fill
                 sizes="(max-width: 640px) 50vw, 25vw"

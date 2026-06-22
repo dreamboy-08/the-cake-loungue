@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -27,7 +27,14 @@ if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
 }
 
 const auth = getAuth(app);
-const db = getFirestore(app);
+
+// Use initializeFirestore to allow for settings like long-polling which helps with E2E testing
+const db = getApps().length > 0
+  ? getFirestore(app)
+  : initializeFirestore(app, {
+      experimentalForceLongPolling: typeof window !== 'undefined' && (window as any).FORCE_FIREBASE_LONG_POLLING,
+    });
+
 const storage = getStorage(app);
 
 export { app, auth, db, storage };

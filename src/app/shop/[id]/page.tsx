@@ -1,23 +1,45 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
-import { products } from '@/constants/products';
+import { getProductById } from '@/utils/productService';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import { Product } from '@/constants/products';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { cart, addToCart, isLoading } = useCart();
+  const { cart, addToCart, isLoading: cartLoading } = useCart();
   const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = products.find((p) => p.id === Number(id));
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (id) {
+        setLoading(true);
+        const data = await getProductById(id as string);
+        setProduct(data as any);
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center">
+        <Loader2 className="animate-spin text-rose-deep mb-4" size={48} />
+        <p className="text-chocolate font-bold">Preparing your cake details...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     notFound();
@@ -55,8 +77,6 @@ const ProductDetail = () => {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               priority
-              placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
             />
             {product.tag && (
               <div className="absolute top-6 left-0 bg-rose-deep text-white px-4 py-1.5 rounded-r-lg font-bold text-sm uppercase tracking-widest shadow-md">
@@ -76,17 +96,17 @@ const ProductDetail = () => {
               <div className="flex items-center gap-4">
                 <div className="flex items-center text-gold">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={18} fill={i < product.rating ? "currentColor" : "none"} />
+                    <Star key={i} size={18} fill={i < (product.rating || 5) ? "currentColor" : "none"} />
                   ))}
                 </div>
-                <span className="text-text-soft text-sm font-medium">({product.reviews} customer reviews)</span>
+                <span className="text-text-soft text-sm font-medium">({product.reviews || 0} customer reviews)</span>
               </div>
             </div>
 
             <div className="mb-8">
               <div className="flex items-baseline gap-3 mb-2">
                 <span className="text-3xl font-bold text-rose-deep">₹{product.price}</span>
-                {product.oldPrice > 0 && (
+                {product.oldPrice && product.oldPrice > 0 && (
                   <span className="text-xl text-text-soft line-through font-medium">₹{product.oldPrice}</span>
                 )}
               </div>
@@ -119,14 +139,14 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                disabled={isLoading}
+                disabled={cartLoading}
                 className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  isLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
                   isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                 }`}
               >
                 <AnimatePresence mode="wait">
-                  {isLoading ? (
+                  {cartLoading ? (
                     <motion.div
                       key="loading"
                       initial={{ opacity: 0 }}

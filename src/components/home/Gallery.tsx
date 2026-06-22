@@ -1,7 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
 
-const galleryImgs = [
+import { useState, useEffect } from 'react';
+import { getHomepageContent } from '@/utils/adminService';
+
+const defaultGalleryImgs = [
   { src: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80', label: 'Chocolate Truffle' },
   { src: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80', label: 'Strawberry Dream' },
   { src: 'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400&q=80', label: 'Birthday Special' },
@@ -13,6 +16,20 @@ const galleryImgs = [
 ];
 
 const Gallery = () => {
+  const [galleryImgs, setGalleryImgs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      const content = await getHomepageContent();
+      if (content?.gallery && content.gallery.length > 0) {
+        setGalleryImgs(content.gallery);
+      } else {
+        setGalleryImgs(defaultGalleryImgs);
+      }
+    };
+    fetchGallery();
+  }, []);
+
   return (
     <section id="gallery" className="py-20 bg-chocolate overflow-hidden">
       <div className="container mx-auto px-6">

@@ -16,9 +16,12 @@ import {
   Trash2,
   Tags,
   AlertCircle,
-  Loader2
+  Loader2,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import CategoryForm from '@/components/admin/CategoryForm';
+import Image from 'next/image';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
@@ -87,12 +90,30 @@ const AdminCategories = () => {
           </div>
         ) : (
           categories.map((category) => (
-            <div key={category.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group">
-              <div className="flex justify-between items-start mb-4">
-                <div className="p-3 bg-rose/5 rounded-2xl text-rose-deep">
-                  <Tags size={24} />
+            <div key={category.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group overflow-hidden">
+              <div className="relative aspect-video w-full bg-gray-100">
+                {category.image ? (
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-300">
+                    <Tags size={48} />
+                  </div>
+                )}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <div className={`p-2 rounded-full backdrop-blur-md shadow-lg ${category.isVisible !== false ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
+                    {category.isVisible !== false ? <Eye size={14} /> : <EyeOff size={14} />}
+                  </div>
                 </div>
-                <div className="flex gap-2">
+              </div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-bold text-chocolate">{category.name}</h3>
+                  <div className="flex gap-2">
                   <button
                     onClick={() => {
                       setSelectedCategory(category);
@@ -110,11 +131,11 @@ const AdminCategories = () => {
                   </button>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-chocolate mb-2">{category.name}</h3>
-              <p className="text-sm text-gray-500 line-clamp-2 mb-4 h-10">{category.description || 'No description provided.'}</p>
-              <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Slug</span>
-                <span className="text-xs font-mono text-rose-deep bg-rose/5 px-2 py-0.5 rounded">{category.slug}</span>
+                <p className="text-sm text-gray-500 line-clamp-2 mb-4 h-10">{category.description || 'No description provided.'}</p>
+                <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Slug</span>
+                  <span className="text-xs font-mono text-rose-deep bg-rose/5 px-2 py-0.5 rounded">{category.slug}</span>
+                </div>
               </div>
             </div>
           ))

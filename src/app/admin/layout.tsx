@@ -12,23 +12,34 @@ import {
   LogOut,
   ChevronRight,
   Menu,
-  X
+  X,
+  FileText,
+  Settings
 } from 'lucide-react';
 import { useState } from 'react';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user, isAdmin, loading, logout } = useAuth();
+  const { user, isAdmin, isStaff, isSuperAdmin, role, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      router.push('/login');
-    }
-  }, [user, isAdmin, loading, router]);
+    if (loading) return;
 
-  if (loading || !user || !isAdmin) {
+    if (!user || !isStaff) {
+      router.push('/login');
+      return;
+    }
+
+    // Strict route-level authorization
+    const currentItem = menuItems.find(item => pathname === item.href);
+    if (currentItem && !currentItem.roles.includes(role as string)) {
+      router.push('/admin'); // Redirect to dashboard if not authorized for specific page
+    }
+  }, [user, isStaff, loading, router, pathname, role]);
+
+  if (loading || !user || !isStaff) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-deep"></div>
@@ -37,11 +48,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   const menuItems = [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
-    { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
-    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
-    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Products', href: '/admin/products', icon: <Package size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} />, roles: ['super_admin', 'admin', 'staff'] },
+    { label: 'Website Content', href: '/admin/website-content', icon: <FileText size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, roles: ['super_admin'] },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => item.roles.includes(role as string));
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -67,7 +82,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <nav className="flex-1 space-y-2">
-            {menuItems.map((item) => (
+            {filteredMenuItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}

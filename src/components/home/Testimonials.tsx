@@ -2,8 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
 
-const Testimonials = () => {
-  const reviews = [
+const Testimonials = ({ content }: { content?: any[] }) => {
+  const defaultReviews = [
     {
       name: "Priya Sharma",
       tag: "Loyal Customer · 3 yrs",
@@ -26,6 +26,14 @@ const Testimonials = () => {
       rating: 4.5,
     },
   ];
+
+  const reviews = content && content.length > 0 ? content.map(t => ({
+    name: t.name,
+    tag: t.role,
+    avatar: `https://i.pravatar.cc/100?u=${t.name}`,
+    text: t.text,
+    rating: t.rating || 5
+  })) : defaultReviews;
 
   return (
     <section id="testimonials" className="py-[100px] bg-cream-dark">
