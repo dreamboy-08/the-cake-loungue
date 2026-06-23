@@ -37,21 +37,20 @@ const AdminCategories = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      // First try to fetch by displayOrder
-      const q = query(collection(db, 'categories'), orderBy('displayOrder', 'asc'));
-      const snapshot = await getDocs(q);
+      // Fetch all categories to avoid Firestore filtering out documents missing the order field
+      const snapshot = await getDocs(collection(db, 'categories'));
       let results: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      // If none have displayOrder, fallback to name and initialize displayOrder
-      if (results.length > 0 && results.every((cat: any) => cat.displayOrder === undefined)) {
-        const qName = query(collection(db, 'categories'), orderBy('name'));
-        const snapName = await getDocs(qName);
-        results = snapName.docs.map((doc, index) => ({
-          id: doc.id,
-          ...doc.data(),
-          displayOrder: index
-        }));
-      }
+      // Sort by displayOrder if available, otherwise fallback to name
+      results.sort((a, b) => {
+        const orderA = a.displayOrder !== undefined ? a.displayOrder : 999999;
+        const orderB = b.displayOrder !== undefined ? b.displayOrder : 999999;
+
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        return (a.name || '').localeCompare(b.name || '');
+      });
 
       setCategories(results);
     } catch (error) {
