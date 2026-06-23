@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Sprout, Hand, Truck } from 'lucide-react';
 
-const About = () => {
+const About = ({ content }: { content?: any }) => {
   return (
     <section id="about" className="py-[100px] bg-white">
       <div className="container mx-auto px-6">
@@ -28,9 +28,9 @@ const About = () => {
           {/* Content */}
           <div className="about-content">
             <p className="section-label">Our Story</p>
-            <h2 className="section-title">Baked with Passion,<br />Served with Love</h2>
+            <h2 className="section-title">{content?.title || "Baked with Passion, Served with Love"}</h2>
             <p className="mt-4 text-[0.95rem] text-text-soft leading-[1.7] max-w-full">
-              Cake Lounge was born from a grandmother&apos;s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.
+              {content?.description || "Cake Lounge was born from a grandmother's kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands."}
             </p>
 
             <div className="mt-9 flex flex-col gap-5">

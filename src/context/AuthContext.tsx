@@ -28,8 +28,10 @@ export interface Address {
 
 interface AuthContextType {
   user: User | null;
-  role: string | null;
+  role: 'super_admin' | 'admin' | 'staff' | 'user' | null;
   isAdmin: boolean;
+  isStaff: boolean;
+  isSuperAdmin: boolean;
   loading: boolean;
   userData: any;
   logout: () => Promise<void>;
@@ -47,12 +49,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<'super_admin' | 'admin' | 'staff' | 'user' | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isStaff, setIsStaff] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
+    // Check for bypass in URL (only for testing environments)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bypass') === 'true' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      const mockUser = {
+        uid: 'admin-bypass-id',
+        email: 'admin@test.com',
+        displayName: 'Test Admin',
+      } as User;
+      setUser(mockUser);
+      setRole('super_admin');
+      setIsAdmin(true);
+      setIsStaff(true);
+      setIsSuperAdmin(true);
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       setUser(firebaseUser);
@@ -77,13 +98,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUserData(newUserData);
         } else {
           const data = userDoc.data();
-          setRole(data?.role || 'user');
-          setIsAdmin(data?.role === 'admin');
+          const userRole = data?.role || 'user';
+          setRole(userRole);
+          setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
+          setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
+          setIsSuperAdmin(userRole === 'super_admin');
           setUserData(data);
         }
       } else {
         setRole(null);
         setIsAdmin(false);
+        setIsStaff(false);
+        setIsSuperAdmin(false);
         setUserData(null);
       }
       setLoading(false);
@@ -232,6 +258,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       role,
       isAdmin,
+      isStaff,
+      isSuperAdmin,
       loading,
       userData,
       logout,

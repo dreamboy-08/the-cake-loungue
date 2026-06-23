@@ -8,7 +8,9 @@ import {
   deleteDoc,
   doc,
   query,
-  orderBy
+  orderBy,
+  updateDoc,
+  writeBatch
 } from 'firebase/firestore';
 import {
   Plus,
@@ -16,12 +18,17 @@ import {
   Trash2,
   Tags,
   AlertCircle,
-  Loader2
+  Loader2,
+  Eye,
+  EyeOff,
+  MoveUp,
+  MoveDown
 } from 'lucide-react';
 import CategoryForm from '@/components/admin/CategoryForm';
+import Image from 'next/image';
 
 const AdminCategories = () => {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<(any & { displayOrder?: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
@@ -30,9 +37,23 @@ const AdminCategories = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const q = query(collection(db, 'categories'), orderBy('name'));
+      // First try to fetch by displayOrder
+      const q = query(collection(db, 'categories'), orderBy('displayOrder', 'asc'));
       const snapshot = await getDocs(q);
-      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      let results: any[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // If none have displayOrder, fallback to name and initialize displayOrder
+      if (results.length > 0 && results.every((cat: any) => cat.displayOrder === undefined)) {
+        const qName = query(collection(db, 'categories'), orderBy('name'));
+        const snapName = await getDocs(qName);
+        results = snapName.docs.map((doc, index) => ({
+          id: doc.id,
+          ...doc.data(),
+          displayOrder: index
+        }));
+      }
+
+      setCategories(results);
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
@@ -52,6 +73,37 @@ const AdminCategories = () => {
     } catch (error) {
       console.error("Error deleting category:", error);
       alert("Failed to delete category.");
+    }
+  };
+
+  const handleMove = async (index: number, direction: 'up' | 'down') => {
+    const newCategories = [...categories];
+    const otherIndex = direction === 'up' ? index - 1 : index + 1;
+
+    if (otherIndex < 0 || otherIndex >= newCategories.length) return;
+
+    // Swap
+    const temp = newCategories[index];
+    newCategories[index] = newCategories[otherIndex];
+    newCategories[otherIndex] = temp;
+
+    // Update displayOrder
+    newCategories.forEach((cat, idx) => {
+      cat.displayOrder = idx;
+    });
+
+    setCategories(newCategories);
+
+    try {
+      const batch = writeBatch(db);
+      newCategories.forEach((cat) => {
+        const ref = doc(db, 'categories', cat.id);
+        batch.update(ref, { displayOrder: cat.displayOrder });
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error("Error updating category order:", error);
+      fetchCategories(); // Revert
     }
   };
 
@@ -86,13 +138,47 @@ const AdminCategories = () => {
             <p className="text-sm text-gray-400 font-medium">No categories created yet.</p>
           </div>
         ) : (
-          categories.map((category) => (
-            <div key={category.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group">
-              <div className="flex justify-between items-start mb-4">
-                <div className="p-3 bg-rose/5 rounded-2xl text-rose-deep">
-                  <Tags size={24} />
+          categories.map((category, index) => (
+            <div key={category.id} className="bg-white rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group overflow-hidden">
+              <div className="relative aspect-video w-full bg-gray-100">
+                {category.image ? (
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-300">
+                    <Tags size={48} />
+                  </div>
+                )}
+                <div className="absolute top-4 right-4 flex gap-2">
+                  <div className={`p-2 rounded-full backdrop-blur-md shadow-lg ${category.isVisible !== false ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
+                    {category.isVisible !== false ? <Eye size={14} /> : <EyeOff size={14} />}
+                  </div>
                 </div>
-                <div className="flex gap-2">
+              </div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-bold text-chocolate">{category.name}</h3>
+                  <div className="flex gap-2">
+                    <div className="flex flex-col gap-1 mr-2">
+                      <button
+                        onClick={() => handleMove(index, 'up')}
+                        disabled={index === 0}
+                        className="p-1 text-gray-400 hover:text-chocolate disabled:opacity-20 transition-all"
+                      >
+                        <MoveUp size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleMove(index, 'down')}
+                        disabled={index === categories.length - 1}
+                        className="p-1 text-gray-400 hover:text-chocolate disabled:opacity-20 transition-all"
+                      >
+                        <MoveDown size={14} />
+                      </button>
+                    </div>
                   <button
                     onClick={() => {
                       setSelectedCategory(category);
@@ -110,11 +196,11 @@ const AdminCategories = () => {
                   </button>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-chocolate mb-2">{category.name}</h3>
-              <p className="text-sm text-gray-500 line-clamp-2 mb-4 h-10">{category.description || 'No description provided.'}</p>
-              <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
-                <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Slug</span>
-                <span className="text-xs font-mono text-rose-deep bg-rose/5 px-2 py-0.5 rounded">{category.slug}</span>
+                <p className="text-sm text-gray-500 line-clamp-2 mb-4 h-10">{category.description || 'No description provided.'}</p>
+                <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
+                  <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Order: {category.displayOrder ?? index}</span>
+                  <span className="text-xs font-mono text-rose-deep bg-rose/5 px-2 py-0.5 rounded">{category.slug}</span>
+                </div>
               </div>
             </div>
           ))

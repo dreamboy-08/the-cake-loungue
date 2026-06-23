@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getBanners } from '@/utils/adminService';
 
-const offers = [
+const defaultOffers = [
   '🎂 Use code <strong>SWEET20</strong> for 20% off your first order!',
   '🚚 <strong>Free delivery</strong> on orders above ₹999',
   '🎁 Custom cakes available — <strong>Order 2 days in advance</strong>',
@@ -10,6 +11,22 @@ const offers = [
 ];
 
 const OfferMarquee = () => {
+  const [offers, setOffers] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchOffers = async () => {
+      const banners = await getBanners();
+      if (banners && banners.length > 0) {
+        setOffers(banners.filter(b => b.enabled !== false).map(b => b.text));
+      } else {
+        setOffers(defaultOffers);
+      }
+    };
+    fetchOffers();
+  }, []);
+
+  if (offers.length === 0) return null;
+
   return (
     <div id="offer-banner" className="bg-brown overflow-hidden py-3.5">
       <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">

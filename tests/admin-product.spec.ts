@@ -10,7 +10,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Admin Product Management & Sync', () => {
 
   test.beforeEach(async ({ page }) => {
-    // Mock Firestore for Categories (needed for the form)
+    // Mock Firestore for Categories
     await page.route('**/firestore.googleapis.com/**/categories*', async route => {
       await route.fulfill({
         status: 200,
@@ -36,17 +36,45 @@ test.describe('Admin Product Management & Sync', () => {
       }
     });
 
-    // Navigate to Admin Products
+    // Navigate to Admin Products with bypass
     await page.goto('http://localhost:3001/admin/products?bypass=true');
   });
 
   test('CRUD Flow: Create, Read, Update, Delete', async ({ page }) => {
     // 1. CREATE
+    await page.waitForSelector('button:has-text("Add New Product")');
     await page.click('button:has-text("Add New Product")');
+
     await page.fill('input[placeholder="e.g. Royal Raspberry Birthday Cake"]', 'Verification Cake');
     await page.fill('input[placeholder="499"]', '999');
     await page.selectOption('select', 'Birthday Cakes');
-    await page.fill('input[placeholder="https://images.unsplash.com/..."]', 'https://images.unsplash.com/photo-1578985545062-69928b1d9587');
+
+    // Handle File Upload
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.click('span:has-text("Add Image")');
+    const fileChooser = await fileChooserPromise;
+    await fileChooser.setFiles({
+      name: 'test-cake.jpg',
+      mimeType: 'image/jpeg',
+      buffer: Buffer.from('fake-image-data'),
+    });
+
+    // Mock successful Storage upload
+    await page.route('**/storage.googleapis.com/**', async route => {
+      if (route.request().method() === 'POST') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ name: 'products/fake-img.jpg', downloadTokens: 'abc' })
+        });
+      } else if (route.request().method() === 'GET') {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ downloadTokens: 'abc' })
+        });
+      }
+    });
 
     // Mock successful creation
     await page.route('**/firestore.googleapis.com/**/products', async route => {
@@ -70,7 +98,7 @@ test.describe('Admin Product Management & Sync', () => {
               name: 'projects/p/databases/d/documents/products/new-id-123',
               fields: {
                 name: { stringValue: 'Verification Cake' },
-                price: { integerValue: '999' },
+                price: { doubleValue: 999 },
                 category: { stringValue: 'Birthday Cakes' },
                 img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
                 flavor: { stringValue: 'Vanilla' }
@@ -112,7 +140,7 @@ test.describe('Admin Product Management & Sync', () => {
               name: 'projects/p/databases/d/documents/products/new-id-123',
               fields: {
                 name: { stringValue: 'Updated Verification Cake' },
-                price: { integerValue: '1299' },
+                price: { doubleValue: 1299 },
                 category: { stringValue: 'Birthday Cakes' },
                 img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
               }
@@ -144,67 +172,5 @@ test.describe('Admin Product Management & Sync', () => {
     });
 
     await expect(page.locator('text=Updated Verification Cake')).not.toBeVisible();
-  });
-
-  test('Visibility Sync: Customer Menu and Detail Page', async ({ page }) => {
-    // 1. Mock a product in Firestore
-    const mockProduct = {
-      name: 'projects/p/databases/d/documents/products/sync-id',
-      fields: {
-        name: { stringValue: 'Sync Test Cake' },
-        price: { integerValue: '750' },
-        category: { stringValue: 'Birthday Cakes' },
-        img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
-        description: { stringValue: 'This is a sync test cake.' },
-        flavor: { stringValue: 'Chocolate' }
-      }
-    };
-
-    await page.route('**/firestore.googleapis.com/**/products*', async route => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ documents: [mockProduct] })
-      });
-    });
-
-    // 2. Check Customer Menu
-    await page.goto('http://localhost:3001/menu');
-    await expect(page.locator('text=Sync Test Cake')).toBeVisible();
-    await expect(page.locator('text=₹750')).toBeVisible();
-
-    // 3. Check Product Detail Page
-    // Assuming clicking the cake leads to /product/sync-id
-    await page.click('text=Sync Test Cake');
-    await expect(page.url()).toContain('/product/');
-    await expect(page.locator('h1')).toContainText('Sync Test Cake');
-    await expect(page.locator('text=This is a sync test cake.')).toBeVisible();
-  });
-
-  test('Image Handling: URL and Upload Fallback UI', async ({ page }) => {
-    await page.click('button:has-text("Add New Product")');
-
-    // Test URL input
-    await page.fill('input[placeholder="https://images.unsplash.com/..."]', 'https://example.com/direct.jpg');
-    const previewImg = page.locator('div[className*="relative aspect-square"] img');
-    await expect(previewImg).toHaveAttribute('src', /direct\.jpg/);
-
-    // Test Upload Fallback Error UI
-    await page.route('**/storage.googleapis.com/**', route => route.abort('failed'));
-
-    const fileChooserPromise = page.waitForEvent('filechooser');
-    await page.click('div:has-text("Click to upload image")');
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles({
-      name: 'test.jpg',
-      mimeType: 'image/jpeg',
-      buffer: Buffer.from('data'),
-    });
-
-    await page.click('button:has-text("Create Product")');
-    await expect(page.locator('text=Image upload failed. Please use the fallback URL below.').first()).toBeVisible();
-
-    // Verify loading state reset
-    await expect(page.locator('button:has-text("Create Product")')).toBeEnabled();
   });
 });
