@@ -19,8 +19,13 @@ import {
   MoreVertical,
   Filter,
   Package,
-  AlertCircle
+  AlertCircle,
+  RefreshCcw,
+  CheckCircle2
 } from 'lucide-react';
+import { products as staticProducts } from '@/constants/products';
+import { MEGA_MENU } from '@/constants/navigation';
+import { writeBatch } from 'firebase/firestore';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
 
@@ -31,6 +36,8 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -60,6 +67,70 @@ const AdminProducts = () => {
     }
   };
 
+  const handleSyncCatalog = async () => {
+    if (!confirm("This will restore the catalog from static constants. It will add missing products and ensure all products have a createdAt date. Continue?")) return;
+
+    setIsSyncing(true);
+    setSyncStatus("Restoring categories...");
+    try {
+      // 1. Restore Categories
+      const categoriesSet = new Set<string>();
+      MEGA_MENU.forEach(item => {
+        if (item.columns) {
+          item.columns.forEach(col => {
+            col.items.forEach(subItem => {
+              if (subItem.href.includes('#')) {
+                categoriesSet.add(subItem.label);
+              }
+            });
+          });
+        }
+      });
+
+      const categoryBatch = writeBatch(db);
+      for (const categoryName of Array.from(categoriesSet)) {
+        const categoryId = categoryName.toLowerCase().replace(/\s+/g, '-');
+        const categoryRef = doc(collection(db, 'categories'), categoryId);
+        categoryBatch.set(categoryRef, {
+          name: categoryName,
+          slug: categoryId,
+          updatedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString()
+        }, { merge: true });
+      }
+      await categoryBatch.commit();
+
+      // 2. Restore Products
+      setSyncStatus(`Restoring ${staticProducts.length} products...`);
+      const BATCH_SIZE = 400;
+      for (let i = 0; i < staticProducts.length; i += BATCH_SIZE) {
+        const batch = writeBatch(db);
+        const chunk = staticProducts.slice(i, i + BATCH_SIZE);
+
+        chunk.forEach(product => {
+          const productRef = doc(collection(db, 'products'), product.id.toString());
+          batch.set(productRef, {
+            ...product,
+            updatedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString()
+          }, { merge: true });
+        });
+
+        await batch.commit();
+        setSyncStatus(`Committed batch ${Math.floor(i / BATCH_SIZE) + 1}...`);
+      }
+
+      setSyncStatus("Success! Catalog restored.");
+      setTimeout(() => setSyncStatus(null), 3000);
+      fetchProducts();
+    } catch (error) {
+      console.error("Sync error:", error);
+      alert("Failed to sync catalog.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const filteredProducts = products.filter(p =>
     p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -72,16 +143,27 @@ const AdminProducts = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Product Management</h1>
           <p className="text-gray-500 mt-1">Manage your bakery inventory and catalog.</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedProduct(null);
-            setIsFormOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto"
-        >
-          <Plus size={20} />
-          <span>Add New Product</span>
-        </button>
+        <div className="flex flex-col md:flex-row gap-3">
+          <button
+            disabled={isSyncing}
+            onClick={handleSyncCatalog}
+            className="flex items-center justify-center gap-2 bg-chocolate text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-chocolate/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto disabled:opacity-50"
+            title="Restore catalog from static constants"
+          >
+            {isSyncing ? <Loader2 size={20} className="animate-spin" /> : (syncStatus ? <CheckCircle2 size={20} /> : <RefreshCcw size={20} />)}
+            <span>{syncStatus || "Sync Catalog"}</span>
+          </button>
+          <button
+            onClick={() => {
+              setSelectedProduct(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto"
+          >
+            <Plus size={20} />
+            <span>Add New Product</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">

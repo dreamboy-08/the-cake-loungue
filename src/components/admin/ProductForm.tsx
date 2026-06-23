@@ -134,15 +134,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         img: finalImageUrls[0], // Main image
         images: finalImageUrls, // All images
         updatedAt: new Date().toISOString(),
+        createdAt: product?.createdAt || new Date().toISOString()
       };
 
       if (product?.id) {
         await updateDoc(doc(db, 'products', product.id), productData);
       } else {
-        await addDoc(collection(db, 'products'), {
-          ...productData,
-          createdAt: new Date().toISOString(),
-        });
+        await addDoc(collection(db, 'products'), productData);
       }
 
       onSuccess();
