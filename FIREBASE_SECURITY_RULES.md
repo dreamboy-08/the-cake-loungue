@@ -10,14 +10,41 @@ These rules allow anyone to read products and categories, but restrict write acc
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper function to check if user is admin
+    // Helper function to check if user is admin or super_admin
     function isAdmin() {
       return request.auth != null &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+             (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_admin');
     }
 
     // Products Collection
     match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // CMS Collections
+    match /siteSettings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /homepageContent/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /contactInfo/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /businessHours/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /banners/{id} {
       allow read: if true;
       allow write: if isAdmin();
     }
@@ -54,7 +81,8 @@ service firebase.storage {
     match /products/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null &&
-                     firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+                     (firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+                      firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'super_admin');
     }
   }
 }

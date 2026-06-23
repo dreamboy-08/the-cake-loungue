@@ -12,12 +12,25 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Log presence of environment variables (masked)
+if (typeof window !== 'undefined') {
+  console.log('[Firebase] Environment Variables Check:', {
+    hasApiKey: !!firebaseConfig.apiKey,
+    hasAuthDomain: !!firebaseConfig.authDomain,
+    hasProjectId: !!firebaseConfig.projectId,
+    hasStorageBucket: !!firebaseConfig.storageBucket,
+    hasMessagingSenderId: !!firebaseConfig.messagingSenderId,
+    hasAppId: !!firebaseConfig.appId,
+    projectId: firebaseConfig.projectId // Project ID is usually not sensitive
+  });
+}
+
 // Initialize Firebase only if API key is present
 let app;
 if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 } else {
-  console.warn("Firebase configuration is missing or invalid. Please check your environment variables.");
+  console.warn("[Firebase] Configuration is missing or invalid. Please check your environment variables.");
   // Initialize with a dummy app to prevent crashes, but it won't work for auth
   app = getApps().length > 0 ? getApp() : initializeApp({
     apiKey: "missing",
@@ -29,11 +42,17 @@ if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
 const auth = getAuth(app);
 
 // Use initializeFirestore to allow for settings like long-polling which helps with E2E testing
-const db = getApps().length > 0
-  ? getFirestore(app)
-  : initializeFirestore(app, {
-      experimentalForceLongPolling: typeof window !== 'undefined' && (window as any).FORCE_FIREBASE_LONG_POLLING,
-    });
+let db;
+try {
+  db = initializeFirestore(app, {
+    experimentalForceLongPolling: typeof window !== 'undefined' && (window as any).FORCE_FIREBASE_LONG_POLLING,
+    ignoreUndefinedProperties: true,
+  });
+  console.log('[Firebase] Firestore initialized with custom settings');
+} catch (e) {
+  db = getFirestore(app);
+  console.log('[Firebase] Firestore instance retrieved (already initialized)');
+}
 
 const storage = getStorage(app);
 

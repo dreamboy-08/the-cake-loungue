@@ -79,11 +79,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(firebaseUser);
 
       if (firebaseUser) {
+        console.log(`[Auth] User authenticated: ${firebaseUser.uid} (${firebaseUser.email})`);
         // Ensure user document exists in Firestore (especially for Google Sign-In)
         const userDocRef = doc(db, 'users', firebaseUser.uid);
         let userDoc = await getDoc(userDocRef);
 
         if (!userDoc.exists()) {
+          console.warn(`[Auth] User document NOT found for ${firebaseUser.uid}, creating default 'user'`);
           const newUserData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -99,6 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } else {
           const data = userDoc.data();
           const userRole = data?.role || 'user';
+          console.log(`[Auth] User document found. Role: ${userRole}`);
           setRole(userRole);
           setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
           setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
@@ -106,6 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUserData(data);
         }
       } else {
+        console.log('[Auth] No user session found');
         setRole(null);
         setIsAdmin(false);
         setIsStaff(false);

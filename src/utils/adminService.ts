@@ -167,15 +167,18 @@ const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
  * Generic fetch for a specific document in a collection
  */
 export const getCMSDoc = async <T>(collectionName: string, docId: string): Promise<T | null> => {
+  console.log(`[CMS] Fetching doc: ${collectionName}/${docId}`);
   try {
     const docRef = doc(db, collectionName, docId);
     // Use 5 second timeout for Firestore fetch
     const docSnap = await withTimeout(getDoc(docRef), 5000);
 
     if (docSnap.exists()) {
+      console.log(`[CMS] Doc exists: ${collectionName}/${docId}`, docSnap.data());
       return docSnap.data() as T;
     }
 
+    console.warn(`[CMS] Doc NOT found, using defaults: ${collectionName}/${docId}`);
     // Return a deep copy of default if not found in Firestore
     const defaults = CMS_DEFAULTS[collectionName as keyof typeof CMS_DEFAULTS];
     if (defaults) {
@@ -183,8 +186,13 @@ export const getCMSDoc = async <T>(collectionName: string, docId: string): Promi
     }
 
     return null;
-  } catch (error) {
-    console.error(`Error fetching CMS doc from ${collectionName}/${docId}:`, error);
+  } catch (error: any) {
+    console.error(`[CMS] Error fetching doc ${collectionName}/${docId}:`, {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      fullError: error
+    });
     // Return a deep copy of default even on error to prevent UI crash
     const defaults = CMS_DEFAULTS[collectionName as keyof typeof CMS_DEFAULTS];
     if (defaults) {
@@ -198,15 +206,22 @@ export const getCMSDoc = async <T>(collectionName: string, docId: string): Promi
  * Generic update/set for a specific document
  */
 export const updateCMSDoc = async <T>(collectionName: string, docId: string, data: T) => {
+  console.log(`[CMS] Updating doc: ${collectionName}/${docId}`, data);
   try {
     const docRef = doc(db, collectionName, docId);
     await setDoc(docRef, {
       ...data,
       updatedAt: new Date().toISOString()
     }, { merge: true });
+    console.log(`[CMS] Successfully updated: ${collectionName}/${docId}`);
     return true;
-  } catch (error) {
-    console.error(`Error updating CMS doc ${collectionName}/${docId}:`, error);
+  } catch (error: any) {
+    console.error(`[CMS] Error updating doc ${collectionName}/${docId}:`, {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      fullError: error
+    });
     return false;
   }
 };
@@ -238,26 +253,40 @@ export interface Banner {
 }
 
 export const getBanners = async (): Promise<Banner[]> => {
+  console.log(`[CMS] Fetching banners collection`);
   try {
     const q = query(collection(db, 'banners'), orderBy('createdAt', 'desc'));
     const snapshot = await withTimeout(getDocs(q), 5000);
+    console.log(`[CMS] Fetched ${snapshot.docs.length} banners`);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Banner));
-  } catch (error) {
-    console.error("Error fetching banners:", error);
+  } catch (error: any) {
+    console.error("[CMS] Error fetching banners:", {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      fullError: error
+    });
     return [];
   }
 };
 
 export const updateBanner = async (id: string, data: Partial<Banner>) => {
+  console.log(`[CMS] Updating banner: ${id}`, data);
   try {
     const docRef = doc(db, 'banners', id);
     await updateDoc(docRef, {
       ...data,
       updatedAt: new Date().toISOString()
     });
+    console.log(`[CMS] Successfully updated banner: ${id}`);
     return true;
-  } catch (error) {
-    console.error("Error updating banner:", error);
+  } catch (error: any) {
+    console.error(`[CMS] Error updating banner ${id}:`, {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+      fullError: error
+    });
     return false;
   }
 };
