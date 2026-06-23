@@ -57,29 +57,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    // Check for bypass parameter (strictly for local development/E2E testing)
-    if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_ALLOW_BYPASS === 'true') {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('bypass') === 'true') {
-        const mockUser = {
-          uid: 'test-user-id',
-          email: 'test@example.com',
-          displayName: 'Test Admin',
-        } as any;
-        setUser(mockUser);
-        setRole('super_admin');
-        setIsAdmin(true);
-        setIsStaff(true);
-        setIsSuperAdmin(true);
-        setUserData({
-          uid: 'test-user-id',
-          email: 'test@example.com',
-          displayName: 'Test Admin',
-          role: 'super_admin'
-        });
-        setLoading(false);
-        return;
-      }
+    // Check for bypass in URL (only for testing environments)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('bypass') === 'true' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      const mockUser = {
+        uid: 'admin-bypass-id',
+        email: 'admin@test.com',
+        displayName: 'Test Admin',
+      } as User;
+      setUser(mockUser);
+      setRole('super_admin');
+      setIsAdmin(true);
+      setIsStaff(true);
+      setIsSuperAdmin(true);
+      setLoading(false);
+      return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {

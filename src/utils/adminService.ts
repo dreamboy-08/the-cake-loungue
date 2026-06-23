@@ -42,6 +42,17 @@ export interface ContactInfo {
   };
 }
 
+export interface CustomSection {
+  id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  ctaText?: string;
+  ctaLink?: string;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
 export interface HomepageContent {
   hero: {
     title?: string;
@@ -56,7 +67,8 @@ export interface HomepageContent {
   };
   gallery?: { src: string; label: string }[];
   testimonials?: { id: number; name: string; role: string; text: string; rating: number }[];
-  sections: { id: string; title: string; enabled: boolean; order: number }[];
+  sections: { id: string; title: string; enabled: boolean; order: number; isCustom?: boolean }[];
+  customSections?: CustomSection[];
 }
 
 export interface BusinessHours {

@@ -24,6 +24,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const menuItems = React.useMemo(() => [
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Products', href: '/admin/products', icon: <Package size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} />, roles: ['super_admin', 'admin', 'staff'] },
+    { label: 'Website Content', href: '/admin/website-content', icon: <FileText size={20} />, roles: ['super_admin', 'admin'] },
+    { label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, roles: ['super_admin'] },
+  ], []);
+
   useEffect(() => {
     if (loading) return;
 
@@ -37,7 +46,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     if (currentItem && !currentItem.roles.includes(role as string)) {
       router.push('/admin'); // Redirect to dashboard if not authorized for specific page
     }
-  }, [user, isStaff, loading, router, pathname, role]);
+  }, [user, isStaff, loading, router, pathname, role, menuItems]);
 
   if (loading || !user || !isStaff) {
     return (
@@ -46,15 +55,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-
-  const menuItems = [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Products', href: '/admin/products', icon: <Package size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} />, roles: ['super_admin', 'admin', 'staff'] },
-    { label: 'Website Content', href: '/admin/website-content', icon: <FileText size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, roles: ['super_admin'] },
-  ];
 
   const filteredMenuItems = menuItems.filter(item => item.roles.includes(role as string));
 
