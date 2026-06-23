@@ -1,7 +1,8 @@
 import { db } from './firebase';
-import { collection, doc, setDoc, getDocs, query, limit } from 'firebase/firestore';
+import { collection, doc, setDoc, getDocs, query, limit, getDoc } from 'firebase/firestore';
 import { products } from '../constants/products';
 import { MEGA_MENU } from '../constants/navigation';
+import { seedCMS } from './seedCMS';
 
 export const seedFirestore = async () => {
   try {
@@ -40,7 +41,11 @@ export const seedFirestore = async () => {
       });
     }
 
-    // 3. Initialize other collections (Users, Orders, Reviews) with a dummy doc if empty
+    // 3. Seed CMS Content
+    console.log('Seeding CMS content...');
+    await seedCMS();
+
+    // 4. Initialize other collections (Users, Orders, Reviews) with a dummy doc if empty
     // This isn't strictly necessary but good for structure
     const initEmptyCollection = async (colName: string) => {
       const q = query(collection(db, colName), limit(1));
