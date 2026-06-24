@@ -8,6 +8,7 @@ const BirthdayCakesPage = () => {
     <CategoryPage
       category="Birthday Cakes"
       title="Birthday Cakes"
+      subtitle="Celebrate with Joy"
       description="Make every birthday magical with our exquisite collection of celebration cakes. From classic favorites to modern designs, we have the perfect centerpiece for your special day."
     />
   );

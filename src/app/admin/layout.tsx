@@ -12,43 +12,23 @@ import {
   LogOut,
   ChevronRight,
   Menu,
-  X,
-  FileText,
-  Settings
+  X
 } from 'lucide-react';
 import { useState } from 'react';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  const { user, isAdmin, isStaff, isSuperAdmin, role, loading, logout } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const menuItems = React.useMemo(() => [
-    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Products', href: '/admin/products', icon: <Package size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} />, roles: ['super_admin', 'admin', 'staff'] },
-    { label: 'Website Content', href: '/admin/website-content', icon: <FileText size={20} />, roles: ['super_admin', 'admin'] },
-    { label: 'Settings', href: '/admin/settings', icon: <Settings size={20} />, roles: ['super_admin'] },
-  ], []);
-
   useEffect(() => {
-    if (loading) return;
-
-    if (!user || !isStaff) {
+    if (!loading && (!user || !isAdmin)) {
       router.push('/login');
-      return;
     }
+  }, [user, isAdmin, loading, router]);
 
-    // Strict route-level authorization
-    const currentItem = menuItems.find(item => pathname === item.href);
-    if (currentItem && !currentItem.roles.includes(role as string)) {
-      router.push('/admin'); // Redirect to dashboard if not authorized for specific page
-    }
-  }, [user, isStaff, loading, router, pathname, role, menuItems]);
-
-  if (loading || !user || !isStaff) {
+  if (loading || !user || !isAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-cream">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-deep"></div>
@@ -56,7 +36,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  const filteredMenuItems = menuItems.filter(item => item.roles.includes(role as string));
+  const menuItems = [
+    { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
+    { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
+    { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
+    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -82,7 +67,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <nav className="flex-1 space-y-2">
-            {filteredMenuItems.map((item) => (
+            {menuItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}

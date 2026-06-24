@@ -1,106 +1,125 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Search, X, Loader2 } from 'lucide-react';
-import { filterProducts } from '@/utils/filterProducts';
-import { getProducts } from '@/utils/productService';
-import Link from 'next/link';
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, X } from 'lucide-react';
+import { products, Product } from '@/constants/products';
 import Image from 'next/image';
-import { Product } from '@/constants/products';
+import { useRouter } from 'next/navigation';
+import { filterProducts } from '@/utils/filterProducts';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
+  placeholder?: string;
 }
 
-const SearchBar = ({ onSearch }: SearchBarProps) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search for cakes, categories, or flavors..." }) => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Product[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const fetchAll = async () => {
-      const data = await getProducts();
-      setAllProducts(data as any);
-    };
-    fetchAll();
-  }, []);
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (query.trim().length > 1) {
-      setLoading(true);
-      const filtered = filterProducts(allProducts, query).slice(0, 8);
-      setResults(filtered);
-      setLoading(false);
+      const filtered = filterProducts(products, query).slice(0, 8);
+      setSuggestions(filtered);
+      setShowSuggestions(true);
     } else {
-      setResults([]);
+      setSuggestions([]);
+      setShowSuggestions(false);
     }
     onSearch(query);
-  }, [query, onSearch, allProducts]);
+  }, [query, onSearch]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleClear = () => {
+    setQuery('');
+    onSearch('');
+  };
+
+  const handleSuggestionClick = (productId: number) => {
+    setShowSuggestions(false);
+    router.push(`/shop/${productId}`);
+  };
 
   return (
-    <div className="relative max-w-2xl mx-auto mb-12 z-[110]">
-      <div className={`relative flex items-center transition-all duration-300 ${isFocused ? 'scale-[1.02]' : ''}`}>
-        <Search className={`absolute left-5 transition-colors duration-300 ${isFocused ? 'text-rose-deep' : 'text-text-soft'}`} size={22} />
+    <div className="relative max-w-2xl mx-auto mb-12 w-full px-4 md:px-0" ref={dropdownRef}>
+      <div className="relative group">
+        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-300 group-focus-within:text-rose-deep text-text-soft">
+          <Search size={20} />
+        </div>
         <input
           type="text"
-          placeholder="Search for cakes, flavors or occasions..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setTimeout(() => setIsFocused(false), 200)}
-          className="w-full bg-white border-none rounded-full py-5 pl-14 pr-14 text-chocolate font-medium shadow-[0_10px_30px_rgba(0,0,0,0.04)] focus:ring-2 focus:ring-rose/20 outline-none transition-all placeholder:text-text-soft/60"
+          onFocus={() => query.trim().length > 1 && setShowSuggestions(true)}
+          placeholder={placeholder}
+          aria-label="Search for cakes, categories, or flavors"
+          className="w-full bg-white border-2 border-rose-deep/10 text-chocolate rounded-full py-3.5 pl-12 pr-12 focus:outline-none focus:border-rose-deep focus:ring-4 focus:ring-rose-deep/5 transition-all duration-300 shadow-sm text-base placeholder:text-text-soft/60"
         />
         {query && (
           <button
-            onClick={() => setQuery('')}
-            className="absolute right-5 p-1 hover:bg-rose/10 rounded-full transition-colors text-text-soft hover:text-rose-deep"
+            onClick={handleClear}
+            aria-label="Clear search"
+            className="absolute inset-y-0 right-0 pr-4 flex items-center text-text-soft hover:text-rose-deep transition-colors duration-300"
           >
             <X size={20} />
           </button>
         )}
       </div>
 
-      {/* Quick Results Dropdown */}
-      {isFocused && (query.length > 1 || loading) && (
-        <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl shadow-2xl border border-cream overflow-hidden animate-fade-up">
-          {loading ? (
-            <div className="p-8 flex justify-center">
-              <Loader2 className="animate-spin text-rose-deep" />
-            </div>
-          ) : results.length > 0 ? (
-            <div className="p-4 grid grid-cols-1 gap-2">
-              <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest px-3 mb-2">Suggestions</p>
-              {results.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/shop/${product.id}`}
-                  className="flex items-center gap-4 p-3 hover:bg-rose/5 rounded-2xl transition-colors group"
-                >
-                  <div className="w-12 h-12 rounded-xl overflow-hidden bg-cream relative">
+      {/* Suggestions Dropdown */}
+      {showSuggestions && suggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-rose-deep/10 overflow-hidden z-[101] animate-fade-in mx-4 md:mx-0">
+          <div className="max-h-[400px] overflow-y-auto">
+            {suggestions.map((product) => (
+              <div
+                key={product.id}
+                onClick={() => handleSuggestionClick(product.id)}
+                className="flex items-center gap-4 p-4 hover:bg-rose-deep/5 cursor-pointer transition-colors border-b border-rose-deep/5 last:border-0 group"
+              >
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-cream flex-shrink-0 relative">
                     <Image
                       src={product.img}
                       alt={product.name}
                       fill
+                      sizes="48px"
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-bold text-chocolate truncate group-hover:text-rose-deep transition-colors">
+                    {product.name}
+                  </h4>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose px-2 py-0.5 bg-rose/10 rounded-full">
+                      {product.category}
+                    </span>
+                    <span className="text-[11px] text-text-soft truncate">
+                      {product.flavor}
+                    </span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-chocolate text-sm truncate">{product.name}</h4>
-                    <p className="text-xs text-text-soft truncate">{product.category} • {product.flavor}</p>
-                  </div>
-                  <div className="text-rose-deep font-bold text-sm">
-                    ₹{product.price}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="p-10 text-center">
-              <p className="text-text-soft italic text-sm">No exact matches found for &quot;{query}&quot;</p>
-            </div>
-          )}
+                </div>
+                <div className="text-rose-deep font-bold text-sm">
+                  ₹{product.price}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 bg-cream/50 text-center border-t border-rose-deep/5">
+            <p className="text-[11px] text-text-soft font-medium">
+              Showing top {suggestions.length} results
+            </p>
+          </div>
         </div>
       )}
     </div>

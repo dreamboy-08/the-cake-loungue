@@ -8,6 +8,7 @@ const WeddingCakesPage = () => {
     <CategoryPage
       category="Wedding Cakes"
       title="Wedding Cakes"
+      subtitle="Eternal Elegance"
       description="Discover the perfect centerpiece for your special day. Our wedding cakes combine sophisticated design with exquisite flavors."
     />
   );

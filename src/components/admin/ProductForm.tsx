@@ -28,8 +28,8 @@ interface ProductFormProps {
 
 const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const [loading, setLoading] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>(product?.images || (product?.img ? [product?.img] : []));
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(product?.img || '');
   const [categories, setCategories] = useState<any[]>([]);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -38,15 +38,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     name: product?.name || '',
     description: product?.description || '',
     price: product?.price || '',
-    discountPrice: product?.discountPrice || '',
     oldPrice: product?.oldPrice || '',
     category: product?.category || '',
     flavor: product?.flavor || '',
-    tags: product?.tags || product?.tag || '',
-    inStock: product?.inStock ?? true,
+    tag: product?.tag || '',
     rating: product?.rating || 5,
     reviews: product?.reviews || 0,
-    imageUrls: product?.images || (product?.img ? [product?.img] : []),
+    imageUrl: product?.img || '',
   });
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -64,31 +62,12 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      setImageFiles(prev => [...prev, ...files]);
-      const newPreviews = files.map(file => URL.createObjectURL(file));
-      setImagePreviews(prev => [...prev, ...newPreviews]);
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      setFormData(prev => ({ ...prev, imageUrl: '' }));
       setUploadError(null);
-    }
-  };
-
-  const removeImage = (index: number) => {
-    const newPreviews = [...imagePreviews];
-    newPreviews.splice(index, 1);
-    setImagePreviews(newPreviews);
-
-    // If it was a newly added file
-    const totalExistingUrls = formData.imageUrls.length;
-    if (index >= totalExistingUrls) {
-      const newFiles = [...imageFiles];
-      newFiles.splice(index - totalExistingUrls, 1);
-      setImageFiles(newFiles);
-    } else {
-      // It was an existing URL
-      const newUrls = [...formData.imageUrls];
-      newUrls.splice(index, 1);
-      setFormData(prev => ({ ...prev, imageUrls: newUrls }));
     }
   };
 
@@ -97,22 +76,17 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setLoading(true);
 
     try {
-      let finalImageUrls = [...formData.imageUrls];
+      let finalImageUrl = formData.imageUrl || product?.img || '';
 
-      // Upload new files
-      if (imageFiles.length > 0) {
+      if (imageFile) {
         try {
           setUploadError(null);
-          const uploadPromises = imageFiles.map(async (file) => {
-            const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-            const uploadResult = await uploadBytes(storageRef, file);
-            return await getDownloadURL(uploadResult.ref);
-          });
-          const uploadedUrls = await Promise.all(uploadPromises);
-          finalImageUrls = [...finalImageUrls, ...uploadedUrls];
+          const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
+          const uploadResult = await uploadBytes(storageRef, imageFile);
+          finalImageUrl = await getDownloadURL(uploadResult.ref);
         } catch (storageError: any) {
           console.error("Storage upload failed:", storageError);
-          const errorMsg = "Image upload failed. Some images might not have been saved.";
+          const errorMsg = "Image upload failed. Please use the fallback URL below.";
           setUploadError(errorMsg);
           showToast(errorMsg, "error");
           setLoading(false);
@@ -120,19 +94,18 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         }
       }
 
-      if (finalImageUrls.length === 0) {
-        showToast("Please upload at least one image.", "error");
+      if (!finalImageUrl) {
+        showToast("Please upload an image or provide an image URL.", "error");
         setLoading(false);
         return;
       }
 
+      const { imageUrl, ...restData } = formData;
       const productData = {
-        ...formData,
+        ...restData,
         price: Number(formData.price),
         oldPrice: Number(formData.oldPrice),
-        discountPrice: formData.discountPrice ? Number(formData.discountPrice) : null,
-        img: finalImageUrls[0], // Main image
-        images: finalImageUrls, // All images
+        img: finalImageUrl,
         updatedAt: new Date().toISOString(),
       };
 
@@ -186,51 +159,63 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
             {/* Image Upload Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-bold text-chocolate uppercase tracking-wider">Product Images</label>
+                <label className="block text-sm font-bold text-chocolate uppercase tracking-wider">Product Image</label>
                 <div className="flex items-center gap-1 text-[10px] font-bold text-rose-deep bg-rose/5 px-2 py-0.5 rounded uppercase">
                   <AlertCircle size={10} />
-                  <span>Bulk Upload Supported</span>
+                  <span>Storage Fallback Active</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                {imagePreviews.map((preview, index) => (
-                  <div key={index} className="relative aspect-square rounded-2xl border border-gray-100 overflow-hidden group">
+              <div
+                className={`relative aspect-square rounded-3xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all group cursor-pointer ${
+                  uploadError ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-rose-deep/50'
+                }`}
+                onClick={() => document.getElementById('image-upload')?.click()}
+              >
+                {(imagePreview || formData.imageUrl) ? (
+                  <>
                     <Image
-                      src={preview}
-                      alt={`Preview ${index}`}
+                      src={imagePreview || formData.imageUrl}
+                      alt="Preview"
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                      <div className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors">
+                        <Upload size={24} />
+                      </div>
+                      {(imageFile || formData.imageUrl) && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setImageFile(null);
+                            setImagePreview('');
+                            setFormData({ ...formData, imageUrl: '' });
+                            setUploadError(null);
+                          }}
+                          className="p-3 bg-red-500/80 backdrop-blur-md rounded-full text-white hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 size={24} />
+                        </button>
+                      )}
                     </div>
+                  </>
+                ) : (
+                  <div className="text-center p-6">
+                    <ImageIcon className="mx-auto text-gray-300 mb-4" size={48} />
+                    <p className="text-sm text-gray-500 font-medium">Click to upload image</p>
+                    <p className="text-xs text-gray-400 mt-1">or provide URL below</p>
                   </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('image-upload')?.click()}
-                  className="aspect-square rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center hover:border-rose-deep/50 hover:bg-rose/5 transition-all"
-                >
-                  <Plus className="text-gray-300" size={32} />
-                  <span className="text-[10px] font-bold text-gray-400 uppercase mt-2">Add Image</span>
-                </button>
+                )}
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </div>
-
-              <input
-                id="image-upload"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
 
               {uploadError && (
                 <div className="flex items-center gap-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100 animate-shake">
@@ -238,6 +223,26 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   <span>{uploadError}</span>
                 </div>
               )}
+
+              <div className="space-y-2 pt-2">
+                <label className="flex items-center gap-2 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest">
+                  <LinkIcon size={12} />
+                  <span>Image URL (Fallback)</span>
+                </label>
+                <input
+                  type="url"
+                  value={formData.imageUrl}
+                  onChange={(e) => {
+                    setFormData({ ...formData, imageUrl: e.target.value });
+                    setImagePreview('');
+                    setImageFile(null);
+                    setUploadError(null);
+                  }}
+                  placeholder="https://images.unsplash.com/..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-xs"
+                />
+                <p className="text-[10px] text-gray-400 italic">Use this if image upload fails or is unavailable.</p>
+              </div>
             </div>
 
             {/* Basic Info Section */}
@@ -254,7 +259,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Price (₹)</label>
                   <input
@@ -267,17 +272,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Disc. Price</label>
-                  <input
-                    type="number"
-                    value={formData.discountPrice}
-                    onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
-                    placeholder="399"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Old Price</label>
+                  <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Old Price (₹)</label>
                   <input
                     type="number"
                     value={formData.oldPrice}
@@ -320,31 +315,16 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Tags (Comma separated)</label>
+              <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Tag</label>
               <input
                 type="text"
-                value={formData.tags}
-                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                value={formData.tag}
+                onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
                 placeholder="e.g. Bestseller, New, Trending"
                 className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
               />
-            </div>
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Availability</label>
-              <div className="flex items-center h-12">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.inStock}
-                    onChange={(e) => setFormData({ ...formData, inStock: e.target.checked })}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                  <span className="ml-3 text-sm font-medium text-gray-500">{formData.inStock ? 'In Stock' : 'Out of Stock'}</span>
-                </label>
-              </div>
             </div>
             <div className="space-y-2">
               <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Description</label>

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingBag, LayoutGrid } from 'lucide-react';
 
-const Hero = ({ content }: { content?: any }) => {
+const Hero = () => {
   return (
     <section id="hero" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-[#3d1f10] via-[#6b3a2a] to-[#c9614a] z-0"></div>
@@ -20,17 +20,17 @@ const Hero = ({ content }: { content?: any }) => {
               <span className="text-sm">★</span> Artisan Patisserie Since 2015
             </div>
             <h1 className="text-white text-[clamp(2.6rem,5vw,4.2rem)] font-bold leading-[1.15] animate-fade-up [animation-delay:0.25s]">
-              {content?.title || "Exquisite Cakes Delivered Fresh to Your Door"}
+              Exquisite Cakes<br /><em className="text-gold-light italic">Delivered Fresh</em><br />to Your Door
             </h1>
             <p className="mt-[22px] text-white/75 text-base leading-[1.75] max-w-[440px] animate-fade-up [animation-delay:0.4s]">
-              {content?.subtitle || "Handcrafted with love using only the finest ingredients. Every bite is a moment of pure bliss — made just for you."}
+              Handcrafted with love using only the finest ingredients. Every bite is a moment of pure bliss — made just for you.
             </p>
             <div className="mt-9 flex flex-wrap gap-4 animate-fade-up [animation-delay:0.55s]">
-              <Link href={content?.ctaPrimary?.link || "/menu"} className="btn btn-primary">
-                <ShoppingBag size={18} className="mr-2" /> {content?.ctaPrimary?.text || "Order Now"}
+              <Link href="/menu" className="btn btn-primary">
+                <ShoppingBag size={18} className="mr-2" /> Order Now
               </Link>
-              <Link href={content?.ctaSecondary?.link || "/menu"} className="btn btn-outline">
-                <LayoutGrid size={18} className="mr-2" /> {content?.ctaSecondary?.text || "View Menu"}
+              <Link href="/menu" className="btn btn-outline">
+                <LayoutGrid size={18} className="mr-2" /> View Menu
               </Link>
             </div>
             <div className="mt-[56px] flex gap-10 animate-fade-up [animation-delay:0.7s]">

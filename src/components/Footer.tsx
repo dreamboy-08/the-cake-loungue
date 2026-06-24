@@ -1,23 +1,8 @@
-"use client";
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Instagram, Facebook, MessageCircle, Pin as Pinterest } from 'lucide-react';
-import { getSiteSettings, getContactInfo } from '@/utils/adminService';
 
 const Footer = () => {
-  const [settings, setSettings] = useState<any>(null);
-  const [contact, setContact] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [s, c] = await Promise.all([getSiteSettings(), getContactInfo()]);
-      setSettings(s);
-      setContact(c);
-    };
-    fetchData();
-  }, []);
-
   return (
     <footer className="bg-chocolate text-[rgba(255,255,255,0.7)] pt-[70px] pb-[30px]">
       <div className="container mx-auto px-6">
@@ -31,15 +16,14 @@ const Footer = () => {
             </p>
             <div className="flex gap-3">
               {[
-                { icon: <Instagram size={18} />, href: contact?.socialLinks?.instagram || "#" },
-                { icon: <Facebook size={18} />, href: contact?.socialLinks?.facebook || "#" },
-                { icon: <MessageCircle size={18} />, href: contact?.whatsapp ? `https://wa.me/${contact.whatsapp}` : "#" },
+                { icon: <Instagram size={18} />, href: "#" },
+                { icon: <Facebook size={18} />, href: "#" },
+                { icon: <MessageCircle size={18} />, href: "#" },
                 { icon: <Pinterest size={18} />, href: "#" },
               ].map((social, i) => (
                 <Link
                   key={i}
                   href={social.href}
-                  target={social.href.startsWith('http') ? '_blank' : '_self'}
                   className="w-[38px] h-[38px] bg-[rgba(255,255,255,0.08)] rounded-full flex items-center justify-center text-[rgba(255,255,255,0.7)] transition-all duration-350 hover:bg-rose-deep hover:text-white hover:translate-y-[-3px]"
                 >
                   {social.icon}
@@ -83,7 +67,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-[rgba(255,255,255,0.08)] pt-6 flex flex-col md:flex-row items-center justify-between text-[0.8rem] text-[rgba(255,255,255,0.35)] gap-[10px]">
-          <span>{settings?.copyrightText || '© 2025 Cake Lounge Patisserie. All rights reserved.'}</span>
+          <span>© 2025 Cake Lounge Patisserie. All rights reserved.</span>
           <div className="flex items-center gap-1">
             Made with <span className="text-rose">❤️</span> in India
           </div>

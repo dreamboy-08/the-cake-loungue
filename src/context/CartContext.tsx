@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useAuth } from './AuthContext';
 import { db } from '@/utils/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
@@ -39,7 +39,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isUpdatingFromServer = useRef(false);
 
   // Persistence helper
-  const persistCart = useCallback(async (newCart: CartItem[]) => {
+  const persistCart = async (newCart: CartItem[]) => {
     if (!user) {
       localStorage.setItem('cakeLounge_cart', JSON.stringify(newCart));
       return;
@@ -53,7 +53,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error persisting cart:', error);
     }
-  }, [user]);
+  };
 
   // Sync with Firestore or LocalStorage
   useEffect(() => {
@@ -109,7 +109,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [user, persistCart]);
+  }, [user]);
 
   // Handle persistence whenever cart changes, but avoid feedback loops
   useEffect(() => {
@@ -122,7 +122,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isUpdatingFromServer.current && !isLoading) {
       persistCart(cart);
     }
-  }, [cart, isLoading, persistCart]);
+  }, [cart, isLoading]);
 
   const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>) => {
     const cartItemId = `${item.id}-${item.flavor || ''}-${item.weight || ''}-${item.message || ''}`;
