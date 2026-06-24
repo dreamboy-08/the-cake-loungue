@@ -9,7 +9,6 @@ import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
-import { getSiteSettings, getContactInfo } from '@/utils/adminService';
 import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
@@ -33,17 +32,6 @@ const Navbar = () => {
   const { bounceCount } = useFlyToCart();
   const router = useRouter();
   const pathname = usePathname();
-  const [settings, setSettings] = useState<any>(null);
-  const [contact, setContact] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const [s, c] = await Promise.all([getSiteSettings(), getContactInfo()]);
-      setSettings(s);
-      setContact(c);
-    };
-    fetchSettings();
-  }, []);
 
   const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password';
   const isAdminPage = pathname.startsWith('/admin');
@@ -78,51 +66,12 @@ const Navbar = () => {
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  const shouldShowAnnouncement = () => {
-    if (!settings?.announcementBar?.enabled || isAdminPage) return false;
-
-    const now = new Date();
-    const start = settings.announcementBar.startDate ? new Date(settings.announcementBar.startDate) : null;
-    const end = settings.announcementBar.endDate ? new Date(settings.announcementBar.endDate) : null;
-
-    if (start && now < start) return false;
-    if (end) {
-      // Set end date to end of day
-      const endOfDay = new Date(end);
-      endOfDay.setHours(23, 59, 59, 999);
-      if (now > endOfDay) return false;
-    }
-
-    return true;
-  };
-
-  const showAnnouncement = shouldShowAnnouncement();
-
   return (
     <>
-      <AnimatePresence>
-        {showAnnouncement && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 bg-chocolate text-gold-light py-2 text-center text-[10px] font-bold uppercase tracking-[0.2em] z-[110] shadow-md"
-          >
-            {settings.announcementBar.text}
-            {settings.announcementBar.link && (
-              <Link href={settings.announcementBar.link} className="ml-2 underline hover:text-white transition-colors">
-                Details
-              </Link>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <nav
         id="navbar"
         className={cn(
-          "fixed left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
-          showAnnouncement ? "top-[36px]" : "top-0",
+          "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
           (isHidden || isAdminPage) && "translate-y-[-100%]",
           (isScrolled || isAuthPage)
             ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"

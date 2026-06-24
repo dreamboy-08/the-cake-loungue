@@ -8,6 +8,7 @@ const ChocolateCakesPage = () => {
     <CategoryPage
       category="Chocolate Cakes"
       title="Chocolate Cakes"
+      subtitle="Pure Indulgence"
       description="For the true connoisseur. Explore our collection of rich, decadent chocolate cakes crafted with the finest Belgian chocolate."
     />
   );

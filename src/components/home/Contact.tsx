@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
-import { getContactInfo } from '@/utils/adminService';
 
 const Contact = () => {
-  const [contact, setContact] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchContact = async () => {
-      const data = await getContactInfo();
-      setContact(data);
-    };
-    fetchContact();
-  }, []);
-
   return (
     <section id="contact" className="py-[100px] bg-white">
       <div className="container mx-auto px-6">
@@ -29,7 +18,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Find Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">{contact?.address || "12, Rose Garden Lane, Connaught Place, New Delhi – 110001"}</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">12, Rose Garden Lane, Connaught Place, New Delhi – 110001</p>
                 </div>
               </div>
 
@@ -39,7 +28,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Call Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">{contact?.phone || "+91 99105 19242"}{contact?.whatsapp ? ` · WhatsApp: ${contact.whatsapp}` : ""}</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">+91 99105 19242 · Mon–Sun 8am–10pm</p>
                 </div>
               </div>
 
@@ -49,7 +38,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Email Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">{contact?.email || "hello@thecakelounge.in"}</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">hello@cakeloungue.in</p>
                 </div>
               </div>
             </div>

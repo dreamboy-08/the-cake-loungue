@@ -1,55 +1,24 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
 import { filterProducts } from '@/utils/filterProducts';
-import { getProducts, getCategories } from '@/utils/productService';
-import { Product } from '@/constants/products';
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(['All']);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [productsData, categoriesData] = await Promise.all([
-          getProducts(),
-          getCategories()
-        ]);
-        setProducts(productsData as any);
-        const catNames = ['All', ...categoriesData.map((c: any) => c.name)];
-        setCategories(catNames);
-      } catch (error) {
-        console.error("Error loading menu:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
 
   const filteredProducts = useMemo(() => {
     const categoryFiltered = products.filter(product =>
       activeCategory === 'All' || product.category === activeCategory
     );
     return filterProducts(categoryFiltered, searchQuery);
-  }, [activeCategory, searchQuery, products]);
-
-  if (loading) {
-    return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center">
-        <Loader2 className="animate-spin text-rose-deep mb-4" size={48} />
-        <p className="text-chocolate font-bold">Loading Our Menu...</p>
-      </div>
-    );
-  }
+  }, [activeCategory, searchQuery]);
 
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
@@ -57,7 +26,7 @@ const MenuPage = () => {
         <section className="text-center mb-12">
           <p className="section-label">Full Bakery Menu</p>
           <h1 className="section-title text-4xl md:text-5xl mb-5">Explore Our Complete Collection</h1>
-          <p className="section-sub mx-auto">Browse every cake, dessert and premium creation from our bakery catalogue — handcrafted items delivered fresh.</p>
+          <p className="section-sub mx-auto">Browse every cake, dessert and premium creation from our bakery catalogue — 300+ handcrafted items delivered fresh.</p>
         </section>
 
         {/* Search Bar */}
