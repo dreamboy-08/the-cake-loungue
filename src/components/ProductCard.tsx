@@ -30,11 +30,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
+    const defaultWeight = product.weights?.[0]?.label || '0.5 Kg';
+    const defaultPrice = product.weights?.[0]?.price || product.price;
+
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: defaultPrice,
       img: product.img,
+      weight: defaultWeight,
     });
 
     setLocalAdded(true);
@@ -93,7 +97,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
 
         <div className="flex items-center justify-between gap-3 mt-auto flex-wrap">
           <div>
-            <span className="font-playfair text-lg font-bold text-rose-deep">₹{product.price}</span>
+            <div className="flex flex-col">
+              <span className="text-[10px] text-text-soft font-bold uppercase tracking-wider leading-none mb-1">Starting from</span>
+              <span className="font-playfair text-lg font-bold text-rose-deep">₹{product.weights?.[0]?.price || product.price}</span>
+            </div>
             {product.oldPrice > 0 && (
               <span className="text-[0.78rem] text-text-soft line-through ml-1">₹{product.oldPrice}</span>
             )}

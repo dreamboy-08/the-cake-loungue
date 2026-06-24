@@ -288,6 +288,9 @@ const CheckoutPage = () => {
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
+                      <p className="text-[10px] text-text-soft mt-0.5">
+                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
+                      </p>
                       <p className="text-xs text-text-soft mt-1">Quantity: {item.quantity}</p>
                       <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
                     </div>

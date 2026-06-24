@@ -298,7 +298,12 @@ const AdminOrders = () => {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>
-                          <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
+                            <span className="text-[10px] font-bold text-rose-deep bg-rose/5 px-1.5 rounded">
+                              {item.weight || '0.5 Kg'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <span className="text-sm font-bold text-chocolate">₹{item.quantity * item.price}</span>

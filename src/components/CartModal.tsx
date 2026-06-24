@@ -98,7 +98,9 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                 <Trash2 size={16} />
                               </button>
                             </div>
-                            <p className="text-xs text-text-soft mt-1">{item.flavor || 'Standard'}</p>
+                            <p className="text-xs text-text-soft mt-1">
+                              {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
+                            </p>
                           </div>
 
                           <div className="flex justify-between items-center mt-2">

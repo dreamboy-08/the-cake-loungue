@@ -28,10 +28,16 @@ export interface Address {
 }
 
 // ============= PRODUCTS =============
+export interface ProductWeight {
+  label: string;
+  price: number;
+}
+
 export interface Product {
   id?: string;
   name: string;
   price: number;
+  weights?: ProductWeight[];
   discountPrice?: number;
   description: string;
   category: string;

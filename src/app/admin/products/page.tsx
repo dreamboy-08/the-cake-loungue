@@ -20,7 +20,8 @@ import {
   Filter,
   Package,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  RefreshCcw
 } from 'lucide-react';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
@@ -49,6 +50,26 @@ const AdminProducts = () => {
     } catch (error) {
       console.error("Sync error:", error);
       alert("An error occurred during sync.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleMigrateWeights = async () => {
+    if (!confirm("This will add default weights to all products in Firestore. Continue?")) return;
+    setIsSyncing(true);
+    try {
+      const { migrateWeights } = await import("@/utils/migrateWeights");
+      const success = await migrateWeights();
+      if (success) {
+        alert("Weights migrated successfully!");
+        fetchProducts();
+      } else {
+        alert("Failed to migrate weights.");
+      }
+    } catch (error) {
+      console.error("Migration error:", error);
+      alert("An error occurred during migration.");
     } finally {
       setIsSyncing(false);
     }
@@ -96,6 +117,18 @@ const AdminProducts = () => {
           <p className="text-gray-500 mt-1">Manage your bakery inventory and catalog.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleMigrateWeights}
+            disabled={isSyncing}
+            className="flex items-center justify-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-600 hover:-translate-y-0.5 transition-all w-full md:w-auto disabled:opacity-50"
+          >
+            {isSyncing ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              <RefreshCcw size={20} />
+            )}
+            <span>Migrate Weights</span>
+          </button>
           <button
             onClick={handleSyncCatalog}
             disabled={isSyncing}

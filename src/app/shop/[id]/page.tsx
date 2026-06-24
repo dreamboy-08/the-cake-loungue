@@ -19,11 +19,16 @@ const ProductDetail = () => {
 
   const product = products.find((p) => p.id === Number(id));
 
+  const [selectedWeight, setSelectedWeight] = useState(product?.weights?.[0]?.label || '0.5 Kg');
+
   if (!product) {
     notFound();
   }
 
-  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const activeWeightOption = product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price };
+  const currentPrice = activeWeightOption.price;
+
+  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight);
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -33,8 +38,9 @@ const ProductDetail = () => {
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: currentPrice,
       img: product.img,
+      weight: selectedWeight,
     });
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -85,8 +91,8 @@ const ProductDetail = () => {
 
             <div className="mb-8">
               <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-3xl font-bold text-rose-deep">₹{product.price}</span>
-                {product.oldPrice > 0 && (
+                <span className="text-3xl font-bold text-rose-deep">₹{currentPrice}</span>
+                {product.oldPrice > 0 && selectedWeight === (product.weights?.[0]?.label || '0.5 Kg') && (
                   <span className="text-xl text-text-soft line-through font-medium">₹{product.oldPrice}</span>
                 )}
               </div>
@@ -94,6 +100,28 @@ const ProductDetail = () => {
                 {product.description}
               </p>
             </div>
+
+            {/* Weight Selector */}
+            {product.weights && product.weights.length > 0 && (
+              <div className="mb-8">
+                <label className="block text-xs font-bold text-chocolate uppercase tracking-widest mb-4">Select Weight</label>
+                <div className="flex flex-wrap gap-3">
+                  {product.weights.map((w) => (
+                    <button
+                      key={w.label}
+                      onClick={() => setSelectedWeight(w.label)}
+                      className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-2 ${
+                        selectedWeight === w.label
+                          ? 'border-rose-deep bg-rose-deep text-white shadow-md'
+                          : 'border-cream bg-white text-chocolate hover:border-rose-deep/30'
+                      }`}
+                    >
+                      {w.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-text-mid">
