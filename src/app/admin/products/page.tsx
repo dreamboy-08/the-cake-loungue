@@ -19,6 +19,7 @@ import {
   MoreVertical,
   Filter,
   Package,
+  Loader2,
   AlertCircle
 } from 'lucide-react';
 import Image from 'next/image';
@@ -31,6 +32,28 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleSyncCatalog = async () => {
+    if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
+    setIsSyncing(true);
+    try {
+      const { recoverCatalog } = await import("@/utils/recoverCatalog");
+      const success = await recoverCatalog();
+      if (success) {
+        alert("Catalog restored successfully!");
+        fetchProducts();
+      } else {
+        alert("Failed to restore catalog.");
+      }
+    } catch (error) {
+      console.error("Sync error:", error);
+      alert("An error occurred during sync.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -72,16 +95,30 @@ const AdminProducts = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Product Management</h1>
           <p className="text-gray-500 mt-1">Manage your bakery inventory and catalog.</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedProduct(null);
-            setIsFormOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto"
-        >
-          <Plus size={20} />
-          <span>Add New Product</span>
-        </button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={handleSyncCatalog}
+            disabled={isSyncing}
+            className="flex items-center justify-center gap-2 bg-amber-500 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-amber-500/20 hover:bg-amber-600 hover:-translate-y-0.5 transition-all w-full md:w-auto disabled:opacity-50"
+          >
+            {isSyncing ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              <Package size={20} />
+            )}
+            <span>Sync Catalog</span>
+          </button>
+          <button
+            onClick={() => {
+              setSelectedProduct(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all w-full md:w-auto"
+          >
+            <Plus size={20} />
+            <span>Add New Product</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4">
