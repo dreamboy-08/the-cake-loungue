@@ -4,10 +4,10 @@ import Link from 'next/link';
 
 const Categories = () => {
   const cats = [
-    { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: 'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=500&q=80', href: '/shop/birthday-cakes' },
-    { name: 'Wedding Cakes', designs: '45+', tag: null, img: 'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=500&q=80', href: '/shop/wedding-cakes' },
-    { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: 'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=500&q=80', href: '/shop/chocolate-cakes' },
-    { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: 'https://images.unsplash.com/photo-1561758033-7e924f619b47?w=500&q=80', href: '/custom-cake' },
+    { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/products/Golden Confetti Birthday Cake.jpg', href: '/shop/birthday-cakes' },
+    { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/products/Ivory Lace Wedding Cake.jpg', href: '/shop/wedding-cakes' },
+    { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/products/Elite Truffle Premium Cake.jpg', href: '/shop/chocolate-cakes' },
+    { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/products/Tailored Celebration Cake.jpg', href: '/custom-cake' },
   ];
 
   return (
