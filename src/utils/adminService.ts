@@ -86,110 +86,18 @@ const CONTACT_DOC = 'primary';
 const HOURS_DOC = 'standard';
 
 /**
- * CMS Default Values
- */
-export const CMS_DEFAULTS = {
-  siteSettings: {
-    logoText: 'Cake Lounge',
-    copyrightText: '© 2025 Cake Lounge Patisserie. All rights reserved.',
-    announcementBar: {
-      enabled: true,
-      text: 'Free Delivery Above ₹999',
-      link: '/menu',
-      startDate: '',
-      endDate: ''
-    },
-    deliveryCharges: 0,
-    minOrderAmount: 0,
-    deliveryTiming: '45 - 60 mins'
-  } as SiteSettings,
-  contactInfo: {
-    phone: '',
-    email: '',
-    address: '',
-    whatsapp: '',
-    googleMaps: '',
-    socialLinks: {
-      instagram: '',
-      facebook: '',
-      pinterest: ''
-    }
-  } as ContactInfo,
-  homepageContent: {
-    hero: {
-      title: 'Exquisite Cakes Delivered Fresh',
-      subtitle: 'Handcrafted with love using only the finest ingredients.',
-      ctaPrimary: { text: 'Order Now', link: '/menu' },
-      ctaSecondary: { text: 'View Menu', link: '/menu' },
-      images: []
-    },
-    about: {
-      title: 'Baked with Passion, Served with Love',
-      description: 'Cake Lounge was born from a grandmother\'s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.'
-    },
-    gallery: [],
-    testimonials: [
-      { id: 1, name: 'Priya Sharma', role: 'Birthday Celebration', text: 'The cake was absolutely beautiful and tasted even better!', rating: 5 },
-      { id: 2, name: 'Rahul Verma', role: 'Anniversary', text: 'Best red velvet cake in town. Highly recommended!', rating: 5 }
-    ],
-    sections: [
-      { id: 'hero', title: 'Hero Banner', enabled: true, order: 0 },
-      { id: 'offers', title: 'Offers Bar', enabled: true, order: 1 },
-      { id: 'categories', title: 'Featured Categories', enabled: true, order: 2 },
-      { id: 'featured', title: 'Featured Products', enabled: true, order: 3 },
-      { id: 'about', title: 'Our Story', enabled: true, order: 4 },
-      { id: 'testimonials', title: 'Testimonials', enabled: true, order: 5 },
-      { id: 'contact', title: 'Contact Section', enabled: true, order: 6 }
-    ]
-  } as HomepageContent,
-  businessHours: {
-    mon_fri: '10:00 AM - 10:00 PM',
-    sat_sun: '09:00 AM - 11:00 PM',
-    delivery: '11:00 AM - 09:00 PM',
-    opening: '10:00 AM',
-    closing: '10:00 PM'
-  } as BusinessHours
-};
-
-/**
- * Helper to wrap a promise with a timeout
- */
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
-  return Promise.race([
-    promise,
-    new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new Error('Firestore operation timed out')), timeoutMs)
-    ),
-  ]);
-};
-
-/**
  * Generic fetch for a specific document in a collection
  */
 export const getCMSDoc = async <T>(collectionName: string, docId: string): Promise<T | null> => {
   try {
     const docRef = doc(db, collectionName, docId);
-    // Use 5 second timeout for Firestore fetch
-    const docSnap = await withTimeout(getDoc(docRef), 5000);
-
+    const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       return docSnap.data() as T;
     }
-
-    // Return a deep copy of default if not found in Firestore
-    const defaults = CMS_DEFAULTS[collectionName as keyof typeof CMS_DEFAULTS];
-    if (defaults) {
-      return JSON.parse(JSON.stringify(defaults)) as T;
-    }
-
     return null;
   } catch (error) {
     console.error(`Error fetching CMS doc from ${collectionName}/${docId}:`, error);
-    // Return a deep copy of default even on error to prevent UI crash
-    const defaults = CMS_DEFAULTS[collectionName as keyof typeof CMS_DEFAULTS];
-    if (defaults) {
-      return JSON.parse(JSON.stringify(defaults)) as T;
-    }
     return null;
   }
 };
@@ -240,7 +148,7 @@ export interface Banner {
 export const getBanners = async (): Promise<Banner[]> => {
   try {
     const q = query(collection(db, 'banners'), orderBy('createdAt', 'desc'));
-    const snapshot = await withTimeout(getDocs(q), 5000);
+    const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Banner));
   } catch (error) {
     console.error("Error fetching banners:", error);
