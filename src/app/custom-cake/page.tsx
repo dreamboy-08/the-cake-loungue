@@ -82,7 +82,7 @@ Weight: ${weightLabel}
 Message: ${message}
 Price: ₹${price}`;
 
-    window.open(`https://wa.me/919910519242?text=${encodeURIComponent(text)}`, "_blank");
+    window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   return (
