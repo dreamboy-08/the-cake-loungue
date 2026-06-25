@@ -6,6 +6,7 @@ import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackButton from './BackButton';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -49,6 +50,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               >
                 <X size={24} />
               </button>
+            </div>
+
+            <div className="px-6 py-4 border-b border-cream bg-white/50">
+              <BackButton
+                className="mb-0"
+                ariaLabel="Go back"
+              />
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 bg-cream/10">
