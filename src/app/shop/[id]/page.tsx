@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle } from 'lucide-react';
 import { db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { Product } from '@/constants/products';
+import { Product, products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,6 +30,7 @@ const ProductDetail = () => {
       setLoading(true);
       setError(null);
       try {
+        // Step 1: Try Firestore
         const docRef = doc(db, 'products', id as string);
         const docSnap = await getDoc(docRef);
 
@@ -40,12 +41,34 @@ const ProductDetail = () => {
           if (productData.weights && productData.weights.length > 0) {
             setSelectedWeight(productData.weights[0].label);
           }
+          setLoading(false);
+          return;
+        }
+
+        // Step 2: Fallback to static constants if not found in Firestore
+        console.warn(`Product ${id} not found in Firestore, falling back to static constants.`);
+        const fallbackProduct = products.find(p => p.id.toString() === id);
+
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
+            setSelectedWeight(fallbackProduct.weights[0].label);
+          }
         } else {
-          setError('Product not found');
+          setError('Product not found in our catalog');
         }
       } catch (err) {
-        console.error('Error fetching product:', err);
-        setError('Failed to load product details');
+        console.error('Error fetching product from Firestore, trying fallback:', err);
+        // Step 3: Try fallback on actual fetch error too
+        const fallbackProduct = products.find(p => p.id.toString() === id);
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
+            setSelectedWeight(fallbackProduct.weights[0].label);
+          }
+        } else {
+          setError('Failed to load product details');
+        }
       } finally {
         setLoading(false);
       }
