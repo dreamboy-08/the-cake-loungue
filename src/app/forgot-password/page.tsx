@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Mail, ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
+import BackButton from '@/components/BackButton';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -28,7 +29,10 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-[100px] lg:pt-0">
+    <div className="min-h-screen bg-cream flex flex-col items-center justify-center px-6 pt-[100px] lg:pt-0">
+      <div className="max-w-md w-full mb-8">
+        <BackButton fallbackRoute="/login" />
+      </div>
       <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
         <div className="bg-rose-deep py-8 px-6 text-center">
           <h1 className="font-playfair text-3xl font-bold text-white">Reset Password</h1>

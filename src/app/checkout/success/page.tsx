@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ShoppingBag, ArrowRight, Calendar, MapPin, Package } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import BackButton from '@/components/BackButton';
 
 const SuccessContent = () => {
   const searchParams = useSearchParams();
@@ -25,6 +26,7 @@ const SuccessContent = () => {
   return (
     <div className="pt-32 md:pt-40 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-2xl">
+        <BackButton className="mb-8" />
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
