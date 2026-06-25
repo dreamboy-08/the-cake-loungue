@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
-import { products } from '@/constants/products';
+import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle } from 'lucide-react';
+import { db } from '@/utils/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { Product } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,16 +15,64 @@ import BackButton from '@/components/BackButton';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { cart, addToCart, isLoading } = useCart();
+  const { cart, addToCart, isLoading: cartLoading } = useCart();
   const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
 
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
 
-  const [selectedWeight, setSelectedWeight] = useState(product?.weights?.[0]?.label || '0.5 Kg');
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const docRef = doc(db, 'products', id as string);
+        const docSnap = await getDoc(docRef);
 
-  if (!product) {
-    notFound();
+        if (docSnap.exists()) {
+          const data = docSnap.data() as any;
+          const productData = { id: docSnap.id, ...data } as Product;
+          setProduct(productData);
+          if (productData.weights && productData.weights.length > 0) {
+            setSelectedWeight(productData.weights[0].label);
+          }
+        } else {
+          setError('Product not found');
+        }
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError('Failed to load product details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-rose-deep" size={48} />
+        <p className="text-chocolate font-medium">Loading delicious details...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6">
+        <div className="w-20 h-20 bg-rose/10 rounded-full flex items-center justify-center text-rose-deep">
+          <AlertCircle size={40} />
+        </div>
+        <h2 className="text-2xl font-bold text-chocolate">{error || 'Product Not Found'}</h2>
+        <Link href="/menu" className="btn btn-primary px-8 py-3">Back to Menu</Link>
+      </div>
+    );
   }
 
   const activeWeightOption = product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price };
@@ -147,14 +197,14 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                disabled={isLoading}
+                disabled={cartLoading}
                 className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  isLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
                   isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                 }`}
               >
                 <AnimatePresence mode="wait">
-                  {isLoading ? (
+                  {cartLoading ? (
                     <motion.div
                       key="loading"
                       initial={{ opacity: 0 }}

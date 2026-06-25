@@ -56,7 +56,7 @@ const AdminProducts = () => {
   };
 
   const handleMigrateWeights = async () => {
-    if (!confirm("This will add default weights to all products in Firestore. Continue?")) return;
+    if (!confirm("This will add MULTIPLE weight options (0.5 Kg, 1 Kg, 2 Kg) to all products in Firestore. This is recommended to ensure customers have choices. Continue?")) return;
     setIsSyncing(true);
     try {
       const { migrateWeights } = await import("@/utils/migrateWeights");
