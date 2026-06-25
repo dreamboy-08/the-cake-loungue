@@ -171,7 +171,7 @@ const OrdersPage = () => {
                   <div className="md:col-span-2">
                     <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-2">Items Ordered</p>
                     <p className="text-sm text-chocolate font-medium leading-relaxed">
-                      {order.items.map((i: any) => `${i.name} (x${i.quantity})`).join(', ')}
+                      {order.items.map((i: any) => `${i.name}${i.weight ? ` (${i.weight})` : ''} (x${i.quantity})`).join(', ')}
                     </p>
                   </div>
 

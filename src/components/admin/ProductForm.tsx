@@ -39,6 +39,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     description: product?.description || '',
     price: product?.price || '',
     oldPrice: product?.oldPrice || '',
+    weights: product?.weights || [{ label: '0.5 Kg', price: product?.price || '' }],
     category: product?.category || '',
     flavor: product?.flavor || '',
     tag: product?.tag || '',
@@ -46,6 +47,34 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     reviews: product?.reviews || 0,
     imageUrl: product?.img || '',
   });
+
+  const supportedWeights = ['0.5 Kg', '1 Kg', '1.5 Kg', '2 Kg', '3 Kg', '4 Kg', '5 Kg'];
+
+  const handleAddWeight = () => {
+    setFormData(prev => ({
+      ...prev,
+      weights: [...prev.weights, { label: '1 Kg', price: '' }]
+    }));
+  };
+
+  const handleRemoveWeight = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      weights: prev.weights.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleWeightChange = (index: number, field: string, value: string | number) => {
+    const newWeights = [...formData.weights];
+    newWeights[index] = { ...newWeights[index], [field]: value };
+
+    // If it's the first weight, also update the main price for backward compatibility/listing
+    if (index === 0 && field === 'price') {
+      setFormData(prev => ({ ...prev, price: value, weights: newWeights }));
+    } else {
+      setFormData(prev => ({ ...prev, weights: newWeights }));
+    }
+  };
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -105,6 +134,10 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         ...restData,
         price: Number(formData.price),
         oldPrice: Number(formData.oldPrice),
+        weights: formData.weights.map((w: any) => ({
+          label: w.label,
+          price: Number(w.price)
+        })),
         img: finalImageUrl,
         updatedAt: new Date().toISOString(),
       };
@@ -312,6 +345,58 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="space-y-4 pt-4 border-t">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-bold text-chocolate/60 uppercase tracking-widest">Weight & Pricing Options</label>
+              <button
+                type="button"
+                onClick={handleAddWeight}
+                className="text-xs font-bold text-rose-deep flex items-center gap-1 hover:underline"
+              >
+                <Plus size={14} /> Add Weight Option
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {formData.weights.map((w: any, index: number) => (
+                <div key={index} className="bg-cream/30 p-4 rounded-2xl border border-cream flex flex-col gap-3 relative group">
+                  {formData.weights.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveWeight(index)}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-chocolate/40 uppercase">Weight</label>
+                    <select
+                      value={w.label}
+                      onChange={(e) => handleWeightChange(index, 'label', e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm bg-white"
+                    >
+                      {supportedWeights.map(sw => (
+                        <option key={sw} value={sw}>{sw}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-chocolate/40 uppercase">Price (₹)</label>
+                    <input
+                      required
+                      type="number"
+                      value={w.price}
+                      onChange={(e) => handleWeightChange(index, 'price', e.target.value)}
+                      placeholder="e.g. 549"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm bg-white"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

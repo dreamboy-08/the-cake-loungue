@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2 } from 'lucide-react';
-import { products } from '@/constants/products';
+import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle } from 'lucide-react';
+import { db } from '@/utils/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { Product, products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,17 +15,93 @@ import BackButton from '@/components/BackButton';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { cart, addToCart, isLoading } = useCart();
+  const { cart, addToCart, isLoading: cartLoading } = useCart();
   const { flyToCart } = useFlyToCart();
   const [localAdded, setLocalAdded] = useState(false);
 
-  const product = products.find((p) => p.id === Number(id));
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
 
-  if (!product) {
-    notFound();
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      setLoading(true);
+      setError(null);
+      try {
+        // Step 1: Try Firestore
+        const docRef = doc(db, 'products', id as string);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data() as any;
+          const productData = { id: docSnap.id, ...data } as Product;
+          setProduct(productData);
+          if (productData.weights && productData.weights.length > 0) {
+            setSelectedWeight(productData.weights[0].label);
+          }
+          setLoading(false);
+          return;
+        }
+
+        // Step 2: Fallback to static constants if not found in Firestore
+        console.warn(`Product ${id} not found in Firestore, falling back to static constants.`);
+        const fallbackProduct = products.find(p => p.id.toString() === id);
+
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
+            setSelectedWeight(fallbackProduct.weights[0].label);
+          }
+        } else {
+          setError('Product not found in our catalog');
+        }
+      } catch (err) {
+        console.error('Error fetching product from Firestore, trying fallback:', err);
+        // Step 3: Try fallback on actual fetch error too
+        const fallbackProduct = products.find(p => p.id.toString() === id);
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
+            setSelectedWeight(fallbackProduct.weights[0].label);
+          }
+        } else {
+          setError('Failed to load product details');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-rose-deep" size={48} />
+        <p className="text-chocolate font-medium">Loading delicious details...</p>
+      </div>
+    );
   }
 
-  const isGloballyAdded = cart.some(item => item.id === product.id);
+  if (error || !product) {
+    return (
+      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6">
+        <div className="w-20 h-20 bg-rose/10 rounded-full flex items-center justify-center text-rose-deep">
+          <AlertCircle size={40} />
+        </div>
+        <h2 className="text-2xl font-bold text-chocolate">{error || 'Product Not Found'}</h2>
+        <Link href="/menu" className="btn btn-primary px-8 py-3">Back to Menu</Link>
+      </div>
+    );
+  }
+
+  const activeWeightOption = product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price };
+  const currentPrice = activeWeightOption.price;
+
+  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight);
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -33,8 +111,9 @@ const ProductDetail = () => {
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.price,
+      price: currentPrice,
       img: product.img,
+      weight: selectedWeight,
     });
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -85,8 +164,8 @@ const ProductDetail = () => {
 
             <div className="mb-8">
               <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-3xl font-bold text-rose-deep">₹{product.price}</span>
-                {product.oldPrice > 0 && (
+                <span className="text-3xl font-bold text-rose-deep">₹{currentPrice}</span>
+                {product.oldPrice > 0 && selectedWeight === (product.weights?.[0]?.label || '0.5 Kg') && (
                   <span className="text-xl text-text-soft line-through font-medium">₹{product.oldPrice}</span>
                 )}
               </div>
@@ -94,6 +173,28 @@ const ProductDetail = () => {
                 {product.description}
               </p>
             </div>
+
+            {/* Weight Selector */}
+            {product.weights && product.weights.length > 0 && (
+              <div className="mb-8">
+                <label className="block text-xs font-bold text-chocolate uppercase tracking-widest mb-4">Select Weight</label>
+                <div className="flex flex-wrap gap-3">
+                  {product.weights.map((w) => (
+                    <button
+                      key={w.label}
+                      onClick={() => setSelectedWeight(w.label)}
+                      className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-2 ${
+                        selectedWeight === w.label
+                          ? 'border-rose-deep bg-rose-deep text-white shadow-md'
+                          : 'border-cream bg-white text-chocolate hover:border-rose-deep/30'
+                      }`}
+                    >
+                      {w.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-text-mid">
@@ -119,14 +220,14 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                disabled={isLoading}
+                disabled={cartLoading}
                 className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  isLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
                   isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                 }`}
               >
                 <AnimatePresence mode="wait">
-                  {isLoading ? (
+                  {cartLoading ? (
                     <motion.div
                       key="loading"
                       initial={{ opacity: 0 }}
