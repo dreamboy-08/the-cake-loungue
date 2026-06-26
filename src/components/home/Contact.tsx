@@ -18,7 +18,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Find Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">12, Rose Garden Lane, Connaught Place, New Delhi – 110001</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">Cake lounge, U-block, DLF phase-3, sector-24, Gurugram, – Haryana </p>
                 </div>
               </div>
 
@@ -28,7 +28,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Call Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">+91 99105 19242 · Mon–Sun 8am–10pm</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">+91 77038 70170 · Mon–Sun 8am–10pm</p>
                 </div>
               </div>
 
@@ -38,7 +38,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Email Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">hello@cakeloungue.in</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">thecakeloungegurgaon@gmail.com</p>
                 </div>
               </div>
             </div>
