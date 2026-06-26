@@ -14,7 +14,6 @@ const PrivacyPolicy = () => {
   return (
     <PolicyLayout
       title="Privacy Policy"
-      lastUpdated="January 15, 2024"
       breadcrumbs={[
         { label: 'Policies', href: '/policies' },
         { label: 'Privacy Policy' },

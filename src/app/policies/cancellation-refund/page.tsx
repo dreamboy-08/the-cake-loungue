@@ -14,7 +14,6 @@ const CancellationRefund = () => {
   return (
     <PolicyLayout
       title="Cancellation & Refund"
-      lastUpdated="January 15, 2024"
       breadcrumbs={[
         { label: 'Policies', href: '/policies' },
         { label: 'Cancellation & Refund' },

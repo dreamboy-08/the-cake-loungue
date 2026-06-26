@@ -13,12 +13,11 @@ interface BreadcrumbItem {
 
 interface PolicyLayoutProps {
   title: string;
-  lastUpdated: string;
   children: React.ReactNode;
   breadcrumbs: BreadcrumbItem[];
 }
 
-const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, lastUpdated, children, breadcrumbs }) => {
+const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, children, breadcrumbs }) => {
   return (
     <div className="pt-24 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
@@ -68,20 +67,10 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, lastUpdated, childre
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="font-playfair text-4xl md:text-5xl font-bold text-chocolate mb-4 leading-tight"
+                className="font-playfair text-4xl md:text-5xl font-bold text-chocolate leading-tight"
               >
                 {title}
               </motion.h1>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="inline-flex items-center bg-white px-4 py-2 rounded-full shadow-sm border border-cream"
-              >
-                <p className="text-[10px] md:text-xs font-bold text-text-soft uppercase tracking-widest">
-                  Last Updated: {lastUpdated}
-                </p>
-              </motion.div>
             </header>
 
             <article className="p-8 md:p-12 max-w-none text-text-mid leading-relaxed

@@ -14,7 +14,6 @@ const ShippingDelivery = () => {
   return (
     <PolicyLayout
       title="Shipping & Delivery"
-      lastUpdated="January 15, 2024"
       breadcrumbs={[
         { label: 'Policies', href: '/policies' },
         { label: 'Shipping & Delivery' },

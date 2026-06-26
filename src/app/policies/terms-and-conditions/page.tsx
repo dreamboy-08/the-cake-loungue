@@ -14,7 +14,6 @@ const TermsAndConditions = () => {
   return (
     <PolicyLayout
       title="Terms & Conditions"
-      lastUpdated="January 15, 2024"
       breadcrumbs={[
         { label: 'Policies', href: '/policies' },
         { label: 'Terms & Conditions' },
