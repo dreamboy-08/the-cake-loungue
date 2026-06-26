@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
-
-const galleryImgs = [
-  { src: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80', label: 'Chocolate Truffle' },
-  { src: 'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&q=80', label: 'Strawberry Dream' },
-  { src: 'https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?w=400&q=80', label: 'Birthday Special' },
-  { src: 'https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=400&q=80', label: 'Wedding Cake' },
-  { src: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', label: 'Vanilla Delight' },
-  { src: 'https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=400&q=80', label: 'Red Velvet' },
-  { src: 'https://images.unsplash.com/photo-1561758033-7e924f619b47?w=400&q=80', label: 'Custom Creation' },
-  { src: 'https://images.unsplash.com/photo-1548365328-8c6db3220e4c?w=400&q=80', label: 'Lemon Bliss' },
-];
+import { products } from '@/constants/products';
 
 const Gallery = () => {
+  const galleryImgs = useMemo(() => {
+    const prioritizedCategories = [
+      'Birthday Cakes',
+      'Wedding Cakes',
+      'Chocolate Cakes',
+      'Bento Cakes',
+      'Theme Cakes',
+      'Red Velvet Cakes',
+      'Fruit Cakes',
+      'Anniversary Cakes',
+      'Designer Cakes',
+      'Custom Cakes'
+    ];
+
+    return prioritizedCategories.map(cat => {
+      const categoryProducts = products.filter(p => p.category === cat);
+      if (categoryProducts.length === 0) return null;
+
+      // Select the highest-quality image based on rating * reviews
+      const bestProduct = [...categoryProducts].sort((a, b) =>
+        (b.rating * b.reviews) - (a.rating * a.reviews)
+      )[0];
+
+      return {
+        src: bestProduct.img,
+        label: bestProduct.name
+      };
+    }).filter((img): img is { src: string; label: string } => img !== null);
+  }, []);
+
   return (
     <section id="gallery" className="py-20 bg-chocolate overflow-hidden">
       <div className="container mx-auto px-6">
