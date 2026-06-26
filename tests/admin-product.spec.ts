@@ -44,7 +44,7 @@ test.describe('Admin Product Management & Sync', () => {
     // 1. CREATE
     await page.click('button:has-text("Add New Product")');
     await page.fill('input[placeholder="e.g. Royal Raspberry Birthday Cake"]', 'Verification Cake');
-    await page.fill('input[placeholder="499"]', '999');
+    await page.fill('input[placeholder="499"]', '499');
     await page.selectOption('select', 'Birthday Cakes');
     await page.fill('input[placeholder="https://images.unsplash.com/..."]', 'https://images.unsplash.com/photo-1578985545062-69928b1d9587');
 
@@ -70,7 +70,7 @@ test.describe('Admin Product Management & Sync', () => {
               name: 'projects/p/databases/d/documents/products/new-id-123',
               fields: {
                 name: { stringValue: 'Verification Cake' },
-                price: { integerValue: '999' },
+                price: { integerValue: '499' },
                 category: { stringValue: 'Birthday Cakes' },
                 img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
                 flavor: { stringValue: 'Vanilla' }
@@ -87,12 +87,12 @@ test.describe('Admin Product Management & Sync', () => {
 
     // Verify visibility in list
     await expect(page.locator('text=Verification Cake')).toBeVisible();
-    await expect(page.locator('text=₹999')).toBeVisible();
+    await expect(page.locator('text=₹499')).toBeVisible();
 
     // 2. UPDATE
     await page.click('button[title="Edit Product"]');
     await page.fill('input[value="Verification Cake"]', 'Updated Verification Cake');
-    await page.fill('input[value="999"]', '1299');
+    await page.fill('input[value="499"]', '1299');
 
     // Mock successful update
     await page.route('**/firestore.googleapis.com/**/products/new-id-123', async route => {
