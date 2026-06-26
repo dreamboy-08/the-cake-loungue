@@ -1,0 +1,14 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 1801ms
+ ○ Compiling /custom-cake ...
+ ✓ Compiled /custom-cake in 14.5s (1562 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /custom-cake 200 in 8329ms
+ ✓ Compiled in 2.2s (706 modules)
+ GET /custom-cake 200 in 558ms
+ GET /custom-cake 200 in 69ms
+ ✓ Compiled in 1123ms (1535 modules)
+ ✓ Compiled in 701ms (1535 modules)
