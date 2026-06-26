@@ -147,11 +147,15 @@ app.post('/api/verify-payment', async (req, res) => {
       if (orderDetails && orderDetails.deliveryDate) {
         const deliveryDate = new Date(orderDetails.deliveryDate);
         const deliveryType = orderDetails.deliveryType || 'Standard';
-        const today = new Date();
+        const now = new Date();
+        const today = new Date(now);
         today.setHours(0, 0, 0, 0);
         deliveryDate.setHours(0, 0, 0, 0);
 
-        const diffDays = Math.ceil((deliveryDate - today) / (1000 * 60 * 60 * 24));
+        // Standard lead time: 1 day (tomorrow).
+        // If ordered after 6 PM, some might argue for 2 days,
+        // but let's stick to simple day difference for now.
+        const diffDays = Math.round((deliveryDate - today) / (1000 * 60 * 60 * 24));
         const minDays = deliveryType === 'Custom' ? 2 : 1;
 
         if (diffDays < minDays) {

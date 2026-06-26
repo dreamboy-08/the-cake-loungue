@@ -15,6 +15,7 @@ export interface CartItem {
   flavor?: string;
   weight?: string;
   message?: string;
+  category?: string;
 }
 
 interface CartContextType {
@@ -125,6 +126,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cart, isLoading]);
 
   const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>) => {
+    // Safety check: Custom Cakes should not enter the cart
+    if (item.category === 'Custom Cakes') {
+      console.warn('Custom Cakes should not be added to cart. Use WhatsApp flow.');
+      return;
+    }
+
     const cartItemId = `${item.id}-${item.flavor || ''}-${item.weight || ''}-${item.message || ''}`;
 
     setCart((prevCart) => {

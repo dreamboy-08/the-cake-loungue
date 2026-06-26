@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle } from 'lucide-react';
+import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle, MessageCircle } from 'lucide-react';
 import { db } from '@/utils/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Product, products } from '@/constants/products';
@@ -114,6 +114,7 @@ const ProductDetail = () => {
       price: currentPrice,
       img: product.img,
       weight: selectedWeight,
+      category: product.category,
     });
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -218,53 +219,66 @@ const ProductDetail = () => {
             </div>
 
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleAddToCart}
-                disabled={cartLoading}
-                className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
-                  isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
-                }`}
-              >
-                <AnimatePresence mode="wait">
-                  {cartLoading ? (
-                    <motion.div
-                      key="loading"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center"
-                    >
-                      <Loader2 size={20} className="mr-2 animate-spin" /> Loading...
-                    </motion.div>
-                  ) : isAdded ? (
-                    <motion.div
-                      key="check"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="flex items-center"
-                    >
-                      <Check size={20} className="mr-2" /> Added to Cart
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="cart"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="flex items-center"
-                    >
-                      <ShoppingCart size={20} className="mr-2" /> Add to Cart
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </button>
+              {product.category === 'Custom Cakes' ? (
+                <button
+                  onClick={() => {
+                    const text = `Hi, I'm interested in ordering the custom cake: *${product.name}* (ID: ${product.id}).\n\nPrice: ₹${currentPrice}\nWeight: ${selectedWeight}\nLink: ${window.location.href}`;
+                    window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
+                  }}
+                  className="flex-1 btn btn-primary bg-[#25D366] hover:bg-[#128C7E] border-none py-4 justify-center flex items-center gap-2"
+                >
+                  <MessageCircle size={20} />
+                  Enquire on WhatsApp
+                </button>
+              ) : (
+                <button
+                  onClick={handleAddToCart}
+                  disabled={cartLoading}
+                  className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
+                    cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                    isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
+                  }`}
+                >
+                  <AnimatePresence mode="wait">
+                    {cartLoading ? (
+                      <motion.div
+                        key="loading"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center"
+                      >
+                        <Loader2 size={20} className="mr-2 animate-spin" /> Loading...
+                      </motion.div>
+                    ) : isAdded ? (
+                      <motion.div
+                        key="check"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="flex items-center"
+                      >
+                        <Check size={20} className="mr-2" /> Added to Cart
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="cart"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="flex items-center"
+                      >
+                        <ShoppingCart size={20} className="mr-2" /> Add to Cart
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </button>
+              )}
               <Link
                 href="/custom-cake"
                 className="flex-1 btn btn-outline border-rose-deep text-rose-deep hover:bg-rose-deep hover:text-white py-4 justify-center"
               >
-                Customize this Cake
+                {product.category === 'Custom Cakes' ? 'Design Your Own' : 'Customize this Cake'}
               </Link>
             </div>
           </div>
