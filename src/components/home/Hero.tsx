@@ -16,13 +16,13 @@ const Hero = () => {
       <div className="container mx-auto px-6 relative z-10 w-full pt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px] items-center min-h-screen">
           <div className="py-[60px]">
-            <div className="inline-flex items-center gap-2 bg-chocolate border border-white/10 text-gold-light text-[0.78rem] font-semibold tracking-[0.12em] uppercase px-[18px] py-2 rounded-[50px] mb-7 animate-fade-up">
+            <div className="inline-flex items-center gap-2 bg-chocolate border border-gold/20 text-gold-light text-[0.78rem] font-semibold tracking-[0.12em] uppercase px-[18px] py-2 rounded-[50px] mb-7 animate-fade-up">
               <span className="text-sm">★</span> Artisan Patisserie Since 2015
             </div>
             <h1 className="text-white text-[clamp(2.6rem,5vw,4.2rem)] font-bold leading-[1.15] animate-fade-up [animation-delay:0.25s]">
               Exquisite Cakes<br /><em className="text-gold-light italic">Delivered Fresh</em><br />to Your Door
             </h1>
-            <p className="mt-[22px] text-white/75 text-base leading-[1.75] max-w-[440px] animate-fade-up [animation-delay:0.4s]">
+            <p className="mt-[22px] text-cream/80 text-base leading-[1.75] max-w-[440px] animate-fade-up [animation-delay:0.4s]">
               Handcrafted with love using only the finest ingredients. Every bite is a moment of pure bliss — made just for you.
             </p>
             <div className="mt-9 flex flex-wrap gap-4 animate-fade-up [animation-delay:0.55s]">
@@ -36,11 +36,11 @@ const Hero = () => {
             <div className="mt-[56px] flex gap-10 animate-fade-up [animation-delay:0.7s]">
               <div>
                 <div className="font-playfair text-[2rem] font-bold text-gold-light leading-none">50k+</div>
-                <div className="text-[0.78rem] text-white/60 mt-1 uppercase tracking-[0.1em]">Happy Customers</div>
+                <div className="text-[0.78rem] text-cream/70 mt-1 uppercase tracking-[0.1em]">Happy Customers</div>
               </div>
               <div>
                 <div className="font-playfair text-[2rem] font-bold text-gold-light leading-none">4.9★</div>
-                <div className="text-[0.78rem] text-white/60 mt-1 uppercase tracking-[0.1em]">Average Rating</div>
+                <div className="text-[0.78rem] text-cream/70 mt-1 uppercase tracking-[0.1em]">Average Rating</div>
               </div>
             </div>
           </div>
