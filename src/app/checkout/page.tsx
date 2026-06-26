@@ -9,7 +9,8 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import BackButton from '@/components/BackButton';
-import { Calendar } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import CalendarPicker from '@/components/CalendarPicker';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -29,6 +30,7 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>('');
+  const [showCalendar, setShowCalendar] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -111,6 +113,16 @@ const CheckoutPage = () => {
     }
     if (!deliveryDate) {
       setErrorMessage('Please select a delivery date.');
+      return;
+    }
+
+    const selectedD = new Date(deliveryDate);
+    const earliestD = new Date(earliestDate);
+    selectedD.setHours(0, 0, 0, 0);
+    earliestD.setHours(0, 0, 0, 0);
+
+    if (selectedD < earliestD) {
+      setErrorMessage(`The earliest delivery date for this order is ${earliestD.toLocaleDateString()}.`);
       return;
     }
 
@@ -267,47 +279,66 @@ const CheckoutPage = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Main Content */}
-          <div className="flex-1 space-y-8">
-            <div>
+          <div className="flex-1 space-y-10">
+            <div className="mb-8">
               <BackButton fallbackRoute="/shop/birthday-cakes" />
-              <h1 className="text-4xl font-bold font-playfair text-chocolate">Secure Checkout</h1>
+              <h1 className="text-4xl md:text-5xl font-bold font-playfair text-chocolate mt-6">Secure Checkout</h1>
+              <p className="text-text-soft mt-2">Complete your order with our secure payment gateway.</p>
             </div>
 
             {/* Address Selection */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/20">
               <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
             </div>
 
             {/* Delivery Date Selection */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <h3 className="text-xl font-bold text-chocolate mb-6">
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/20">
+              <h3 className="text-2xl font-bold text-chocolate mb-8 font-playfair flex items-center gap-3">
+                <CalendarIcon className="text-rose-deep" size={24} />
                 Delivery Date
               </h3>
               <div className="relative max-w-sm">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
-                  <Calendar size={18} />
-                </div>
-                <input
-                  type="date"
-                  required
-                  min={earliestDate}
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-cream/30 rounded-2xl border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                />
+                <button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="w-full text-left pl-12 pr-6 py-4 bg-cream/30 rounded-2xl border-2 border-transparent hover:border-rose-deep/30 focus:border-rose-deep outline-none transition-all font-bold text-chocolate flex items-center"
+                  type="button"
+                >
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep">
+                    <CalendarIcon size={20} />
+                  </div>
+                  {deliveryDate ? new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' }) : "Select delivery date"}
+                </button>
+
+                <AnimatePresence>
+                  {showCalendar && (
+                    <div className="absolute top-full left-0 mt-4 z-50 w-full min-w-[320px]">
+                      <CalendarPicker
+                        selectedDate={deliveryDate}
+                        minDate={new Date(earliestDate)}
+                        onSelect={(date) => {
+                          setDeliveryDate(date);
+                          setShowCalendar(false);
+                        }}
+                        onClose={() => setShowCalendar(false)}
+                      />
+                    </div>
+                  )}
+                </AnimatePresence>
               </div>
-              <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
-                <AlertCircle size={14} className="text-rose-deep" />
-                {hasCustomCake
-                  ? "Custom Cakes require at least 2 days preparation."
-                  : "Standard Cakes can be delivered as early as tomorrow."}
+              <p className="mt-4 text-sm text-text-soft flex items-start gap-3 bg-cream/20 p-4 rounded-2xl">
+                <AlertCircle size={18} className="text-rose-deep shrink-0 mt-0.5" />
+                <span>
+                  {hasCustomCake
+                    ? "Your order contains Custom Cakes. These require at least 2 days for our chefs to perfect."
+                    : "Standard Cakes can be delivered as early as tomorrow if ordered before 6 PM."}
+                </span>
               </p>
             </div>
 
             {/* Payment Method */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
-                <CreditCard size={20} className="text-rose-deep" />
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/20">
+              <h3 className="text-2xl font-bold text-chocolate flex items-center gap-3 mb-8 font-playfair">
+                <CreditCard size={24} className="text-rose-deep" />
                 Payment Method
               </h3>
               <div className="p-6 rounded-[30px] border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
@@ -359,12 +390,12 @@ const CheckoutPage = () => {
 
               <div className="space-y-4 border-t border-cream pt-6">
                 {deliveryDate && (
-                  <div className="flex justify-between text-text-mid bg-rose/5 p-3 rounded-xl border border-rose-100">
-                    <span className="text-xs font-bold flex items-center gap-2 text-rose-deep">
-                      <Calendar size={14} />
+                  <div className="flex justify-between text-text-mid bg-rose/5 p-4 rounded-2xl border border-rose-100">
+                    <span className="text-sm font-bold flex items-center gap-2 text-rose-deep">
+                      <CalendarIcon size={16} />
                       Delivery Date
                     </span>
-                    <span className="text-xs font-bold text-chocolate">
+                    <span className="text-sm font-bold text-chocolate">
                       {new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                     </span>
                   </div>

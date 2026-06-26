@@ -143,6 +143,26 @@ app.post('/api/verify-payment', async (req, res) => {
     if (generatedSignature === razorpay_signature) {
       console.log('Payment verified successfully:', razorpay_payment_id);
 
+      // Backend Validation for Delivery Date
+      if (orderDetails && orderDetails.deliveryDate) {
+        const deliveryDate = new Date(orderDetails.deliveryDate);
+        const deliveryType = orderDetails.deliveryType || 'Standard';
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        deliveryDate.setHours(0, 0, 0, 0);
+
+        const diffDays = Math.ceil((deliveryDate - today) / (1000 * 60 * 60 * 24));
+        const minDays = deliveryType === 'Custom' ? 2 : 1;
+
+        if (diffDays < minDays) {
+          console.error(`Invalid delivery date for ${deliveryType} order: ${orderDetails.deliveryDate}`);
+          return res.status(400).json({
+            success: false,
+            error: `Invalid delivery date. ${deliveryType} cakes require at least ${minDays} day(s) lead time.`
+          });
+        }
+      }
+
       // Store order in Firestore if db is initialized
       if (db && orderDetails) {
         try {
