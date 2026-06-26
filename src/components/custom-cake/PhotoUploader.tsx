@@ -68,7 +68,10 @@ const PhotoUploader: React.FC<PhotoUploaderProps> = ({ photo, onPhotoUpload }) =
             className="object-contain"
           />
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-32 h-32 border-2 border-white border-dashed rounded-full shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"></div>
+            <div
+              className="border-2 border-white border-dashed rounded-full shadow-[0_0_0_9999px_rgba(0,0,0,0.3)]"
+              style={{ width: '45%', aspectRatio: '1/1' }}
+            ></div>
           </div>
           <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-md backdrop-blur-sm">
             Circular Crop Preview

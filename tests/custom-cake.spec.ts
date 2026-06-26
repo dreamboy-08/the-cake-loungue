@@ -28,13 +28,14 @@ test.describe('Custom Cake Builder', () => {
   test('should update price when changing weight', async ({ page }) => {
     const priceDisplay = page.locator('span.text-rose-deep').first();
     const initialPrice = await priceDisplay.innerText();
+    expect(initialPrice).toBe('₹499');
 
     // Select 1 Kg
-    await page.click('button:has-text("1 Kg")');
+    const weightBtn = page.locator('button:has-text("1 Kg")');
+    await weightBtn.click();
 
-    await page.waitForTimeout(500);
-    const newPrice = await priceDisplay.innerText();
-    expect(initialPrice).not.toBe(newPrice);
+    // Wait for the specific price to appear (499 * 1.8 = 898)
+    await expect(priceDisplay).toHaveText(/₹898/);
   });
 
   test('should show validation errors if contact info is missing', async ({ page }) => {

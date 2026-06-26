@@ -47,8 +47,13 @@ Please confirm my order.`;
     const encodedMsg = encodeURIComponent(message);
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMsg}`;
 
-    // 3. Open WhatsApp
-    window.open(whatsappURL, '_blank');
+    // 3. Open WhatsApp (Using location.href for better reliability in some browsers)
+    // and falling back to window.open if needed
+    try {
+      window.location.href = whatsappURL;
+    } catch (e) {
+      window.open(whatsappURL, '_blank');
+    }
 
   } catch (error) {
     console.error('WhatsApp service failed:', error);

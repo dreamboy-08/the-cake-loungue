@@ -22,11 +22,18 @@ const CakePreview: React.FC<CakePreviewProps> = ({ flavor, photo, message }) => 
         />
       </div>
 
-      {/* Overlay layers */}
-      <div className="absolute inset-0 flex flex-col items-center pt-[20%]">
+      {/* Overlay layers - Standardized positioning to match Canvas Exporter */}
+      <div className="absolute inset-0">
         {/* Edible Photo Layer */}
         {photo && (
-          <div className="relative w-[45%] aspect-square rounded-full overflow-hidden border-4 border-white/80 shadow-lg mb-6 animate-fade-up">
+          <div
+            className="absolute left-1/2 -translate-x-1/2 rounded-full overflow-hidden border-[4px] md:border-[6px] border-white/80 shadow-lg animate-fade-up"
+            style={{
+              top: '20%',
+              width: '45%',
+              aspectRatio: '1/1'
+            }}
+          >
             <Image
               src={photo}
               alt="Edible Photo"
@@ -38,11 +45,17 @@ const CakePreview: React.FC<CakePreviewProps> = ({ flavor, photo, message }) => 
 
         {/* Message Layer */}
         {message && (
-          <div className="px-6 py-2">
+          <div
+            className="absolute left-1/2 -translate-x-1/2 w-full px-6 flex justify-center"
+            style={{
+              top: photo ? '70%' : '45%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
             <p
-              className="font-dancing text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center break-words max-w-[280px]"
+              className="font-dancing text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center break-words max-w-[80%]"
               style={{
-                fontSize: message.length > 15 ? '1.5rem' : '2.2rem',
+                fontSize: message.length > 15 ? 'clamp(1.2rem, 4vw, 1.8rem)' : 'clamp(1.8rem, 6vw, 2.5rem)',
                 lineHeight: 1.1
               }}
             >

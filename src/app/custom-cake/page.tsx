@@ -23,6 +23,7 @@ const CustomCakePage = () => {
 
   // UI State
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("");
 
   // Price Calculation
   const totalPrice = useMemo(() => {
@@ -39,10 +40,12 @@ const CustomCakePage = () => {
     }
 
     setIsSubmitting(true);
+    setSubmitStatus("Generating design preview...");
     try {
       // 1. Generate Composite Image
       const imageBlob = await generateCakeComposite(flavor, photo, message);
 
+      setSubmitStatus("Uploading design...");
       // 2. Send to WhatsApp via Service
       await sendWhatsAppOrder({
         name,
@@ -54,6 +57,7 @@ const CustomCakePage = () => {
         price: totalPrice
       }, imageBlob);
 
+      setSubmitStatus("Redirecting to WhatsApp...");
     } catch (error) {
       console.error(error);
       alert("Something went wrong. Please try again.");
@@ -189,7 +193,7 @@ const CustomCakePage = () => {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="animate-spin" size={20} />
-                    Preparing Request...
+                    {submitStatus || "Preparing Request..."}
                   </>
                 ) : (
                   <>

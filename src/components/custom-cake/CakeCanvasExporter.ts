@@ -14,12 +14,18 @@ export const generateCakeComposite = async (
 
   if (!ctx) throw new Error('Could not get canvas context');
 
-  // Helper to load images
+  // Helper to load and decode images
   const loadImage = (src: string): Promise<HTMLImageElement> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      img.onload = () => resolve(img);
+      img.onload = () => {
+        if ('decode' in img) {
+          img.decode().then(() => resolve(img)).catch(() => resolve(img));
+        } else {
+          resolve(img);
+        }
+      };
       img.onerror = reject;
       img.src = src;
     });
@@ -73,22 +79,29 @@ export const generateCakeComposite = async (
     // 3. Draw Message
     if (message) {
       ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 12;
       ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 4;
+      ctx.shadowOffsetY = 6;
       ctx.fillStyle = 'white';
 
-      const fontSize = message.length > 15 ? 60 : 85;
-      ctx.font = `${fontSize}px "Dancing Script", cursive`;
+      const fontSize = message.length > 15 ? 70 : 100;
+      // Using generic cursive fallback and explicit font stack
+      ctx.font = `${fontSize}px "Dancing Script", "DancingScript", cursive`;
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-      // If font not loaded in canvas yet, fallback to serif
-      if (!document.fonts.check(`${fontSize}px "Dancing Script"`)) {
+      // Better font detection and fallback
+      const isFontLoaded = document.fonts.check(`${fontSize}px "Dancing Script"`);
+      if (!isFontLoaded) {
         ctx.font = `italic bold ${fontSize}px serif`;
       }
 
-      const yPos = photo ? canvas.height * 0.2 + (canvas.width * 0.45) + 120 : canvas.height * 0.5;
-      ctx.fillText(message, canvas.width / 2, yPos);
+      // Match the 70% top (with photo) or 45% top (without photo) from Preview
+      const yPos = photo ? canvas.height * 0.7 : canvas.height * 0.45;
+
+      // Wrap text if needed (basic implementation)
+      const maxWidth = canvas.width * 0.8;
+      ctx.fillText(message, canvas.width / 2, yPos, maxWidth);
     }
 
     return new Promise((resolve, reject) => {
