@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Upload, ShoppingCart, MessageCircle, CreditCard, Save } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import BackButton from '@/components/BackButton';
 
 const CustomCakePage = () => {
   const { addToCart } = useCart();
@@ -86,8 +87,11 @@ Price: ₹${price}`;
   };
 
   return (
-    <div className="pt-32 pb-20 bg-[#fff7f8] min-h-screen">
+    <div className="pt-24 pb-20 bg-[#fff7f8] min-h-screen">
       <div className="container mx-auto px-6">
+        <div className="max-w-[1200px] mx-auto mb-8">
+          <BackButton />
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-9">
           {/* Preview Section */}
           <div className="bg-white rounded-[22px] p-6 shadow-sm">

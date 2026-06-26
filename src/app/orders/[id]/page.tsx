@@ -76,7 +76,7 @@ const OrderDetailsPage = () => {
   const currentStep = getStatusStep(order.status);
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <div className="pt-24 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-4xl">
         <BackButton fallbackRoute="/orders" ariaLabel="Go back to order history" />
 

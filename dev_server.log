@@ -1,0 +1,18 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling /policies ...
+ ✓ Compiled /policies in 15.1s (1553 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /policies 200 in 17169ms
+ ✓ Compiled in 2.1s (705 modules)
+ GET /policies 200 in 68ms
+ GET /policies 200 in 60ms
+ ○ Compiling /policies/privacy-policy ...
+ ✓ Compiled /policies/privacy-policy in 908ms (1532 modules)
