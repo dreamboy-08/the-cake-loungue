@@ -9,6 +9,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import BackButton from '@/components/BackButton';
+import { Calendar } from 'lucide-react';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -27,8 +28,34 @@ const CheckoutPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Delivery Date Logic
+  const hasCustomCake = useMemo(() => {
+    return cart.some(item => {
+      // Check if 'Custom' is in category info if available in cart item
+      // ProductDetail addToCart doesn't include category currently, so we check name for 'Custom'
+      // or rely on a more robust check if we decide to include category in CartItem.
+      // For now, let's look at common indicators in our catalog.
+      const category = (item as any).category;
+      return category === 'Custom Cakes' || item.name.toLowerCase().includes('custom');
+    });
+  }, [cart]);
+
+  const deliveryType = hasCustomCake ? 'Custom' : 'Standard';
+
+  const earliestDate = useMemo(() => {
+    const today = new Date();
+    const date = new Date(today);
+    if (hasCustomCake) {
+      date.setDate(today.getDate() + 2);
+    } else {
+      date.setDate(today.getDate() + 1);
+    }
+    return date.toISOString().split('T')[0];
+  }, [hasCustomCake]);
 
   // Get API URL from environment variables with fallback
   const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
@@ -70,7 +97,7 @@ const CheckoutPage = () => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
 
-  const shippingFee = useMemo(() => cartTotal > 1000 ? 0 : 50, [cartTotal]);
+  const shippingFee = useMemo(() => cartTotal >= 499 ? 0 : 50, [cartTotal]);
   const finalTotal = useMemo(() => cartTotal + shippingFee, [cartTotal, shippingFee]);
 
   const handleCheckout = async () => {
@@ -80,6 +107,10 @@ const CheckoutPage = () => {
     }
     if (!selectedAddress) {
       setErrorMessage('Please select or add a delivery address.');
+      return;
+    }
+    if (!deliveryDate) {
+      setErrorMessage('Please select a delivery date.');
       return;
     }
 
@@ -138,6 +169,8 @@ const CheckoutPage = () => {
               subtotal: cartTotal,
               status: 'Confirmed',
               createdAt: new Date().toISOString(),
+              deliveryDate,
+              deliveryType,
             };
 
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
@@ -245,6 +278,32 @@ const CheckoutPage = () => {
               <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
             </div>
 
+            {/* Delivery Date Selection */}
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
+              <h3 className="text-xl font-bold text-chocolate mb-6">
+                Delivery Date
+              </h3>
+              <div className="relative max-w-sm">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
+                  <Calendar size={18} />
+                </div>
+                <input
+                  type="date"
+                  required
+                  min={earliestDate}
+                  value={deliveryDate}
+                  onChange={(e) => setDeliveryDate(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 bg-cream/30 rounded-2xl border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                />
+              </div>
+              <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
+                <AlertCircle size={14} className="text-rose-deep" />
+                {hasCustomCake
+                  ? "Custom Cakes require at least 2 days preparation."
+                  : "Standard Cakes can be delivered as early as tomorrow."}
+              </p>
+            </div>
+
             {/* Payment Method */}
             <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
               <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
@@ -299,6 +358,17 @@ const CheckoutPage = () => {
               </div>
 
               <div className="space-y-4 border-t border-cream pt-6">
+                {deliveryDate && (
+                  <div className="flex justify-between text-text-mid bg-rose/5 p-3 rounded-xl border border-rose-100">
+                    <span className="text-xs font-bold flex items-center gap-2 text-rose-deep">
+                      <Calendar size={14} />
+                      Delivery Date
+                    </span>
+                    <span className="text-xs font-bold text-chocolate">
+                      {new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Subtotal</span>
                   <span className="font-bold text-chocolate">₹{cartTotal}</span>
@@ -307,9 +377,13 @@ const CheckoutPage = () => {
                   <span className="text-sm">Delivery Fee</span>
                   <span className="font-bold">{shippingFee === 0 ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
                 </div>
-                {shippingFee > 0 && (
+                {shippingFee === 0 ? (
+                  <div className="bg-green-50 p-3 rounded-xl border border-green-100">
+                    <p className="text-[10px] text-green-600 font-bold italic text-center">🎉 Congratulations! You unlocked FREE Delivery.</p>
+                  </div>
+                ) : (
                   <div className="bg-rose/5 p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more for FREE delivery!</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
@@ -337,7 +411,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || cart.length === 0 || !selectedAddress}
+                disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -353,9 +427,9 @@ const CheckoutPage = () => {
                 )}
               </button>
 
-              {!selectedAddress && cart.length > 0 && (
+              {(!selectedAddress || !deliveryDate) && cart.length > 0 && (
                 <p className="mt-4 text-rose-deep text-xs font-bold text-center">
-                  * Please select a delivery address to proceed
+                  * Please select {(!selectedAddress && !deliveryDate) ? 'address and delivery date' : !selectedAddress ? 'a delivery address' : 'a delivery date'} to proceed
                 </p>
               )}
 

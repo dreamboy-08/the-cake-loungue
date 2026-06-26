@@ -172,6 +172,18 @@ const OrderDetailsPage = () => {
                     <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Address</p>
                     <p className="text-sm text-text-mid leading-relaxed">{order.shippingAddress}</p>
                   </div>
+                  {order.deliveryDate && (
+                    <div className="pt-4 border-t border-cream/50">
+                      <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Scheduled Delivery</p>
+                      <p className="font-bold text-chocolate flex items-center gap-2">
+                        <Calendar size={16} className="text-rose-deep" />
+                        {new Date(order.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                      </p>
+                      {order.deliveryType && (
+                        <p className="text-[10px] text-text-soft mt-1 font-medium">Type: {order.deliveryType}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </section>
 
