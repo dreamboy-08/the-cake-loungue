@@ -64,7 +64,7 @@ export default function SignupPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-cream/50 border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
+                  className="w-full bg-cream border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
                   placeholder="John Doe"
                 />
               </div>
@@ -79,7 +79,7 @@ export default function SignupPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-cream/50 border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
+                  className="w-full bg-cream border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
                   placeholder="your@email.com"
                 />
               </div>
@@ -94,7 +94,7 @@ export default function SignupPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-cream/50 border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
+                  className="w-full bg-cream border border-rose/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-rose/20 transition-all text-chocolate"
                   placeholder="••••••••"
                 />
               </div>
@@ -126,7 +126,7 @@ export default function SignupPage() {
 
             <button
               onClick={handleGoogleSignIn}
-              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream/30 transition-all"
+              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream transition-all"
             >
               <Chrome size={20} className="text-rose" />
               Sign up with Google

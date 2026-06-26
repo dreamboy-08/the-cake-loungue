@@ -37,7 +37,7 @@ const Testimonials = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-[50px]">
           {reviews.map((review, i) => (
-            <div key={i} className="bg-white rounded-md p-8 shadow-sm transition-all duration-350 relative hover:translate-y-[-6px] hover:shadow-md before:content-['\201C'] before:font-playfair before:text-[6rem] before:text-cream-dark before:absolute before:top-2.5 before:left-5 before:leading-none">
+            <div key={i} className="bg-white rounded-[14px] p-8 shadow-sm transition-all duration-350 relative hover:translate-y-[-6px] hover:shadow-md before:content-['\201C'] before:font-playfair before:text-[6rem] before:text-cream-dark before:absolute before:top-2.5 before:left-5 before:leading-none">
               <div className="flex gap-[3px] text-gold text-[0.9rem] mb-4">
                 {[...Array(5)].map((_, j) => (
                   <Star key={j} size={16} fill={j < Math.floor(review.rating) ? "currentColor" : "none"} className={j < Math.floor(review.rating) ? "text-gold" : "text-text-soft/30"} />

@@ -89,7 +89,7 @@ const ProductDetail = () => {
   if (error || !product) {
     return (
       <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6">
-        <div className="w-20 h-20 bg-rose/10 rounded-full flex items-center justify-center text-rose-deep">
+        <div className="w-20 h-20 bg-cream-dark rounded-full flex items-center justify-center text-rose-deep">
           <AlertCircle size={40} />
         </div>
         <h2 className="text-2xl font-bold text-chocolate">{error || 'Product Not Found'}</h2>
@@ -124,7 +124,7 @@ const ProductDetail = () => {
       <div className="container mx-auto px-6">
         <BackButton fallbackRoute="/menu" />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white p-8 rounded-2xl shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white p-8 rounded-[24px] shadow-sm border border-cream-dark">
           {/* Image Section */}
           <div className="relative aspect-square rounded-xl overflow-hidden bg-cream-dark">
             <Image

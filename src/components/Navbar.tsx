@@ -74,6 +74,9 @@ const Navbar = () => {
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
           (isHidden || isAdminPage) && "translate-y-[-100%]",
+          (isScrolled || isAuthPage)
+            ? "bg-cream shadow-sm py-[10px]"
+            : "bg-chocolate",
           (isScrolled || isAuthPage || isPolicyPage)
             ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"
             : "bg-black/10 backdrop-blur-sm",
@@ -98,6 +101,7 @@ const Navbar = () => {
                       onClick={() => setIsSearchOpen(!isSearchOpen)}
                       className={cn(
                         "p-2 rounded-full transition-all duration-300",
+                        (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
                         (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                       )}
                       aria-label="Toggle search"
@@ -111,6 +115,7 @@ const Navbar = () => {
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
                             "flex items-center gap-2 group p-1 rounded-full transition-all",
+                            (isScrolled || isAuthPage) ? "hover:text-rose" : "hover:text-gold-light"
                             (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
                           )}
                         >
@@ -132,9 +137,9 @@ const Navbar = () => {
                                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-cream overflow-hidden z-[101]"
+                                className="absolute right-0 mt-3 w-56 bg-white rounded-[22px] shadow-xl border border-cream overflow-hidden z-[101]"
                               >
-                                <div className="p-4 border-b border-cream bg-cream/20">
+                                <div className="p-4 border-b border-cream bg-cream">
                                   <p className="text-xs font-bold text-rose-deep uppercase tracking-widest mb-1">Welcome</p>
                                   <p className="text-sm font-bold text-chocolate truncate">{user.displayName || 'Member'}</p>
                                 </div>
@@ -142,14 +147,14 @@ const Navbar = () => {
                                   <Link
                                     href="/profile"
                                     onClick={() => setIsUserMenuOpen(false)}
-                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:text-rose rounded-xl transition-colors font-medium"
                                   >
                                     <User size={18} className="text-rose-deep" /> Profile
                                   </Link>
                                   <Link
                                     href="/orders"
                                     onClick={() => setIsUserMenuOpen(false)}
-                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                    className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:text-rose rounded-xl transition-colors font-medium"
                                   >
                                     <ShoppingBag size={18} className="text-rose-deep" /> My Orders
                                   </Link>
@@ -157,7 +162,7 @@ const Navbar = () => {
                                     <Link
                                       href="/admin"
                                       onClick={() => setIsUserMenuOpen(false)}
-                                      className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:bg-rose/5 rounded-xl transition-colors font-medium"
+                                      className="flex items-center gap-3 px-4 py-2 text-sm text-text-mid hover:text-rose rounded-xl transition-colors font-medium"
                                     >
                                       <Settings size={18} className="text-rose-deep" /> Admin Panel
                                     </Link>
@@ -201,6 +206,7 @@ const Navbar = () => {
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
                     "relative p-2 rounded-full transition-all duration-300",
+                    (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
                   aria-label="View Cart"
@@ -251,8 +257,8 @@ const Navbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className={cn(
-              "fixed left-0 right-0 z-[98] pt-32 pb-8 px-6 backdrop-blur-md shadow-lg",
-              (isScrolled || isAuthPage) ? "bg-cream/95" : "bg-black/40"
+              "fixed left-0 right-0 z-[98] pt-32 pb-8 px-6 shadow-lg",
+              (isScrolled || isAuthPage) ? "bg-cream" : "bg-chocolate"
             )}
           >
             <div className="container mx-auto">
@@ -267,6 +273,7 @@ const Navbar = () => {
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",
+          (isScrolled || isAuthPage) && "bg-cream shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
           (isScrolled || isAuthPage || isPolicyPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
@@ -281,7 +288,7 @@ const Navbar = () => {
                 </Link>
                 {item.columns && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
-                    <div className="bg-white rounded-2xl shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
+                    <div className="bg-white rounded-[22px] shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
                       {item.columns.map((col, idx) => (
                         <div key={idx} className="flex flex-col gap-4 text-center">
                           <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
@@ -363,7 +370,7 @@ const Navbar = () => {
           <div className="flex flex-col gap-4 pt-4 border-t border-rose/10">
             {user ? (
               <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-rose/5">
+                <div className="flex items-center gap-3 bg-white p-4 rounded-[22px] shadow-sm border border-rose/5">
                   <div className="w-12 h-12 rounded-full bg-rose-deep flex items-center justify-center text-white text-xl font-bold">
                     {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
                   </div>
@@ -393,7 +400,7 @@ const Navbar = () => {
                     logout();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="w-full bg-rose/10 text-rose font-bold py-3 rounded-xl hover:bg-rose/20 transition-all text-center"
+                  className="w-full bg-cream-dark text-rose font-bold py-3 rounded-xl hover:bg-cream-dark transition-all text-center"
                 >
                   Logout
                 </button>

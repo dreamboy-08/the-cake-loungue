@@ -16,7 +16,7 @@ const Hero = () => {
       <div className="container mx-auto px-6 relative z-10 w-full pt-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px] items-center min-h-screen">
           <div className="py-[60px]">
-            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/25 text-gold-light text-[0.78rem] font-semibold tracking-[0.12em] uppercase px-[18px] py-2 rounded-[50px] mb-7 animate-fade-up">
+            <div className="inline-flex items-center gap-2 bg-chocolate border border-white/10 text-gold-light text-[0.78rem] font-semibold tracking-[0.12em] uppercase px-[18px] py-2 rounded-[50px] mb-7 animate-fade-up">
               <span className="text-sm">★</span> Artisan Patisserie Since 2015
             </div>
             <h1 className="text-white text-[clamp(2.6rem,5vw,4.2rem)] font-bold leading-[1.15] animate-fade-up [animation-delay:0.25s]">
@@ -46,11 +46,11 @@ const Hero = () => {
           </div>
 
           <div className="hidden lg:block relative h-[580px] animate-fade-up [animation-delay:0.3s]">
-            <div className="absolute bg-white rounded-md px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float top-[10px] left-5">
+            <div className="absolute bg-white rounded-[14px] px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float top-[10px] left-5">
               <span className="text-rose">🍃</span> Fresh Every Day
             </div>
 
-            <div className="absolute rounded-lg overflow-hidden shadow-lg w-[260px] h-[340px] top-10 left-10 -rotate-4 z-[2] transition-transform duration-[6s] hover:scale-105">
+            <div className="absolute rounded-[18px] overflow-hidden shadow-lg w-[260px] h-[340px] top-10 left-10 -rotate-4 z-[2] transition-transform duration-[6s] hover:scale-105">
               <Image
                 src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80"
                 alt="Chocolate Cake"
@@ -62,7 +62,7 @@ const Hero = () => {
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
               />
             </div>
-            <div className="absolute rounded-lg overflow-hidden shadow-lg w-[230px] h-[290px] top-5 right-10 rotate-3 z-[3] transition-transform duration-[6s] hover:scale-105">
+            <div className="absolute rounded-[18px] overflow-hidden shadow-lg w-[230px] h-[290px] top-5 right-10 rotate-3 z-[3] transition-transform duration-[6s] hover:scale-105">
               <Image
                 src="https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&q=80"
                 alt="Birthday Cake"
@@ -74,7 +74,7 @@ const Hero = () => {
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
               />
             </div>
-            <div className="absolute rounded-lg overflow-hidden shadow-lg w-[210px] h-[260px] bottom-[30px] left-[100px] rotate-2 z-[4] transition-transform duration-[6s] hover:scale-105">
+            <div className="absolute rounded-[18px] overflow-hidden shadow-lg w-[210px] h-[260px] bottom-[30px] left-[100px] rotate-2 z-[4] transition-transform duration-[6s] hover:scale-105">
               <Image
                 src="https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=500&q=80"
                 alt="Strawberry Cake"
@@ -85,7 +85,7 @@ const Hero = () => {
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
               />
             </div>
-            <div className="absolute rounded-lg overflow-hidden shadow-lg w-[180px] h-[220px] bottom-[60px] right-[60px] -rotate-3 z-[2] transition-transform duration-[6s] hover:scale-105">
+            <div className="absolute rounded-[18px] overflow-hidden shadow-lg w-[180px] h-[220px] bottom-[60px] right-[60px] -rotate-3 z-[2] transition-transform duration-[6s] hover:scale-105">
               <Image
                 src="https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80"
                 alt="Wedding Cake"
@@ -97,7 +97,7 @@ const Hero = () => {
               />
             </div>
 
-            <div className="absolute bg-white rounded-md px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float [animation-delay:-2s] bottom-[10px] right-5">
+            <div className="absolute bg-white rounded-[14px] px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float [animation-delay:-2s] bottom-[10px] right-5">
               <span className="text-rose">📅</span> Schedule Your Delivery
             </div>
           </div>

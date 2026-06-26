@@ -85,7 +85,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 text-rose-deep font-bold text-sm hover:bg-rose/5 px-4 py-2 rounded-full transition-all"
+            className="flex items-center gap-2 text-rose-deep font-bold text-sm hover:bg-cream-dark px-4 py-2 rounded-full transition-all"
           >
             <Plus size={18} /> Add New
           </button>
@@ -98,7 +98,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-white rounded-2xl border-2 border-cream p-6 shadow-sm overflow-hidden"
+            className="bg-white rounded-[22px] border-2 border-cream p-6 shadow-sm overflow-hidden"
           >
             <div className="flex justify-between items-center mb-6">
               <h4 className="font-bold text-chocolate">{editingId ? 'Edit Address' : 'Add New Address'}</h4>
@@ -125,7 +125,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
                 <input
                   type="tel"
@@ -134,7 +134,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   required
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
               </div>
               <input
@@ -144,7 +144,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                 required
                 value={formData.street}
                 onChange={handleInputChange}
-                className="w-full p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                className="w-full p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
               />
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <input
@@ -154,7 +154,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   required
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
                 <input
                   type="text"
@@ -163,7 +163,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   required
                   value={formData.state}
                   onChange={handleInputChange}
-                  className="p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
                 <input
                   type="text"
@@ -172,7 +172,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   required
                   value={formData.zipCode}
                   onChange={handleInputChange}
-                  className="p-3 bg-cream/30 border border-cream rounded-xl outline-none focus:border-rose-deep transition-all col-span-2 md:col-span-1"
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all col-span-2 md:col-span-1"
                 />
               </div>
               <label className="flex items-center gap-3 cursor-pointer">
@@ -202,8 +202,8 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                 layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer group ${
-                  address.isDefault ? 'border-rose-deep bg-rose/5' : 'border-cream bg-white hover:border-rose/30'
+                className={`relative p-5 rounded-[22px] border-2 transition-all cursor-pointer group ${
+                  address.isDefault ? 'border-rose-deep bg-cream-dark' : 'border-cream bg-white hover:border-rose/30'
                 }`}
                 onClick={() => onSelect?.(address)}
               >

@@ -19,7 +19,7 @@ const About = () => {
                 className="object-cover"
               />
             </div>
-            <div className="absolute bottom-[-24px] right-[-24px] bg-white rounded-md p-6 shadow-md z-[2] max-w-[200px]">
+            <div className="absolute bottom-[-24px] right-[-24px] bg-white rounded-[14px] p-6 shadow-md z-[2] max-w-[200px]">
               <div className="font-playfair text-[2.2rem] font-bold text-rose-deep leading-none">10+</div>
               <p className="text-[0.8rem] text-text-soft mt-1 leading-[1.4]">Years of crafting joyful memories with every cake</p>
             </div>

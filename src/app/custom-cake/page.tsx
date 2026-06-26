@@ -131,7 +131,7 @@ Price: ₹${price}`;
               <label className="block mb-2 font-semibold">Upload Photos</label>
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-cream-dark rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-cream/20 transition-colors"
+                className="border-2 border-dashed border-cream-dark rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-cream transition-colors"
               >
                 <Upload size={32} className="text-text-soft mb-2" />
                 <span className="text-sm text-text-soft">Click to upload photos</span>

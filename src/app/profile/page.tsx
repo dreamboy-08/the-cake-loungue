@@ -70,29 +70,29 @@ const ProfilePage = () => {
                 </div>
 
                 <div className="pt-6 space-y-4 text-left">
-                  <div className="flex items-center gap-3 text-text-mid bg-cream/20 p-3 rounded-2xl border border-cream/50">
+                  <div className="flex items-center gap-3 text-text-mid bg-cream p-3 rounded-[22px] border border-cream/50">
                     <Mail size={18} className="text-rose-deep" />
                     <span className="text-sm truncate">{user?.email}</span>
                   </div>
                   {userData?.addresses?.[0] && (
-                    <div className="flex items-center gap-3 text-text-mid bg-cream/20 p-3 rounded-2xl border border-cream/50">
+                    <div className="flex items-center gap-3 text-text-mid bg-cream p-3 rounded-[22px] border border-cream/50">
                       <Phone size={18} className="text-rose-deep" />
                       <span className="text-sm">{userData.addresses.find((a: any) => a.isDefault)?.phone || userData.addresses[0].phone}</span>
                     </div>
                   )}
-                  <div className="flex items-center gap-3 text-text-mid bg-cream/20 p-3 rounded-2xl border border-cream/50">
+                  <div className="flex items-center gap-3 text-text-mid bg-cream p-3 rounded-[22px] border border-cream/50">
                     <Calendar size={18} className="text-rose-deep" />
                     <span className="text-sm">Joined {new Date(user?.metadata.creationTime || '').toLocaleDateString()}</span>
                   </div>
                 </div>
 
                 <div className="pt-6 grid grid-cols-2 gap-3">
-                  <button className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-cream/50 text-chocolate hover:bg-cream transition-all text-sm font-bold">
+                  <button className="flex items-center justify-center gap-2 p-3 rounded-[22px] bg-cream text-chocolate hover:bg-cream transition-all text-sm font-bold">
                     <Settings size={18} /> Edit
                   </button>
                   <button
                     onClick={() => logout()}
-                    className="flex items-center justify-center gap-2 p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all text-sm font-bold"
+                    className="flex items-center justify-center gap-2 p-3 rounded-[22px] bg-red-50 text-red-600 hover:bg-red-100 transition-all text-sm font-bold"
                   >
                     <LogOut size={18} /> Logout
                   </button>
@@ -103,14 +103,14 @@ const ProfilePage = () => {
             {/* Quick Actions */}
             <div className="bg-white rounded-[40px] p-8 shadow-sm border border-cream space-y-4">
               <h3 className="font-bold text-chocolate mb-2">Quick Actions</h3>
-              <Link href="/orders" className="flex items-center justify-between p-4 rounded-2xl hover:bg-rose/5 transition-all border border-transparent hover:border-rose/10 group">
+              <Link href="/orders" className="flex items-center justify-between p-4 rounded-[22px] hover:bg-cream-dark transition-all border border-transparent hover:border-rose/10 group">
                 <div className="flex items-center gap-3 text-text-mid">
                   <ShoppingBag size={20} className="text-rose-deep" />
                   <span className="font-medium">My Orders</span>
                 </div>
                 <ChevronRight size={18} className="text-text-soft group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link href="/checkout" className="flex items-center justify-between p-4 rounded-2xl hover:bg-rose/5 transition-all border border-transparent hover:border-rose/10 group">
+              <Link href="/checkout" className="flex items-center justify-between p-4 rounded-[22px] hover:bg-cream-dark transition-all border border-transparent hover:border-rose/10 group">
                 <div className="flex items-center gap-3 text-text-mid">
                   <MapPin size={20} className="text-rose-deep" />
                   <span className="font-medium">Manage Addresses</span>
@@ -160,7 +160,7 @@ const ProfilePage = () => {
                   >
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                       <div className="flex items-center gap-4">
-                        <div className="relative w-16 h-16 rounded-2xl bg-cream overflow-hidden">
+                        <div className="relative w-16 h-16 rounded-[22px] bg-cream overflow-hidden">
                           <Image
                             src={order.items[0].img}
                             alt={order.items[0].name}
@@ -188,7 +188,7 @@ const ProfilePage = () => {
                       </div>
                       <Link
                         href={`/orders/${order.id}`}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-cream/30 rounded-2xl text-chocolate font-bold text-sm hover:bg-rose-deep hover:text-white transition-all group"
+                        className="flex items-center justify-center gap-2 px-6 py-3 bg-cream rounded-[22px] text-chocolate font-bold text-sm hover:bg-rose-deep hover:text-white transition-all group"
                       >
                         Order Details
                         <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
