@@ -74,12 +74,9 @@ const Navbar = () => {
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
           (isHidden || isAdminPage) && "translate-y-[-100%]",
-          (isScrolled || isAuthPage)
-            ? "bg-cream shadow-sm py-[10px]"
-            : "bg-chocolate",
           (isScrolled || isAuthPage || isPolicyPage)
-            ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"
-            : "bg-black/10 backdrop-blur-sm",
+            ? "bg-cream shadow-md py-[10px] border-b border-cream-dark"
+            : "bg-chocolate py-[18px]",
           isAdminPage && "hidden"
         )}
       >
@@ -101,8 +98,9 @@ const Navbar = () => {
                       onClick={() => setIsSearchOpen(!isSearchOpen)}
                       className={cn(
                         "p-2 rounded-full transition-all duration-300",
-                        (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
-                        (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                        (isScrolled || isAuthPage || isPolicyPage)
+                          ? "text-chocolate hover:text-rose-deep hover:bg-cream-dark"
+                          : "text-white hover:text-blush hover:bg-brown"
                       )}
                       aria-label="Toggle search"
                     >
@@ -115,8 +113,9 @@ const Navbar = () => {
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
                             "flex items-center gap-2 group p-1 rounded-full transition-all",
-                            (isScrolled || isAuthPage) ? "hover:text-rose" : "hover:text-gold-light"
-                            (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
+                            (isScrolled || isAuthPage || isPolicyPage)
+                              ? "hover:bg-cream-dark"
+                              : "hover:bg-brown"
                           )}
                         >
                           <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
@@ -206,8 +205,9 @@ const Navbar = () => {
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
                     "relative p-2 rounded-full transition-all duration-300",
-                    (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
-                    (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                    (isScrolled || isAuthPage || isPolicyPage)
+                      ? "text-chocolate hover:text-rose-deep hover:bg-cream-dark"
+                      : "text-white hover:text-blush hover:bg-brown"
                   )}
                   aria-label="View Cart"
                 >
@@ -271,10 +271,9 @@ const Navbar = () => {
       {/* CATEGORY BAR (Desktop) */}
       {!isAuthPage && !isAdminPage && !isPolicyPage && pathname !== '/checkout' && (
         <div className={cn(
-          "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
+          "hidden md:block fixed top-[62px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",
-          (isScrolled || isAuthPage) && "bg-cream shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
-          (isScrolled || isAuthPage || isPolicyPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
+          (isScrolled || isAuthPage || isPolicyPage) && "bg-cream shadow-md border-b border-cream-dark"
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
           <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">

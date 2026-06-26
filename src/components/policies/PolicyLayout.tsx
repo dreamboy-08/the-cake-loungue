@@ -29,7 +29,7 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, children, breadcrumb
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="sticky top-24 z-30 inline-flex items-center bg-white/80 backdrop-blur-md px-6 py-3 rounded-full border border-cream shadow-sm mb-4"
+            className="sticky top-24 z-30 inline-flex items-center bg-white px-6 py-3 rounded-full border border-cream shadow-sm mb-4"
           >
             <ol className="flex items-center flex-wrap gap-2 text-sm">
               <li className="flex items-center">
@@ -62,7 +62,7 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, children, breadcrumb
           className="max-w-[900px] mx-auto"
         >
           <div className="bg-white rounded-[32px] shadow-lg border border-cream overflow-hidden">
-            <header className="bg-cream/30 p-8 md:p-12 border-b border-cream-dark">
+            <header className="bg-cream p-8 md:p-12 border-b border-cream-dark">
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -84,7 +84,7 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, children, breadcrumb
               {children}
             </article>
 
-            <footer className="bg-cream/10 p-8 md:p-10 border-t border-cream-dark text-center">
+            <footer className="bg-cream p-8 md:p-10 border-t border-cream-dark text-center">
               <p className="text-sm text-text-soft mb-2">
                 Have questions about our {title.toLowerCase()}?
               </p>

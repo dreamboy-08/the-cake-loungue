@@ -9,7 +9,7 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Visual */}
           <div className="relative hidden lg:block">
-            <div className="absolute top-[-20px] left-[-20px] w-[100px] h-[100px] bg-gold-light rounded-full z-0 opacity-60"></div>
+            <div className="absolute top-[-20px] left-[-20px] w-[100px] h-[100px] bg-gold-light/40 rounded-full z-0"></div>
             <div className="rounded-xl overflow-hidden shadow-lg aspect-[4/5] relative">
               <Image
                 src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80"

@@ -48,9 +48,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
   return (
     <Link
       href={`/shop/${product.id}`}
-      className="group bg-white rounded-[22px] overflow-hidden shadow-sm border border-cream-dark transition-all duration-500 flex flex-col h-full hover:scale-[1.01] hover:shadow-md animate-fade-up"
+      className="group bg-white rounded-[22px] overflow-hidden shadow-sm border border-cream-dark transition-all duration-500 flex flex-col h-full hover:scale-[1.01] hover:shadow-md animate-fade-up p-2"
     >
-      <div className="relative aspect-[4/3] min-h-[240px] max-h-[300px] overflow-hidden bg-cream-dark m-2 rounded-[18px]">
+      <div className="relative aspect-[4/3] min-h-[240px] max-h-[300px] overflow-hidden bg-cream-dark rounded-[18px]">
         <Image
           src={product.img}
           alt={product.name}

@@ -24,10 +24,10 @@ const Categories = () => {
             <Link
               key={i}
               href={cat.href}
-              className="group bg-white rounded-[22px] overflow-hidden border border-cream-dark shadow-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-md animate-fade-up flex flex-col"
+              className="group bg-white rounded-[22px] overflow-hidden border border-cream-dark shadow-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-md animate-fade-up flex flex-col p-3"
               style={{ animationDelay: `${i * 0.1}s` }}
             >
-              <div className="relative aspect-square overflow-hidden bg-cream-dark m-3 rounded-[18px]">
+              <div className="relative aspect-square overflow-hidden bg-cream-dark rounded-[18px]">
                 <Image
                   src={cat.img}
                   alt={cat.name}
