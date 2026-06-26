@@ -120,7 +120,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <div className="pt-24 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
         <BackButton fallbackRoute="/menu" />
 

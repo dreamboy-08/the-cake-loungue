@@ -35,6 +35,7 @@ const Navbar = () => {
 
   const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password';
   const isAdminPage = pathname.startsWith('/admin');
+  const isPolicyPage = pathname?.startsWith('/policies');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,7 +74,7 @@ const Navbar = () => {
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] py-[18px] transition-all duration-400 ease-in-out",
           (isHidden || isAdminPage) && "translate-y-[-100%]",
-          (isScrolled || isAuthPage)
+          (isScrolled || isAuthPage || isPolicyPage)
             ? "bg-[rgba(253,246,238,0.97)] shadow-sm py-[10px] backdrop-blur-[12px]"
             : "bg-black/10 backdrop-blur-sm",
           isAdminPage && "hidden"
@@ -83,9 +84,9 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             <Link href="/" className={cn(
               "font-playfair text-[1.6rem] font-bold transition-colors duration-300",
-              (isScrolled || isAuthPage) ? "text-chocolate" : "text-white"
+              (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
             )}>
-              Cake <span className={(isScrolled || isAuthPage) ? "text-rose" : "text-blush"}>Lounge</span>
+              Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
             </Link>
 
             <div className="flex items-center gap-4 md:gap-6">
@@ -97,7 +98,7 @@ const Navbar = () => {
                       onClick={() => setIsSearchOpen(!isSearchOpen)}
                       className={cn(
                         "p-2 rounded-full transition-all duration-300",
-                        (isScrolled || isAuthPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                        (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                       )}
                       aria-label="Toggle search"
                     >
@@ -110,7 +111,7 @@ const Navbar = () => {
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
                             "flex items-center gap-2 group p-1 rounded-full transition-all",
-                            (isScrolled || isAuthPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
+                            (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
                           )}
                         >
                           <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
@@ -119,7 +120,7 @@ const Navbar = () => {
                           <ChevronDown size={14} className={cn(
                             "transition-transform duration-300",
                             isUserMenuOpen && "rotate-180",
-                            (isScrolled || isAuthPage) ? "text-chocolate" : "text-white"
+                            (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
                           )} />
                         </button>
 
@@ -182,7 +183,7 @@ const Navbar = () => {
                         href="/login"
                         className={cn(
                           "text-[0.85rem] font-semibold transition-colors",
-                          (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
+                        (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >
                         Login
@@ -200,7 +201,7 @@ const Navbar = () => {
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
                     "relative p-2 rounded-full transition-all duration-300",
-                    (isScrolled || isAuthPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                    (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
                   aria-label="View Cart"
                 >
@@ -232,9 +233,9 @@ const Navbar = () => {
                   onClick={toggleMobileMenu}
                   aria-label="Open menu"
                 >
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage) ? "bg-chocolate" : "bg-white")}></span>
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage) ? "bg-chocolate" : "bg-white")}></span>
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage) ? "bg-chocolate" : "bg-white")}></span>
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
                 </button>
               )}
             </div>
@@ -262,11 +263,11 @@ const Navbar = () => {
       </AnimatePresence>
 
       {/* CATEGORY BAR (Desktop) */}
-      {!isAuthPage && !isAdminPage && pathname !== '/checkout' && (
+      {!isAuthPage && !isAdminPage && !isPolicyPage && pathname !== '/checkout' && (
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",
-          (isScrolled || isAuthPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
+          (isScrolled || isAuthPage || isPolicyPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
           <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
