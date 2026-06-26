@@ -1,0 +1,18 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev -p 3001
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 1977ms
+ ○ Compiling /custom-cake ...
+ ✓ Compiled /custom-cake in 6.3s (1541 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /custom-cake 200 in 7614ms
+ GET /custom-cake 200 in 7744ms
+ ✓ Compiled in 1503ms (709 modules)
+ GET /custom-cake 200 in 120ms
+ GET /custom-cake 200 in 222ms
+ GET /custom-cake 200 in 107ms

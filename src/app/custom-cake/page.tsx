@@ -1,209 +1,214 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import { Upload, ShoppingCart, MessageCircle, CreditCard, Save } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
-import { useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
+import { MessageCircle, Loader2, ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
+
+import CakePreview from '@/components/custom-cake/CakePreview';
+import FlavorSelector, { FLAVORS, Flavor } from '@/components/custom-cake/FlavorSelector';
+import WeightSelector, { WEIGHT_OPTIONS, WeightOption } from '@/components/custom-cake/WeightSelector';
+import PhotoUploader from '@/components/custom-cake/PhotoUploader';
+import { generateCakeComposite } from '@/components/custom-cake/CakeCanvasExporter';
+import { sendWhatsAppOrder } from '@/components/custom-cake/WhatsAppService';
 
 const CustomCakePage = () => {
-  const { addToCart } = useCart();
-  const router = useRouter();
-  const [photos, setPhotos] = useState<string[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<string>("https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800");
-  const [message, setMessage] = useState<string>("Your Text");
-  const [flavor, setFlavor] = useState<string>("499");
-  const [weight, setWeight] = useState<string>("0");
-  const [notes, setNotes] = useState<string>("");
-  const [price, setPrice] = useState<number>(499);
+  // Form State
+  const [flavor, setFlavor] = useState<Flavor>(FLAVORS[0]);
+  const [weight, setWeight] = useState<WeightOption>(WEIGHT_OPTIONS[0]);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [instructions, setInstructions] = useState("");
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // UI State
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState("");
 
-  useEffect(() => {
-    let total = Number(flavor) + Number(weight);
-    if (photos.length > 0) total += 150;
-    setPrice(total);
-  }, [flavor, weight, photos]);
+  // Price Calculation
+  const totalPrice = useMemo(() => {
+    let base = flavor.basePrice * weight.multiplier;
+    if (photo) base += 200; // Extra charge for edible photo
+    return Math.round(base);
+  }, [flavor, weight, photo]);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !phone) {
+      alert("Please enter your name and phone number.");
+      return;
+    }
 
-    const newPhotos: string[] = [];
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const result = event.target?.result as string;
-        newPhotos.push(result);
-        if (newPhotos.length === files.length) {
-          setPhotos(prev => [...prev, ...newPhotos]);
-          setSelectedPhoto(newPhotos[0]);
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-  };
+    setIsSubmitting(true);
+    setSubmitStatus("Generating design preview...");
+    try {
+      // 1. Generate Composite Image
+      const imageBlob = await generateCakeComposite(flavor, photo, message);
 
-  const flavorOptions = [
-    { label: "Chocolate", value: "499" },
-    { label: "Vanilla", value: "599" },
-    { label: "Red Velvet", value: "699" },
-  ];
+      setSubmitStatus("Uploading design...");
+      // 2. Send to WhatsApp via Service
+      await sendWhatsAppOrder({
+        name,
+        phone,
+        flavor: flavor.name,
+        weight: weight.label,
+        message,
+        instructions,
+        price: totalPrice
+      }, imageBlob);
 
-  const weightOptions = [
-    { label: "0.5 KG", value: "0" },
-    { label: "1 KG", value: "400" },
-    { label: "2 KG", value: "900" },
-  ];
-
-  const handleAddToCart = () => {
-    const flavorLabel = flavorOptions.find(f => f.value === flavor)?.label;
-    const weightLabel = weightOptions.find(w => w.value === weight)?.label;
-
-    addToCart({
-      id: Date.now(), // Generate a unique ID for custom cake
-      name: `Custom Cake (${flavorLabel}, ${weightLabel})`,
-      price: price,
-      img: selectedPhoto,
-      flavor: flavorLabel,
-      weight: weightLabel,
-      message: message,
-    });
-    alert("Added To Cart");
-  };
-
-  const sendWhatsApp = () => {
-    const flavorLabel = flavorOptions.find(f => f.value === flavor)?.label;
-    const weightLabel = weightOptions.find(w => w.value === weight)?.label;
-
-    const text = `CUSTOM CAKE ORDER
-Flavor: ${flavorLabel}
-Weight: ${weightLabel}
-Message: ${message}
-Price: ₹${price}`;
-
-    window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
+      setSubmitStatus("Redirecting to WhatsApp...");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className="pt-32 pb-20 bg-[#fff7f8] min-h-screen">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-9">
-          {/* Preview Section */}
-          <div className="bg-white rounded-[22px] p-6 shadow-sm">
-            <div className="relative w-full max-w-[500px] mx-auto overflow-hidden group aspect-[500/404]">
-              <Image
-                src="https://i.imgur.com/4AI6p5K.png"
-                alt="Cake Base"
-                fill
-                sizes="(max-width: 500px) 100vw, 500px"
-                className="object-contain transition-transform duration-300 group-hover:scale-[1.01]"
-                priority
-              />
-              <div className="absolute top-[34%] left-1/2 -translate-x-1/2 w-[180px] h-[180px] rounded-xe overflow-hidden border-4 border-white z-[2] transition-all duration-300 group-hover:scale-[1.05]">
-                <Image src={selectedPhoto} alt="User Photo" fill className="object-cover" />
-              </div>
-              <div className="absolute top-[72%] left-1/2 -translate-x-1/2 text-white text-2xl font-bold cursor-move drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] z-[3] transition-transform duration-300 group-hover:scale-[1.02]">
-                {message}
-              </div>
-            </div>
+    <div className="pt-24 pb-20 bg-cream min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6">
 
-            <div className="flex gap-2.5 mt-3 flex-wrap">
-              {photos.map((photo, i) => (
-                <div
-                  key={i}
-                  className="w-[70px] h-[70px] rounded-sm overflow-hidden relative cursor-pointer transition-all hover:scale-110 hover:shadow-md"
-                  onClick={() => setSelectedPhoto(photo)}
-                >
-                  <Image src={photo} alt={`Upload ${i}`} fill className="object-cover" />
-                </div>
-              ))}
+        {/* Header */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <Link href="/" className="inline-flex items-center text-text-soft hover:text-rose-deep transition-colors mb-2 group">
+              <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+              <span className="text-sm font-medium">Back to Home</span>
+            </Link>
+            <h1 className="text-3xl md:text-4xl font-playfair font-bold text-chocolate">
+              Design Your Masterpiece
+            </h1>
+            <p className="text-text-soft text-sm md:text-base mt-1">
+              Custom-crafted cakes, tailored to your celebration.
+            </p>
+          </div>
+          <div className="bg-white px-6 py-3 rounded-2xl shadow-sm border border-cream-dark flex items-center gap-4">
+            <span className="text-text-soft text-sm font-medium">Estimated Price</span>
+            <span className="text-2xl font-bold text-rose-deep">₹{totalPrice}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-start">
+
+          {/* Left 60%: Live Preview */}
+          <div className="lg:col-span-6 sticky top-28">
+            <CakePreview
+              flavor={flavor}
+              photo={photo}
+              message={message}
+            />
+            <div className="mt-4 p-4 bg-white/50 rounded-2xl border border-cream-dark/50 flex items-start gap-3">
+              <div className="w-5 h-5 rounded-full bg-rose-deep/10 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-2 h-2 rounded-full bg-rose-deep" />
+              </div>
+              <p className="text-xs text-text-mid leading-relaxed italic">
+                * This is a realistic digital mockup. Our artisan bakers will ensure the final cake
+                matches your vision as closely as possible. Edible photos are printed with food-grade
+                inks on premium icing sheets.
+              </p>
             </div>
           </div>
 
-          {/* Form Section */}
-          <div className="bg-white rounded-[22px] p-6 shadow-sm flex flex-col gap-4">
-            <div className="form-group">
-              <label className="block mb-2 font-semibold">Upload Photos</label>
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-cream-dark rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-cream/20 transition-colors"
-              >
-                <Upload size={32} className="text-text-soft mb-2" />
-                <span className="text-sm text-text-soft">Click to upload photos</span>
+          {/* Right 40%: Customization Form */}
+          <div className="lg:col-span-4 bg-white rounded-[32px] p-6 md:p-8 shadow-sm border border-cream-dark">
+            <form onSubmit={handleSubmit} className="space-y-8">
+
+              {/* Flavor */}
+              <FlavorSelector
+                selectedFlavorId={flavor.id}
+                onFlavorChange={setFlavor}
+              />
+
+              {/* Weight */}
+              <WeightSelector
+                selectedWeight={weight.value}
+                onWeightChange={setWeight}
+              />
+
+              {/* Photo Upload */}
+              <PhotoUploader
+                photo={photo}
+                onPhotoUpload={setPhoto}
+              />
+
+              {/* Cake Message */}
+              <div className="space-y-3">
+                <label className="block text-sm font-semibold text-text-mid uppercase tracking-wider">
+                  4. Cake Message (Max 25 chars)
+                </label>
                 <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handlePhotoUpload}
-                  multiple
-                  accept="image/*"
-                  className="hidden"
+                  type="text"
+                  maxLength={25}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="e.g. Happy Birthday Riya"
+                  className="w-full p-4 rounded-xl border-2 border-cream-dark focus:border-blush outline-none transition-all font-medium text-text placeholder:text-text-soft/50"
                 />
               </div>
-            </div>
 
-            <div className="form-group">
-              <label className="block mb-2 font-semibold">Cake Message</label>
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Happy Birthday Riya"
-                className="w-full p-3.5 border border-[#ddd] rounded-xl outline-none"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="form-group">
-                <label className="block mb-2 font-semibold">Flavor</label>
-                <select
-                  value={flavor}
-                  onChange={(e) => setFlavor(e.target.value)}
-                  className="w-full p-3.5 border border-[#ddd] rounded-xl outline-none bg-white"
-                >
-                  {flavorOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
+              {/* Customer Info */}
+              <div className="space-y-4 pt-4 border-t border-cream-dark">
+                <label className="block text-sm font-semibold text-text-mid uppercase tracking-wider">
+                  5. Contact Details
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your Name"
+                    className="w-full p-3.5 rounded-xl border border-cream-dark focus:border-blush outline-none transition-all text-sm"
+                  />
+                  <input
+                    type="tel"
+                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="Phone Number"
+                    className="w-full p-3.5 rounded-xl border border-cream-dark focus:border-blush outline-none transition-all text-sm"
+                  />
+                </div>
+                <textarea
+                  value={instructions}
+                  onChange={(e) => setInstructions(e.target.value)}
+                  placeholder="Any special instructions for our bakers? (e.g. less sugar, eggless preference etc.)"
+                  className="w-full p-4 rounded-xl border border-cream-dark focus:border-blush outline-none transition-all text-sm h-24 resize-none"
+                />
               </div>
-              <div className="form-group">
-                <label className="block mb-2 font-semibold">Weight</label>
-                <select
-                  value={weight}
-                  onChange={(e) => setWeight(e.target.value)}
-                  className="w-full p-3.5 border border-[#ddd] rounded-xl outline-none bg-white"
-                >
-                  {weightOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-              </div>
-            </div>
 
-            <div className="form-group">
-              <label className="block mb-2 font-semibold">Special Instructions</label>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full p-3.5 border border-[#ddd] rounded-xl outline-none resize-none h-[100px]"
-              />
-            </div>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`
+                  w-full py-4 px-6 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all
+                  ${isSubmitting
+                    ? 'bg-cream-dark text-text-soft cursor-not-allowed'
+                    : 'bg-[#25D366] text-white hover:bg-[#20bd5c] shadow-lg shadow-green-500/20 hover:-translate-y-0.5 active:translate-y-0'}
+                `}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    {submitStatus || "Preparing Request..."}
+                  </>
+                ) : (
+                  <>
+                    <MessageCircle size={20} />
+                    Send Custom Cake Request
+                  </>
+                )}
+              </button>
 
-            <div className="bg-[#fff0f3] p-[18px] rounded-xl mt-[15px] text-[22px] font-bold text-[#ff2e63]">
-              Total Price: ₹{price}
-            </div>
-
-            <div className="flex flex-wrap gap-3.5 mt-5">
-              <button onClick={() => alert("Design Saved Successfully")} className="bg-[#ff4d6d] text-white py-3.5 px-5 rounded-xl font-semibold cursor-pointer border-none flex items-center gap-2 hover:opacity-90">
-                <Save size={18} /> Save Design
-              </button>
-              <button onClick={handleAddToCart} className="bg-[#111] text-white py-3.5 px-5 rounded-xl font-semibold cursor-pointer border-none flex items-center gap-2 hover:opacity-90">
-                <ShoppingCart size={18} /> Add To Cart
-              </button>
-              <button onClick={sendWhatsApp} className="bg-[#25D366] text-white py-3.5 px-5 rounded-xl font-semibold cursor-pointer border-none flex items-center gap-2 hover:opacity-90">
-                <MessageCircle size={18} /> WhatsApp
-              </button>
-              <button onClick={() => router.push('/checkout')} className="bg-[#3395ff] text-white py-3.5 px-5 rounded-xl font-semibold cursor-pointer border-none flex items-center gap-2 hover:opacity-90">
-                <CreditCard size={18} /> Pay Now
-              </button>
-            </div>
+              <p className="text-[11px] text-center text-text-soft px-4">
+                Clicking the button will generate your design and open WhatsApp to finalize details with our team.
+              </p>
+            </form>
           </div>
+
         </div>
       </div>
     </div>

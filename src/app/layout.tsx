@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Poppins } from "next/font/google";
+import { Playfair_Display, Poppins, Dancing_Script } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -21,6 +21,12 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const dancing = Dancing_Script({
+  subsets: ["latin"],
+  variable: "--font-dancing",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "cake lounge — Artisan Bakery & Patisserie",
   description: "Handcrafted cakes and desserts delivered fresh to your door.",
@@ -33,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${poppins.variable} font-poppins`}>
+      <body className={`${playfair.variable} ${poppins.variable} ${dancing.variable} font-poppins`}>
         <AuthProvider>
           <CartProvider>
             <FlyToCartProvider>

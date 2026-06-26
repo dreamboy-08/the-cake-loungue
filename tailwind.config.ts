@@ -26,6 +26,7 @@ const config: Config = {
       fontFamily: {
         playfair: ["var(--font-playfair)", "serif"],
         poppins: ["var(--font-poppins)", "sans-serif"],
+        dancing: ["var(--font-dancing)", "cursive"],
       },
       borderRadius: {
         sm: "10px",

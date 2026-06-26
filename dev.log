@@ -1,0 +1,18 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+
+ ✓ Starting...
+ ✓ Ready in 3s
+ ○ Compiling /custom-cake ...
+ ✓ Compiled /custom-cake in 15.1s (1568 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /custom-cake 200 in 16295ms
+ ✓ Compiled in 1538ms (709 modules)
+ GET /custom-cake 200 in 71ms
+[?25h
