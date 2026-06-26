@@ -148,16 +148,19 @@ _Generated via Cake Lounge AI Builder_`;
   };
 
   return (
-    <div className="pt-32 pb-20 bg-[#fffcfd] min-h-screen">
-      <div className="container mx-auto px-6">
-        <div className="mb-12 text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-playfair font-bold text-rose-950 mb-4">Design Your Dream Cake</h1>
-          <p className="text-gray-600">Bring your vision to life with our live AI preview. Customize every layer to perfection.</p>
+    <div className="pt-32 pb-20 bg-[#fffdfb] min-h-screen">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="mb-16 text-center max-w-3xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-playfair font-bold text-rose-950 mb-6">Experience the Art of Gifting</h1>
+          <p className="text-lg text-gray-600 leading-relaxed font-light">
+            Design your bespoke cake in real-time. From premium flavors to custom edible prints,
+            witness your creation come to life before it reaches your doorstep.
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
-          {/* Left: Large Live Preview (55-60% width on desktop) */}
-          <div className="w-full lg:w-[58%]">
+        <div className="flex flex-col lg:flex-row gap-16 items-start">
+          {/* Left: Large Live Preview (60% visual focus) */}
+          <div className="w-full lg:w-[60%] lg:sticky lg:top-32">
             <LivePreview
               flavor={flavor}
               photo={selectedPhoto}
@@ -166,8 +169,8 @@ _Generated via Cake Lounge AI Builder_`;
             />
           </div>
 
-          {/* Right: Controls (remaining width) */}
-          <div className="w-full lg:w-[42%]">
+          {/* Right: Controls (40% width) */}
+          <div className="w-full lg:w-[40%]">
             <CustomizationForm
               message={message}
               setMessage={setMessage}

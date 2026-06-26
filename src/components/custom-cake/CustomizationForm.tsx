@@ -60,10 +60,10 @@ const CustomizationForm: React.FC<CustomizationFormProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="bg-white rounded-[22px] p-8 shadow-sm border border-rose-50 flex flex-col gap-6">
+    <div className="bg-white rounded-[32px] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.05)] border border-rose-100 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-playfair font-bold text-rose-900 mb-2">Customize Your Cake</h2>
-        <p className="text-sm text-gray-500">Every detail matters for your special occasion.</p>
+        <h2 className="text-2xl md:text-3xl font-playfair font-bold text-rose-950 mb-2">Customize Your Masterpiece</h2>
+        <p className="text-sm text-gray-500">Tailor every detail to create your perfect cake.</p>
       </div>
 
       <div className="form-group">
