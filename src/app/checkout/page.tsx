@@ -309,7 +309,7 @@ const CheckoutPage = () => {
                 </div>
                 {shippingFee > 0 && (
                   <div className="bg-rose/5 p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{1000 - cartTotal} more for FREE delivery!</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more for FREE delivery!</p>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">

@@ -207,7 +207,7 @@ const ProductDetail = () => {
                 <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-rose">
                   <Truck size={18} />
                 </div>
-                <span className="text-sm font-medium">Same-day Delivery available in 4 hours</span>
+                <span className="text-sm font-medium">Freshly Baked for Your Selected Date</span>
               </div>
               <div className="flex items-center gap-3 text-text-mid">
                 <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-rose">

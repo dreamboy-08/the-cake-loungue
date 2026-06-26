@@ -94,7 +94,7 @@ export const CMS_DEFAULTS = {
     copyrightText: '© 2025 Cake Lounge Patisserie. All rights reserved.',
     announcementBar: {
       enabled: true,
-      text: 'Free Delivery Above ₹999',
+      text: 'Free Delivery Above ₹499',
       link: '/menu',
       startDate: '',
       endDate: ''

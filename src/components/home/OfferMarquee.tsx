@@ -1,12 +1,11 @@
 import React from 'react';
 
 const offers = [
-  '🎂 Use code <strong>SWEET20</strong> for 20% off your first order!',
-  '🚚 <strong>Free delivery</strong> on orders above ₹999',
-  '🎁 Custom cakes available — <strong>Order 2 days in advance</strong>',
-  '⭐ Rated <strong>#1 Bakery</strong> in Delhi NCR 2024',
-  '🍓 New Summer Flavours now available — <strong>Mango Sorbet & Lychee Rose</strong>',
-  '🎉 <strong>Same-day delivery</strong> in select areas — Order before 2 PM',
+  '🚚 <strong>Free Delivery</strong> on Orders Above ₹499',
+  '📅 <strong>Schedule</strong> Your Delivery Date',
+  '🎁 Custom Cakes Require <strong>2 Days Advance Notice</strong>',
+  '🍰 <strong>Freshly Baked</strong> for Every Celebration',
+  '🎉 <strong>Premium Cakes</strong> for Every Occasion',
 ];
 
 const OfferMarquee = () => {
