@@ -57,47 +57,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-
-
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       setUser(firebaseUser);
 
-      if (firebaseUser) {
-        // Ensure user document exists in Firestore (especially for Google Sign-In)
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
+      try {
+        if (firebaseUser) {
+          // Ensure user document exists in Firestore (especially for Google Sign-In)
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          let userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-          const newUserData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            createdAt: new Date().toISOString(),
-            role: 'user',
-            addresses: []
-          };
-          await setDoc(userDocRef, newUserData);
-          setRole('user');
-          setIsAdmin(false);
-          setUserData(newUserData);
+          if (!userDoc.exists()) {
+            const newUserData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              createdAt: new Date().toISOString(),
+              role: 'user',
+              addresses: []
+            };
+            await setDoc(userDocRef, newUserData);
+            setRole('user');
+            setIsAdmin(false);
+            setUserData(newUserData);
+          } else {
+            const data = userDoc.data();
+            const userRole = data?.role || 'user';
+            setRole(userRole);
+            setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
+            setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
+            setIsSuperAdmin(userRole === 'super_admin');
+            setUserData(data);
+          }
         } else {
-          const data = userDoc.data();
-          const userRole = data?.role || 'user';
-          setRole(userRole);
-          setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
-          setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
-          setIsSuperAdmin(userRole === 'super_admin');
-          setUserData(data);
+          setRole(null);
+          setIsAdmin(false);
+          setIsStaff(false);
+          setIsSuperAdmin(false);
+          setUserData(null);
         }
-      } else {
+      } catch (error) {
+        console.error("Error in onAuthStateChanged:", error);
+        // Reset state on error to avoid inconsistent state
         setRole(null);
         setIsAdmin(false);
         setIsStaff(false);
         setIsSuperAdmin(false);
         setUserData(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
