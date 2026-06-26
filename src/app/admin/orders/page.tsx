@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { db } from '@/utils/firebase';
 import {
   collection,
@@ -35,6 +35,8 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [sortField, setSortField] = useState<'createdAt' | 'deliveryDate'>('createdAt');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -70,17 +72,29 @@ const AdminOrders = () => {
     }
   };
 
-  const filteredOrders = orders.filter(o => {
-    const matchesSearch =
-      o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (o.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (o.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (o.paymentId || '').toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredOrders = useMemo(() => {
+    let result = orders.filter(o => {
+      const matchesSearch =
+        o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (o.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (o.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (o.paymentId || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
+      const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    });
+
+    result.sort((a, b) => {
+      const valA = a[sortField] || '';
+      const valB = b[sortField] || '';
+      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return result;
+  }, [orders, searchTerm, statusFilter, sortField, sortOrder]);
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -107,7 +121,7 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -138,6 +152,35 @@ const AdminOrders = () => {
             ))}
           </div>
         </div>
+        <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex items-center gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-chocolate uppercase tracking-widest shrink-0">
+            Sort By
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                if (sortField === 'createdAt') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                else { setSortField('createdAt'); setSortOrder('desc'); }
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                sortField === 'createdAt' ? 'bg-chocolate text-white' : 'bg-gray-50 text-gray-500'
+              }`}
+            >
+              Order Date {sortField === 'createdAt' && (sortOrder === 'asc' ? '↑' : '↓')}
+            </button>
+            <button
+              onClick={() => {
+                if (sortField === 'deliveryDate') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                else { setSortField('deliveryDate'); setSortOrder('asc'); }
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                sortField === 'deliveryDate' ? 'bg-chocolate text-white' : 'bg-gray-50 text-gray-500'
+              }`}
+            >
+              Delivery Date {sortField === 'deliveryDate' && (sortOrder === 'asc' ? '↑' : '↓')}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -147,6 +190,7 @@ const AdminOrders = () => {
               <tr className="bg-gray-50/50">
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Order ID</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Customer</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Dates</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Payment</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Total</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Status</th>
@@ -182,6 +226,20 @@ const AdminOrders = () => {
                       <div className="flex flex-col">
                         <span className="font-bold text-chocolate text-sm">{order.customer?.name || 'Guest'}</span>
                         <span className="text-[10px] text-gray-400">{order.customer?.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-500">
+                          <Clock size={10} />
+                          Ordered: {new Date(order.createdAt).toLocaleDateString()}
+                        </div>
+                        {order.deliveryDate && (
+                          <div className="flex items-center gap-1.5 text-[10px] font-black text-rose-deep">
+                            <Calendar size={12} />
+                            Delivery: {new Date(order.deliveryDate).toLocaleDateString()}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
@@ -255,13 +313,13 @@ const AdminOrders = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-rose-deep">
                     <User size={18} />
                     <h3 className="font-bold text-xs uppercase tracking-wider">Customer Info</h3>
                   </div>
-                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50">
+                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 h-full">
                     <p className="font-bold text-chocolate mb-1">{selectedOrder.customer?.name}</p>
                     <p className="text-gray-500 mb-1">{selectedOrder.customer?.email}</p>
                     <p className="text-gray-500">{selectedOrder.customer?.phone}</p>
@@ -269,10 +327,25 @@ const AdminOrders = () => {
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-rose-deep">
+                    <Calendar size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Delivery Schedule</h3>
+                  </div>
+                  <div className="text-sm bg-rose/5 p-5 rounded-2xl border border-rose-deep/20 h-full">
+                    <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Date</p>
+                    <p className="font-bold text-chocolate text-lg">
+                      {selectedOrder.deliveryDate ? new Date(selectedOrder.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Not specified'}
+                    </p>
+                    {selectedOrder.deliveryType && (
+                      <p className="text-[10px] text-text-soft mt-1 font-bold uppercase tracking-widest">Type: {selectedOrder.deliveryType}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
                     <MapPin size={18} />
                     <h3 className="font-bold text-xs uppercase tracking-wider">Shipping Address</h3>
                   </div>
-                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 min-h-[100px]">
+                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 h-full min-h-[100px]">
                     <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
                   </div>
                 </div>

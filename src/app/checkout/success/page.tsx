@@ -12,6 +12,25 @@ const SuccessContent = () => {
   const router = useRouter();
   const orderId = searchParams.get('orderId');
   const paymentId = searchParams.get('paymentId');
+  const [orderDetails, setOrderDetails] = React.useState<any>(null);
+
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) return;
+      try {
+        const { db } = await import('@/utils/firebase');
+        const { doc, getDoc } = await import('firebase/firestore');
+        const docRef = doc(db, 'orders', orderId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setOrderDetails(docSnap.data());
+        }
+      } catch (error) {
+        console.error("Error fetching order for success page:", error);
+      }
+    };
+    fetchOrder();
+  }, [orderId]);
 
   useEffect(() => {
     // If no orderId, redirect to orders after some time
@@ -46,10 +65,20 @@ const SuccessContent = () => {
               <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Order ID</p>
               <p className="font-mono font-bold text-chocolate">#{orderId?.slice(-8).toUpperCase() || 'N/A'}</p>
             </div>
-            <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
-              <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Payment ID</p>
-              <p className="font-mono font-bold text-chocolate text-xs truncate">{paymentId || 'N/A'}</p>
-            </div>
+            {orderDetails?.deliveryDate ? (
+              <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
+                <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Delivery Date</p>
+                <p className="font-bold text-chocolate flex items-center gap-2">
+                  <Calendar size={14} className="text-rose-deep" />
+                  {new Date(orderDetails.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                </p>
+              </div>
+            ) : (
+              <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
+                <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Payment ID</p>
+                <p className="font-mono font-bold text-chocolate text-xs truncate">{paymentId || 'N/A'}</p>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
