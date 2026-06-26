@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -13,21 +13,25 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if API key is present
-let app;
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-} else {
-  console.warn("Firebase configuration is missing or invalid. Please check your environment variables.");
-  // Initialize with a dummy app to prevent crashes, but it won't work for auth
-  app = getApps().length > 0 ? getApp() : initializeApp({
-    apiKey: "missing",
-    authDomain: "missing",
-    projectId: "missing"
-  });
-}
+const isConfigValid = firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key" && firebaseConfig.apiKey !== "undefined";
 
+const app = getApps().length > 0
+  ? getApp()
+  : initializeApp(isConfigValid ? firebaseConfig : {
+      apiKey: "missing",
+      authDomain: "missing",
+      projectId: "missing"
+    });
+
+// Initialize Auth
 const auth = getAuth(app);
-const db = getFirestore(app);
+
+// Initialize Firestore with settings to handle undefined properties
+const db = initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+});
+
+// Initialize Storage
 const storage = getStorage(app);
 
 export { app, auth, db, storage };
