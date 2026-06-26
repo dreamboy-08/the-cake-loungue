@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const Razorpay = require('razorpay');
 const admin = require('firebase-admin');
 
@@ -206,6 +207,105 @@ app.post('/api/verify-payment', async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message || 'Verification failed'
+    });
+  }
+});
+
+// Contact Form Endpoint
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, phone, message, honeypot } = req.body;
+
+    // Spam protection: check honeypot
+    if (honeypot) {
+      console.warn('Spam detected via honeypot field');
+      return res.status(400).json({ success: false, error: 'Spam detected' });
+    }
+
+    // Server-side validation
+    if (!name || !email || !message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: name, email, and message are required'
+      });
+    }
+
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, error: 'Invalid email address' });
+    }
+
+    // Configure Nodemailer transporter
+    // If SMTP credentials are not provided, we log the inquiry for admin visibility
+    const smtpConfigured = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
+
+    if (!smtpConfigured) {
+      console.warn('SMTP not configured. Email cannot be sent.');
+      console.log('--- CONTACT INQUIRY (NOT SENT) ---');
+      console.log(`Name: ${name}`);
+      console.log(`Email: ${email}`);
+      console.log(`Phone: ${phone || 'N/A'}`);
+      console.log(`Message: ${message}`);
+      console.log('----------------------------------');
+
+      return res.status(503).json({
+        success: false,
+        error: 'Email service is currently unavailable. Please try again later.'
+      });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const dateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    const mailOptions = {
+      from: `"Cake Lounge Website" <${process.env.SMTP_USER}>`,
+      to: 'thecakeloungegurgaon@gmail.com',
+      replyTo: email,
+      subject: 'New Contact Form Inquiry – Cake Lounge',
+      text: `
+Customer Name:
+${name}
+
+Email:
+${email}
+
+Phone:
+${phone || 'Not provided'}
+
+Message:
+${message}
+
+Submitted At:
+${dateTime}
+
+Website:
+https://www.thecakelounge.in
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Contact inquiry sent successfully from ${email}`);
+
+    res.status(200).json({
+      success: true,
+      message: 'Your message has been sent successfully.'
+    });
+
+  } catch (error) {
+    console.error('Contact form error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to send message. Please try again later or contact us directly.'
     });
   }
 });
