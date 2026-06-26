@@ -67,7 +67,7 @@ const OrdersPage = () => {
   }
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <div className="pt-24 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6 max-w-5xl">
         <BackButton fallbackRoute="/profile" ariaLabel="Go back to profile" />
         

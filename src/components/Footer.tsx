@@ -6,8 +6,8 @@ const Footer = () => {
   return (
     <footer className="bg-chocolate text-[rgba(255,255,255,0.7)] pt-[70px] pb-[30px]">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-[50px]">
-          <div className="footer-brand">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-[50px]">
+          <div className="footer-brand sm:col-span-2 lg:col-span-1">
             <div className="font-playfair text-[1.6rem] font-bold text-white mb-[14px]">
               Cake <span className="text-blush">Lounge</span>
             </div>
@@ -55,13 +55,21 @@ const Footer = () => {
           </div>
 
           <div className="footer-col">
+            <h4 className="text-[0.92rem] font-semibold text-white mb-[18px] font-poppins">Policies</h4>
+            <div className="flex flex-col gap-[10px]">
+              <Link href="/policies/privacy-policy" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Privacy Policy</Link>
+              <Link href="/policies/terms-and-conditions" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Terms & Conditions</Link>
+              <Link href="/policies/cancellation-refund" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Cancellation & Refund</Link>
+              <Link href="/policies/shipping-delivery" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Shipping & Delivery</Link>
+            </div>
+          </div>
+
+          <div className="footer-col">
             <h4 className="text-[0.92rem] font-semibold text-white mb-[18px] font-poppins">Support</h4>
             <div className="flex flex-col gap-[10px]">
-              <Link href="#" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">FAQs</Link>
-              <Link href="#" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Track Order</Link>
-              <Link href="#" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Return Policy</Link>
-              <Link href="#" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Privacy Policy</Link>
-              <Link href="#" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Terms of Use</Link>
+              <Link href="/#contact" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Help Center</Link>
+              <Link href="/orders" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Track Order</Link>
+              <Link href="/policies" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Policy Index</Link>
             </div>
           </div>
         </div>
