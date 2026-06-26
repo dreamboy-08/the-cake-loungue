@@ -9,7 +9,8 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import BackButton from '@/components/BackButton';
-import { Calendar } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import CalendarPicker from '@/components/CalendarPicker';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -29,18 +30,14 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>('');
+  const [showCalendar, setShowCalendar] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Delivery Date Logic
   const hasCustomCake = useMemo(() => {
     return cart.some(item => {
-      // Check if 'Custom' is in category info if available in cart item
-      // ProductDetail addToCart doesn't include category currently, so we check name for 'Custom'
-      // or rely on a more robust check if we decide to include category in CartItem.
-      // For now, let's look at common indicators in our catalog.
-      const category = (item as any).category;
-      return category === 'Custom Cakes' || item.name.toLowerCase().includes('custom');
+      return item.category === 'Custom Cakes' || item.name.toLowerCase().includes('custom');
     });
   }, [cart]);
 
@@ -54,7 +51,7 @@ const CheckoutPage = () => {
     } else {
       date.setDate(today.getDate() + 1);
     }
-    return date.toISOString().split('T')[0];
+    return date;
   }, [hasCustomCake]);
 
   // Get API URL from environment variables with fallback
@@ -111,6 +108,16 @@ const CheckoutPage = () => {
     }
     if (!deliveryDate) {
       setErrorMessage('Please select a delivery date.');
+      return;
+    }
+
+    const selectedD = new Date(deliveryDate);
+    const earliestD = new Date(earliestDate);
+    selectedD.setHours(0, 0, 0, 0);
+    earliestD.setHours(0, 0, 0, 0);
+
+    if (selectedD < earliestD) {
+      setErrorMessage(`The earliest delivery date for this order is ${earliestD.toLocaleDateString()}.`);
       return;
     }
 
@@ -236,26 +243,26 @@ const CheckoutPage = () => {
 
   if (paymentStatus === 'verifying' || paymentStatus === 'success') {
     return (
-      <div className="min-h-screen bg-cream flex items-center justify-center p-6">
+      <div className="min-h-screen bg-cream flex items-center justify-center p-6 text-center">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white p-10 rounded-[40px] shadow-xl text-center max-w-md w-full border-2 border-rose-100"
+          className="bg-white p-12 md:p-16 rounded-[60px] shadow-[0_20px_60px_rgba(201,97,74,0.1)] max-w-lg w-full border border-cream"
         >
-          <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-deep">
+          <div className="w-24 h-24 bg-rose/5 rounded-full flex items-center justify-center mx-auto mb-8 text-rose-deep border-4 border-rose/10">
             <Loader2 className="animate-spin" size={48} />
           </div>
-          <h2 className="text-3xl font-bold font-playfair text-chocolate mb-2">
-            {paymentStatus === 'verifying' ? 'Verifying Payment' : 'Order Successful!'}
+          <h2 className="text-4xl font-bold font-playfair text-chocolate mb-4">
+            {paymentStatus === 'verifying' ? 'Confirming Your Joy' : 'Baking Your Memories'}
           </h2>
-          <p className="text-text-soft mb-8">
+          <p className="text-text-soft text-lg leading-relaxed mb-10">
             {paymentStatus === 'verifying'
-              ? "Please don't refresh or close the page while we verify your transaction."
-              : "Hang tight, we're redirecting you to your order confirmation."}
+              ? "We're verifying your transaction with the bank. Please stay on this page."
+              : "Payment successful! We're redirecting you to your receipt."}
           </p>
-          <div className="flex items-center justify-center gap-2 text-rose-deep font-bold">
+          <div className="flex items-center justify-center gap-2 text-rose-deep font-bold bg-rose/5 py-4 px-8 rounded-full">
             <ShieldCheck size={20} />
-            Secure Transaction
+            <span className="uppercase tracking-[0.2em] text-xs">Secure Checkout Active</span>
           </div>
         </motion.div>
       </div>
@@ -265,132 +272,160 @@ const CheckoutPage = () => {
   return (
     <div className="pt-32 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col lg:flex-row gap-12">
+        <div className="flex flex-col lg:flex-row gap-16">
           {/* Main Content */}
-          <div className="flex-1 space-y-8">
+          <div className="flex-1 space-y-12">
             <div>
               <BackButton fallbackRoute="/shop/birthday-cakes" />
-              <h1 className="text-4xl font-bold font-playfair text-chocolate">Secure Checkout</h1>
+              <h1 className="text-5xl md:text-6xl font-bold font-playfair text-chocolate mt-8 tracking-tight italic">Secure Checkout</h1>
+              <p className="text-text-soft mt-3 text-lg">Complete your order with our secure payment gateway.</p>
             </div>
 
             {/* Address Selection */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
+            <div className="bg-white rounded-[50px] p-10 md:p-14 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/10">
               <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
             </div>
 
             {/* Delivery Date Selection */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <h3 className="text-xl font-bold text-chocolate mb-6">
+            <div className="bg-white rounded-[50px] p-10 md:p-14 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/10 relative">
+              <h3 className="text-3xl font-bold text-chocolate mb-10 font-playfair flex items-center gap-4">
+                <CalendarIcon className="text-rose-deep" size={32} />
                 Delivery Date
               </h3>
-              <div className="relative max-w-sm">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
-                  <Calendar size={18} />
-                </div>
-                <input
-                  type="date"
-                  required
-                  min={earliestDate}
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-cream/30 rounded-2xl border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                />
+              <div className="relative max-w-md">
+                <button
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="w-full text-left px-8 py-6 bg-cream/30 rounded-[30px] border-2 border-transparent hover:border-rose-deep/30 focus:border-rose-deep outline-none transition-all font-bold text-chocolate flex items-center justify-between"
+                  type="button"
+                >
+                  <div className="flex items-center gap-4">
+                    <CalendarIcon size={24} className="text-rose-deep" />
+                    <span className="text-xl">
+                      {deliveryDate ? new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'full' }) : "Select delivery date"}
+                    </span>
+                  </div>
+                  <div className="text-rose-deep font-black uppercase tracking-widest text-[10px]">
+                    {showCalendar ? 'Close' : 'Choose'}
+                  </div>
+                </button>
+
+                <AnimatePresence>
+                  {showCalendar && (
+                    <div className="absolute top-full left-0 mt-6 z-50 w-full min-w-[340px] shadow-2xl">
+                      <CalendarPicker
+                        selectedDate={deliveryDate}
+                        minDate={earliestDate}
+                        onSelect={(date) => {
+                          setDeliveryDate(date);
+                          setShowCalendar(false);
+                        }}
+                        onClose={() => setShowCalendar(false)}
+                      />
+                    </div>
+                  )}
+                </AnimatePresence>
               </div>
-              <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
-                <AlertCircle size={14} className="text-rose-deep" />
-                {hasCustomCake
-                  ? "Custom Cakes require at least 2 days preparation."
-                  : "Standard Cakes can be delivered as early as tomorrow."}
+              <p className="mt-8 text-sm text-text-soft flex items-start gap-4 bg-cream/20 p-6 rounded-[30px] border border-cream/50">
+                <AlertCircle size={20} className="text-rose-deep shrink-0 mt-0.5" />
+                <span className="font-medium leading-relaxed">
+                  {hasCustomCake
+                    ? "Your order contains Custom Cakes. These handcrafted masterpieces require at least 2 days for our chefs to perfect."
+                    : "Standard Cakes can be delivered as early as tomorrow if ordered before 6 PM."}
+                </span>
               </p>
             </div>
 
-            {/* Payment Method */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
-                <CreditCard size={20} className="text-rose-deep" />
+            {/* Payment Method Preview */}
+            <div className="bg-white rounded-[50px] p-10 md:p-14 shadow-xl border border-cream transition-all hover:shadow-2xl hover:shadow-rose-100/10">
+              <h3 className="text-3xl font-bold text-chocolate flex items-center gap-4 mb-10 font-playfair">
+                <CreditCard size={32} className="text-rose-deep" />
                 Payment Method
               </h3>
-              <div className="p-6 rounded-[30px] border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
-                <div className="w-12 h-12 bg-rose-deep rounded-full flex items-center justify-center text-white shrink-0">
-                  <CheckCircle2 size={24} />
+              <div className="p-8 rounded-[40px] border-2 border-rose-deep bg-rose/5 flex items-center gap-6">
+                <div className="w-16 h-16 bg-rose-deep rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-deep/20">
+                  <CheckCircle2 size={32} />
                 </div>
                 <div>
-                  <p className="font-bold text-chocolate">Secure Online Payment</p>
-                  <p className="text-sm text-text-soft">UPI, Cards, NetBanking via Razorpay</p>
+                  <p className="font-bold text-chocolate text-lg">Secure Online Payment</p>
+                  <p className="text-sm text-text-soft font-medium">UPI, Cards, NetBanking via Razorpay</p>
                 </div>
                 <div className="ml-auto hidden sm:block">
-                  <ShieldCheck className="text-rose-deep/30" size={32} />
+                  <ShieldCheck className="text-rose-deep/20" size={48} />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Sidebar Summary */}
-          <div className="lg:w-[450px]">
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-xl border border-cream sticky top-32">
-              <h3 className="text-xl font-bold font-playfair text-chocolate mb-6 flex items-center gap-2">
-                <ShoppingBag size={20} className="text-rose-deep" />
+          <div className="lg:w-[480px]">
+            <div className="bg-white rounded-[60px] p-10 md:p-14 shadow-2xl border border-cream sticky top-32">
+              <h3 className="text-2xl font-bold font-playfair text-chocolate mb-10 flex items-center gap-3">
+                <ShoppingBag size={24} className="text-rose-deep" />
                 Order Summary
               </h3>
 
-              <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto mb-8 space-y-6 pr-4 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream/20 rounded-2xl transition-colors">
-                    <div className="relative w-20 h-20 rounded-2xl bg-cream overflow-hidden flex-shrink-0 border border-cream">
+                  <div key={item.cartItemId} className="flex gap-6 p-2 group">
+                    <div className="relative w-24 h-24 rounded-[30px] bg-cream overflow-hidden flex-shrink-0 border border-cream shadow-sm group-hover:scale-105 transition-transform duration-500">
                       <Image
                         src={item.img}
                         alt={item.name}
                         fill
-                        sizes="80px"
+                        sizes="96px"
                         className="object-cover"
                       />
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
-                      <p className="text-[10px] text-text-soft mt-0.5">
+                      <h4 className="text-lg font-bold text-chocolate line-clamp-1 font-playfair">{item.name}</h4>
+                      <p className="text-[11px] text-text-soft mt-1 font-bold uppercase tracking-widest opacity-70">
                         {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
                       </p>
-                      <p className="text-xs text-text-soft mt-1">Quantity: {item.quantity}</p>
-                      <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-sm font-medium text-text-soft">Qty: {item.quantity}</span>
+                        <p className="text-lg font-black text-rose-deep">₹{item.price * item.quantity}</p>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-4 border-t border-cream pt-6">
+              <div className="space-y-6 border-t border-cream pt-10">
                 {deliveryDate && (
-                  <div className="flex justify-between text-text-mid bg-rose/5 p-3 rounded-xl border border-rose-100">
-                    <span className="text-xs font-bold flex items-center gap-2 text-rose-deep">
-                      <Calendar size={14} />
-                      Delivery Date
+                  <div className="flex justify-between items-center bg-rose/5 p-5 rounded-[30px] border border-rose-100/50">
+                    <span className="text-xs font-black flex items-center gap-2 text-rose-deep uppercase tracking-widest">
+                      <CalendarIcon size={16} />
+                      Delivery
                     </span>
-                    <span className="text-xs font-bold text-chocolate">
+                    <span className="text-sm font-bold text-chocolate">
                       {new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' })}
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between text-text-mid">
-                  <span className="text-sm">Subtotal</span>
+                <div className="flex justify-between text-text-mid text-lg px-2">
+                  <span>Subtotal</span>
                   <span className="font-bold text-chocolate">₹{cartTotal}</span>
                 </div>
-                <div className="flex justify-between text-text-mid">
-                  <span className="text-sm">Delivery Fee</span>
+                <div className="flex justify-between text-text-mid text-lg px-2">
+                  <span>Delivery Fee</span>
                   <span className="font-bold">{shippingFee === 0 ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
                 </div>
+
                 {shippingFee === 0 ? (
-                  <div className="bg-green-50 p-3 rounded-xl border border-green-100">
-                    <p className="text-[10px] text-green-600 font-bold italic text-center">🎉 Congratulations! You unlocked FREE Delivery.</p>
+                  <div className="bg-green-50 p-4 rounded-2xl border border-green-100">
+                    <p className="text-xs text-green-600 font-bold text-center tracking-wide">🎉 You&apos;ve unlocked FREE Delivery!</p>
                   </div>
                 ) : (
-                  <div className="bg-rose/5 p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
+                  <div className="bg-rose/5 p-4 rounded-2xl border border-rose-100">
+                    <p className="text-xs text-rose-deep font-bold text-center tracking-wide">Add ₹{499 - cartTotal} more for FREE Delivery</p>
                   </div>
                 )}
-                <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
-                  <span className="text-lg font-bold text-chocolate uppercase tracking-wider">Total Amount</span>
+
+                <div className="flex justify-between items-center pt-8 border-t-2 border-chocolate mt-8 px-2">
+                  <span className="text-lg font-black text-chocolate uppercase tracking-[0.2em]">Total</span>
                   <div className="text-right">
-                    <span className="text-4xl font-black text-rose-deep">₹{finalTotal}</span>
-                    <p className="text-[10px] text-text-soft font-bold uppercase tracking-widest mt-1">Inclusive of all taxes</p>
+                    <span className="text-5xl font-black text-rose-deep font-playfair">₹{finalTotal}</span>
+                    <p className="text-[10px] text-text-soft font-black uppercase tracking-widest mt-2 opacity-50">Inclusive of all taxes</p>
                   </div>
                 </div>
               </div>
@@ -401,9 +436,9 @@ const CheckoutPage = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold flex items-center gap-2 border border-red-100"
+                    className="mt-8 p-5 bg-red-50 text-red-600 rounded-[30px] text-sm font-bold flex items-center gap-3 border border-red-100 shadow-sm shadow-red-100/50"
                   >
-                    <AlertCircle size={16} className="shrink-0" />
+                    <AlertCircle size={20} className="shrink-0" />
                     {errorMessage}
                   </motion.div>
                 )}
@@ -412,41 +447,39 @@ const CheckoutPage = () => {
               <button
                 onClick={handleCheckout}
                 disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate}
-                className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+                className="w-full mt-10 py-6 bg-chocolate text-white rounded-[30px] font-bold text-2xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-4 active:scale-95 group overflow-hidden relative"
               >
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                 {loading ? (
                   <>
-                    <Loader2 className="animate-spin" size={24} />
-                    Processing...
+                    <Loader2 className="animate-spin" size={28} />
+                    <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck size={24} />
-                    Pay Now
+                    <ShieldCheck size={28} className="relative z-10" />
+                    <span className="relative z-10 italic font-playfair">Pay Now</span>
                   </>
                 )}
               </button>
 
               {(!selectedAddress || !deliveryDate) && cart.length > 0 && (
-                <p className="mt-4 text-rose-deep text-xs font-bold text-center">
-                  * Please select {(!selectedAddress && !deliveryDate) ? 'address and delivery date' : !selectedAddress ? 'a delivery address' : 'a delivery date'} to proceed
+                <p className="mt-6 text-rose-deep text-xs font-black text-center uppercase tracking-widest opacity-60">
+                  * Select address and delivery date to proceed
                 </p>
               )}
 
-              <div className="mt-8 pt-8 border-t border-cream flex items-center justify-center gap-6 grayscale opacity-50">
-                <div className="relative h-4 w-16">
+              <div className="mt-12 pt-10 border-t border-cream flex items-center justify-center gap-8 grayscale opacity-30">
+                <div className="relative h-6 w-20">
                   <Image src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" fill className="object-contain" />
                 </div>
-                <div className="relative h-6 w-12">
+                <div className="relative h-8 w-16">
                   <Image src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" fill className="object-contain" />
                 </div>
-                <div className="relative h-4 w-12">
+                <div className="relative h-6 w-16">
                   <Image src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" fill className="object-contain" />
                 </div>
               </div>
-              <p className="text-[10px] text-center text-text-soft mt-4 uppercase tracking-widest font-bold">
-                100% Secure SSL Encrypted Checkout
-              </p>
             </div>
           </div>
         </div>

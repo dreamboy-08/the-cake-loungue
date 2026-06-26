@@ -39,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
       price: defaultPrice,
       img: product.img,
       weight: defaultWeight,
+      category: product.category,
     });
 
     setLocalAdded(true);
@@ -105,36 +106,50 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
               <span className="text-[0.78rem] text-text-soft line-through ml-1">₹{product.oldPrice}</span>
             )}
           </div>
-          <button
-            onClick={handleAddToCart}
-            className={`min-w-[90px] border-none rounded-[50px] py-[9px] px-[18px] font-poppins text-[0.8rem] font-semibold cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-350 ${
-              isAdded ? 'bg-green-600 text-white' : 'bg-rose-deep text-white hover:bg-brown hover:scale-105 active:scale-95'
-            }`}
-          >
-            <AnimatePresence mode="wait">
-              {isAdded ? (
-                <motion.div
-                  key="check"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className="flex items-center gap-1.5"
-                >
-                  <Check size={14} /> Added
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="plus"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  className="flex items-center gap-1.5"
-                >
-                  <Plus size={14} /> Add
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
+          {product.category === 'Custom Cakes' ? (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const text = `Hi, I'm interested in the custom cake: *${product.name}* (ID: ${product.id}).\n\nPrice: ₹${product.price}\nLink: ${window.location.origin}/shop/${product.id}`;
+                window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
+              }}
+              className="min-w-[90px] border-none rounded-[50px] py-[9px] px-[18px] font-poppins text-[0.8rem] font-semibold cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-350 bg-[#25D366] text-white hover:scale-105 active:scale-95"
+            >
+              Enquire
+            </button>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              className={`min-w-[90px] border-none rounded-[50px] py-[9px] px-[18px] font-poppins text-[0.8rem] font-semibold cursor-pointer flex items-center justify-center gap-1.5 transition-all duration-350 ${
+                isAdded ? 'bg-green-600 text-white' : 'bg-rose-deep text-white hover:bg-brown hover:scale-105 active:scale-95'
+              }`}
+            >
+              <AnimatePresence mode="wait">
+                {isAdded ? (
+                  <motion.div
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <Check size={14} /> Added
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="plus"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    className="flex items-center gap-1.5"
+                  >
+                    <Plus size={14} /> Add
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+          )}
         </div>
       </div>
     </Link>
