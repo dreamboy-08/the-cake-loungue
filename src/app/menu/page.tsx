@@ -52,7 +52,7 @@ const MenuPage = () => {
                 className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border-none cursor-pointer ${
                   activeCategory === cat
                     ? 'bg-rose-deep text-white shadow-md'
-                    : 'bg-rose-deep/10 text-brown-dark hover:bg-rose-deep/20'
+                    : 'bg-cream-dark text-brown-dark hover:bg-cream-dark'
                 }`}
               >
                 {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}

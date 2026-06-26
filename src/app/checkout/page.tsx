@@ -293,7 +293,7 @@ const CheckoutPage = () => {
                   min={earliestDate}
                   value={deliveryDate}
                   onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-cream/30 rounded-2xl border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                  className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 />
               </div>
               <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
@@ -310,7 +310,7 @@ const CheckoutPage = () => {
                 <CreditCard size={20} className="text-rose-deep" />
                 Payment Method
               </h3>
-              <div className="p-6 rounded-[30px] border-2 border-rose-deep bg-rose/5 flex items-center gap-4">
+              <div className="p-6 rounded-[30px] border-2 border-rose-deep bg-cream-dark flex items-center gap-4">
                 <div className="w-12 h-12 bg-rose-deep rounded-full flex items-center justify-center text-white shrink-0">
                   <CheckCircle2 size={24} />
                 </div>
@@ -335,8 +335,8 @@ const CheckoutPage = () => {
 
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream/20 rounded-2xl transition-colors">
-                    <div className="relative w-20 h-20 rounded-2xl bg-cream overflow-hidden flex-shrink-0 border border-cream">
+                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
+                    <div className="relative w-20 h-20 rounded-[22px] bg-cream overflow-hidden flex-shrink-0 border border-cream">
                       <Image
                         src={item.img}
                         alt={item.name}
@@ -359,7 +359,7 @@ const CheckoutPage = () => {
 
               <div className="space-y-4 border-t border-cream pt-6">
                 {deliveryDate && (
-                  <div className="flex justify-between text-text-mid bg-rose/5 p-3 rounded-xl border border-rose-100">
+                  <div className="flex justify-between text-text-mid bg-cream-dark p-3 rounded-xl border border-rose-100">
                     <span className="text-xs font-bold flex items-center gap-2 text-rose-deep">
                       <Calendar size={14} />
                       Delivery Date
@@ -382,7 +382,7 @@ const CheckoutPage = () => {
                     <p className="text-[10px] text-green-600 font-bold italic text-center">🎉 Congratulations! You unlocked FREE Delivery.</p>
                   </div>
                 ) : (
-                  <div className="bg-rose/5 p-3 rounded-xl">
+                  <div className="bg-cream-dark p-3 rounded-xl">
                     <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
                   </div>
                 )}
@@ -401,7 +401,7 @@ const CheckoutPage = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mt-6 p-4 bg-red-50 text-red-600 rounded-2xl text-xs font-bold flex items-center gap-2 border border-red-100"
+                    className="mt-6 p-4 bg-red-50 text-red-600 rounded-[22px] text-xs font-bold flex items-center gap-2 border border-red-100"
                   >
                     <AlertCircle size={16} className="shrink-0" />
                     {errorMessage}
@@ -412,7 +412,7 @@ const CheckoutPage = () => {
               <button
                 onClick={handleCheckout}
                 disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate}
-                className="w-full mt-8 py-5 bg-chocolate text-white rounded-2xl font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
+                className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
                   <>

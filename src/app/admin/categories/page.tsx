@@ -89,7 +89,7 @@ const AdminCategories = () => {
           categories.map((category) => (
             <div key={category.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
-                <div className="p-3 bg-rose/5 rounded-2xl text-rose-deep">
+                <div className="p-3 bg-cream-dark rounded-2xl text-rose-deep">
                   <Tags size={24} />
                 </div>
                 <div className="flex gap-2">
@@ -98,7 +98,7 @@ const AdminCategories = () => {
                       setSelectedCategory(category);
                       setIsFormOpen(true);
                     }}
-                    className="p-2 text-gray-400 hover:text-rose-deep hover:bg-rose/10 rounded-lg transition-all"
+                    className="p-2 text-gray-400 hover:text-rose-deep hover:bg-cream-dark rounded-lg transition-all"
                   >
                     <Edit2 size={16} />
                   </button>
@@ -114,7 +114,7 @@ const AdminCategories = () => {
               <p className="text-sm text-gray-500 line-clamp-2 mb-4 h-10">{category.description || 'No description provided.'}</p>
               <div className="pt-4 border-t border-gray-50 flex items-center justify-between">
                 <span className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Slug</span>
-                <span className="text-xs font-mono text-rose-deep bg-rose/5 px-2 py-0.5 rounded">{category.slug}</span>
+                <span className="text-xs font-mono text-rose-deep bg-cream-dark px-2 py-0.5 rounded">{category.slug}</span>
               </div>
             </div>
           ))
@@ -123,7 +123,7 @@ const AdminCategories = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 ">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <AlertCircle size={32} />

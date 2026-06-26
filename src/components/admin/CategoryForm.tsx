@@ -50,11 +50,11 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-chocolate/60  animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col animate-fade-up">
         <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white">
           <h2 className="text-xl font-bold font-playfair">{category ? 'Edit Category' : 'Add Category'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-rose rounded-full transition-colors">
             <X size={24} />
           </button>
         </div>

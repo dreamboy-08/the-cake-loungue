@@ -39,13 +39,13 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => router.push('/admin/products')}
-              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep"
+              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-cream-dark transition-all text-gray-500 hover:text-rose-deep"
             >
               <span className="text-sm font-medium">Add Product</span>
             </button>
             <button
               onClick={() => router.push('/admin/categories')}
-              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-rose/5 transition-all text-gray-500 hover:text-rose-deep"
+              className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-gray-200 hover:border-rose-deep hover:bg-cream-dark transition-all text-gray-500 hover:text-rose-deep"
             >
               <span className="text-sm font-medium">New Category</span>
             </button>

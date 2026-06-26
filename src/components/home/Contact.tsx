@@ -104,14 +104,14 @@ const Contact = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-[44px_40px] shadow-md border border-cream relative overflow-hidden">
+          <div className="bg-white rounded-[18px] p-[44px_40px] shadow-md border border-cream relative overflow-hidden">
             <AnimatePresence>
               {status === 'success' && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 z-10 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8"
+                  className="absolute inset-0 z-10 bg-white flex flex-col items-center justify-center text-center p-8"
                 >
                   <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6 text-green-500">
                     <CheckCircle2 size={48} />
@@ -197,7 +197,7 @@ const Contact = () => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="flex items-center gap-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-lg border border-red-100"
+                    className="flex items-center gap-2 text-red-500 text-xs font-bold bg-red-50 p-3 rounded-[18px] border border-red-100"
                   >
                     <AlertCircle size={14} />
                     <span>{errorMessage}</span>

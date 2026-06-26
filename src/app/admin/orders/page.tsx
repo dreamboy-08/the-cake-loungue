@@ -220,7 +220,7 @@ const AdminOrders = () => {
                 filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
-                      <span className="font-mono text-[10px] font-bold text-rose-deep bg-rose/5 px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
+                      <span className="font-mono text-[10px] font-bold text-rose-deep bg-cream-dark px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
                       <div className="flex flex-col">
@@ -279,7 +279,7 @@ const AdminOrders = () => {
 
       {/* Order Details Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-end p-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
+        <div className="fixed inset-0 z-[400] flex items-center justify-end p-4 bg-chocolate/60  transition-all duration-300">
           <div className="bg-white h-full w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-l-[40px]">
             <div className="p-8 border-b flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
@@ -319,7 +319,7 @@ const AdminOrders = () => {
                     <User size={18} />
                     <h3 className="font-bold text-xs uppercase tracking-wider">Customer Info</h3>
                   </div>
-                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 h-full">
+                  <div className="text-sm bg-cream p-5 rounded-2xl border border-cream/50 h-full">
                     <p className="font-bold text-chocolate mb-1">{selectedOrder.customer?.name}</p>
                     <p className="text-gray-500 mb-1">{selectedOrder.customer?.email}</p>
                     <p className="text-gray-500">{selectedOrder.customer?.phone}</p>
@@ -330,7 +330,7 @@ const AdminOrders = () => {
                     <Calendar size={18} />
                     <h3 className="font-bold text-xs uppercase tracking-wider">Delivery Schedule</h3>
                   </div>
-                  <div className="text-sm bg-rose/5 p-5 rounded-2xl border border-rose-deep/20 h-full">
+                  <div className="text-sm bg-cream-dark p-5 rounded-2xl border border-rose-deep/20 h-full">
                     <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Date</p>
                     <p className="font-bold text-chocolate text-lg">
                       {selectedOrder.deliveryDate ? new Date(selectedOrder.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Not specified'}
@@ -345,7 +345,7 @@ const AdminOrders = () => {
                     <MapPin size={18} />
                     <h3 className="font-bold text-xs uppercase tracking-wider">Shipping Address</h3>
                   </div>
-                  <div className="text-sm bg-cream/20 p-5 rounded-2xl border border-cream/50 h-full min-h-[100px]">
+                  <div className="text-sm bg-cream p-5 rounded-2xl border border-cream/50 h-full min-h-[100px]">
                     <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
                   </div>
                 </div>
@@ -373,7 +373,7 @@ const AdminOrders = () => {
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
-                            <span className="text-[10px] font-bold text-rose-deep bg-rose/5 px-1.5 rounded">
+                            <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
                               {item.weight || '0.5 Kg'}
                             </span>
                           </div>

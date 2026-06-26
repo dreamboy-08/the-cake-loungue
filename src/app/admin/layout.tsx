@@ -75,7 +75,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                   flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
                   ${pathname === item.href
                     ? 'bg-rose-deep text-white shadow-lg shadow-rose-deep/20'
-                    : 'text-white/60 hover:bg-white/10 hover:text-white'}
+                    : 'text-white/60 hover:bg-rose hover:text-white'}
                 `}
                 onClick={() => setIsSidebarOpen(false)}
               >
@@ -117,7 +117,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Overlay for mobile sidebar */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[150] lg:hidden backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-chocolate/50 z-[150] lg:hidden  transition-opacity"
           onClick={() => setIsSidebarOpen(false)}
         ></div>
       )}

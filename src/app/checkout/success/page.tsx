@@ -61,12 +61,12 @@ const SuccessContent = () => {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 text-left">
-            <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
+            <div className="bg-cream p-6 rounded-3xl border border-cream/50">
               <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Order ID</p>
               <p className="font-mono font-bold text-chocolate">#{orderId?.slice(-8).toUpperCase() || 'N/A'}</p>
             </div>
             {orderDetails?.deliveryDate ? (
-              <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
+              <div className="bg-cream p-6 rounded-3xl border border-cream/50">
                 <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Delivery Date</p>
                 <p className="font-bold text-chocolate flex items-center gap-2">
                   <Calendar size={14} className="text-rose-deep" />
@@ -74,7 +74,7 @@ const SuccessContent = () => {
                 </p>
               </div>
             ) : (
-              <div className="bg-cream/30 p-6 rounded-3xl border border-cream/50">
+              <div className="bg-cream p-6 rounded-3xl border border-cream/50">
                 <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Payment ID</p>
                 <p className="font-mono font-bold text-chocolate text-xs truncate">{paymentId || 'N/A'}</p>
               </div>
@@ -84,7 +84,7 @@ const SuccessContent = () => {
           <div className="space-y-4">
             <Link
               href="/orders"
-              className="flex items-center justify-center gap-3 w-full py-5 bg-chocolate text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-brown transition-all group"
+              className="flex items-center justify-center gap-3 w-full py-5 bg-chocolate text-white rounded-[22px] font-bold text-lg shadow-xl hover:bg-brown transition-all group"
             >
               <ShoppingBag size={24} />
               View Order History
@@ -102,21 +102,21 @@ const SuccessContent = () => {
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-rose-deep shadow-sm mb-4">
+            <div className="w-12 h-12 bg-white rounded-[22px] flex items-center justify-center text-rose-deep shadow-sm mb-4">
               <Package size={24} />
             </div>
             <h3 className="font-bold text-chocolate mb-1">Freshly Baked</h3>
             <p className="text-xs text-text-soft">Prepared with love just for you</p>
           </div>
           <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-rose-deep shadow-sm mb-4">
+            <div className="w-12 h-12 bg-white rounded-[22px] flex items-center justify-center text-rose-deep shadow-sm mb-4">
               <Calendar size={24} />
             </div>
             <h3 className="font-bold text-chocolate mb-1">On-Time Delivery</h3>
             <p className="text-xs text-text-soft">Scheduled for your convenience</p>
           </div>
           <div className="flex flex-col items-center text-center p-4">
-            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-rose-deep shadow-sm mb-4">
+            <div className="w-12 h-12 bg-white rounded-[22px] flex items-center justify-center text-rose-deep shadow-sm mb-4">
               <MapPin size={24} />
             </div>
             <h3 className="font-bold text-chocolate mb-1">Real-time Tracking</h3>

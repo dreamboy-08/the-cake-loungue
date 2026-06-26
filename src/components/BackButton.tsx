@@ -66,7 +66,7 @@ const BackButton: React.FC<BackButtonProps> = ({
           }
         }}
         aria-label={ariaLabel}
-        className="inline-flex items-center gap-2 px-4 py-2 text-text-soft hover:text-rose-deep transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-deep focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-lg"
+        className="inline-flex items-center gap-2 px-4 py-2 text-text-soft hover:text-rose-deep transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-deep focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-[18px]"
         tabIndex={0}
       >
         <ArrowLeft
@@ -79,7 +79,7 @@ const BackButton: React.FC<BackButtonProps> = ({
 
       <Link
         href="/"
-        className="inline-flex items-center gap-2 px-4 py-2 text-text-soft hover:text-rose-deep transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-deep focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-lg"
+        className="inline-flex items-center gap-2 px-4 py-2 text-text-soft hover:text-rose-deep transition-all duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-deep focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-[18px]"
         aria-label="Go to homepage"
       >
         <Home

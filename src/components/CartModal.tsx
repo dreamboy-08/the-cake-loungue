@@ -27,7 +27,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60"
+            className="absolute inset-0 bg-chocolate/60"
           />
 
           {/* Cart Drawer */}
@@ -52,14 +52,14 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               </button>
             </div>
 
-            <div className="px-6 py-4 border-b border-cream bg-white/50">
+            <div className="px-6 py-4 border-b border-cream bg-white">
               <BackButton
                 className="mb-0"
                 ariaLabel="Go back"
               />
             </div>
 
-            <div className="p-6 overflow-y-auto flex-1 bg-cream/10">
+            <div className="p-6 overflow-y-auto flex-1 bg-cream">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4">
                   <Loader2 className="animate-spin text-rose-deep" size={40} />
@@ -88,7 +88,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-white rounded-2xl p-4 flex gap-4 shadow-sm border border-cream/50 group"
+                        className="bg-white rounded-[22px] p-4 flex gap-4 shadow-sm border border-cream/50 group"
                       >
                         <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream">
                           <Image src={item.img} alt={item.name} fill className="object-cover" />
@@ -114,7 +114,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                           <div className="flex justify-between items-center mt-2">
                             <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
 
-                            <div className="flex items-center gap-3 bg-cream/50 rounded-full px-2 py-1 border border-cream">
+                            <div className="flex items-center gap-3 bg-cream rounded-full px-2 py-1 border border-cream">
                               <button
                                 onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
                                 className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"

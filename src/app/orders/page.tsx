@@ -114,7 +114,7 @@ const OrdersPage = () => {
               >
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6 pb-6 border-b border-cream/50">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-rose/5 rounded-2xl flex items-center justify-center text-rose-deep">
+                    <div className="w-12 h-12 bg-cream-dark rounded-[22px] flex items-center justify-center text-rose-deep">
                       <Package size={24} />
                     </div>
                     <div>
@@ -135,7 +135,7 @@ const OrdersPage = () => {
                     )}
                     <Link
                       href={`/orders/${order.id}`}
-                      className="p-2 bg-cream/30 hover:bg-rose-deep hover:text-white rounded-full transition-all text-chocolate"
+                      className="p-2 bg-cream hover:bg-rose-deep hover:text-white rounded-full transition-all text-chocolate"
                     >
                       <ChevronRight size={20} />
                     </Link>

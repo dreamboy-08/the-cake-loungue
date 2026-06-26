@@ -196,19 +196,19 @@ const AdminContent = () => {
         <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100 self-start">
           <button
             onClick={() => setActiveTab('global')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'global' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
+            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'global' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
           >
             Global
           </button>
           <button
             onClick={() => setActiveTab('homepage')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'homepage' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
+            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'homepage' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
           >
             Homepage
           </button>
           <button
             onClick={() => setActiveTab('sections')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'sections' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
+            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'sections' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
           >
             Sections
           </button>
@@ -220,7 +220,7 @@ const AdminContent = () => {
           {/* Contact Information */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-50 text-blue-500 rounded-lg">
+              <div className="p-2 bg-blue-50 text-blue-500 rounded-[18px]">
                 <Phone size={20} />
               </div>
               <h2 className="text-lg font-bold text-chocolate">Contact Information</h2>
@@ -233,7 +233,7 @@ const AdminContent = () => {
                   type="text"
                   value={contactInfo.phone}
                   onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -242,7 +242,7 @@ const AdminContent = () => {
                   type="email"
                   value={contactInfo.email}
                   onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -251,7 +251,7 @@ const AdminContent = () => {
                   type="text"
                   value={contactInfo.whatsapp}
                   onChange={(e) => setContactInfo({...contactInfo, whatsapp: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -260,7 +260,7 @@ const AdminContent = () => {
                   rows={2}
                   value={contactInfo.address}
                   onChange={(e) => setContactInfo({...contactInfo, address: e.target.value})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -279,7 +279,7 @@ const AdminContent = () => {
                         }
                       }
                     })}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -297,7 +297,7 @@ const AdminContent = () => {
                         }
                       }
                     })}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -307,7 +307,7 @@ const AdminContent = () => {
           {/* About Section */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+              <div className="p-2 bg-green-50 text-green-600 rounded-[18px]">
                 <Type size={20} />
               </div>
               <h2 className="text-lg font-bold text-chocolate">About Section</h2>
@@ -319,7 +319,7 @@ const AdminContent = () => {
                   type="text"
                   value={homepageContent.about?.title}
                   onChange={(e) => setHomepageContent({...homepageContent, about: {...homepageContent.about, title: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -328,7 +328,7 @@ const AdminContent = () => {
                   rows={4}
                   value={homepageContent.about?.description}
                   onChange={(e) => setHomepageContent({...homepageContent, about: {...homepageContent.about, description: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
                 />
               </div>
             </div>
@@ -338,7 +338,7 @@ const AdminContent = () => {
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-50 text-indigo-500 rounded-lg">
+                <div className="p-2 bg-indigo-50 text-indigo-500 rounded-[18px]">
                   <ImageIcon size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Gallery Items</h2>
@@ -348,7 +348,7 @@ const AdminContent = () => {
                   ...homepageContent,
                   gallery: [...(homepageContent.gallery || []), { src: '', label: '' }]
                 })}
-                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-rose/5 px-3 py-2 rounded-lg transition-all"
+                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-cream-dark px-3 py-2 rounded-[18px] transition-all"
               >
                 <Plus size={14} /> Add Image
               </button>
@@ -378,7 +378,7 @@ const AdminContent = () => {
                           newG[index].src = e.target.value;
                           setHomepageContent({...homepageContent, gallery: newG});
                         }}
-                        className="w-full px-4 py-2 rounded-xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                         placeholder="https://..."
                       />
                     </div>
@@ -392,7 +392,7 @@ const AdminContent = () => {
                           newG[index].label = e.target.value;
                           setHomepageContent({...homepageContent, gallery: newG});
                         }}
-                        className="w-full px-4 py-2 rounded-xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                         placeholder="Image Label"
                       />
                     </div>
@@ -406,7 +406,7 @@ const AdminContent = () => {
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 text-blue-500 rounded-lg">
+                <div className="p-2 bg-blue-50 text-blue-500 rounded-[18px]">
                   <Share2 size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Testimonials</h2>
@@ -416,7 +416,7 @@ const AdminContent = () => {
                   ...homepageContent,
                   testimonials: [...(homepageContent.testimonials || []), { id: Date.now(), name: '', role: '', text: '', rating: 5 }]
                 })}
-                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-rose/5 px-3 py-2 rounded-lg transition-all"
+                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-cream-dark px-3 py-2 rounded-[18px] transition-all"
               >
                 <Plus size={14} /> Add Testimonial
               </button>
@@ -446,7 +446,7 @@ const AdminContent = () => {
                           newT[index].name = e.target.value;
                           setHomepageContent({...homepageContent, testimonials: newT});
                         }}
-                        className="w-full px-4 py-2 rounded-xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                       />
                     </div>
                     <div className="space-y-2">
@@ -459,7 +459,7 @@ const AdminContent = () => {
                           newT[index].role = e.target.value;
                           setHomepageContent({...homepageContent, testimonials: newT});
                         }}
-                        className="w-full px-4 py-2 rounded-xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                       />
                     </div>
                     <div className="md:col-span-2 space-y-2">
@@ -472,7 +472,7 @@ const AdminContent = () => {
                           newT[index].text = e.target.value;
                           setHomepageContent({...homepageContent, testimonials: newT});
                         }}
-                        className="w-full px-4 py-2 rounded-xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
+                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
                       />
                     </div>
                   </div>
@@ -485,7 +485,7 @@ const AdminContent = () => {
           <div className="space-y-8">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-purple-50 text-purple-500 rounded-lg">
+                <div className="p-2 bg-purple-50 text-purple-500 rounded-[18px]">
                   <Share2 size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Social Links</h2>
@@ -497,7 +497,7 @@ const AdminContent = () => {
                     type="text"
                     value={contactInfo.socialLinks?.instagram}
                     onChange={(e) => setContactInfo({...contactInfo, socialLinks: {...contactInfo.socialLinks, instagram: e.target.value}})}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -506,7 +506,7 @@ const AdminContent = () => {
                     type="text"
                     value={contactInfo.socialLinks?.facebook}
                     onChange={(e) => setContactInfo({...contactInfo, socialLinks: {...contactInfo.socialLinks, facebook: e.target.value}})}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -514,7 +514,7 @@ const AdminContent = () => {
 
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+                <div className="p-2 bg-green-50 text-green-600 rounded-[18px]">
                   <Settings size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Site Footer</h2>
@@ -526,7 +526,7 @@ const AdminContent = () => {
                     type="text"
                     value={siteSettings.copyrightText}
                     onChange={(e) => setSiteSettings({...siteSettings, copyrightText: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -534,7 +534,7 @@ const AdminContent = () => {
 
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-50 text-orange-500 rounded-lg">
+                <div className="p-2 bg-orange-50 text-orange-500 rounded-[18px]">
                   <Clock size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Business Hours</h2>
@@ -546,7 +546,7 @@ const AdminContent = () => {
                     type="text"
                     value={businessHours.mon_fri}
                     onChange={(e) => setBusinessHours({...businessHours, mon_fri: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -555,7 +555,7 @@ const AdminContent = () => {
                     type="text"
                     value={businessHours.sat_sun}
                     onChange={(e) => setBusinessHours({...businessHours, sat_sun: e.target.value})}
-                    className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -581,7 +581,7 @@ const AdminContent = () => {
            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-50 text-yellow-600 rounded-lg">
+                <div className="p-2 bg-yellow-50 text-yellow-600 rounded-[18px]">
                   <Layout size={20} />
                 </div>
                 <h2 className="text-lg font-bold text-chocolate">Announcement Bar</h2>
@@ -603,7 +603,7 @@ const AdminContent = () => {
                   type="text"
                   value={siteSettings.announcementBar?.text}
                   onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, text: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   placeholder="e.g. Free Delivery Above ₹499"
                 />
               </div>
@@ -613,7 +613,7 @@ const AdminContent = () => {
                   type="date"
                   value={siteSettings.announcementBar?.startDate || ''}
                   onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, startDate: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -622,7 +622,7 @@ const AdminContent = () => {
                   type="date"
                   value={siteSettings.announcementBar?.endDate || ''}
                   onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, endDate: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2 md:col-span-2">
@@ -631,7 +631,7 @@ const AdminContent = () => {
                   type="text"
                   value={siteSettings.announcementBar?.link}
                   onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, link: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                   placeholder="/menu"
                 />
               </div>
@@ -641,7 +641,7 @@ const AdminContent = () => {
           {/* Hero Section */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-rose-50 text-rose-deep rounded-lg">
+              <div className="p-2 bg-rose-50 text-rose-deep rounded-[18px]">
                 <Layout size={20} />
               </div>
               <h2 className="text-lg font-bold text-chocolate">Hero Section</h2>
@@ -653,7 +653,7 @@ const AdminContent = () => {
                   type="text"
                   value={homepageContent.hero?.title}
                   onChange={(e) => setHomepageContent({...homepageContent, hero: {...homepageContent.hero, title: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -662,7 +662,7 @@ const AdminContent = () => {
                   rows={3}
                   value={homepageContent.hero?.subtitle}
                   onChange={(e) => setHomepageContent({...homepageContent, hero: {...homepageContent.hero, subtitle: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
+                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
                 />
               </div>
             </div>
@@ -684,7 +684,7 @@ const AdminContent = () => {
       {activeTab === 'sections' && (
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-teal-50 text-teal-500 rounded-lg">
+            <div className="p-2 bg-teal-50 text-teal-500 rounded-[18px]">
               <Layout size={20} />
             </div>
             <h2 className="text-lg font-bold text-chocolate">Homepage Section Builder</h2>
@@ -735,7 +735,7 @@ const AdminContent = () => {
                     newSections[index].enabled = !newSections[index].enabled;
                     setHomepageContent({...homepageContent, sections: newSections});
                   }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${section.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-[18px] text-xs font-bold transition-all ${section.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}
                 >
                   {section.enabled ? <Eye size={14} /> : <EyeOff size={14} />}
                   {section.enabled ? 'Visible' : 'Hidden'}

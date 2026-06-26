@@ -79,13 +79,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
 
       {/* Suggestions Dropdown */}
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-xl border border-rose-deep/10 overflow-hidden z-[101] animate-fade-in mx-4 md:mx-0">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[22px] shadow-xl border border-rose-deep/10 overflow-hidden z-[101] animate-fade-in mx-4 md:mx-0">
           <div className="max-h-[400px] overflow-y-auto">
             {suggestions.map((product) => (
               <div
                 key={product.id}
                 onClick={() => handleSuggestionClick(product.id)}
-                className="flex items-center gap-4 p-4 hover:bg-rose-deep/5 cursor-pointer transition-colors border-b border-rose-deep/5 last:border-0 group"
+                className="flex items-center gap-4 p-4 hover:bg-cream-dark cursor-pointer transition-colors border-b border-cream-dark last:border-0 group"
               >
                 <div className="w-12 h-12 rounded-lg overflow-hidden bg-cream flex-shrink-0 relative">
                     <Image
@@ -101,7 +101,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
                     {product.name}
                   </h4>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose px-2 py-0.5 bg-rose/10 rounded-full">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-rose px-2 py-0.5 bg-cream-dark rounded-full">
                       {product.category}
                     </span>
                     <span className="text-[11px] text-text-soft truncate">
@@ -118,7 +118,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
               </div>
             ))}
           </div>
-          <div className="p-3 bg-cream/50 text-center border-t border-rose-deep/5">
+          <div className="p-3 bg-cream text-center border-t border-cream-dark">
             <p className="text-[11px] text-text-soft font-medium">
               Showing top {suggestions.length} results
             </p>

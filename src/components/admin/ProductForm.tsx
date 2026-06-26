@@ -162,14 +162,14 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-chocolate/60 ">
       <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 font-bold text-sm ${
+            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-3 rounded-[22px] shadow-2xl flex items-center gap-3 font-bold text-sm ${
               toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
             }`}
           >
@@ -182,7 +182,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-up">
         <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white">
           <h2 className="text-xl font-bold font-playfair">{product ? 'Edit Product' : 'Add New Product'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-rose rounded-full transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -193,7 +193,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-bold text-chocolate uppercase tracking-wider">Product Image</label>
-                <div className="flex items-center gap-1 text-[10px] font-bold text-rose-deep bg-rose/5 px-2 py-0.5 rounded uppercase">
+                <div className="flex items-center gap-1 text-[10px] font-bold text-rose-deep bg-cream-dark px-2 py-0.5 rounded uppercase">
                   <AlertCircle size={10} />
                   <span>Storage Fallback Active</span>
                 </div>
@@ -213,8 +213,8 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                      <div className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors">
+                    <div className="absolute inset-0 bg-chocolate/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                      <div className="p-3 bg-white rounded-full text-chocolate hover:bg-cream transition-colors">
                         <Upload size={24} />
                       </div>
                       {(imageFile || formData.imageUrl) && (
@@ -227,7 +227,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                             setFormData({ ...formData, imageUrl: '' });
                             setUploadError(null);
                           }}
-                          className="p-3 bg-red-500/80 backdrop-blur-md rounded-full text-white hover:bg-red-600 transition-colors"
+                          className="p-3 bg-red-500/80  rounded-full text-white hover:bg-red-600 transition-colors"
                         >
                           <Trash2 size={24} />
                         </button>
@@ -362,7 +362,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {formData.weights.map((w: any, index: number) => (
-                <div key={index} className="bg-cream/30 p-4 rounded-2xl border border-cream flex flex-col gap-3 relative group">
+                <div key={index} className="bg-cream p-4 rounded-[22px] border border-cream flex flex-col gap-3 relative group">
                   {formData.weights.length > 1 && (
                     <button
                       type="button"

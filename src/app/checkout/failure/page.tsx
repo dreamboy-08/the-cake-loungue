@@ -42,7 +42,7 @@ const FailureContent = () => {
           <div className="space-y-4">
             <Link
               href="/checkout"
-              className="flex items-center justify-center gap-3 w-full py-5 bg-chocolate text-white rounded-2xl font-bold text-lg shadow-xl hover:bg-brown transition-all group"
+              className="flex items-center justify-center gap-3 w-full py-5 bg-chocolate text-white rounded-[22px] font-bold text-lg shadow-xl hover:bg-brown transition-all group"
             >
               <RefreshCcw size={24} className="group-hover:rotate-180 transition-transform duration-500" />
               Try Checkout Again
@@ -58,7 +58,7 @@ const FailureContent = () => {
           </div>
         </motion.div>
 
-        <div className="mt-12 bg-white/50 backdrop-blur-sm rounded-[30px] p-8 border border-white/50">
+        <div className="mt-12 bg-white  rounded-[30px] p-8 border border-white/50">
           <h3 className="text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
             <HelpCircle className="text-rose-deep" size={24} />
             Common Payment Issues

@@ -223,7 +223,7 @@ const AdminProducts = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 rounded-full bg-rose/5 text-rose-deep text-[11px] font-bold uppercase tracking-wider border border-rose/10">
+                      <span className="px-3 py-1 rounded-full bg-cream-dark text-rose-deep text-[11px] font-bold uppercase tracking-wider border border-rose/10">
                         {p.category}
                       </span>
                     </td>
@@ -246,7 +246,7 @@ const AdminProducts = () => {
                             setSelectedProduct(p);
                             setIsFormOpen(true);
                           }}
-                          className="p-2 text-gray-400 hover:text-rose-deep hover:bg-rose/10 rounded-lg transition-all"
+                          className="p-2 text-gray-400 hover:text-rose-deep hover:bg-cream-dark rounded-lg transition-all"
                           title="Edit Product"
                         >
                           <Edit2 size={18} />
@@ -270,7 +270,7 @@ const AdminProducts = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60  animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <AlertCircle size={32} />

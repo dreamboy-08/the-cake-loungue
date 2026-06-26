@@ -43,7 +43,7 @@ const Gallery = () => {
       <div className="mt-11 relative">
         <div className="flex gap-[18px] w-max animate-slider hover:[animation-play-state:paused]">
           {[...galleryImgs, ...galleryImgs].map((img, i) => (
-            <div key={i} className="w-[280px] h-[340px] min-w-[280px] rounded-lg overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group">
+            <div key={i} className="w-[280px] h-[340px] min-w-[280px] rounded-[18px] overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group">
               <Image
                 src={img.src}
                 alt={img.label}

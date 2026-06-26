@@ -61,7 +61,7 @@ const OrderDetailsPage = () => {
   if (!order) {
     return (
       <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center">
-        <div className="w-20 h-20 bg-rose/10 rounded-full flex items-center justify-center text-rose-deep">
+        <div className="w-20 h-20 bg-cream-dark rounded-full flex items-center justify-center text-rose-deep">
           <Package size={40} />
         </div>
         <h2 className="text-2xl font-bold text-chocolate">Order Not Found</h2>
@@ -88,7 +88,7 @@ const OrderDetailsPage = () => {
                 <p className="text-blush font-bold uppercase tracking-widest text-xs mb-2">Order Tracking</p>
                 <h1 className="text-3xl md:text-4xl font-bold font-playfair">Order #{order.id.slice(-8).toUpperCase()}</h1>
               </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+              <div className="bg-cream-dark  rounded-[22px] p-4 border border-white/10">
                 <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1">Total Amount</p>
                 <p className="text-2xl font-black text-blush">₹{order.totalAmount}</p>
               </div>
@@ -96,7 +96,7 @@ const OrderDetailsPage = () => {
 
             {/* Progress Tracker */}
             <div className="mt-12 relative">
-              <div className="absolute top-1/2 left-0 w-full h-1 bg-white/10 -translate-y-1/2" />
+              <div className="absolute top-1/2 left-0 w-full h-1 bg-cream-dark -translate-y-1/2" />
               <div
                 className="absolute top-1/2 left-0 h-1 bg-blush -translate-y-1/2 transition-all duration-1000"
                 style={{ width: `${(currentStep / 3) * 100}%` }}
@@ -106,7 +106,7 @@ const OrderDetailsPage = () => {
                 {['Confirmed', 'Preparing', 'Out for Delivery', 'Delivered'].map((step, idx) => (
                   <div key={step} className="flex flex-col items-center">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center border-4 border-chocolate z-10 transition-colors duration-500 ${
-                      idx <= currentStep ? 'bg-blush text-chocolate' : 'bg-chocolate/50 text-white/30 border-white/10'
+                      idx <= currentStep ? 'bg-blush text-chocolate' : 'bg-chocolate text-white/30 border-white/10'
                     }`}>
                       <CheckCircle2 size={20} className={idx <= currentStep ? 'opacity-100' : 'opacity-0'} />
                     </div>
@@ -130,7 +130,7 @@ const OrderDetailsPage = () => {
               </h3>
               <div className="space-y-4">
                 {order.items.map((item: any, idx: number) => (
-                  <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-cream/20 border border-cream/50">
+                  <div key={idx} className="flex items-center gap-4 p-4 rounded-[22px] bg-cream border border-cream/50">
                     <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-cream flex-shrink-0">
                       <Image
                         src={item.img}
@@ -162,7 +162,7 @@ const OrderDetailsPage = () => {
                   <MapPin size={20} className="text-rose-deep" />
                   Delivery Details
                 </h3>
-                <div className="space-y-4 bg-cream/20 p-6 rounded-3xl border border-cream/50">
+                <div className="space-y-4 bg-cream p-6 rounded-3xl border border-cream/50">
                   <div>
                     <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Customer</p>
                     <p className="font-bold text-chocolate">{order.customer.name}</p>
@@ -193,7 +193,7 @@ const OrderDetailsPage = () => {
                   <CreditCard size={20} className="text-rose-deep" />
                   Order Information
                 </h3>
-                <div className="space-y-4 bg-cream/20 p-6 rounded-3xl border border-cream/50">
+                <div className="space-y-4 bg-cream p-6 rounded-3xl border border-cream/50">
                   <div className="flex justify-between">
                     <div>
                       <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Placed On</p>
