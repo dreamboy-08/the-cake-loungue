@@ -13,48 +13,52 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { signup, signInWithGoogle } = useAuth();
+  const { signup, signInWithGoogle, mapAuthError } = useAuth();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     setError('');
     setLoading(true);
     try {
       await signup(email, password, name);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      setError(mapAuthError(err));
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (loading) return;
     setError('');
+    setLoading(true);
     try {
       await signInWithGoogle();
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError(mapAuthError(err));
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-6 pt-[100px] lg:pt-0">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
-        <div className="bg-rose-deep py-8 px-6 text-center">
-          <h1 className="font-playfair text-3xl font-bold text-white">Create Account</h1>
-          <p className="text-white/80 mt-2">Join the Cake Lounge family today</p>
+    <div className="min-h-screen bg-cream flex items-center justify-center px-4 sm:px-6 py-20 md:py-32">
+      <div className="max-w-md w-full bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
+        <div className="bg-rose-deep pt-10 pb-8 sm:pt-12 sm:pb-10 px-6 sm:px-8 text-center">
+          <h1 className="font-playfair text-3xl sm:text-4xl font-bold text-white">Create Account</h1>
+          <p className="text-white/80 mt-2 text-sm sm:base">Join the Cake Lounge family today</p>
         </div>
 
-        <div className="p-8">
+        <div className="p-6 sm:p-8">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl mb-6 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSignup} className="space-y-6">
+          <form onSubmit={handleSignup} className="space-y-5 sm:space-y-6">
             <div>
               <label className="block text-sm font-medium text-chocolate mb-2">Full Name</label>
               <div className="relative">
@@ -103,9 +107,14 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-rose-deep text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brown transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-rose-deep/20"
+              className="w-full bg-rose-deep text-white py-3.5 sm:py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brown transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-rose-deep/20 active:scale-[0.98]"
             >
-              {loading ? "Creating Account..." : (
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Creating Account...</span>
+                </div>
+              ) : (
                 <>
                   <UserPlus size={20} />
                   Sign Up
@@ -126,10 +135,15 @@ export default function SignupPage() {
 
             <button
               onClick={handleGoogleSignIn}
-              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream/30 transition-all"
+              disabled={loading}
+              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-3.5 sm:py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream/30 transition-all disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]"
             >
-              <Chrome size={20} className="text-rose" />
-              Sign up with Google
+              {loading ? (
+                 <div className="w-5 h-5 border-2 border-rose/30 border-t-rose rounded-full animate-spin"></div>
+              ) : (
+                <Chrome size={20} className="text-rose" />
+              )}
+              {loading ? "Please wait..." : "Sign up with Google"}
             </button>
           </div>
 

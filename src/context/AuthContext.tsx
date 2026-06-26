@@ -6,6 +6,8 @@ import {
   User,
   signOut,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -13,7 +15,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth, db } from '@/utils/firebase';
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 export interface Address {
   id: string;
@@ -43,6 +45,8 @@ interface AuthContextType {
   updateAddress: (id: string, address: Partial<Address>) => Promise<void>;
   deleteAddress: (id: string) => Promise<void>;
   setDefaultAddress: (id: string) => Promise<void>;
+  updateUserRole: (uid: string, newRole: 'admin' | 'user' | 'staff' | 'super_admin') => Promise<void>;
+  mapAuthError: (error: any) => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,47 +61,72 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-
+    // Handle redirect result for Google Sign-In
+    const checkRedirect = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log("Redirect sign-in successful");
+        }
+      } catch (error) {
+        console.error("Redirect sign-in error:", error);
+      }
+    };
+    checkRedirect();
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
-      setUser(firebaseUser);
+      try {
+        setUser(firebaseUser);
 
-      if (firebaseUser) {
-        // Ensure user document exists in Firestore (especially for Google Sign-In)
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
+        if (firebaseUser) {
+          // Ensure user document exists in Firestore (especially for Google Sign-In)
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          let userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-          const newUserData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            createdAt: new Date().toISOString(),
-            role: 'user',
-            addresses: []
-          };
-          await setDoc(userDocRef, newUserData);
-          setRole('user');
-          setIsAdmin(false);
-          setUserData(newUserData);
+          if (!userDoc.exists()) {
+            const newUserData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString(),
+              role: 'user',
+              addresses: []
+            };
+            await setDoc(userDocRef, newUserData);
+            setRole('user');
+            setIsAdmin(false);
+            setIsStaff(false);
+            setIsSuperAdmin(false);
+            setUserData(newUserData);
+          } else {
+            const data = userDoc.data();
+            const userRole = data?.role || 'user';
+
+            // Update lastLogin
+            await updateDoc(userDocRef, {
+              lastLogin: new Date().toISOString()
+            });
+
+            setRole(userRole);
+            setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
+            setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
+            setIsSuperAdmin(userRole === 'super_admin');
+            setUserData({ ...data, lastLogin: new Date().toISOString() });
+          }
         } else {
-          const data = userDoc.data();
-          const userRole = data?.role || 'user';
-          setRole(userRole);
-          setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
-          setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
-          setIsSuperAdmin(userRole === 'super_admin');
-          setUserData(data);
+          setRole(null);
+          setIsAdmin(false);
+          setIsStaff(false);
+          setIsSuperAdmin(false);
+          setUserData(null);
         }
-      } else {
-        setRole(null);
-        setIsAdmin(false);
-        setIsStaff(false);
-        setIsSuperAdmin(false);
-        setUserData(null);
+      } catch (error) {
+        console.error("Auth state change error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -109,7 +138,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      // Try popup first
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      console.error("Popup sign-in error:", error);
+      // Fallback to redirect if popup is blocked
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw error;
+      }
+    }
   };
 
   const resetPassword = async (email: string) => {
@@ -238,6 +278,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserRole = async (uid: string, newRole: 'admin' | 'user' | 'staff' | 'super_admin') => {
+    if (!isAdmin && !isSuperAdmin) {
+      throw new Error("Unauthorized: Only admins can change roles");
+    }
+
+    try {
+      const userDocRef = doc(db, 'users', uid);
+      await updateDoc(userDocRef, {
+        role: newRole,
+        updatedAt: new Date().toISOString()
+      });
+
+      // If the current user's role was changed, update local state
+      if (user?.uid === uid) {
+        setRole(newRole);
+        setIsAdmin(newRole === 'admin' || newRole === 'super_admin');
+        setIsStaff(newRole === 'staff' || newRole === 'admin' || newRole === 'super_admin');
+      }
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      throw error;
+    }
+  };
+
+  const mapAuthError = (error: any): string => {
+    const errorCode = error.code || '';
+
+    switch (errorCode) {
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please try again.';
+      case 'auth/email-already-in-use':
+        return 'An account with this email already exists.';
+      case 'auth/weak-password':
+        return 'Password should be at least 6 characters.';
+      case 'auth/popup-blocked':
+        return 'Sign-in popup was blocked by your browser. Please try again.';
+      case 'auth/network-request-failed':
+        return 'Network error. Please check your internet connection.';
+      case 'auth/too-many-requests':
+        return 'Too many failed attempts. Please try again later.';
+      case 'auth/user-disabled':
+        return 'This account has been disabled.';
+      case 'auth/operation-not-allowed':
+        return 'Operation not allowed. Please contact support.';
+      default:
+        return error.message || 'An unexpected error occurred. Please try again.';
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -255,7 +346,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       addAddress,
       updateAddress,
       deleteAddress,
-      setDefaultAddress
+      setDefaultAddress,
+      updateUserRole,
+      mapAuthError
     }}>
       {children}
     </AuthContext.Provider>

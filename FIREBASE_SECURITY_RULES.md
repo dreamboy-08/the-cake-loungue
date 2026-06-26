@@ -28,9 +28,16 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // Users Collection (Users can only read/write their own data)
+    // Users Collection
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Users can only read/write their own data
+      // Admins can read all user data and update roles
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (
+        (request.auth.uid == userId && request.resource.data.role == resource.data.role) ||
+        isAdmin()
+      );
     }
 
     // Orders (Customers can create/read their own, Admins can do everything)
