@@ -35,6 +35,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  const [dateSort, setDateSort] = useState<'asc' | 'desc'>('desc');
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -80,6 +81,10 @@ const AdminOrders = () => {
     const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
 
     return matchesSearch && matchesStatus;
+  }).sort((a, b) => {
+    const dateA = a.deliveryDate ? new Date(a.deliveryDate).getTime() : 0;
+    const dateB = b.deliveryDate ? new Date(b.deliveryDate).getTime() : 0;
+    return dateSort === 'desc' ? dateB - dateA : dateA - dateB;
   });
 
   const getStatusColor = (status: string) => {
@@ -147,6 +152,14 @@ const AdminOrders = () => {
               <tr className="bg-gray-50/50">
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Order ID</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Customer</th>
+                <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">
+                  <button
+                    onClick={() => setDateSort(dateSort === 'desc' ? 'asc' : 'desc')}
+                    className="flex items-center gap-1 hover:text-rose-deep transition-colors"
+                  >
+                    Delivery Date {dateSort === 'desc' ? '↓' : '↑'}
+                  </button>
+                </th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Payment</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Total</th>
                 <th className="px-6 py-4 text-[10px] font-bold text-chocolate/60 uppercase tracking-widest border-b border-gray-100">Status</th>
@@ -182,6 +195,16 @@ const AdminOrders = () => {
                       <div className="flex flex-col">
                         <span className="font-bold text-chocolate text-sm">{order.customer?.name || 'Guest'}</span>
                         <span className="text-[10px] text-gray-400">{order.customer?.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-rose-deep text-sm">
+                          {order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'N/A'}
+                        </span>
+                        <span className="text-[9px] font-black uppercase tracking-wider text-gray-400">
+                          {order.deliveryType || 'Standard'}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4" onClick={() => setSelectedOrder(order)}>
@@ -234,9 +257,9 @@ const AdminOrders = () => {
             </div>
 
             <div className="p-8 space-y-10">
-              <div className="flex items-center justify-between bg-gray-50 p-6 rounded-3xl border border-gray-100">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-3xl border border-gray-100">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Update Order Status</span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Update Status</span>
                   <div className="mt-2 flex items-center gap-3">
                     <select
                       value={selectedOrder.status || 'Pending'}
@@ -248,6 +271,14 @@ const AdminOrders = () => {
                     </select>
                     {updatingId === selectedOrder.id && <Loader2 className="animate-spin text-rose-deep" size={20} />}
                   </div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-rose-deep uppercase tracking-widest">Delivery Schedule</span>
+                  <div className="mt-2 flex items-center gap-2 text-rose-deep">
+                    <Calendar size={18} />
+                    <span className="font-bold">{selectedOrder.deliveryDate ? new Date(selectedOrder.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'N/A'}</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase mt-1">{selectedOrder.deliveryType || 'Standard'} Delivery</span>
                 </div>
                 <div className="text-right">
                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Placed On</p>

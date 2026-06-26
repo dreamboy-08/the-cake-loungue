@@ -144,10 +144,22 @@ const OrdersPage = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-text-soft text-sm font-medium">
-                      <Calendar size={16} />
-                      {new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest">Placed On</p>
+                      <div className="flex items-center gap-2 text-text-soft text-sm font-medium">
+                        <Calendar size={14} />
+                        {new Date(order.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                      </div>
                     </div>
+                    {order.deliveryDate && (
+                      <div className="flex flex-col gap-1">
+                        <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest">Delivery Date</p>
+                        <div className="flex items-center gap-2 text-rose-deep text-sm font-bold">
+                          <Calendar size={14} />
+                          {new Date(order.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                        </div>
+                      </div>
+                    )}
                     <div className="flex -space-x-3 overflow-hidden">
                       {order.items.slice(0, 4).map((item: any, idx: number) => (
                         <div key={idx} className="relative w-10 h-10 rounded-full border-2 border-white overflow-hidden bg-cream shadow-sm">

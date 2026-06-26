@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useCart } from '@/context/CartContext';
 import { useAuth, Address } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
@@ -27,6 +27,7 @@ const CheckoutPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -70,8 +71,26 @@ const CheckoutPage = () => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
 
-  const shippingFee = useMemo(() => cartTotal > 1000 ? 0 : 50, [cartTotal]);
+  const shippingFee = useMemo(() => cartTotal > 499 ? 0 : 50, [cartTotal]);
   const finalTotal = useMemo(() => cartTotal + shippingFee, [cartTotal, shippingFee]);
+
+  const isCustomCakeOrder = useMemo(() => {
+    return cart.some(item =>
+      (item.category && item.category.toLowerCase().includes('custom')) ||
+      (item.name && item.name.toLowerCase().includes('custom'))
+    );
+  }, [cart]);
+
+  const minDeliveryDate = useMemo(() => {
+    const today = new Date();
+    const minDate = new Date(today);
+    if (isCustomCakeOrder) {
+      minDate.setDate(today.getDate() + 2);
+    } else {
+      minDate.setDate(today.getDate() + 1);
+    }
+    return minDate.toISOString().split('T')[0];
+  }, [isCustomCakeOrder]);
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -80,6 +99,10 @@ const CheckoutPage = () => {
     }
     if (!selectedAddress) {
       setErrorMessage('Please select or add a delivery address.');
+      return;
+    }
+    if (!deliveryDate) {
+      setErrorMessage('Please select a delivery date.');
       return;
     }
 
@@ -138,6 +161,8 @@ const CheckoutPage = () => {
               subtotal: cartTotal,
               status: 'Confirmed',
               createdAt: new Date().toISOString(),
+              deliveryDate,
+              deliveryType: isCustomCakeOrder ? 'Custom' : 'Standard',
             };
 
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
@@ -245,6 +270,34 @@ const CheckoutPage = () => {
               <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
             </div>
 
+            {/* Delivery Date Selection */}
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
+              <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
+                <Calendar size={20} className="text-rose-deep" />
+                Delivery Date
+              </h3>
+              <div className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="date"
+                    min={minDeliveryDate}
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    className="w-full px-6 py-4 rounded-2xl bg-cream/30 border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate appearance-none"
+                  />
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-rose-deep">
+                    <Calendar size={20} />
+                  </div>
+                </div>
+                <p className="text-sm text-text-soft flex items-center gap-2 px-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-deep" />
+                  {isCustomCakeOrder
+                    ? "Custom Cakes require at least 2 days preparation."
+                    : "Standard Cakes are freshly baked and delivered from tomorrow."}
+                </p>
+              </div>
+            </div>
+
             {/* Payment Method */}
             <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
               <h3 className="text-xl font-bold text-chocolate flex items-center gap-2 mb-6">
@@ -299,6 +352,15 @@ const CheckoutPage = () => {
               </div>
 
               <div className="space-y-4 border-t border-cream pt-6">
+                <div className="flex justify-between items-center bg-cream/20 p-4 rounded-2xl border border-cream/50">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} className="text-rose-deep" />
+                    <span className="text-sm font-bold text-chocolate">Delivery Date</span>
+                  </div>
+                  <span className="text-sm font-black text-rose-deep">
+                    {deliveryDate ? new Date(deliveryDate).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Not Selected'}
+                  </span>
+                </div>
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Subtotal</span>
                   <span className="font-bold text-chocolate">₹{cartTotal}</span>
@@ -309,7 +371,7 @@ const CheckoutPage = () => {
                 </div>
                 {shippingFee > 0 && (
                   <div className="bg-rose/5 p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{1000 - cartTotal} more for FREE delivery!</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more for FREE delivery!</p>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
