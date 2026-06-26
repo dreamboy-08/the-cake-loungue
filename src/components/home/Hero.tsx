@@ -98,7 +98,7 @@ const Hero = () => {
             </div>
 
             <div className="absolute bg-white rounded-md px-4 py-2.5 shadow-md text-[0.8rem] font-semibold text-chocolate flex items-center gap-1.5 whitespace-nowrap animate-blob-float [animation-delay:-2s] bottom-[10px] right-5">
-              <span className="text-rose">🚚</span> Same Day Delivery
+              <span className="text-rose">📅</span> Schedule Delivery
             </div>
           </div>
         </div>

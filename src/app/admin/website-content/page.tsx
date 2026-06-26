@@ -71,7 +71,7 @@ const AdminContent = () => {
           copyrightText: '© 2025 Cake Lounge Patisserie. All rights reserved.',
           announcementBar: {
             enabled: true,
-            text: 'Free Delivery Above ₹999',
+            text: 'Free Delivery Above ₹499',
             link: '/menu'
           }
         });
@@ -604,7 +604,7 @@ const AdminContent = () => {
                   value={siteSettings.announcementBar?.text}
                   onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, text: e.target.value}})}
                   className="w-full px-4 py-3 rounded-xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  placeholder="e.g. Free Delivery Above ₹999"
+                  placeholder="e.g. Free Delivery Above ₹499"
                 />
               </div>
               <div className="space-y-2">

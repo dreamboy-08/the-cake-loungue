@@ -182,6 +182,16 @@ const OrderDetailsPage = () => {
                   Order Information
                 </h3>
                 <div className="space-y-4 bg-cream/20 p-6 rounded-3xl border border-cream/50">
+                  {order.deliveryDate && (
+                    <div className="bg-rose-deep/5 p-4 rounded-2xl border border-rose-deep/10 mb-2">
+                      <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Scheduled Delivery Date</p>
+                      <div className="flex items-center gap-2 text-rose-deep">
+                        <Calendar size={18} />
+                        <p className="text-lg font-black">{new Date(order.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+                      </div>
+                      <p className="text-[10px] font-bold text-rose-deep/60 mt-1 uppercase tracking-widest">{order.deliveryType || 'Standard'} Delivery</p>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <div>
                       <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-1">Placed On</p>

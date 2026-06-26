@@ -36,8 +36,8 @@ const About = () => {
             <div className="mt-9 flex flex-col gap-5">
               {[
                 { icon: <Sprout size={20} />, title: "All-Natural Ingredients", desc: "We source only the finest local produce — no artificial preservatives, ever." },
-                { icon: <Hand size={20} />, title: "Handcrafted Daily", desc: "Each cake is made fresh the morning of delivery by our master pastry chefs." },
-                { icon: <Truck size={20} />, title: "Guaranteed Freshness", desc: "Express delivery in temperature-controlled packaging within 4 hours." },
+                { icon: <Hand size={20} />, title: "Handcrafted Daily", desc: "Each cake is made fresh on your selected date by our master pastry chefs." },
+                { icon: <Truck size={20} />, title: "Scheduled Delivery", desc: "Professional handling in temperature-controlled packaging on your selected date." },
               ].map((feat, i) => (
                 <div key={i} className="flex items-start gap-4 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
                   <div className="w-11 h-11 min-w-[44px] bg-cream-dark rounded-sm flex items-center justify-center text-rose-deep">

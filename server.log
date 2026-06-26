@@ -1,0 +1,12 @@
+
+> cake-lounge-frontend@0.1.0 start
+> next start -p 3001
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 426ms
+ ⚠ For production Image Optimization with Next.js, the optional 'sharp' package is strongly recommended. Run 'npm i sharp', and Next.js will use it automatically for Image Optimization.
+Read more: https://nextjs.org/docs/messages/sharp-missing-in-production
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
