@@ -25,7 +25,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
-      router.push('/login');
+      router.replace('/login');
     }
   }, [user, isAdmin, loading, router]);
 
