@@ -47,6 +47,7 @@ const AdminProducts = () => {
   const [isSyncing, setIsSyncing] = useState(false);
 
   const fetchProducts = useCallback(async (isNext = false) => {
+    setLoading(true);
     try {
       let q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
@@ -58,29 +59,40 @@ const AdminProducts = () => {
       const newProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       if (isNext) {
-        setProducts(prev => [...prev, ...newProducts]);
+        setProducts(prev => {
+          // Prevent duplicates
+          const existingIds = new Set(prev.map(p => p.id));
+          const uniqueNew = newProducts.filter(p => !existingIds.has(p.id));
+          return [...prev, ...uniqueNew];
+        });
       } else {
         setProducts(newProducts);
       }
 
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      setLastDoc(lastVisible);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
+    } finally {
       setLoading(false);
     }
   }, [lastDoc]);
 
   useEffect(() => {
-    fetchProducts();
+    // Initial fetch only if products is empty to avoid loop if fetchProducts changes
+    if (products.length === 0) {
+      fetchProducts();
+    }
 
     const unsubCats = onSnapshot(collection(db, 'categories'), (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      console.error("Error listening to categories:", error);
     });
 
     return () => unsubCats();
-  }, [fetchProducts]);
+  }, [fetchProducts, products.length]);
 
   const handleSyncCatalog = async () => {
     if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
@@ -342,13 +354,15 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {hasMore && !loading && (
+      {hasMore && (
         <div className="flex justify-center mt-8">
           <button
+            disabled={loading}
             onClick={() => fetchProducts(true)}
-            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm"
+            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
           >
-            Load More Products
+            {loading && products.length > 0 && <Loader2 className="animate-spin" size={16} />}
+            {loading && products.length > 0 ? 'Loading...' : 'Load More Products'}
           </button>
         </div>
       )}
