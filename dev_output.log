@@ -1,0 +1,18 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 4.6s
+ ○ Compiling /checkout ...
+ ✓ Compiled /checkout in 12.8s (1570 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /checkout 200 in 14506ms
+ ✓ Compiled in 1685ms (714 modules)
+ HEAD /checkout 200 in 47ms
+ GET /checkout 200 in 50ms
+ GET /checkout 200 in 69ms
