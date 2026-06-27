@@ -335,6 +335,12 @@ const AdminOrders = () => {
                     <p className="font-bold text-chocolate text-lg">
                       {selectedOrder.deliveryDate ? new Date(selectedOrder.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Not specified'}
                     </p>
+                    {selectedOrder.deliveryTimeSlot && (
+                      <div className="mt-2">
+                        <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Time Slot</p>
+                        <p className="font-bold text-chocolate">{selectedOrder.deliveryTimeSlot}</p>
+                      </div>
+                    )}
                     {selectedOrder.deliveryType && (
                       <p className="text-[10px] text-text-soft mt-1 font-bold uppercase tracking-widest">Type: {selectedOrder.deliveryType}</p>
                     )}
@@ -346,10 +352,31 @@ const AdminOrders = () => {
                     <h3 className="font-bold text-xs uppercase tracking-wider">Shipping Address</h3>
                   </div>
                   <div className="text-sm bg-cream p-5 rounded-2xl border border-cream/50 h-full min-h-[100px]">
-                    <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
+                    {selectedOrder.address ? (
+                      <div className="space-y-1">
+                        <p className="font-bold text-chocolate">{selectedOrder.address.houseNumber}, {selectedOrder.address.street}</p>
+                        {selectedOrder.address.landmark && <p className="text-xs text-text-soft">Near {selectedOrder.address.landmark}</p>}
+                        <p className="text-gray-600">{selectedOrder.address.area}</p>
+                        <p className="text-gray-600">{selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.zipCode}</p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
+                    )}
                   </div>
                 </div>
               </div>
+
+              {selectedOrder.deliveryInstructions && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
+                    <ShieldCheck size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Delivery Instructions</h3>
+                  </div>
+                  <div className="bg-orange-50 p-5 rounded-2xl border border-orange-100 italic text-sm text-chocolate">
+                    &quot;{selectedOrder.deliveryInstructions}&quot;
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-rose-deep">
