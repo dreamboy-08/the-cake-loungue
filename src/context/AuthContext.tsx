@@ -26,6 +26,8 @@ export interface Address {
   city: string;
   state: string;
   zipCode: string;
+  pincode?: string; // Standardized for India
+  email?: string; // For guest checkout
   isDefault: boolean;
 }
 

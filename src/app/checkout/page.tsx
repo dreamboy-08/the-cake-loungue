@@ -170,7 +170,7 @@ const CheckoutPage = () => {
               userId: user?.uid || 'guest',
               customer: {
                 name: selectedAddress.name,
-                email: user?.email || 'guest@example.com',
+                email: user?.email || selectedAddress.email || 'guest@example.com',
                 phone: selectedAddress.phone,
               },
               address: {
@@ -180,10 +180,10 @@ const CheckoutPage = () => {
                 area: selectedAddress.area,
                 city: selectedAddress.city,
                 state: selectedAddress.state,
-                zipCode: selectedAddress.zipCode,
+                pincode: selectedAddress.zipCode || (selectedAddress as any).pincode,
               },
               // For legacy support and easy display
-              shippingAddress: `${selectedAddress.houseNumber}, ${selectedAddress.street}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+              shippingAddress: `${selectedAddress.houseNumber}, ${selectedAddress.street}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode || (selectedAddress as any).pincode}`,
               items: cart,
               totalAmount: finalTotal,
               shippingFee,

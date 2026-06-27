@@ -24,6 +24,7 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
     city: '',
     state: '',
     zipCode: '',
+    email: '',
     isDefault: false
   });
 
@@ -89,6 +90,7 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
       city: address.city,
       state: address.state,
       zipCode: address.zipCode,
+      email: address.email || '',
       isDefault: address.isDefault
     });
     setEditingId(address.id);
@@ -170,6 +172,17 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
                   className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
               </div>
+              {!user && (
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address (for order updates)"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                />
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -286,7 +299,7 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
                     {address.houseNumber}, {address.street}<br />
                     {address.landmark && <span className="text-xs text-text-soft/70">Near {address.landmark}<br /></span>}
                     {address.area}, {address.city}<br />
-                    {address.state} - {address.zipCode}
+                    {address.state} - {address.zipCode || address.pincode}
                   </p>
                 </div>
                 <div className="mt-4 flex gap-4 border-t border-cream pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
