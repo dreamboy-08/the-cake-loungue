@@ -147,10 +147,10 @@ app.post('/api/verify-payment', async (req, res) => {
       // Store order in Firestore if db is initialized
       if (db && orderDetails) {
         try {
-          const orderRef = db.collection('orders').doc(razorpay_order_id);
-          const doc = await orderRef.get();
+          const masterOrderRef = db.collection('orders').doc(razorpay_order_id);
+          const masterDoc = await masterOrderRef.get();
 
-          if (!doc.exists) {
+          if (!masterDoc.exists) {
             const orderDoc = {
               ...orderDetails,
               paymentId: razorpay_payment_id,
@@ -162,8 +162,21 @@ app.post('/api/verify-payment', async (req, res) => {
               updatedAt: new Date().toISOString(),
             };
 
-            await orderRef.set(orderDoc);
-            console.log('Order stored successfully in Firestore:', razorpay_order_id);
+            // Save to master orders collection
+            await masterOrderRef.set(orderDoc);
+            console.log('Order stored in master collection:', razorpay_order_id);
+
+            // Save to user-specific orders collection if userId is present and not 'guest'
+            if (orderDetails.userId && orderDetails.userId !== 'guest') {
+              const userOrderRef = db
+                .collection('users')
+                .doc(orderDetails.userId)
+                .collection('orders')
+                .doc(razorpay_order_id);
+
+              await userOrderRef.set(orderDoc);
+              console.log(`Order stored in user collection for UID: ${orderDetails.userId}`);
+            }
 
             // SIMULATED OWNER NOTIFICATION
             console.log('-------------------------------------------');

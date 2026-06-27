@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth, Address } from '@/context/AuthContext';
 import { Plus, Edit2, Trash2, CheckCircle2, MapPin, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void }) => {
-  const { userData, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAuth();
-  const [isAdding, setIsAdding] = useState(false);
+const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Address) => void, selectedAddress?: Address | null }) => {
+  const { user, userData, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAuth();
+  const [isAdding, setIsAdding] = useState(!user && !selectedAddress); // Default to adding if guest and no address selected
+  const [guestAddress, setGuestAddress] = useState<Address | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState<string | null>(null); // To track which address action is loading
@@ -16,7 +17,10 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
   const [formData, setFormData] = useState<Omit<Address, 'id'>>({
     name: '',
     phone: '',
+    houseNumber: '',
     street: '',
+    landmark: '',
+    area: '',
     city: '',
     state: '',
     zipCode: '',
@@ -36,17 +40,31 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
     setLoading(true);
     setError(null);
     try {
-      if (editingId) {
-        await updateAddress(editingId, formData);
-        setEditingId(null);
+      if (user) {
+        if (editingId) {
+          await updateAddress(editingId, formData);
+          setEditingId(null);
+        } else {
+          await addAddress(formData);
+          setIsAdding(false);
+        }
       } else {
-        await addAddress(formData);
+        // Guest mode: just pass the data up
+        const tempAddress: Address = {
+          ...formData,
+          id: 'guest-temp-' + Date.now(),
+        };
+        setGuestAddress(tempAddress);
+        onSelect?.(tempAddress);
         setIsAdding(false);
       }
       setFormData({
         name: '',
         phone: '',
+        houseNumber: '',
         street: '',
+        landmark: '',
+        area: '',
         city: '',
         state: '',
         zipCode: '',
@@ -64,7 +82,10 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
     setFormData({
       name: address.name,
       phone: address.phone,
+      houseNumber: address.houseNumber || '',
       street: address.street,
+      landmark: address.landmark || '',
+      area: address.area || '',
       city: address.city,
       state: address.state,
       zipCode: address.zipCode,
@@ -73,7 +94,15 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
     setEditingId(address.id);
   };
 
-  const addresses = userData?.addresses || [];
+  const addresses = user
+    ? (userData?.addresses || [])
+    : (selectedAddress ? [selectedAddress] : (guestAddress ? [guestAddress] : []));
+
+  useEffect(() => {
+    if (!user && selectedAddress && isAdding) {
+      setIsAdding(false);
+    }
+  }, [user, selectedAddress, isAdding]);
 
   return (
     <div className="space-y-6">
@@ -101,13 +130,17 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
             className="bg-white rounded-[22px] border-2 border-cream p-6 shadow-sm overflow-hidden"
           >
             <div className="flex justify-between items-center mb-6">
-              <h4 className="font-bold text-chocolate">{editingId ? 'Edit Address' : 'Add New Address'}</h4>
-              <button
-                onClick={() => { setIsAdding(false); setEditingId(null); setError(null); }}
-                className="text-text-soft hover:text-chocolate"
-              >
-                <X size={20} />
-              </button>
+              <h4 className="font-bold text-chocolate">
+                {user ? (editingId ? 'Edit Address' : 'Add New Address') : 'Delivery Address'}
+              </h4>
+              {user && (
+                <button
+                  onClick={() => { setIsAdding(false); setEditingId(null); setError(null); }}
+                  className="text-text-soft hover:text-chocolate"
+                >
+                  <X size={20} />
+                </button>
+              )}
             </div>
 
             {error && (
@@ -137,15 +170,45 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
                 />
               </div>
-              <input
-                type="text"
-                name="street"
-                placeholder="Street Address, House No."
-                required
-                value={formData.street}
-                onChange={handleInputChange}
-                className="w-full p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="houseNumber"
+                  placeholder="House / Flat / Office No."
+                  required
+                  value={formData.houseNumber}
+                  onChange={handleInputChange}
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                />
+                <input
+                  type="text"
+                  name="street"
+                  placeholder="Street / Road Name"
+                  required
+                  value={formData.street}
+                  onChange={handleInputChange}
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="landmark"
+                  placeholder="Landmark (Optional)"
+                  value={formData.landmark}
+                  onChange={handleInputChange}
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                />
+                <input
+                  type="text"
+                  name="area"
+                  placeholder="Area / Sector / Locality"
+                  required
+                  value={formData.area}
+                  onChange={handleInputChange}
+                  className="p-3 bg-cream border border-cream rounded-xl outline-none focus:border-rose-deep transition-all"
+                />
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <input
                   type="text"
@@ -190,7 +253,11 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                 disabled={loading}
                 className="w-full bg-rose-deep text-white font-bold py-3 rounded-xl shadow-lg hover:bg-brown transition-all flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="animate-spin" size={20} /> : (editingId ? 'Update Address' : 'Save Address')}
+                {loading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  user ? (editingId ? 'Update Address' : 'Save Address') : 'Apply Address'
+                )}
               </button>
             </form>
           </motion.div>
@@ -203,11 +270,11 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className={`relative p-5 rounded-[22px] border-2 transition-all cursor-pointer group ${
-                  address.isDefault ? 'border-rose-deep bg-cream-dark' : 'border-cream bg-white hover:border-rose/30'
+                  (address.isDefault || selectedAddress?.id === address.id) ? 'border-rose-deep bg-cream-dark' : 'border-cream bg-white hover:border-rose/30'
                 }`}
                 onClick={() => onSelect?.(address)}
               >
-                {address.isDefault && (
+                {(address.isDefault || selectedAddress?.id === address.id) && (
                   <div className="absolute top-4 right-4 text-rose-deep">
                     <CheckCircle2 size={20} />
                   </div>
@@ -216,8 +283,10 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                   <p className="font-bold text-chocolate mb-1">{address.name}</p>
                   <p className="text-sm text-text-mid mb-2">{address.phone}</p>
                   <p className="text-sm text-text-soft leading-relaxed">
-                    {address.street},<br />
-                    {address.city}, {address.state} - {address.zipCode}
+                    {address.houseNumber}, {address.street}<br />
+                    {address.landmark && <span className="text-xs text-text-soft/70">Near {address.landmark}<br /></span>}
+                    {address.area}, {address.city}<br />
+                    {address.state} - {address.zipCode}
                   </p>
                 </div>
                 <div className="mt-4 flex gap-4 border-t border-cream pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -242,7 +311,7 @@ const AddressManager = ({ onSelect }: { onSelect?: (address: Address) => void })
                     {actionLoading === address.id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={14} />}
                     Delete
                   </button>
-                  {!address.isDefault && (
+                  {user && !address.isDefault && (
                     <button
                       onClick={async (e) => {
                         e.stopPropagation();

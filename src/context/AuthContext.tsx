@@ -19,7 +19,10 @@ export interface Address {
   id: string;
   name: string;
   phone: string;
+  houseNumber: string;
   street: string;
+  landmark?: string;
+  area: string;
   city: string;
   state: string;
   zipCode: string;

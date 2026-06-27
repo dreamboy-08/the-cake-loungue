@@ -9,7 +9,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import BackButton from '@/components/BackButton';
-import { Calendar } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -29,6 +29,8 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>('');
+  const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>('');
+  const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -60,26 +62,35 @@ const CheckoutPage = () => {
   // Get API URL from environment variables with fallback
   const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
 
-  // Set default address if available and ensure selectedAddress is valid
+  // Load persisted checkout data
   useEffect(() => {
-    if (userData?.addresses) {
-      if (!selectedAddress) {
-        const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
-        if (defaultAddr) setSelectedAddress(defaultAddr);
-      } else {
-        const stillExists = userData.addresses.find((a: Address) => a.id === selectedAddress.id);
-        if (!stillExists) {
-          const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
-          setSelectedAddress(defaultAddr || null);
-        } else {
-          // Sync with the latest address data from profile
-          if (JSON.stringify(stillExists) !== JSON.stringify(selectedAddress)) {
-            setSelectedAddress(stillExists);
-          }
-        }
-      }
+    // Only load if not already set (prevents overwriting defaults if they were just set)
+    const savedAddress = sessionStorage.getItem('checkout_address');
+    const savedDate = sessionStorage.getItem('checkout_delivery_date');
+    const savedSlot = sessionStorage.getItem('checkout_delivery_slot');
+    const savedInstructions = sessionStorage.getItem('checkout_delivery_instructions');
+
+    if (savedAddress) setSelectedAddress(JSON.parse(savedAddress));
+    if (savedDate) setDeliveryDate(savedDate);
+    if (savedSlot) setDeliveryTimeSlot(savedSlot);
+    if (savedInstructions) setDeliveryInstructions(savedInstructions);
+  }, []);
+
+  // Persist checkout data
+  useEffect(() => {
+    if (selectedAddress) sessionStorage.setItem('checkout_address', JSON.stringify(selectedAddress));
+    if (deliveryDate) sessionStorage.setItem('checkout_delivery_date', deliveryDate);
+    if (deliveryTimeSlot) sessionStorage.setItem('checkout_delivery_slot', deliveryTimeSlot);
+    if (deliveryInstructions) sessionStorage.setItem('checkout_delivery_instructions', deliveryInstructions);
+  }, [selectedAddress, deliveryDate, deliveryTimeSlot, deliveryInstructions]);
+
+  // Set default address if available and no address is selected (for logged in users)
+  useEffect(() => {
+    if (user && userData?.addresses && !selectedAddress) {
+      const defaultAddr = userData.addresses.find((a: Address) => a.isDefault);
+      if (defaultAddr) setSelectedAddress(defaultAddr);
     }
-  }, [userData?.addresses, selectedAddress]);
+  }, [user, userData?.addresses, selectedAddress]);
 
   useEffect(() => {
     // Dynamically load Razorpay script
@@ -162,7 +173,17 @@ const CheckoutPage = () => {
                 email: user?.email || 'guest@example.com',
                 phone: selectedAddress.phone,
               },
-              shippingAddress: `${selectedAddress.street}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
+              address: {
+                houseNumber: selectedAddress.houseNumber,
+                street: selectedAddress.street,
+                landmark: selectedAddress.landmark,
+                area: selectedAddress.area,
+                city: selectedAddress.city,
+                state: selectedAddress.state,
+                zipCode: selectedAddress.zipCode,
+              },
+              // For legacy support and easy display
+              shippingAddress: `${selectedAddress.houseNumber}, ${selectedAddress.street}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
               items: cart,
               totalAmount: finalTotal,
               shippingFee,
@@ -170,6 +191,8 @@ const CheckoutPage = () => {
               status: 'Confirmed',
               createdAt: new Date().toISOString(),
               deliveryDate,
+              deliveryTimeSlot,
+              deliveryInstructions,
               deliveryType,
             };
 
@@ -192,6 +215,12 @@ const CheckoutPage = () => {
 
               setPaymentStatus('success');
               clearCart();
+              // Clear persisted checkout data
+              sessionStorage.removeItem('checkout_address');
+              sessionStorage.removeItem('checkout_delivery_date');
+              sessionStorage.removeItem('checkout_delivery_slot');
+              sessionStorage.removeItem('checkout_delivery_instructions');
+
               router.push(`/checkout/success?orderId=${orderId}&paymentId=${response.razorpay_payment_id}`);
             } else {
               throw new Error(verifyData.error || 'Payment verification failed');
@@ -275,33 +304,67 @@ const CheckoutPage = () => {
 
             {/* Address Selection */}
             <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <AddressManager onSelect={(addr) => setSelectedAddress(addr)} />
+              <AddressManager onSelect={(addr) => setSelectedAddress(addr)} selectedAddress={selectedAddress} />
             </div>
 
-            {/* Delivery Date Selection */}
-            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
-              <h3 className="text-xl font-bold text-chocolate mb-6">
-                Delivery Date
-              </h3>
-              <div className="relative max-w-sm">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
-                  <Calendar size={18} />
+            {/* Delivery Details */}
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream space-y-8">
+              <div>
+                <h3 className="text-xl font-bold text-chocolate mb-6">
+                  Delivery Date & Time
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="relative">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
+                      <Calendar size={18} />
+                    </div>
+                    <input
+                      type="date"
+                      required
+                      min={earliestDate}
+                      value={deliveryDate}
+                      onChange={(e) => setDeliveryDate(e.target.value)}
+                      className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <select
+                      value={deliveryTimeSlot}
+                      onChange={(e) => setDeliveryTimeSlot(e.target.value)}
+                      required
+                      className="w-full px-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate appearance-none"
+                    >
+                      <option value="">Select Time Slot</option>
+                      <option value="10:00 AM - 01:00 PM">10:00 AM - 01:00 PM</option>
+                      <option value="01:00 PM - 04:00 PM">01:00 PM - 04:00 PM</option>
+                      <option value="04:00 PM - 07:00 PM">04:00 PM - 07:00 PM</option>
+                      <option value="07:00 PM - 10:00 PM">07:00 PM - 10:00 PM</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
+                      <Clock size={18} />
+                    </div>
+                  </div>
                 </div>
-                <input
-                  type="date"
-                  required
-                  min={earliestDate}
-                  value={deliveryDate}
-                  onChange={(e) => setDeliveryDate(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
+                  <AlertCircle size={14} className="text-rose-deep" />
+                  {hasCustomCake
+                    ? "Custom Cakes require at least 2 days preparation."
+                    : "Standard Cakes can be delivered as early as tomorrow."}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-bold text-chocolate mb-4">
+                  Delivery Instructions (Optional)
+                </h3>
+                <textarea
+                  placeholder="e.g. Please leave at the gate, call upon arrival, etc."
+                  value={deliveryInstructions}
+                  onChange={(e) => setDeliveryInstructions(e.target.value)}
+                  className="w-full p-6 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-medium text-chocolate min-h-[100px]"
                 />
               </div>
-              <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
-                <AlertCircle size={14} className="text-rose-deep" />
-                {hasCustomCake
-                  ? "Custom Cakes require at least 2 days preparation."
-                  : "Standard Cakes can be delivered as early as tomorrow."}
-              </p>
             </div>
 
             {/* Payment Method */}
@@ -411,7 +474,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate}
+                disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate || !deliveryTimeSlot}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -427,9 +490,17 @@ const CheckoutPage = () => {
                 )}
               </button>
 
-              {(!selectedAddress || !deliveryDate) && cart.length > 0 && (
+              {(!selectedAddress || !deliveryDate || !deliveryTimeSlot) && cart.length > 0 && (
                 <p className="mt-4 text-rose-deep text-xs font-bold text-center">
-                  * Please select {(!selectedAddress && !deliveryDate) ? 'address and delivery date' : !selectedAddress ? 'a delivery address' : 'a delivery date'} to proceed
+                  * Please select {
+                    (!selectedAddress && !deliveryDate && !deliveryTimeSlot)
+                    ? 'address, date and time slot'
+                    : !selectedAddress
+                    ? 'a delivery address'
+                    : !deliveryDate
+                    ? 'a delivery date'
+                    : 'a delivery time slot'
+                  } to proceed
                 </p>
               )}
 
