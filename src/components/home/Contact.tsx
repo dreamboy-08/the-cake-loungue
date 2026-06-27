@@ -15,10 +15,10 @@ const Contact = () => {
             Reach out to us through any of these channels.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
             {/* Address */}
-            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px]">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm">
+            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px] flex flex-col h-full">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm shrink-0">
                 <MapPin size={28} />
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Find Us</h4>
@@ -28,8 +28,8 @@ const Contact = () => {
             </div>
 
             {/* Phone */}
-            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px]">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm">
+            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px] flex flex-col h-full">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm shrink-0">
                 <Phone size={28} />
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Call Us</h4>
@@ -40,12 +40,12 @@ const Contact = () => {
             </div>
 
             {/* Email */}
-            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px]">
-              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm">
+            <div className="bg-cream rounded-[22px] p-8 shadow-sm border border-cream-dark transition-all duration-300 hover:shadow-md hover:translate-y-[-5px] flex flex-col h-full overflow-hidden">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-rose-deep mx-auto mb-6 shadow-sm shrink-0">
                 <Mail size={28} />
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Email Us</h4>
-              <p className="text-[0.95rem] text-text-soft leading-relaxed">
+              <p className="text-[0.95rem] text-text-soft leading-relaxed break-words">
                 thecakeloungegurgaon@gmail.com
               </p>
             </div>
