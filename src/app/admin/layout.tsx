@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -9,6 +9,7 @@ import {
   Package,
   Tags,
   ShoppingBag,
+  Users,
   LogOut,
   ChevronRight,
   Menu,
@@ -16,10 +17,13 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+import { Suspense } from 'react';
+
+const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { user, isAdmin, loading, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -41,6 +45,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
+    { label: 'Customers', href: '/admin/customers', icon: <Users size={20} /> },
   ];
 
   return (
@@ -87,15 +92,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           </nav>
 
           <div className="mt-auto pt-6 border-t border-white/10">
-            <div className="flex items-center gap-3 px-4 py-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-rose-deep flex items-center justify-center text-white font-bold border-2 border-white/20">
-                {user.displayName ? user.displayName[0].toUpperCase() : user.email?.[0].toUpperCase()}
+            {user && (
+              <div className="flex items-center gap-3 px-4 py-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-rose-deep flex items-center justify-center text-white font-bold border-2 border-white/20">
+                  {user.displayName ? user.displayName[0].toUpperCase() : user.email?.[0].toUpperCase() || 'A'}
+                </div>
+                <div className="flex flex-col overflow-hidden">
+                  <span className="font-bold text-sm truncate">{user.displayName || 'Admin'}</span>
+                  <span className="text-xs text-rose-deep/60 truncate">{user.email}</span>
+                </div>
               </div>
-              <div className="flex flex-col overflow-hidden">
-                <span className="font-bold text-sm truncate">{user.displayName || 'Admin'}</span>
-                <span className="text-[10px] text-white/40 truncate">{user.email}</span>
-              </div>
-            </div>
+            )}
             <button
               onClick={() => logout()}
               className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300"
@@ -122,6 +129,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         ></div>
       )}
     </div>
+  );
+};
+
+const AdminLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen bg-cream">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-deep"></div>
+      </div>
+    }>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </Suspense>
   );
 };
 

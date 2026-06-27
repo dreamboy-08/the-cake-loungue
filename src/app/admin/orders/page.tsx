@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '@/utils/firebase';
 import {
   collection,
@@ -8,7 +8,10 @@ import {
   orderBy,
   updateDoc,
   doc,
-  onSnapshot
+  onSnapshot,
+  limit,
+  startAfter,
+  getDocs
 } from 'firebase/firestore';
 import {
   ShoppingBag,
@@ -28,11 +31,14 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled'];
+const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Ready for Delivery', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [sortField, setSortField] = useState<'createdAt' | 'deliveryDate'>('createdAt');
@@ -40,20 +46,35 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
+  const fetchOrders = useCallback(async (isNext = false) => {
+    try {
+      let q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), limit(PAGE_SIZE));
+
+      if (isNext && lastDoc) {
+        q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), startAfter(lastDoc), limit(PAGE_SIZE));
+      }
+
+      const snapshot = await getDocs(q);
+      const newOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      if (isNext) {
+        setOrders(prev => [...prev, ...newOrders]);
+      } else {
+        setOrders(newOrders);
+      }
+
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMore(snapshot.docs.length === PAGE_SIZE);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      setLoading(false);
+    }
+  }, [sortField, sortOrder, lastDoc]);
+
   useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-      setLoading(false);
-    }, (error) => {
-      console.error("Error listening to orders:", error);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+    fetchOrders();
+  }, [fetchOrders]);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -73,34 +94,32 @@ const AdminOrders = () => {
   };
 
   const filteredOrders = useMemo(() => {
-    let result = orders.filter(o => {
+    return orders.filter(o => {
+      const id = o.id || '';
+      const customerName = o.customer?.name || '';
+      const customerEmail = o.customer?.email || '';
+      const customerPhone = o.customer?.phone || '';
+      const paymentId = o.paymentId || '';
+
       const matchesSearch =
-        o.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.customer?.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.paymentId || '').toLowerCase().includes(searchTerm.toLowerCase());
+        id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customerPhone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        paymentId.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus = statusFilter === 'All' || o.status === statusFilter;
 
       return matchesSearch && matchesStatus;
     });
-
-    result.sort((a, b) => {
-      const valA = a[sortField] || '';
-      const valB = b[sortField] || '';
-      if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
-      if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-    return result;
-  }, [orders, searchTerm, statusFilter, sortField, sortOrder]);
+  }, [orders, searchTerm, statusFilter]);
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case 'delivered': return 'bg-green-50 text-green-600 border-green-100';
       case 'confirmed': return 'bg-blue-50 text-blue-600 border-blue-100';
       case 'preparing': return 'bg-yellow-50 text-yellow-600 border-yellow-100';
+      case 'ready for delivery': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
       case 'out for delivery': return 'bg-purple-50 text-purple-600 border-purple-100';
       case 'pending': return 'bg-orange-50 text-orange-600 border-orange-100';
       case 'cancelled': return 'bg-red-50 text-red-600 border-red-100';
@@ -200,7 +219,7 @@ const AdminOrders = () => {
             <tbody className="divide-y divide-gray-100">
               {loading && orders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center">
+                  <td colSpan={7} className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <Loader2 className="animate-spin text-rose-deep" size={32} />
                       <p className="text-sm text-gray-400 font-medium">Loading orders...</p>
@@ -209,7 +228,7 @@ const AdminOrders = () => {
                 </tr>
               ) : filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-20 text-center">
+                  <td colSpan={7} className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <ShoppingBag className="text-gray-200" size={48} />
                       <p className="text-sm text-gray-400 font-medium">No orders found.</p>
@@ -277,7 +296,6 @@ const AdminOrders = () => {
         </div>
       </div>
 
-      {/* Order Details Modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-[400] flex items-center justify-end p-4 bg-chocolate/60  transition-all duration-300">
           <div className="bg-white h-full w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-l-[40px]">
@@ -341,9 +359,6 @@ const AdminOrders = () => {
                         <p className="font-bold text-chocolate">{selectedOrder.deliveryTimeSlot}</p>
                       </div>
                     )}
-                    {selectedOrder.deliveryType && (
-                      <p className="text-[10px] text-text-soft mt-1 font-bold uppercase tracking-widest">Type: {selectedOrder.deliveryType}</p>
-                    )}
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -403,6 +418,11 @@ const AdminOrders = () => {
                             <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
                               {item.weight || '0.5 Kg'}
                             </span>
+                            {item.flavor && (
+                              <span className="text-[10px] font-bold text-chocolate bg-gray-100 px-1.5 rounded">
+                                {item.flavor}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -461,6 +481,16 @@ const AdminOrders = () => {
               </div>
             </div>
           </div>
+        </div>
+      )}
+      {hasMore && !loading && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => fetchOrders(true)}
+            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm"
+          >
+            Load More Orders
+          </button>
         </div>
       )}
     </div>
