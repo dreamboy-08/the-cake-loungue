@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock, User, UserPlus, Chrome } from 'lucide-react';
+import { useAuth, mapAuthError } from '@/context/AuthContext';
+import { Mail, Lock, User, UserPlus, Chrome, Loader2 } from 'lucide-react';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -12,30 +12,38 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
   const { signup, signInWithGoogle } = useAuth();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || googleLoading) return;
+
     setError('');
     setLoading(true);
     try {
       await signup(email, password, name);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      setError(mapAuthError(err));
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (loading || googleLoading) return;
+
     setError('');
+    setGoogleLoading(true);
     try {
       await signInWithGoogle();
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError(mapAuthError(err));
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -102,10 +110,15 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="w-full bg-rose-deep text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brown transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-rose-deep/20"
             >
-              {loading ? "Creating Account..." : (
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Creating Account...
+                </>
+              ) : (
                 <>
                   <UserPlus size={20} />
                   Sign Up
@@ -126,10 +139,20 @@ export default function SignupPage() {
 
             <button
               onClick={handleGoogleSignIn}
-              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream transition-all"
+              disabled={loading || googleLoading}
+              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Chrome size={20} className="text-rose" />
-              Sign up with Google
+              {googleLoading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin text-rose" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Chrome size={20} className="text-rose" />
+                  Sign up with Google
+                </>
+              )}
             </button>
           </div>
 
