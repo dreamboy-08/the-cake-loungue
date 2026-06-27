@@ -6,10 +6,10 @@ import {
   collection,
   query,
   orderBy,
-  onSnapshot,
   limit,
   startAfter,
-  getDocs
+  getDocs,
+  where
 } from 'firebase/firestore';
 import {
   Users,
@@ -32,13 +32,14 @@ import Image from 'next/image';
 
 const AdminCustomers = () => {
   const [users, setUsers] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [customerOrders, setCustomerOrders] = useState<any[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   const fetchUsers = useCallback(async (isNext = false) => {
     try {
@@ -68,37 +69,35 @@ const AdminCustomers = () => {
 
   useEffect(() => {
     fetchUsers();
+  }, []);
 
-    const unsubOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
-      setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    });
-
-    return () => unsubOrders();
-  }, [fetchUsers]);
-
-  const customerStats = useMemo(() => {
-    return users.map(user => {
-      const userOrders = orders.filter(o => o.userId === user.uid || o.customer?.email === user.email);
-      const totalSpend = userOrders.reduce((acc, curr) => acc + (Number(curr.totalAmount) || 0), 0);
-      const lastOrder = userOrders.length > 0 ? userOrders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0] : null;
-
-      return {
-        ...user,
-        orderCount: userOrders.length,
-        totalSpend,
-        lastOrderDate: lastOrder ? lastOrder.createdAt : null,
-        history: userOrders
-      };
-    });
-  }, [users, orders]);
+  const fetchCustomerHistory = async (customer: any) => {
+    setLoadingOrders(true);
+    setSelectedCustomer(customer);
+    try {
+      // Query orders by userId OR email
+      const q = query(
+        collection(db, 'orders'),
+        where('customerEmail', '==', customer.email),
+        orderBy('createdAt', 'desc'),
+        limit(50)
+      );
+      const snapshot = await getDocs(q);
+      setCustomerOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    } catch (error) {
+      console.error("Error fetching customer history:", error);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 
   const filteredCustomers = useMemo(() => {
-    return customerStats.filter(c =>
+    return users.filter(c =>
       (c.displayName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (c.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (c.phone || '').toLowerCase().includes(searchTerm.toLowerCase())
-    ).sort((a, b) => (b.totalSpend || 0) - (a.totalSpend || 0));
-  }, [customerStats, searchTerm]);
+    );
+  }, [users, searchTerm]);
 
   return (
     <div className="space-y-8 animate-fade-up pb-12">
@@ -127,30 +126,29 @@ const AdminCustomers = () => {
             <thead>
               <tr className="bg-gray-50/50">
                 <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Customer</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Orders</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Total Spend</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Last Order</th>
+                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Status</th>
+                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Joined</th>
                 <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading && users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-8 py-20 text-center">
+                  <td colSpan={4} className="px-8 py-20 text-center">
                     <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={32} />
                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading Customers...</p>
                   </td>
                 </tr>
               ) : filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-8 py-20 text-center">
+                  <td colSpan={4} className="px-8 py-20 text-center">
                     <Users className="mx-auto text-gray-100 mb-4" size={64} />
                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No customers found</p>
                   </td>
                 </tr>
               ) : (
                 filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-gray-50/50 transition-colors group cursor-pointer" onClick={() => setSelectedCustomer(customer)}>
+                  <tr key={customer.id} className="hover:bg-gray-50/50 transition-colors group cursor-pointer" onClick={() => fetchCustomerHistory(customer)}>
                     <td className="px-8 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center text-rose-deep font-bold border border-rose/10">
@@ -163,16 +161,13 @@ const AdminCustomers = () => {
                       </div>
                     </td>
                     <td className="px-8 py-4 text-center">
-                      <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest">
-                        {customer.orderCount} Orders
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${customer.role === 'admin' ? 'bg-rose-deep text-white' : 'bg-blue-50 text-blue-600'}`}>
+                        {customer.role || 'user'}
                       </span>
                     </td>
                     <td className="px-8 py-4 text-center">
-                      <span className="font-black text-chocolate text-sm">₹{customer.totalSpend.toLocaleString()}</span>
-                    </td>
-                    <td className="px-8 py-4 text-center">
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                        {customer.lastOrderDate ? new Date(customer.lastOrderDate).toLocaleDateString() : 'Never'}
+                        {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'Unknown'}
                       </span>
                     </td>
                     <td className="px-8 py-4 text-right">
@@ -207,112 +202,114 @@ const AdminCustomers = () => {
             </div>
 
             <div className="p-8 space-y-10">
-              <div className="grid grid-cols-3 gap-4">
-                 <div className="bg-blue-50 p-6 rounded-[32px] border border-blue-100">
-                    <div className="text-blue-500 mb-2"><ShoppingBag size={20} /></div>
-                    <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total Orders</p>
-                    <p className="text-2xl font-black text-blue-600">{selectedCustomer.orderCount}</p>
-                 </div>
-                 <div className="bg-green-50 p-6 rounded-[32px] border border-green-100">
-                    <div className="text-green-500 mb-2"><TrendingUp size={20} /></div>
-                    <p className="text-[10px] font-black text-green-400 uppercase tracking-widest">Total Spend</p>
-                    <p className="text-2xl font-black text-green-600">₹{selectedCustomer.totalSpend.toLocaleString()}</p>
-                 </div>
-                 <div className="bg-purple-50 p-6 rounded-[32px] border border-purple-100">
-                    <div className="text-purple-500 mb-2"><Clock size={20} /></div>
-                    <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest">Average Order</p>
-                    <p className="text-2xl font-black text-purple-600">
-                      ₹{selectedCustomer.orderCount > 0 ? Math.round(selectedCustomer.totalSpend / selectedCustomer.orderCount).toLocaleString() : 0}
-                    </p>
-                 </div>
-              </div>
+              {loadingOrders ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-4">
+                   <Loader2 className="animate-spin text-rose-deep" size={32} />
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Fetching Account History...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="bg-blue-50 p-6 rounded-[32px] border border-blue-100">
+                        <div className="text-blue-500 mb-2"><ShoppingBag size={20} /></div>
+                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total Orders</p>
+                        <p className="text-2xl font-black text-blue-600">{customerOrders.length}</p>
+                     </div>
+                     <div className="bg-green-50 p-6 rounded-[32px] border border-green-100">
+                        <div className="text-green-500 mb-2"><TrendingUp size={20} /></div>
+                        <p className="text-[10px] font-black text-green-400 uppercase tracking-widest">Total Spend</p>
+                        <p className="text-2xl font-black text-green-600">₹{customerOrders.reduce((acc, curr) => acc + (Number(curr.totalAmount) || 0), 0).toLocaleString()}</p>
+                     </div>
+                  </div>
 
-              <div className="space-y-4">
-                 <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
-                    <UserIcon size={16} className="text-rose-deep" />
-                    Contact Information
-                 </h3>
-                 <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                       <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Email Address</p>
-                       <p className="text-sm font-bold text-chocolate">{selectedCustomer.email}</p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                       <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone Number</p>
-                       <p className="text-sm font-bold text-chocolate">{selectedCustomer.phone || 'Not Provided'}</p>
-                    </div>
-                 </div>
-              </div>
-
-              <div className="space-y-4">
-                 <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
-                    <MapPin size={16} className="text-rose-deep" />
-                    Saved Addresses
-                 </h3>
-                 <div className="space-y-3">
-                    {selectedCustomer.addresses && selectedCustomer.addresses.length > 0 ? (
-                      selectedCustomer.addresses.map((addr: any, idx: number) => (
-                        <div key={idx} className="p-5 rounded-[24px] bg-gray-50 border border-gray-100 flex items-start gap-4">
-                           <div className={`p-2 rounded-xl ${addr.isDefault ? 'bg-rose-deep text-white' : 'bg-white text-gray-300 shadow-sm'}`}>
-                              <MapPin size={16} />
-                           </div>
-                           <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                 <p className="text-sm font-bold text-chocolate">{addr.name}</p>
-                                 {addr.isDefault && <span className="text-[9px] font-black bg-rose/10 text-rose-deep px-2 py-0.5 rounded-full uppercase">Default</span>}
-                              </div>
-                              <p className="text-xs text-gray-500 leading-relaxed">
-                                {addr.houseNumber}, {addr.street}, {addr.landmark && `Near ${addr.landmark}, `}
-                                {addr.area}, {addr.city}, {addr.state} - {addr.zipCode}
-                              </p>
-                           </div>
+                  <div className="space-y-4">
+                     <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
+                        <UserIcon size={16} className="text-rose-deep" />
+                        Contact Information
+                     </h3>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Email Address</p>
+                           <p className="text-sm font-bold text-chocolate">{selectedCustomer.email}</p>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-gray-400 italic bg-gray-50 p-6 rounded-3xl border border-dashed border-gray-200 text-center">
-                        No saved addresses found.
-                      </p>
-                    )}
-                 </div>
-              </div>
-
-              <div className="space-y-4">
-                 <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
-                    <ShoppingBag size={16} className="text-rose-deep" />
-                    Order History
-                 </h3>
-                 <div className="space-y-3">
-                    {selectedCustomer.history && selectedCustomer.history.length > 0 ? (
-                      selectedCustomer.history.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((order: any) => (
-                        <div key={order.id} className="p-5 rounded-[24px] bg-white border border-gray-100 flex items-center justify-between hover:border-rose-deep/30 transition-all cursor-pointer group shadow-sm">
-                           <div className="flex items-center gap-4">
-                              <div className="bg-cream-dark p-3 rounded-2xl text-rose-deep font-mono text-[10px] font-bold uppercase">
-                                 #{order.id.slice(-6)}
-                              </div>
-                              <div className="flex flex-col">
-                                 <span className="text-sm font-bold text-chocolate group-hover:text-rose-deep transition-colors">₹{order.totalAmount}</span>
-                                 <span className="text-[10px] text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</span>
-                              </div>
-                           </div>
-                           <div className="flex items-center gap-3">
-                              <span className={`text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${
-                                 order.status?.toLowerCase() === 'delivered' ? 'bg-green-50 text-green-600' :
-                                 order.status?.toLowerCase() === 'cancelled' ? 'bg-red-50 text-red-600' :
-                                 'bg-blue-50 text-blue-600'
-                              }`}>
-                                 {order.status || 'Pending'}
-                              </span>
-                              <ArrowRight size={14} className="text-gray-300 group-hover:text-chocolate transition-all" />
-                           </div>
+                        <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone Number</p>
+                           <p className="text-sm font-bold text-chocolate">{selectedCustomer.phone || 'Not Provided'}</p>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-sm text-gray-400 italic bg-gray-50 p-6 rounded-3xl border border-dashed border-gray-200 text-center">
-                        No orders placed yet.
-                      </p>
-                    )}
-                 </div>
-              </div>
+                     </div>
+                  </div>
+
+                  <div className="space-y-4">
+                     <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
+                        <MapPin size={16} className="text-rose-deep" />
+                        Saved Addresses
+                     </h3>
+                     <div className="space-y-3">
+                        {selectedCustomer.addresses && selectedCustomer.addresses.length > 0 ? (
+                          selectedCustomer.addresses.map((addr: any, idx: number) => (
+                            <div key={idx} className="p-5 rounded-[24px] bg-gray-50 border border-gray-100 flex items-start gap-4">
+                               <div className={`p-2 rounded-xl ${addr.isDefault ? 'bg-rose-deep text-white' : 'bg-white text-gray-300 shadow-sm'}`}>
+                                  <MapPin size={16} />
+                               </div>
+                               <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                     <p className="text-sm font-bold text-chocolate">{addr.name}</p>
+                                     {addr.isDefault && <span className="text-[9px] font-black bg-rose/10 text-rose-deep px-2 py-0.5 rounded-full uppercase">Default</span>}
+                                  </div>
+                                  <p className="text-xs text-gray-500 leading-relaxed">
+                                    {addr.houseNumber}, {addr.street}, {addr.landmark && `Near ${addr.landmark}, `}
+                                    {addr.area}, {addr.city}, {addr.state} - {addr.zipCode}
+                                  </p>
+                               </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-gray-400 italic bg-gray-50 p-6 rounded-3xl border border-dashed border-gray-200 text-center">
+                            No saved addresses found.
+                          </p>
+                        )}
+                     </div>
+                  </div>
+
+                  <div className="space-y-4">
+                     <h3 className="text-xs font-black text-chocolate uppercase tracking-widest flex items-center gap-2">
+                        <ShoppingBag size={16} className="text-rose-deep" />
+                        Order History
+                     </h3>
+                     <div className="space-y-3">
+                        {customerOrders.length > 0 ? (
+                          customerOrders.map((order: any) => (
+                            <div key={order.id} className="p-5 rounded-[24px] bg-white border border-gray-100 flex items-center justify-between hover:border-rose-deep/30 transition-all cursor-pointer group shadow-sm">
+                               <div className="flex items-center gap-4">
+                                  <div className="bg-cream-dark p-3 rounded-2xl text-rose-deep font-mono text-[10px] font-bold uppercase">
+                                     #{order.id.slice(-6).toUpperCase()}
+                                  </div>
+                                  <div className="flex flex-col">
+                                     <span className="text-sm font-bold text-chocolate group-hover:text-rose-deep transition-colors">₹{order.totalAmount}</span>
+                                     <span className="text-[10px] text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                  </div>
+                               </div>
+                               <div className="flex items-center gap-3">
+                                  <span className={`text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${
+                                     order.status?.toLowerCase() === 'delivered' ? 'bg-green-50 text-green-600' :
+                                     order.status?.toLowerCase() === 'cancelled' ? 'bg-red-50 text-red-600' :
+                                     'bg-blue-50 text-blue-600'
+                                  }`}>
+                                     {order.status || 'Pending'}
+                                  </span>
+                                  <ArrowRight size={14} className="text-gray-300 group-hover:text-chocolate transition-all" />
+                               </div>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-gray-400 italic bg-gray-50 p-6 rounded-3xl border border-dashed border-gray-200 text-center">
+                            No orders placed yet.
+                          </p>
+                        )}
+                     </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

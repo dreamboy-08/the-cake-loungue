@@ -9,7 +9,9 @@ import {
   doc,
   query,
   orderBy,
-  onSnapshot
+  limit,
+  getCountFromServer,
+  where
 } from 'firebase/firestore';
 import {
   Plus,
@@ -39,7 +41,18 @@ const AdminCategories = () => {
     try {
       const q = query(collection(db, 'categories'), orderBy('name'));
       const snapshot = await getDocs(q);
-      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const fetchedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      setCategories(fetchedCategories);
+
+      // Fetch product counts for each category (Quota efficient)
+      const counts: Record<string, number> = {};
+      for (const cat of fetchedCategories) {
+        const qCount = query(collection(db, 'products'), where('category', '==', cat.name));
+        const countSnapshot = await getCountFromServer(qCount);
+        counts[cat.name] = countSnapshot.data().count;
+      }
+      setProductCounts(counts);
+
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
@@ -49,20 +62,6 @@ const AdminCategories = () => {
 
   useEffect(() => {
     fetchCategories();
-
-    // Listen to products to maintain accurate counts
-    const unsubProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const counts: Record<string, number> = {};
-      snapshot.docs.forEach(doc => {
-        const product = doc.data();
-        if (product.category) {
-          counts[product.category] = (counts[product.category] || 0) + 1;
-        }
-      });
-      setProductCounts(counts);
-    });
-
-    return () => unsubProducts();
   }, [fetchCategories]);
 
   const handleDelete = async (id: string) => {
@@ -108,7 +107,7 @@ const AdminCategories = () => {
           </div>
         ) : (
           categories.map((category) => (
-            <div key={category.id} className={`bg-white rounded-[40px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${category.status === 'inactive' ? 'opacity-60' : ''}`}>
+            <div key={category.id} className={`bg-white rounded-[40px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${category.active === false ? 'opacity-60' : ''}`}>
               <div className="relative h-48 bg-gray-50 overflow-hidden">
                 {category.image ? (
                   <Image src={category.image} alt={category.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -119,10 +118,10 @@ const AdminCategories = () => {
                 )}
                 <div className="absolute top-4 right-4 flex gap-2">
                   <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md flex items-center gap-1.5 ${
-                    category.status === 'inactive' ? 'bg-black/20 text-white' : 'bg-green-500/80 text-white'
+                    category.active === false ? 'bg-black/20 text-white' : 'bg-green-500/80 text-white'
                   }`}>
-                    {category.status === 'inactive' ? <EyeOff size={10} /> : <Eye size={10} />}
-                    {category.status || 'Active'}
+                    {category.active === false ? <EyeOff size={10} /> : <Eye size={10} />}
+                    {category.active === false ? 'Hidden' : 'Live'}
                   </div>
                 </div>
               </div>
