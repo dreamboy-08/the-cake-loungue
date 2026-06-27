@@ -13,7 +13,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth, db } from '@/utils/firebase';
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
 
 export interface Address {
   id: string;
@@ -60,50 +60,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
+    let unsubscribeSnapshot: (() => void) | null = null;
 
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Clear previous snapshot listener if it exists
+      if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+        unsubscribeSnapshot = null;
+      }
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setLoading(true);
       setUser(firebaseUser);
 
       if (firebaseUser) {
-        // Ensure user document exists in Firestore (especially for Google Sign-In)
+        setLoading(true);
         const userDocRef = doc(db, 'users', firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-          const newUserData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            createdAt: new Date().toISOString(),
-            role: 'user',
-            addresses: []
-          };
-          await setDoc(userDocRef, newUserData);
-          setRole('user');
-          setIsAdmin(false);
-          setUserData(newUserData);
-        } else {
-          const data = userDoc.data();
-          const userRole = data?.role || 'user';
-          setRole(userRole);
-          setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
-          setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
-          setIsSuperAdmin(userRole === 'super_admin');
-          setUserData(data);
-        }
+        // Setup real-time listener for user data
+        unsubscribeSnapshot = onSnapshot(userDocRef, async (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            const userRole = data?.role || 'user';
+            setRole(userRole);
+            setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
+            setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
+            setIsSuperAdmin(userRole === 'super_admin');
+            setUserData(data);
+            setLoading(false);
+          } else {
+            // Create user document if it doesn't exist (e.g., first Google Sign-In)
+            try {
+              const newUserData = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName,
+                createdAt: new Date().toISOString(),
+                role: 'user',
+                addresses: []
+              };
+              await setDoc(userDocRef, newUserData);
+              // onSnapshot will fire again after setDoc
+            } catch (err) {
+              console.error("Error creating user document:", err);
+              setLoading(false);
+            }
+          }
+        }, (error) => {
+          console.error("User data snapshot error:", error);
+          setLoading(false);
+        });
       } else {
         setRole(null);
         setIsAdmin(false);
         setIsStaff(false);
         setIsSuperAdmin(false);
         setUserData(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, []);
 
   const logout = async () => {
@@ -166,13 +184,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAddresses = [...currentAddresses, newAddress];
       }
 
+      console.log("Saving address to Firestore for user:", user.uid);
       await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
-
-      // Update local state immediately
-      setUserData({ ...userData, addresses: updatedAddresses });
-      console.log("Address added successfully:", newAddress.id);
-    } catch (error) {
-      console.error("Error adding address:", error);
+      console.log("Address saved successfully in Firestore");
+    } catch (error: any) {
+      console.error("Firestore save error:", error);
       throw error;
     }
   };
@@ -192,11 +208,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return addr;
       });
 
+      console.log("Updating address in Firestore for user:", user.uid);
       await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
-      setUserData({ ...userData, addresses: updatedAddresses });
-      console.log("Address updated successfully:", id);
-    } catch (error) {
-      console.error("Error updating address:", error);
+      console.log("Address updated successfully in Firestore");
+    } catch (error: any) {
+      console.error("Firestore update error:", error);
       throw error;
     }
   };
@@ -213,11 +229,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updatedAddresses[0].isDefault = true;
       }
 
+      console.log("Deleting address from Firestore for user:", user.uid);
       await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
-      setUserData({ ...userData, addresses: updatedAddresses });
-      console.log("Address deleted successfully:", id);
-    } catch (error) {
-      console.error("Error deleting address:", error);
+      console.log("Address deleted successfully in Firestore");
+    } catch (error: any) {
+      console.error("Firestore delete error:", error);
       throw error;
     }
   };
@@ -232,11 +248,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isDefault: addr.id === id
       }));
 
+      console.log("Setting default address in Firestore for user:", user.uid);
       await setDoc(userDocRef, { addresses: updatedAddresses }, { merge: true });
-      setUserData({ ...userData, addresses: updatedAddresses });
-      console.log("Default address set successfully:", id);
-    } catch (error) {
-      console.error("Error setting default address:", error);
+      console.log("Default address set successfully in Firestore");
+    } catch (error: any) {
+      console.error("Firestore set default error:", error);
       throw error;
     }
   };

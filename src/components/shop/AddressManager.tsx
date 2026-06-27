@@ -6,8 +6,8 @@ import { Plus, Edit2, Trash2, CheckCircle2, MapPin, X, Loader2 } from 'lucide-re
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Address) => void, selectedAddress?: Address | null }) => {
-  const { user, userData, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAuth();
-  const [isAdding, setIsAdding] = useState(!user && !selectedAddress); // Default to adding if guest and no address selected
+  const { user, userData, loading: authLoading, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAuth();
+  const [isAdding, setIsAdding] = useState(false);
   const [guestAddress, setGuestAddress] = useState<Address | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -37,15 +37,22 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("AddressManager: Form submitted", { isEditing: !!editingId, isUser: !!user });
     setLoading(true);
     setError(null);
     try {
       if (user) {
         if (editingId) {
+          console.log("AddressManager: Updating address", editingId);
           await updateAddress(editingId, formData);
+          const updatedAddr = { ...formData, id: editingId };
+          onSelect?.(updatedAddr as Address);
           setEditingId(null);
         } else {
+          console.log("AddressManager: Adding new address");
           await addAddress(formData);
+          // For new addresses, they are usually set as default if it's the first one
+          // The parent CheckoutPage will pick up the new default via useEffect
           setIsAdding(false);
         }
       } else {
@@ -99,10 +106,28 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
     : (selectedAddress ? [selectedAddress] : (guestAddress ? [guestAddress] : []));
 
   useEffect(() => {
+    // If not loading and not logged in and no address selected, default to adding
+    if (!authLoading && !user && !selectedAddress && !guestAddress && !isAdding && !editingId) {
+      setIsAdding(true);
+    }
+    // If logged in and has no addresses, default to adding
+    if (!authLoading && user && userData && (!userData.addresses || userData.addresses.length === 0) && !isAdding && !editingId) {
+      setIsAdding(true);
+    }
+    // If guest address was selected, stop adding
     if (!user && selectedAddress && isAdding) {
       setIsAdding(false);
     }
-  }, [user, selectedAddress, isAdding]);
+  }, [authLoading, user, userData?.addresses, selectedAddress, guestAddress, isAdding, editingId]);
+
+  if (authLoading && !userData && user) {
+    return (
+      <div className="h-40 flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-rose-deep" size={32} />
+        <p className="text-text-soft text-sm font-medium">Loading your addresses...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
