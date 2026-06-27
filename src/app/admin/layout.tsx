@@ -9,6 +9,7 @@ import {
   Package,
   Tags,
   ShoppingBag,
+  Users,
   LogOut,
   ChevronRight,
   Menu,
@@ -41,6 +42,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
+    { label: 'Users', href: '/admin/users', icon: <Users size={20} /> },
   ];
 
   return (

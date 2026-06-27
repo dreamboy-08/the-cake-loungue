@@ -6,6 +6,8 @@ import {
   User,
   signOut,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
@@ -13,7 +15,38 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { auth, db } from '@/utils/firebase';
-import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+
+/**
+ * Maps Firebase Auth error codes to user-friendly messages
+ */
+export const mapAuthError = (error: any): string => {
+  const code = error?.code;
+  switch (code) {
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/user-disabled':
+      return 'This account has been disabled.';
+    case 'auth/user-not-found':
+      return 'No account found with this email.';
+    case 'auth/wrong-password':
+      return 'Incorrect password. Please try again.';
+    case 'auth/email-already-in-use':
+      return 'An account with this email already exists.';
+    case 'auth/weak-password':
+      return 'Password should be at least 6 characters.';
+    case 'auth/popup-blocked':
+      return 'Sign-in popup was blocked. Please try again or check your browser settings.';
+    case 'auth/popup-closed-by-user':
+      return 'Sign-in window was closed before finishing. Please try again.';
+    case 'auth/network-request-failed':
+      return 'Network error. Please check your internet connection.';
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please try again later.';
+    default:
+      return error?.message || 'An unexpected error occurred. Please try again.';
+  }
+};
 
 export interface Address {
   id: string;
@@ -57,86 +90,171 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result?.user) {
+          console.log("Successfully signed in via redirect");
+        }
+      } catch (error) {
+        console.error("Error with redirect sign-in:", error);
+      }
+    };
 
+    handleRedirectResult();
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
-      setUser(firebaseUser);
+      try {
+        setUser(firebaseUser);
 
-      if (firebaseUser) {
-        // Ensure user document exists in Firestore (especially for Google Sign-In)
-        const userDocRef = doc(db, 'users', firebaseUser.uid);
-        let userDoc = await getDoc(userDocRef);
+        if (firebaseUser) {
+          // Ensure user document exists in Firestore (especially for Google Sign-In)
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          let userDoc = await getDoc(userDocRef);
 
-        if (!userDoc.exists()) {
-          const newUserData = {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            createdAt: new Date().toISOString(),
-            role: 'user',
-            addresses: []
-          };
-          await setDoc(userDocRef, newUserData);
-          setRole('user');
-          setIsAdmin(false);
-          setUserData(newUserData);
+          const now = new Date().toISOString();
+
+          if (!userDoc.exists()) {
+            const newUserData = {
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || '',
+              email: firebaseUser.email,
+              role: 'user',
+              createdAt: now,
+              lastLogin: now,
+              addresses: []
+            };
+            await setDoc(userDocRef, newUserData);
+            setRole('user');
+            setIsAdmin(false);
+            setIsStaff(false);
+            setIsSuperAdmin(false);
+            setUserData(newUserData);
+          } else {
+            const data = userDoc.data();
+
+            // Check for missing fields and migrate if necessary
+            const updates: any = {
+              lastLogin: now
+            };
+
+            let needsMigration = false;
+            if (!data.uid) { updates.uid = firebaseUser.uid; needsMigration = true; }
+            if (!data.email) { updates.email = firebaseUser.email; needsMigration = true; }
+            if (data.name === undefined && data.displayName !== undefined) {
+              updates.name = data.displayName;
+              needsMigration = true;
+            }
+            if (!data.role) { updates.role = 'user'; needsMigration = true; }
+            if (!data.createdAt) { updates.createdAt = now; needsMigration = true; }
+
+            if (needsMigration || updates.lastLogin) {
+              await updateDoc(userDocRef, updates);
+            }
+
+            const updatedData = { ...data, ...updates };
+            const userRole = updatedData.role || 'user';
+
+            setRole(userRole);
+            setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
+            setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
+            setIsSuperAdmin(userRole === 'super_admin');
+            setUserData(updatedData);
+          }
         } else {
-          const data = userDoc.data();
-          const userRole = data?.role || 'user';
-          setRole(userRole);
-          setIsAdmin(userRole === 'admin' || userRole === 'super_admin');
-          setIsStaff(userRole === 'staff' || userRole === 'admin' || userRole === 'super_admin');
-          setIsSuperAdmin(userRole === 'super_admin');
-          setUserData(data);
+          setRole(null);
+          setIsAdmin(false);
+          setIsStaff(false);
+          setIsSuperAdmin(false);
+          setUserData(null);
         }
-      } else {
-        setRole(null);
-        setIsAdmin(false);
-        setIsStaff(false);
-        setIsSuperAdmin(false);
-        setUserData(null);
+      } catch (error) {
+        console.error("Auth state change error:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout error:", error);
+      throw error;
+    }
   };
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      // Try popup first
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      console.warn("Popup sign-in failed, trying redirect:", error.code);
+      // Fallback to redirect for mobile or if popup is blocked
+      if (error.code === 'auth/popup-blocked' ||
+          error.code === 'auth/popup-closed-by-user' ||
+          error.code === 'auth/cancelled-popup-request') {
+        try {
+          await signInWithRedirect(auth, provider);
+        } catch (redirectError) {
+          console.error("Redirect sign-in failed:", redirectError);
+          throw redirectError;
+        }
+      } else {
+        throw error;
+      }
+    }
   };
 
   const resetPassword = async (email: string) => {
-    await sendPasswordResetEmail(auth, email);
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error("Reset password error:", error);
+      throw error;
+    }
   };
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(userCredential.user, {
-      displayName: name
-    });
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, {
+        displayName: name
+      });
 
-    // Create user document in Firestore
-    const newUserData = {
-      uid: userCredential.user.uid,
-      email: userCredential.user.email,
-      displayName: name,
-      createdAt: new Date().toISOString(),
-      role: 'user',
-      addresses: []
-    };
-    await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
-    setUserData(newUserData);
+      const now = new Date().toISOString();
+      const newUserData = {
+        uid: userCredential.user.uid,
+        name: name,
+        email: userCredential.user.email,
+        role: 'user',
+        createdAt: now,
+        lastLogin: now,
+        addresses: []
+      };
+
+      await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
+      setUserData(newUserData);
+    } catch (error) {
+      console.error("Signup error:", error);
+      throw error;
+    }
   };
 
   const addAddress = async (address: Omit<Address, 'id'>) => {

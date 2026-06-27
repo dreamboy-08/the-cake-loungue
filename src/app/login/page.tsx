@@ -3,38 +3,46 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock, LogIn, Chrome } from 'lucide-react';
+import { useAuth, mapAuthError } from '@/context/AuthContext';
+import { Mail, Lock, LogIn, Chrome, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
   const { login, signInWithGoogle } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading || googleLoading) return;
+
     setError('');
     setLoading(true);
     try {
       await login(email, password);
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to login');
+      setError(mapAuthError(err));
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
+    if (loading || googleLoading) return;
+
     setError('');
+    setGoogleLoading(true);
     try {
       await signInWithGoogle();
       router.push('/');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in with Google');
+      setError(mapAuthError(err));
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -91,10 +99,15 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || googleLoading}
               className="w-full bg-rose-deep text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brown transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-rose-deep/20"
             >
-              {loading ? "Logging in..." : (
+              {loading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin" />
+                  Logging in...
+                </>
+              ) : (
                 <>
                   <LogIn size={20} />
                   Login
@@ -115,10 +128,20 @@ export default function LoginPage() {
 
             <button
               onClick={handleGoogleSignIn}
-              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream transition-all"
+              disabled={loading || googleLoading}
+              className="mt-6 w-full bg-white border border-rose/10 text-chocolate py-4 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-cream transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Chrome size={20} className="text-rose" />
-              Sign in with Google
+              {googleLoading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin text-rose" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <Chrome size={20} className="text-rose" />
+                  Sign in with Google
+                </>
+              )}
             </button>
           </div>
 

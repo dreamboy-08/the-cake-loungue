@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/context/AuthContext';
-import { Mail, ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
+import { useAuth, mapAuthError } from '@/context/AuthContext';
+import { Mail, ArrowLeft, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 
 export default function ForgotPasswordPage() {
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
       await resetPassword(email);
       setMessage('Password reset email sent! Please check your inbox.');
     } catch (err: any) {
-      setError(err.message || 'Failed to reset password');
+      setError(mapAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,12 @@ export default function ForgotPasswordPage() {
                   disabled={loading}
                   className="w-full bg-rose-deep text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-brown transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-rose-deep/20"
                 >
-                  {loading ? "Sending..." : (
+                  {loading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
                     <>
                       <Send size={18} />
                       Send Reset Link

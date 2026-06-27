@@ -101,8 +101,9 @@ const Navbar = () => {
                       onClick={() => setIsSearchOpen(!isSearchOpen)}
                       className={cn(
                         "p-2 rounded-full transition-all duration-300",
-                        (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
-                        (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                        (isScrolled || isAuthPage || isPolicyPage)
+                          ? "text-chocolate hover:text-rose hover:bg-rose/10"
+                          : "text-white hover:text-gold-light hover:bg-white/10"
                       )}
                       aria-label="Toggle search"
                     >
@@ -115,8 +116,9 @@ const Navbar = () => {
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
                             "flex items-center gap-2 group p-1 rounded-full transition-all",
-                            (isScrolled || isAuthPage) ? "hover:text-rose" : "hover:text-gold-light"
-                            (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
+                            (isScrolled || isAuthPage || isPolicyPage)
+                              ? "hover:text-rose hover:bg-rose/5"
+                              : "hover:text-gold-light hover:bg-white/10"
                           )}
                         >
                           <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm">
@@ -206,8 +208,9 @@ const Navbar = () => {
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
                     "relative p-2 rounded-full transition-all duration-300",
-                    (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light"
-                    (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                    (isScrolled || isAuthPage || isPolicyPage)
+                      ? "text-chocolate hover:text-rose hover:bg-rose/10"
+                      : "text-white hover:text-gold-light hover:bg-white/10"
                   )}
                   aria-label="View Cart"
                 >
@@ -273,7 +276,6 @@ const Navbar = () => {
         <div className={cn(
           "hidden md:block fixed top-[72px] left-0 w-full z-[99] py-3 transition-all duration-400 ease-in-out opacity-100 bg-transparent",
           isHidden && "translate-y-[-100%] opacity-0",
-          (isScrolled || isAuthPage) && "bg-cream shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
           (isScrolled || isAuthPage || isPolicyPage) && "bg-[rgba(253,246,238,0.97)] backdrop-blur-[12px] shadow-[0_4px_14px_rgba(0,0,0,0.05)]"
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">

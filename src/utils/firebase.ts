@@ -14,16 +14,24 @@ const firebaseConfig = {
 
 // Initialize Firebase only if API key is present
 let app;
-if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-} else {
-  console.warn("Firebase configuration is missing or invalid. Please check your environment variables.");
-  // Initialize with a dummy app to prevent crashes, but it won't work for auth
-  app = getApps().length > 0 ? getApp() : initializeApp({
-    apiKey: "missing",
-    authDomain: "missing",
-    projectId: "missing"
-  });
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key" && firebaseConfig.apiKey !== "missing") {
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  } else {
+    if (typeof window !== 'undefined') {
+      console.warn("Firebase configuration is missing or invalid. Please check your environment variables.");
+    }
+    // Initialize with a dummy app to prevent crashes during build or if env vars are missing
+    app = getApps().length > 0 ? getApp() : initializeApp({
+      apiKey: "missing",
+      authDomain: "missing",
+      projectId: "missing"
+    });
+  }
+} catch (error) {
+  console.error("Error initializing Firebase:", error);
+  // Fallback to existing app if already initialized
+  app = getApp();
 }
 
 const auth = getAuth(app);
