@@ -5,6 +5,7 @@ import { Shield, FileText, RefreshCcw, Truck } from 'lucide-react';
 import PolicyCard from '@/components/policies/PolicyCard';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import { CONTACT_INFO } from '@/constants/contact';
 
 const PoliciesContent = () => {
   const policies = [
@@ -92,13 +93,13 @@ const PoliciesContent = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+917703870170"
+              href={`tel:${CONTACT_INFO.whatsapp}`}
               className="btn btn-primary"
             >
               Call Support
             </a>
             <a
-              href="mailto:thecakeloungegurgaon@gmail.com"
+              href={`mailto:${CONTACT_INFO.email}`}
               className="btn btn-outline border-rose-deep text-rose-deep hover:bg-rose-deep hover:text-white"
             >
               Email Us

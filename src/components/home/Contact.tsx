@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { CONTACT_INFO } from '@/constants/contact';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -15,14 +16,12 @@ const Contact = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Client-side validation
@@ -33,33 +32,12 @@ const Contact = () => {
       return;
     }
 
-    setStatus('loading');
-    setErrorMessage('');
+    const mailtoUrl = `mailto:${CONTACT_INFO.email}?subject=Cake Lounge Inquiry&body=${encodeURIComponent(`Name: ${formData.name}\nPhone: ${formData.phone}\n\nMessage:\n${formData.message}`)}`;
+    window.location.href = mailtoUrl;
 
-    try {
-      const response = await fetch(`${API_URL}/api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus('success');
-        setFormData({ name: '', email: '', phone: '', message: '', honeypot: '' });
-        setTimeout(() => setStatus('idle'), 6000);
-      } else {
-        throw new Error(data.error || 'Something went wrong. Please try again.');
-      }
-    } catch (error: any) {
-      console.error('Submission error:', error);
-      setErrorMessage(error.message || 'Failed to send message. Please try again.');
-      setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
-    }
+    setStatus('success');
+    setFormData({ name: '', email: '', phone: '', message: '', honeypot: '' });
+    setTimeout(() => setStatus('idle'), 6000);
   };
 
   return (
@@ -78,7 +56,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Find Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">Cake lounge, U-block, DLF phase-3, sector-24, Gurugram, – Haryana </p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">{CONTACT_INFO.address}</p>
                 </div>
               </div>
 
@@ -88,7 +66,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Call Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">+91 77038 70170 · Mon–Sun 8am–10pm</p>
+                  <p className="text-[0.82rem] text-text-soft mt-0.5">{CONTACT_INFO.phone} · {CONTACT_INFO.businessHours}</p>
                 </div>
               </div>
 
@@ -98,7 +76,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="text-[0.88rem] font-semibold text-chocolate">Email Us</h4>
-                  <p className="text-[0.82rem] text-text-soft mt-0.5">thecakeloungegurgaon@gmail.com</p>
+                  <a href={`mailto:${CONTACT_INFO.email}?subject=Cake Lounge Inquiry`} className="text-[0.82rem] text-text-soft mt-0.5 hover:text-rose-deep transition-colors">{CONTACT_INFO.email}</a>
                 </div>
               </div>
             </div>
@@ -116,10 +94,9 @@ const Contact = () => {
                   <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-6 text-green-500">
                     <CheckCircle2 size={48} />
                   </div>
-                  <h3 className="text-2xl font-bold text-chocolate mb-2">Thank you!</h3>
+                  <h3 className="text-2xl font-bold text-chocolate mb-2">Email Client Opened!</h3>
                   <p className="text-text-soft">
-                    We&apos;ve received your message.<br />
-                    Our team will get back to you shortly.
+                    Your message has been prepared in your default email application.
                   </p>
                   <button
                     onClick={() => setStatus('idle')}
@@ -131,7 +108,7 @@ const Contact = () => {
               )}
             </AnimatePresence>
 
-            <h3 className="mb-6 text-[1.4rem] text-chocolate font-bold">Send a Message</h3>
+            <h3 className="mb-6 text-[1.4rem] text-chocolate font-bold">Send Me a Message</h3>
             <form onSubmit={handleSubmit} className="flex flex-col gap-[22px]">
               {/* Honeypot field for spam protection */}
               <input
@@ -207,18 +184,9 @@ const Contact = () => {
 
               <button
                 type="submit"
-                disabled={status === 'loading'}
                 className="w-full p-[15px] bg-rose-deep text-white border-none rounded-[50px] font-poppins text-[0.95rem] font-semibold cursor-pointer transition-all duration-350 flex items-center justify-center gap-2 hover:bg-brown hover:translate-y-[-2px] hover:shadow-[0_6px_20px_rgba(107,58,42,0.3)] disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none"
               >
-                {status === 'loading' ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" /> Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send size={18} /> Send Message
-                  </>
-                )}
+                <Send size={18} /> Send Me a Message
               </button>
             </form>
           </div>

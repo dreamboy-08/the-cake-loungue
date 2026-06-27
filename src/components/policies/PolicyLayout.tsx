@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import { CONTACT_INFO } from '@/constants/contact';
 
 interface BreadcrumbItem {
   label: string;
@@ -90,8 +91,8 @@ const PolicyLayout: React.FC<PolicyLayoutProps> = ({ title, children, breadcrumb
               </p>
               <p className="text-sm">
                 Email us at{' '}
-                <a href="mailto:thecakeloungegurgaon@gmail.com" className="text-rose-deep font-bold hover:underline underline-offset-4">
-                  thecakeloungegurgaon@gmail.com
+                <a href={`mailto:${CONTACT_INFO.email}`} className="text-rose-deep font-bold hover:underline underline-offset-4">
+                  {CONTACT_INFO.email}
                 </a>
               </p>
             </footer>
