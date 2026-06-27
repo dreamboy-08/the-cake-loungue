@@ -37,7 +37,7 @@ test.describe('Admin Product Management & Sync', () => {
     });
 
     // Navigate to Admin Products
-    await page.goto('http://localhost:3001/admin/products?bypass=true');
+    await page.goto('http://localhost:3000/admin/products?bypass=true');
   });
 
   test('CRUD Flow: Create, Read, Update, Delete', async ({ page }) => {
@@ -169,7 +169,7 @@ test.describe('Admin Product Management & Sync', () => {
     });
 
     // 2. Check Customer Menu
-    await page.goto('http://localhost:3001/menu');
+    await page.goto('http://localhost:3000/menu');
     await expect(page.locator('text=Sync Test Cake')).toBeVisible();
     await expect(page.locator('text=₹750')).toBeVisible();
 
