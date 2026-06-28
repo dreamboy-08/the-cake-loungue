@@ -99,7 +99,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   };
 
   useEffect(() => {
-    const q = query(collection(db, 'categories'), orderBy('name'));
+    const q = query(collection(db, 'categories'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {

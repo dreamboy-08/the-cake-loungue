@@ -33,19 +33,15 @@ import { useAuth } from '@/context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ROLES = [
-  { value: 'super_admin', label: 'Super Admin', icon: <ShieldAlert size={14} />, color: 'bg-red-500', textColor: 'text-red-500' },
   { value: 'admin', label: 'Admin', icon: <ShieldCheck size={14} />, color: 'bg-rose-deep', textColor: 'text-rose-deep' },
   { value: 'staff', label: 'Staff', icon: <Shield size={14} />, color: 'bg-blue-500', textColor: 'text-blue-500' },
   { value: 'user', label: 'Customer', icon: <UserIcon size={14} />, color: 'bg-gray-500', textColor: 'text-gray-500' },
 ];
 
 const AdminUsers = () => {
-  const { user: currentUser, isSuperAdmin } = useAuth();
+  const { user: currentUser, isAdmin } = useAuth();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastDoc, setLastDoc] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -56,44 +52,25 @@ const AdminUsers = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const fetchUsers = useCallback(async (isNext = false) => {
-    setLoading(true);
-    try {
-      let q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
-
-      if (isNext && lastDoc) {
-        q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(PAGE_SIZE));
-      }
-
-      const snapshot = await getDocs(q);
-      const newUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-      if (isNext) {
-        setUsers(prev => {
-          const existingIds = new Set(prev.map(u => u.id));
-          const uniqueNew = newUsers.filter(u => !existingIds.has(u.id));
-          return [...prev, ...uniqueNew];
-        });
-      } else {
-        setUsers(newUsers);
-      }
-
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-      setHasMore(snapshot.docs.length === PAGE_SIZE);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [lastDoc]);
-
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    setLoading(true);
+    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUsers(fetchedUsers);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error listening to users:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleRoleChange = async (userId: string, newRole: string) => {
-    if (!isSuperAdmin) {
-      showToast("Only Super Admins can manage roles.", "error");
+    if (!isAdmin) {
+      showToast("You do not have permission to manage roles.", "error");
       return;
     }
 
@@ -164,12 +141,6 @@ const AdminUsers = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">User Role Management</h1>
           <p className="text-gray-500 mt-1">Control access levels and manage team permissions.</p>
         </div>
-        {!isSuperAdmin && (
-          <div className="flex items-center gap-2 bg-amber-50 text-amber-600 px-4 py-2 rounded-xl border border-amber-100 text-[10px] font-black uppercase tracking-widest">
-            <ShieldAlert size={14} />
-            View Only (Super Admin Access Required to Edit)
-          </div>
-        )}
       </header>
 
       <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6">
@@ -231,7 +202,6 @@ const AdminUsers = () => {
                     <td className="px-8 py-4">
                       <div className="flex items-center gap-4">
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 ${
-                          u.role === 'super_admin' ? 'bg-red-50 text-red-500 border-red-100' :
                           u.role === 'admin' ? 'bg-rose-50 text-rose-deep border-rose-100' :
                           'bg-cream-dark text-chocolate border-rose/10'
                         }`}>
@@ -264,7 +234,7 @@ const AdminUsers = () => {
                           <Loader2 className="animate-spin text-rose-deep" size={20} />
                         ) : (
                           <select
-                            disabled={!isSuperAdmin || u.id === currentUser?.uid}
+                            disabled={!isAdmin || u.id === currentUser?.uid}
                             value={u.role || 'user'}
                             onChange={(e) => handleRoleChange(u.id, e.target.value)}
                             className="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -284,31 +254,18 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      {hasMore && (
-        <div className="flex justify-center mt-8">
-          <button
-            disabled={loading}
-            onClick={() => fetchUsers(true)}
-            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
-          >
-            {loading && users.length > 0 && <Loader2 className="animate-spin" size={16} />}
-            {loading && users.length > 0 ? 'Loading...' : 'Load More Users'}
-          </button>
-        </div>
-      )}
-
       <div className="bg-cream-dark/30 p-8 rounded-[40px] border border-rose/10 flex flex-col md:flex-row items-center gap-6 mt-8">
         <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-rose-deep shadow-sm">
            <ShieldAlert size={32} />
         </div>
         <div className="flex-1 text-center md:text-left">
            <h3 className="text-lg font-bold text-chocolate mb-1">Permission Guardrails</h3>
-           <p className="text-sm text-gray-500">Super Admins have full control over role assignments. Changes are applied instantly across the platform. Users cannot modify their own permissions to prevent accidental lockouts.</p>
+           <p className="text-sm text-gray-500">Administrators have full control over role assignments. Changes are applied instantly across the platform. Users cannot modify their own permissions to prevent accidental lockouts.</p>
         </div>
         <div className="flex items-center gap-4">
            <div className="text-right hidden lg:block">
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Your Status</p>
-              <p className="text-sm font-bold text-chocolate capitalize">{isSuperAdmin ? 'Super Admin (Unrestricted)' : 'Admin (View Only)'}</p>
+              <p className="text-sm font-bold text-chocolate capitalize">{isAdmin ? 'Administrator (Full Access)' : 'Team Member'}</p>
            </div>
         </div>
       </div>
