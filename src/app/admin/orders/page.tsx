@@ -63,11 +63,17 @@ const AdminOrders = () => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const liveOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setOrders(prev => {
-        // Merge live orders with existing ones, preserving pagination
-        const otherOrders = prev.slice(PAGE_SIZE);
-        const merged = [...liveOrders, ...otherOrders];
-        // Deduplicate by ID
-        return Array.from(new Map(merged.map(item => [item.id, item])).values());
+        // Robust ID-based merge to prevent duplicates and data loss
+        const liveIds = new Set(liveOrders.map(o => o.id));
+        const filteredPrev = prev.filter(o => !liveIds.has(o.id));
+        const combined = [...liveOrders, ...filteredPrev];
+
+        // Sort by date descending
+        return combined.sort((a, b) => {
+          const dateA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : new Date(a.createdAt).getTime();
+          const dateB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : new Date(b.createdAt).getTime();
+          return dateB - dateA;
+        });
       });
       if (snapshot.docs.length > 0) {
         setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
