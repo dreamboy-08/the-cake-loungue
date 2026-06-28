@@ -39,7 +39,7 @@ const AdminCategories = () => {
 
   useEffect(() => {
     setLoading(true);
-    const q = query(collection(db, 'categories'));
+    const q = query(collection(db, 'categories'), orderBy('name'));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const fetchedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
