@@ -99,7 +99,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   };
 
   useEffect(() => {
-    const q = query(collection(db, 'categories'), orderBy('name'));
+    const q = query(collection(db, 'categories'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {
@@ -228,15 +228,15 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-up">
-        <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col">
+        <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white shrink-0">
           <h2 className="text-xl font-bold font-playfair">{product ? 'Edit Product' : 'Add New Product'}</h2>
           <button onClick={onClose} className="p-2 hover:bg-rose rounded-full transition-colors">
             <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 overflow-y-auto space-y-8">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Image Gallery Section */}
             <div className="space-y-6">
@@ -351,10 +351,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold bg-white"
                   >
-                    <option value="">Select Category</option>
+                    <option value="">{categories.length === 0 ? 'Loading categories...' : 'Select Category'}</option>
                     {categories.map(cat => (
                       <option key={cat.id} value={cat.name}>{cat.name}</option>
                     ))}
+                    {categories.length === 0 && !loading && (
+                      <option disabled>No categories found</option>
+                    )}
                   </select>
                 </div>
               </div>
