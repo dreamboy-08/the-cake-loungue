@@ -168,6 +168,7 @@ const CheckoutPage = () => {
 
             const orderDetails = {
               userId: user?.uid || 'guest',
+              isGuest: !user,
               customer: {
                 name: selectedAddress.name,
                 email: user?.email || 'guest@example.com',
@@ -176,18 +177,27 @@ const CheckoutPage = () => {
               address: {
                 houseNumber: selectedAddress.houseNumber,
                 street: selectedAddress.street,
-                landmark: selectedAddress.landmark,
+                landmark: selectedAddress.landmark || 'None',
                 area: selectedAddress.area,
                 city: selectedAddress.city,
                 state: selectedAddress.state,
-                zipCode: selectedAddress.zipCode,
+                pincode: selectedAddress.zipCode,
+                zipCode: selectedAddress.zipCode, // Keep for legacy
               },
               // For legacy support and easy display
               shippingAddress: `${selectedAddress.houseNumber}, ${selectedAddress.street}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
-              items: cart,
+              items: cart.map(item => ({
+                ...item,
+                unitPrice: item.price,
+                totalPrice: item.price * item.quantity
+              })),
               totalAmount: finalTotal,
               shippingFee,
               subtotal: cartTotal,
+              discount: 0,
+              taxes: 0,
+              coupon: null,
+              paymentMethod: 'Online',
               status: 'Confirmed',
               createdAt: new Date().toISOString(),
               deliveryDate,

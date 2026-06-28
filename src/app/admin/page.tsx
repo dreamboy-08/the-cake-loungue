@@ -142,10 +142,42 @@ const AdminDashboard = () => {
 
     fetchInitialStats();
 
-    // Live listeners for RECENT activity only (Quota efficient)
-    const qRecentOrders = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(5));
-    const unsubRecentOrders = onSnapshot(qRecentOrders, (snapshot) => {
-      setRecentOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    // Optimized Live listener: Only fetch recent/relevant orders for live stats
+    // Historical stats are fetched once in fetchInitialStats
+    const qRecentOrdersSync = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(50));
+    const unsubOrders = onSnapshot(qRecentOrdersSync, (snapshot) => {
+      const recentOrdersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Update Recent Orders UI (Top 5)
+      setRecentOrders(recentOrdersList.slice(0, 5));
+
+      // Update TODAY'S stats in real-time
+      const now = new Date();
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const todayStartTime = todayStart.getTime();
+
+      let todayCount = 0;
+      let revToday = 0;
+
+      recentOrdersList.forEach((order: any) => {
+        const orderDate = new Date(order.createdAt).getTime();
+        const amount = Number(order.totalAmount) || 0;
+        const status = order.status?.toLowerCase();
+
+        if (orderDate >= todayStartTime) {
+          todayCount++;
+          if (status !== 'cancelled') revToday += amount;
+        }
+      });
+
+      setStats(prev => ({
+        ...prev,
+        todayOrders: todayCount,
+        revenueToday: revToday,
+        // For other stats, we could either re-fetch or assume fetchInitialStats is sufficient
+        // In a real production app, we'd use a summary document.
+      }));
     });
 
     const qRecentUsers = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(5));
@@ -154,7 +186,7 @@ const AdminDashboard = () => {
     });
 
     return () => {
-      unsubRecentOrders();
+      unsubOrders();
       unsubRecentUsers();
     };
   }, []);

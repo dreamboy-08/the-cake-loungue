@@ -31,14 +31,11 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
-const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Ready for Delivery', 'Out for Delivery', 'Delivered', 'Cancelled'];
+const ORDER_STATUSES = ['Pending', 'Confirmed', 'Preparing', 'Baking', 'Ready for Dispatch', 'Out for Delivery', 'Delivered', 'Cancelled'];
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastDoc, setLastDoc] = useState<any>(null);
-  const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [sortField, setSortField] = useState<'createdAt' | 'deliveryDate'>('createdAt');
@@ -46,43 +43,87 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const fetchOrders = useCallback(async (isNext = false) => {
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 20;
+
+  // 1. Real-time listener for VERY RECENT orders (e.g., last 24 hours or last 10)
+  useEffect(() => {
+    // Only use real-time for the first page to ensure "instant" appearance
+    // If searching or filtering, real-time becomes tricky with pagination,
+    // so we'll keep it simple: real-time for the main view's top orders.
+    if (searchTerm || statusFilter !== 'All') return;
+
+    const q = query(
+      collection(db, 'orders'),
+      orderBy(sortField, sortOrder),
+      limit(PAGE_SIZE)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const liveOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setOrders(prev => {
+        // Merge live orders with existing ones, preserving pagination
+        const otherOrders = prev.slice(PAGE_SIZE);
+        const merged = [...liveOrders, ...otherOrders];
+        // Deduplicate by ID
+        return Array.from(new Map(merged.map(item => [item.id, item])).values());
+      });
+      if (snapshot.docs.length > 0) {
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [sortField, sortOrder, searchTerm, statusFilter]); // Removed lastDoc dependency
+
+  // 2. Paginated fetch for historical data
+  const fetchMore = async () => {
+    if (!hasMore || loading || !lastDoc) return;
     setLoading(true);
     try {
-      let q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), limit(PAGE_SIZE));
-
-      if (isNext && lastDoc) {
-        q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), startAfter(lastDoc), limit(PAGE_SIZE));
-      }
-
+      const q = query(
+        collection(db, 'orders'),
+        orderBy(sortField, sortOrder),
+        startAfter(lastDoc),
+        limit(PAGE_SIZE)
+      );
       const snapshot = await getDocs(q);
       const newOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      if (isNext) {
-        setOrders(prev => {
-          const existingIds = new Set(prev.map(o => o.id));
-          const uniqueNew = newOrders.filter(o => !existingIds.has(o.id));
-          return [...prev, ...uniqueNew];
-        });
-      } else {
-        setOrders(newOrders);
-      }
+      setOrders(prev => {
+        const merged = [...prev, ...newOrders];
+        return Array.from(new Map(merged.map(item => [item.id, item])).values());
+      });
 
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching more orders:", error);
     } finally {
       setLoading(false);
     }
-  }, [sortField, sortOrder, lastDoc]);
+  };
 
+  // Reset pagination when sorting or filters change
   useEffect(() => {
-    // Initial fetch
-    if (orders.length === 0 || sortField || sortOrder) {
-      fetchOrders();
+    setLastDoc(null);
+    setHasMore(true);
+    // If not using real-time (due to filters), do an initial fetch
+    if (searchTerm || statusFilter !== 'All') {
+       const fetchInitial = async () => {
+         setLoading(true);
+         const q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), limit(PAGE_SIZE));
+         const snapshot = await getDocs(q);
+         setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+         setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+         setHasMore(snapshot.docs.length === PAGE_SIZE);
+         setLoading(false);
+       };
+       fetchInitial();
     }
-  }, [sortField, sortOrder, fetchOrders, orders.length]);
+  }, [sortField, sortOrder, searchTerm, statusFilter]);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -104,13 +145,15 @@ const AdminOrders = () => {
   const filteredOrders = useMemo(() => {
     return orders.filter(o => {
       const id = o.id || '';
-      const customerName = o.customer?.name || '';
+      const razorpayOrderId = o.razorpayOrderId || '';
+      const customerName = o.customer?.name || o.customerName || '';
       const customerEmail = o.customer?.email || '';
       const customerPhone = o.customer?.phone || '';
       const paymentId = o.paymentId || '';
 
       const matchesSearch =
         id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        razorpayOrderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
         customerPhone.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -127,9 +170,10 @@ const AdminOrders = () => {
       case 'delivered': return 'bg-green-50 text-green-600 border-green-100';
       case 'confirmed': return 'bg-blue-50 text-blue-600 border-blue-100';
       case 'preparing': return 'bg-yellow-50 text-yellow-600 border-yellow-100';
-      case 'ready for delivery': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      case 'baking': return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'ready for dispatch': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
       case 'out for delivery': return 'bg-purple-50 text-purple-600 border-purple-100';
-      case 'pending': return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'pending': return 'bg-rose-50 text-rose-600 border-rose-100';
       case 'cancelled': return 'bg-red-50 text-red-600 border-red-100';
       default: return 'bg-gray-50 text-gray-600 border-gray-100';
     }
@@ -304,6 +348,17 @@ const AdminOrders = () => {
         </div>
       </div>
 
+      {hasMore && !loading && !searchTerm && statusFilter === 'All' && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={fetchMore}
+            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm"
+          >
+            Load More Orders
+          </button>
+        </div>
+      )}
+
       {selectedOrder && (
         <div className="fixed inset-0 z-[400] flex items-center justify-end p-4 bg-chocolate/60  transition-all duration-300">
           <div className="bg-white h-full w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-l-[40px]">
@@ -378,9 +433,9 @@ const AdminOrders = () => {
                     {selectedOrder.address ? (
                       <div className="space-y-1">
                         <p className="font-bold text-chocolate">{selectedOrder.address.houseNumber}, {selectedOrder.address.street}</p>
-                        {selectedOrder.address.landmark && <p className="text-xs text-text-soft">Near {selectedOrder.address.landmark}</p>}
-                        <p className="text-gray-600">{selectedOrder.address.area}</p>
-                        <p className="text-gray-600">{selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.zipCode}</p>
+                            {selectedOrder.address.landmark && <p className="text-xs text-text-soft font-bold">Landmark: {selectedOrder.address.landmark}</p>}
+                            <p className="text-gray-600 font-medium">{selectedOrder.address.area}</p>
+                            <p className="text-gray-600 font-medium">{selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.zipCode || selectedOrder.address.pincode}</p>
                       </div>
                     ) : (
                       <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
@@ -457,8 +512,19 @@ const AdminOrders = () => {
                         </div>
                       </div>
                       <div className="space-y-1 text-right">
-                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment ID</p>
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Razorpay Order ID</p>
+                        <p className="text-[10px] font-mono text-white/70 truncate">{selectedOrder.razorpayOrderId || selectedOrder.id || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment ID (Transaction)</p>
                         <p className="text-[10px] font-mono text-white/70 truncate">{selectedOrder.paymentId || 'N/A'}</p>
+                      </div>
+                      <div className="space-y-1 text-right">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment Method</p>
+                        <p className="text-[10px] font-bold text-white/70">{selectedOrder.paymentMethod || 'Online'}</p>
                       </div>
                     </div>
 
@@ -467,14 +533,21 @@ const AdminOrders = () => {
                         <span>Subtotal</span>
                         <span>₹{selectedOrder.subtotal || selectedOrder.totalAmount - (selectedOrder.shippingFee || 0)}</span>
                       </div>
-                      <div className="flex justify-between text-white/60 text-xs mb-4">
+                      <div className="flex justify-between text-white/60 text-xs mb-2">
                         <span>Delivery Fee</span>
                         <span>₹{selectedOrder.shippingFee || 0}</span>
                       </div>
+                      <div className="flex justify-between text-white/60 text-xs mb-4">
+                        <span>Tax & Discount</span>
+                        <span>₹{selectedOrder.taxes || 0} / -₹{selectedOrder.discount || 0}</span>
+                      </div>
                       <div className="flex justify-between items-center pt-4 border-t border-white/10">
                         <div>
-                          <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Total Amount</p>
-                          <p className="text-4xl font-black text-blush">₹{selectedOrder.totalAmount}</p>
+                          <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Total Amount Paid</p>
+                          <div className="flex items-baseline gap-2">
+                            <p className="text-4xl font-black text-blush">₹{selectedOrder.totalAmount}</p>
+                            {selectedOrder.paymentStatus === 'Paid' && <CheckCircle2 size={16} className="text-green-400" />}
+                          </div>
                         </div>
                         <div className="text-right">
                            <ShieldCheck className="text-white/20 inline-block" size={40} />
@@ -489,16 +562,6 @@ const AdminOrders = () => {
               </div>
             </div>
           </div>
-        </div>
-      )}
-      {hasMore && !loading && (
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={() => fetchOrders(true)}
-            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm"
-          >
-            Load More Orders
-          </button>
         </div>
       )}
     </div>

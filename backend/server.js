@@ -153,6 +153,7 @@ app.post('/api/verify-payment', async (req, res) => {
           if (!masterDoc.exists) {
             const orderDoc = {
               ...orderDetails,
+              orderId: razorpay_order_id,
               paymentId: razorpay_payment_id,
               razorpayOrderId: razorpay_order_id,
               paymentSignature: razorpay_signature,
