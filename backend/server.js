@@ -87,6 +87,17 @@ app.post('/api/orders', async (req, res) => {
     }
 
     if (!razorpay) {
+      if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+        console.log('Razorpay missing, but in test/dev mode. Simulating order creation.');
+        return res.json({
+          order: {
+            id: `order_test_${Date.now()}`,
+            amount: Math.round(Number(totalAmount) * 100),
+            currency: 'INR',
+          },
+          keyId: 'rzp_test_mock_key'
+        });
+      }
       return res.status(500).json({ error: 'Razorpay is not configured on the server' });
     }
 
@@ -122,6 +133,11 @@ app.post('/api/verify-payment', async (req, res) => {
       orderDetails
     } = req.body;
 
+    console.log('--- VERIFICATION ATTEMPT ---');
+    console.log('Order ID:', razorpay_order_id);
+    console.log('Payment ID:', razorpay_payment_id);
+    console.log('Signature:', razorpay_signature);
+
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({
         success: false,
@@ -153,6 +169,7 @@ app.post('/api/verify-payment', async (req, res) => {
           if (!masterDoc.exists) {
             const orderDoc = {
               ...orderDetails,
+              orderId: razorpay_order_id,
               paymentId: razorpay_payment_id,
               razorpayOrderId: razorpay_order_id,
               paymentSignature: razorpay_signature,
@@ -197,6 +214,13 @@ app.post('/api/verify-payment', async (req, res) => {
           });
         }
       } else if (!db) {
+        if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+          console.log('Firestore not initialized, but in test/dev mode. Simulating success.');
+          return res.json({
+            success: true,
+            message: 'Simulated: Payment verified but order not stored due to missing Firestore'
+          });
+        }
         console.error('Firestore not initialized, cannot store order');
         return res.status(500).json({
           success: false,
