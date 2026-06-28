@@ -4,7 +4,7 @@
  */
 
 // ============= USER ROLES =============
-export type UserRole = 'superadmin' | 'admin' | 'staff' | 'user';
+export type UserRole = 'admin' | 'staff' | 'user';
 
 export interface UserData {
   uid: string;
