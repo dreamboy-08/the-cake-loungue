@@ -56,24 +56,40 @@ const AdminUsers = () => {
     setTimeout(() => setToast(null), 3000);
   };
 
-  useEffect(() => {
+  const fetchUsers = useCallback(async (isNext = false) => {
     setLoading(true);
-    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    try {
+      let q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (isNext && lastDoc) {
+        q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(PAGE_SIZE));
+      }
+
+      const snapshot = await getDocs(q);
       const newUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setUsers(newUsers);
-      setLoading(false);
-      // Pagination with onSnapshot for a simple implementation is tricky,
-      // so we load all for real-time role management as requested.
-      setHasMore(false);
-    }, (error) => {
-      console.error("Error listening to users:", error);
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
-  }, []);
+      if (isNext) {
+        setUsers(prev => {
+          const existingIds = new Set(prev.map(u => u.id));
+          const uniqueNew = newUsers.filter(u => !existingIds.has(u.id));
+          return [...prev, ...uniqueNew];
+        });
+      } else {
+        setUsers(newUsers);
+      }
+
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMore(snapshot.docs.length === PAGE_SIZE);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [lastDoc]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     if (!isSuperAdmin) {
@@ -84,16 +100,6 @@ const AdminUsers = () => {
     if (userId === currentUser?.uid) {
       showToast("You cannot change your own role.", "error");
       return;
-    }
-
-    // Protection against removing the last Super Admin
-    const userToUpdate = users.find(u => u.id === userId);
-    if (userToUpdate?.role === 'super_admin' && newRole !== 'super_admin') {
-      const superAdminCount = users.filter(u => u.role === 'super_admin').length;
-      if (superAdminCount <= 1) {
-        showToast("System must have at least one Super Admin.", "error");
-        return;
-      }
     }
 
     setUpdatingId(userId);
@@ -278,6 +284,18 @@ const AdminUsers = () => {
         </div>
       </div>
 
+      {hasMore && (
+        <div className="flex justify-center mt-8">
+          <button
+            disabled={loading}
+            onClick={() => fetchUsers(true)}
+            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+          >
+            {loading && users.length > 0 && <Loader2 className="animate-spin" size={16} />}
+            {loading && users.length > 0 ? 'Loading...' : 'Load More Users'}
+          </button>
+        </div>
+      )}
 
       <div className="bg-cream-dark/30 p-8 rounded-[40px] border border-rose/10 flex flex-col md:flex-row items-center gap-6 mt-8">
         <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-rose-deep shadow-sm">
