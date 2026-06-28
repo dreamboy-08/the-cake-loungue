@@ -9,7 +9,8 @@ import {
   doc,
   getDocs,
   query,
-  orderBy
+  orderBy,
+  onSnapshot
 } from 'firebase/firestore';
 import {
   ref,
@@ -98,12 +99,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const q = query(collection(db, 'categories'), orderBy('name'));
-      const snapshot = await getDocs(q);
+    const q = query(collection(db, 'categories'), orderBy('name'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    };
-    fetchCategories();
+    }, (error) => {
+      console.error("Error listening to categories:", error);
+    });
+    return () => unsubscribe();
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,8 +127,29 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     // This is a bit simplified, ideally we track which preview belongs to which file/existing URL
   };
 
+  const validateForm = () => {
+    if (!formData.name.trim()) return "Product name is required.";
+    if (!formData.category) return "Please select a category.";
+    if (!formData.price || Number(formData.price) <= 0) return "Base price must be greater than zero.";
+    if (imagePreviews.length === 0 && !formData.imageUrl) return "At least one product image is required.";
+    if (formData.weights.length === 0) return "At least one weight variant is required.";
+    if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All variants must have a valid price.";
+    if (!formData.description.trim()) return "Product description is required.";
+    if (!formData.flavor.trim()) return "Flavor information is required.";
+    // inStock and active are booleans, usually have defaults
+    // Promotional badges (isFeatured, etc.) are optional by nature, but we check if at least one variant is present
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationError = validateForm();
+    if (validationError) {
+      showToast(validationError, "error");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -391,8 +414,21 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Flavor / Description</label>
+                <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Flavor</label>
+                <input
+                  required
+                  type="text"
+                  value={formData.flavor}
+                  onChange={(e) => setFormData({ ...formData, flavor: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                  placeholder="e.g. Vanilla, Chocolate, Red Velvet"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Description</label>
                 <textarea
+                  required
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}

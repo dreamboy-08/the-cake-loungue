@@ -11,7 +11,8 @@ import {
   orderBy,
   limit,
   getCountFromServer,
-  where
+  where,
+  onSnapshot
 } from 'firebase/firestore';
 import {
   Plus,
@@ -36,39 +37,39 @@ const AdminCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
-  const fetchCategories = useCallback(async () => {
+  useEffect(() => {
     setLoading(true);
-    try {
-      const q = query(collection(db, 'categories'), orderBy('name'));
-      const snapshot = await getDocs(q);
+    const q = query(collection(db, 'categories'), orderBy('name'));
+
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const fetchedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
       setCategories(fetchedCategories);
 
-      // Fetch product counts for each category (Quota efficient)
+      // Fetch product counts for each category
       const counts: Record<string, number> = {};
-      for (const cat of fetchedCategories) {
-        const qCount = query(collection(db, 'products'), where('category', '==', cat.name));
-        const countSnapshot = await getCountFromServer(qCount);
-        counts[cat.name] = countSnapshot.data().count;
+      try {
+        await Promise.all(fetchedCategories.map(async (cat) => {
+          const qCount = query(collection(db, 'products'), where('category', '==', cat.name));
+          const countSnapshot = await getCountFromServer(qCount);
+          counts[cat.name] = countSnapshot.data().count;
+        }));
+        setProductCounts(counts);
+      } catch (err) {
+        console.error("Error fetching product counts:", err);
       }
-      setProductCounts(counts);
-
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    } finally {
       setLoading(false);
-    }
-  }, []);
+    }, (error) => {
+      console.error("Error listening to categories:", error);
+      setLoading(false);
+    });
 
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    return () => unsubscribe();
+  }, []);
 
   const handleDelete = async (id: string) => {
     try {
       await deleteDoc(doc(db, 'categories', id));
       setShowDeleteConfirm(null);
-      fetchCategories();
     } catch (error) {
       console.error("Error deleting category:", error);
       alert("Failed to delete category.");
@@ -170,6 +171,14 @@ const AdminCategories = () => {
         )}
       </div>
 
+      {isFormOpen && (
+        <CategoryForm
+          category={selectedCategory}
+          onClose={() => setIsFormOpen(false)}
+          onSuccess={() => {}}
+        />
+      )}
+
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
@@ -198,13 +207,6 @@ const AdminCategories = () => {
         </div>
       )}
 
-      {isFormOpen && (
-        <CategoryForm
-          category={selectedCategory}
-          onClose={() => setIsFormOpen(false)}
-          onSuccess={() => fetchCategories()}
-        />
-      )}
     </div>
   );
 };

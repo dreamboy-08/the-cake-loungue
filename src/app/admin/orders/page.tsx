@@ -47,6 +47,7 @@ const AdminOrders = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async (isNext = false) => {
+    setLoading(true);
     try {
       let q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), limit(PAGE_SIZE));
 
@@ -58,23 +59,30 @@ const AdminOrders = () => {
       const newOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       if (isNext) {
-        setOrders(prev => [...prev, ...newOrders]);
+        setOrders(prev => {
+          const existingIds = new Set(prev.map(o => o.id));
+          const uniqueNew = newOrders.filter(o => !existingIds.has(o.id));
+          return [...prev, ...uniqueNew];
+        });
       } else {
         setOrders(newOrders);
       }
 
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching orders:", error);
+    } finally {
       setLoading(false);
     }
   }, [sortField, sortOrder, lastDoc]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
+    // Initial fetch
+    if (orders.length === 0 || sortField || sortOrder) {
+      fetchOrders();
+    }
+  }, [sortField, sortOrder, fetchOrders, orders.length]);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);

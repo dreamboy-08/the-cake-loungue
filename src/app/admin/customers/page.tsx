@@ -26,7 +26,9 @@ import {
   TrendingUp,
   CreditCard,
   Clock,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2,
+  ShieldCheck
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -40,8 +42,12 @@ const AdminCustomers = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [customerOrders, setCustomerOrders] = useState<any[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const [customerAddresses, setCustomerAddresses] = useState<any[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const fetchUsers = useCallback(async (isNext = false) => {
+    setLoading(true);
     try {
       let q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
@@ -53,36 +59,78 @@ const AdminCustomers = () => {
       const newUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
       if (isNext) {
-        setUsers(prev => [...prev, ...newUsers]);
+        setUsers(prev => {
+          const existingIds = new Set(prev.map(u => u.id));
+          const uniqueNew = newUsers.filter(u => !existingIds.has(u.id));
+          return [...prev, ...uniqueNew];
+        });
       } else {
         setUsers(newUsers);
       }
 
       setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
       setLoading(false);
     }
   }, [lastDoc]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const fetchCustomerHistory = async (customer: any) => {
     setLoadingOrders(true);
+    setLoadingAddresses(true);
     setSelectedCustomer(customer);
+
+    // Fetch addresses from 'savedAddresses' collection if it exists
     try {
-      // Query orders by userId OR email
-      const q = query(
+      const addrQ = query(collection(db, 'savedAddresses'), where('userId', '==', customer.id));
+      const addrSnapshot = await getDocs(addrQ);
+      const addresses = addrSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Combine with addresses in user document if any
+      const userDocAddresses = customer.addresses || [];
+      const combinedAddresses = [...userDocAddresses];
+
+      addresses.forEach(addr => {
+        if (!combinedAddresses.find(a => a.id === addr.id)) {
+          combinedAddresses.push(addr);
+        }
+      });
+
+      setCustomerAddresses(combinedAddresses);
+    } catch (err) {
+      console.error("Error fetching addresses:", err);
+      setCustomerAddresses(customer.addresses || []);
+    } finally {
+      setLoadingAddresses(false);
+    }
+
+    try {
+      // Query orders by customer ID first, then fallback to email if needed
+      let q = query(
         collection(db, 'orders'),
-        where('customerEmail', '==', customer.email),
+        where('userId', '==', customer.id),
         orderBy('createdAt', 'desc'),
         limit(50)
       );
-      const snapshot = await getDocs(q);
+
+      let snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        q = query(
+          collection(db, 'orders'),
+          where('customer.email', '==', customer.email),
+          orderBy('createdAt', 'desc'),
+          limit(50)
+        );
+        snapshot = await getDocs(q);
+      }
+
       setCustomerOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     } catch (error) {
       console.error("Error fetching customer history:", error);
@@ -245,8 +293,12 @@ const AdminCustomers = () => {
                         Saved Addresses
                      </h3>
                      <div className="space-y-3">
-                        {selectedCustomer.addresses && selectedCustomer.addresses.length > 0 ? (
-                          selectedCustomer.addresses.map((addr: any, idx: number) => (
+                        {loadingAddresses ? (
+                          <div className="flex justify-center py-8">
+                            <Loader2 className="animate-spin text-rose-deep" size={24} />
+                          </div>
+                        ) : customerAddresses && customerAddresses.length > 0 ? (
+                          customerAddresses.map((addr: any, idx: number) => (
                             <div key={idx} className="p-5 rounded-[24px] bg-gray-50 border border-gray-100 flex items-start gap-4">
                                <div className={`p-2 rounded-xl ${addr.isDefault ? 'bg-rose-deep text-white' : 'bg-white text-gray-300 shadow-sm'}`}>
                                   <MapPin size={16} />
@@ -256,9 +308,10 @@ const AdminCustomers = () => {
                                      <p className="text-sm font-bold text-chocolate">{addr.name}</p>
                                      {addr.isDefault && <span className="text-[9px] font-black bg-rose/10 text-rose-deep px-2 py-0.5 rounded-full uppercase">Default</span>}
                                   </div>
+                                  <p className="text-xs text-chocolate font-bold mb-1">{addr.phone}</p>
                                   <p className="text-xs text-gray-500 leading-relaxed">
                                     {addr.houseNumber}, {addr.street}, {addr.landmark && `Near ${addr.landmark}, `}
-                                    {addr.area}, {addr.city}, {addr.state} - {addr.zipCode}
+                                    {addr.area}, {addr.city}, {addr.state} - {addr.zipCode || addr.pincode}
                                   </p>
                                </div>
                             </div>
@@ -297,7 +350,15 @@ const AdminCustomers = () => {
                                   }`}>
                                      {order.status || 'Pending'}
                                   </span>
-                                  <ArrowRight size={14} className="text-gray-300 group-hover:text-chocolate transition-all" />
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedOrder(order);
+                                    }}
+                                    className="p-2 hover:bg-gray-100 rounded-full transition-all"
+                                  >
+                                    <ArrowRight size={14} className="text-gray-300 group-hover:text-chocolate transition-all" />
+                                  </button>
                                </div>
                             </div>
                           ))
@@ -314,6 +375,174 @@ const AdminCustomers = () => {
           </div>
         </div>
       )}
+
+      {selectedOrder && (
+        <div className="fixed inset-0 z-[500] flex items-center justify-end p-4 bg-chocolate/60 transition-all duration-300">
+          <div className="bg-white h-full w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-l-[40px]">
+            <div className="p-8 border-b flex items-center justify-between sticky top-0 bg-white z-10">
+              <div>
+                <h2 className="text-2xl font-bold font-playfair text-chocolate">Order Details</h2>
+                <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest font-bold">#{selectedOrder.id.toUpperCase()}</p>
+              </div>
+              <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <XCircle size={28} className="text-gray-400" />
+              </button>
+            </div>
+
+            <div className="p-8 space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
+                    <UserIcon size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Customer Info</h3>
+                  </div>
+                  <div className="text-sm bg-cream p-5 rounded-2xl border border-cream/50 h-full">
+                    <p className="font-bold text-chocolate mb-1">{selectedOrder.customer?.name}</p>
+                    <p className="text-gray-500 mb-1">{selectedOrder.customer?.email}</p>
+                    <p className="text-gray-500">{selectedOrder.customer?.phone}</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
+                    <Calendar size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Delivery Schedule</h3>
+                  </div>
+                  <div className="text-sm bg-cream-dark p-5 rounded-2xl border border-rose-deep/20 h-full">
+                    <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Date</p>
+                    <p className="font-bold text-chocolate text-lg">
+                      {selectedOrder.deliveryDate ? new Date(selectedOrder.deliveryDate).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Not specified'}
+                    </p>
+                    {selectedOrder.deliveryTimeSlot && (
+                      <div className="mt-2">
+                        <p className="text-[10px] font-bold text-rose-deep uppercase tracking-widest mb-1">Time Slot</p>
+                        <p className="font-bold text-chocolate">{selectedOrder.deliveryTimeSlot}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
+                    <MapPin size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Shipping Address</h3>
+                  </div>
+                  <div className="text-sm bg-cream p-5 rounded-2xl border border-cream/50 h-full min-h-[100px]">
+                    {selectedOrder.address ? (
+                      <div className="space-y-1">
+                        <p className="font-bold text-chocolate">{selectedOrder.address.houseNumber}, {selectedOrder.address.street}</p>
+                        {selectedOrder.address.landmark && <p className="text-xs text-text-soft">Near {selectedOrder.address.landmark}</p>}
+                        <p className="text-gray-600">{selectedOrder.address.area}</p>
+                        <p className="text-gray-600">{selectedOrder.address.city}, {selectedOrder.address.state} - {selectedOrder.address.zipCode}</p>
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 leading-relaxed">{selectedOrder.shippingAddress || 'No address provided.'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {selectedOrder.deliveryInstructions && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-rose-deep">
+                    <ShieldCheck size={18} />
+                    <h3 className="font-bold text-xs uppercase tracking-wider">Delivery Instructions</h3>
+                  </div>
+                  <div className="bg-orange-50 p-5 rounded-2xl border border-orange-100 italic text-sm text-chocolate">
+                    &quot;{selectedOrder.deliveryInstructions}&quot;
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-rose-deep">
+                  <ShoppingBag size={18} />
+                  <h3 className="font-bold text-xs uppercase tracking-wider">Order Items</h3>
+                </div>
+                <div className="space-y-3">
+                  {(selectedOrder.items || []).map((item: any, idx: number) => (
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-gray-50 bg-white shadow-sm">
+                      <div className="flex items-center gap-4">
+                        <div className="relative w-14 h-14 rounded-xl bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-100">
+                          {item.img && <Image
+                            src={item.img}
+                            alt={item.name}
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                          />}
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-chocolate">{item.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
+                            <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
+                              {item.weight || '0.5 Kg'}
+                            </span>
+                            {item.flavor && (
+                              <span className="text-[10px] font-bold text-chocolate bg-gray-100 px-1.5 rounded">
+                                {item.flavor}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-chocolate">₹{item.quantity * item.price}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-gray-100">
+                <div className="flex items-center gap-2 text-rose-deep mb-4">
+                  <CreditCard size={18} />
+                  <h3 className="font-bold text-xs uppercase tracking-wider">Payment Details</h3>
+                </div>
+                <div className="bg-chocolate text-white p-8 rounded-[35px] shadow-xl relative overflow-hidden">
+                  <div className="relative z-10 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment Status</p>
+                        <div className="flex items-center gap-2">
+                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${selectedOrder.paymentStatus === 'Paid' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-orange-500/20 text-orange-400 border-orange-500/30'}`}>
+                              {selectedOrder.paymentStatus || 'Pending'}
+                           </span>
+                        </div>
+                      </div>
+                      <div className="space-y-1 text-right">
+                        <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest">Payment ID</p>
+                        <p className="text-[10px] font-mono text-white/70 truncate">{selectedOrder.paymentId || 'N/A'}</p>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-white/10">
+                      <div className="flex justify-between text-white/60 text-xs mb-2">
+                        <span>Subtotal</span>
+                        <span>₹{selectedOrder.subtotal || selectedOrder.totalAmount - (selectedOrder.shippingFee || 0)}</span>
+                      </div>
+                      <div className="flex justify-between text-white/60 text-xs mb-4">
+                        <span>Delivery Fee</span>
+                        <span>₹{selectedOrder.shippingFee || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center pt-4 border-t border-white/10">
+                        <div>
+                          <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Total Amount</p>
+                          <p className="text-4xl font-black text-blush">₹{selectedOrder.totalAmount}</p>
+                        </div>
+                        <div className="text-right">
+                           <ShieldCheck className="text-white/20 inline-block" size={40} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute top-[-20px] right-[-20px] opacity-10">
+                    <CreditCard size={150} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {hasMore && !loading && (
         <div className="flex justify-center mt-8">
           <button
