@@ -31,7 +31,7 @@ const OrdersPage = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log("Orders found in subcollection:", snapshot.size);
+      console.log("Orders found in subcollection:", snapshot.size, snapshot.docs);
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
     }, (error) => {

@@ -84,7 +84,9 @@ const AdminProducts = () => {
     if (products.length === 0) {
       fetchProducts();
     }
+  }, [fetchProducts, products.length]);
 
+  useEffect(() => {
     const unsubCats = onSnapshot(collection(db, 'categories'), (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     }, (error) => {
@@ -92,7 +94,7 @@ const AdminProducts = () => {
     });
 
     return () => unsubCats();
-  }, [fetchProducts, products.length]);
+  }, []);
 
   const handleSyncCatalog = async () => {
     if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
