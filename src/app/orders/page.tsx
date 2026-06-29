@@ -24,13 +24,14 @@ const OrdersPage = () => {
     }
 
     setLoading(true);
+    console.log("Fetching orders from path: users/", user.uid, "/orders");
     const q = query(
-      collection(db, 'orders'),
-      where('userId', '==', user.uid),
+      collection(db, 'users', user.uid, 'orders'),
       orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log("Orders found in subcollection:", snapshot.size);
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setLoading(false);
     }, (error) => {

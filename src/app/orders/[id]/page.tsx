@@ -22,16 +22,17 @@ const OrderDetailsPage = () => {
       if (!user || !id) return;
       setLoading(true);
       try {
-        const docRef = doc(db, 'orders', id as string);
+        const docRef = doc(db, 'users', user.uid, 'orders', id as string);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          // Security check: ensure user owns this order
-          if (data.userId === user.uid) {
-            setOrder({ id: docSnap.id, ...data });
-          } else {
-            console.error("Unauthorized access to order");
+          setOrder({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          // Fallback to master orders for legacy or admin-placed orders if needed
+          const masterDocRef = doc(db, 'orders', id as string);
+          const masterDocSnap = await getDoc(masterDocRef);
+          if (masterDocSnap.exists() && masterDocSnap.data().userId === user.uid) {
+            setOrder({ id: masterDocSnap.id, ...masterDocSnap.data() });
           }
         }
       } catch (error) {
