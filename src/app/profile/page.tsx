@@ -21,8 +21,7 @@ const ProfilePage = () => {
       setLoading(true);
       try {
         const q = query(
-          collection(db, 'orders'),
-          where('userId', '==', user.uid),
+          collection(db, 'users', user.uid, 'orders'),
           orderBy('createdAt', 'desc'),
           limit(3)
         );
