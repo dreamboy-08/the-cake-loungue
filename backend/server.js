@@ -17,29 +17,45 @@ try {
     initializeApp({
       credential: cert(serviceAccount)
     });
-    console.log('Firebase Admin initialized via service account');
-  } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
-    console.log('Attempting to initialize Firebase Admin via individual credentials...');
-    initializeApp({
-      credential: cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      }),
-    });
-    console.log('Firebase Admin initialized via individual credentials');
-  } else if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
-    console.log('Attempting to initialize Firebase Admin via application default credentials...');
-    initializeApp({
-      credential: applicationDefault(),
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    });
-    console.log('Firebase Admin initialized via application default credentials');
+    console.log('Firebase Admin initialized successfully via FIREBASE_SERVICE_ACCOUNT');
   } else {
-    console.warn('Firebase Admin not initialized: Missing credentials (FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT_ID/CLIENT_EMAIL/PRIVATE_KEY)');
+    const hasProjectId = !!process.env.FIREBASE_PROJECT_ID;
+    const hasClientEmail = !!process.env.FIREBASE_CLIENT_EMAIL;
+    const hasPrivateKey = !!process.env.FIREBASE_PRIVATE_KEY;
+
+    if (hasProjectId && hasClientEmail && hasPrivateKey) {
+      console.log('Attempting to initialize Firebase Admin via individual credentials...');
+      initializeApp({
+        credential: cert({
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        }),
+      });
+      console.log('Firebase Admin initialized successfully via individual credentials');
+    } else if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+      console.log('Attempting to initialize Firebase Admin via application default credentials...');
+      initializeApp({
+        credential: applicationDefault(),
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+      });
+      console.log('Firebase Admin initialized successfully via application default credentials');
+    } else {
+      console.warn('CRITICAL: Firebase Admin not initialized.');
+      console.warn('Missing credentials. Please provide either:');
+      console.warn('1. FIREBASE_SERVICE_ACCOUNT (JSON string)');
+      console.warn('OR');
+      console.warn('2. Individual variables:');
+      if (!hasProjectId) console.warn('   - FIREBASE_PROJECT_ID is MISSING');
+      if (!hasClientEmail) console.warn('   - FIREBASE_CLIENT_EMAIL is MISSING');
+      if (!hasPrivateKey) console.warn('   - FIREBASE_PRIVATE_KEY is MISSING');
+    }
   }
 } catch (error) {
   console.error('Firebase Admin initialization error:', error.message);
+  if (error.message.includes('Unexpected token')) {
+    console.error('Hint: FIREBASE_SERVICE_ACCOUNT may not be a valid JSON string.');
+  }
 }
 
 const db = getApps().length > 0 ? getFirestore() : null;
