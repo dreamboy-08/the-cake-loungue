@@ -4,32 +4,45 @@ const dotenv = require('dotenv');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const Razorpay = require('razorpay');
-const admin = require('firebase-admin');
+const { initializeApp, cert, getApps, applicationDefault } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 
 dotenv.config();
 
 // Initialize Firebase Admin
 try {
   if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    console.log('Attempting to initialize Firebase Admin via FIREBASE_SERVICE_ACCOUNT...');
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount)
+    initializeApp({
+      credential: cert(serviceAccount)
     });
     console.log('Firebase Admin initialized via service account');
+  } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+    console.log('Attempting to initialize Firebase Admin via individual credentials...');
+    initializeApp({
+      credential: cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      }),
+    });
+    console.log('Firebase Admin initialized via individual credentials');
   } else if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
-    admin.initializeApp({
-      credential: admin.credential.applicationDefault(),
+    console.log('Attempting to initialize Firebase Admin via application default credentials...');
+    initializeApp({
+      credential: applicationDefault(),
       projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
     });
     console.log('Firebase Admin initialized via application default credentials');
   } else {
-    console.warn('Firebase Admin not initialized: Missing credentials');
+    console.warn('Firebase Admin not initialized: Missing credentials (FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT_ID/CLIENT_EMAIL/PRIVATE_KEY)');
   }
 } catch (error) {
   console.error('Firebase Admin initialization error:', error.message);
 }
 
-const db = admin.apps && admin.apps.length > 0 ? admin.firestore() : null;
+const db = getApps().length > 0 ? getFirestore() : null;
 
 const app = express();
 
@@ -73,7 +86,8 @@ app.get('/', (req, res) => {
   res.json({
     message: 'Cake Lounge backend is running',
     environment: process.env.NODE_ENV || 'development',
-    razorpayConfigured: !!razorpay
+    razorpayConfigured: !!razorpay,
+    firebaseConfigured: !!db
   });
 });
 
