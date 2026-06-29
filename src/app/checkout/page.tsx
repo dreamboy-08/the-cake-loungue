@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { doc, collection, setDoc, getDoc } from 'firebase/firestore';
 import BackButton from '@/components/BackButton';
 import { Calendar, Clock } from 'lucide-react';
 
@@ -19,7 +18,6 @@ const AddressManager = dynamic(() => import('@/components/shop/AddressManager'),
     </div>
   )
 });
-import { db } from '@/utils/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CheckoutPage = () => {
@@ -33,6 +31,7 @@ const CheckoutPage = () => {
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const verificationStarted = React.useRef(false);
 
   // Delivery Date Logic
   const hasCustomCake = useMemo(() => {
@@ -162,7 +161,13 @@ const CheckoutPage = () => {
         description: `Order for ${cart.length} item${cart.length > 1 ? 's' : ''}`,
         order_id: order.id,
         handler: async (response: any) => {
+          if (verificationStarted.current) {
+            console.log('Verification already in progress, skipping...');
+            return;
+          }
+          verificationStarted.current = true;
           setPaymentStatus('verifying');
+
           try {
             console.log('Razorpay payment successful, verifying...', response.razorpay_payment_id);
 

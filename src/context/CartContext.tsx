@@ -37,6 +37,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const isInitialMount = useRef(true);
   const isUpdatingFromServer = useRef(false);
+  const lastSyncedCartRef = useRef<string>('');
 
   // Persistence helper
   const persistCart = async (newCart: CartItem[]) => {
@@ -69,7 +70,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           if (docSnap.exists()) {
             isUpdatingFromServer.current = true;
-            setCart(docSnap.data().items || []);
+            const items = docSnap.data().items || [];
+            lastSyncedCartRef.current = JSON.stringify(items);
+            setCart(items);
             isUpdatingFromServer.current = false;
           } else {
             // If no Firestore cart, try to migrate from localStorage
@@ -118,9 +121,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    // Only persist if the update was NOT from the server
+    // Only persist if the update was NOT from the server and cart has actually changed
     if (!isUpdatingFromServer.current && !isLoading) {
-      persistCart(cart);
+      const currentCartStr = JSON.stringify(cart);
+      if (currentCartStr !== lastSyncedCartRef.current) {
+        lastSyncedCartRef.current = currentCartStr;
+        persistCart(cart);
+      }
     }
   }, [cart, isLoading]);
 
