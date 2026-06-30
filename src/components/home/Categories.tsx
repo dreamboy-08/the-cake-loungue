@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -38,6 +40,15 @@ const Categories = () => {
       } else {
         setCats(fetchedCats);
       }
+    }, (error) => {
+      console.error("Error listening to home categories:", error);
+      // Fallback on error
+      setCats([
+        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg', href: '/shop/birthday-cakes' },
+        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg', href: '/shop/wedding-cakes' },
+        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg', href: '/shop/chocolate-cakes' },
+        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png', href: '/custom-cake' },
+      ]);
     });
 
     return () => unsubscribe();
