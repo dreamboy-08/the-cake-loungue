@@ -1,18 +1,46 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
 import BackButton from '@/components/BackButton';
 import { filterProducts } from '@/utils/filterProducts';
+import { db } from '@/utils/firebase';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 
 const MenuPage = () => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+  useEffect(() => {
+    const q = query(
+      collection(db, 'categories'),
+      where('active', '==', true)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) {
+        // Fallback to static if Firestore is empty
+        setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+      } else {
+        const cats = snapshot.docs.map(doc => doc.data().name);
+        setDynamicCategories(cats);
+      }
+      setLoading(false);
+    }, (err) => {
+      console.error("Error fetching menu categories:", err);
+      setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const categories = ['All', ...dynamicCategories];
 
   const filteredProducts = useMemo(() => {
     const categoryFiltered = products.filter(product =>
@@ -35,7 +63,11 @@ const MenuPage = () => {
         <SearchBar onSearch={setSearchQuery} />
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap gap-4 justify-center mb-12 items-center">
+        <div className="flex flex-wrap gap-4 justify-center mb-12 items-center min-h-[50px]">
+          {loading ? (
+             <Loader2 className="animate-spin text-rose-deep" size={24} />
+          ) : (
+            <>
           {activeCategory !== 'All' && (
             <button
               onClick={() => setActiveCategory('All')}
@@ -60,6 +92,8 @@ const MenuPage = () => {
                 {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}
               </button>
             ))}
+            </>
+          )}
         </div>
 
         {/* Dynamic Grid */}
