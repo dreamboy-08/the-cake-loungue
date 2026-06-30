@@ -46,6 +46,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>(product?.images || product?.img ? [product?.img, ...(product?.images || [])].filter(Boolean) : []);
   const [categories, setCategories] = useState<any[]>([]);
+  const [catLoading, setCatLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
@@ -99,11 +100,16 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   };
 
   useEffect(() => {
+    setCatLoading(true);
+    console.log("Firestore Path: categories");
     const q = query(collection(db, 'categories'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log(`Categories returned: ${snapshot.docs.length}`);
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setCatLoading(false);
     }, (error) => {
       console.error("Error listening to categories:", error);
+      setCatLoading(false);
     });
     return () => unsubscribe();
   }, []);
@@ -347,14 +353,25 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Category</label>
                   <select
                     required
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    value={categories.find(cat => cat.name === formData.category)?.id || ''}
+                    onChange={(e) => {
+                      const selectedCat = categories.find(cat => cat.id === e.target.value);
+                      setFormData({ ...formData, category: selectedCat ? selectedCat.name : '' });
+                    }}
                     className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold bg-white"
                   >
-                    <option value="">Select Category</option>
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.name}>{cat.name}</option>
-                    ))}
+                    {catLoading ? (
+                      <option value="" disabled>Loading categories...</option>
+                    ) : categories.length === 0 ? (
+                      <option value="" disabled>No categories found (Please create one first)</option>
+                    ) : (
+                      <>
+                        <option value="">Select Category</option>
+                        {categories.map(cat => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
