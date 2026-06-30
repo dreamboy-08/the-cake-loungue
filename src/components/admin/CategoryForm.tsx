@@ -49,7 +49,7 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
       const categoryData = {
         ...formData,
         image: finalImageUrl,
-        slug: formData.name.toLowerCase().replace(/\s+/g, '-'),
+        slug: formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
         updatedAt: new Date().toISOString(),
       };
 

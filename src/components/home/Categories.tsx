@@ -1,14 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { db } from '@/utils/firebase';
+import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
 
 const Categories = () => {
-  const cats = [
-    { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg', href: '/shop/birthday-cakes' },
-    { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg', href: '/shop/wedding-cakes' },
-    { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg', href: '/shop/chocolate-cakes' },
-    { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png', href: '/custom-cake' },
-  ];
+  const [cats, setCats] = useState<any[]>([]);
+
+  useEffect(() => {
+    // We prioritize featured or specifically chosen categories for the home page
+    const q = query(
+      collection(db, 'categories'),
+      where('active', '==', true),
+      limit(4)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedCats = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          name: data.name,
+          designs: data.productCount ? `${data.productCount}+` : 'Explore',
+          tag: data.isFeatured ? 'Featured' : data.isBestSeller ? 'Bestseller' : null,
+          img: data.image || `/images/categories/${data.name}.jpg`,
+          href: `/shop/${data.slug}`
+        };
+      });
+
+      // Fallback if Firestore is empty (initial state)
+      if (fetchedCats.length === 0) {
+        setCats([
+          { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg', href: '/shop/birthday-cakes' },
+          { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg', href: '/shop/wedding-cakes' },
+          { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg', href: '/shop/chocolate-cakes' },
+          { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png', href: '/custom-cake' },
+        ]);
+      } else {
+        setCats(fetchedCats);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <section id="categories" className="py-[90px] bg-cream">

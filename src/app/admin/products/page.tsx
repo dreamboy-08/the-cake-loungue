@@ -110,6 +110,21 @@ const AdminProducts = () => {
     }
   };
 
+  const handleSeedCategories = async () => {
+    if (!confirm("This will populate categories from the static products list. Continue?")) return;
+    setIsSyncing(true);
+    try {
+      const { seedCategories } = await import("@/utils/seedCategories");
+      const success = await seedCategories();
+      if (success) alert("Categories seeded successfully!");
+    } catch (error) {
+      console.error("Seeding error:", error);
+      alert("Failed to seed categories.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const handleMigrateWeights = async () => {
     if (!confirm("This will add MULTIPLE weight options (0.5 Kg, 1 Kg, 2 Kg) to all products in Firestore. Continue?")) return;
     setIsSyncing(true);
@@ -160,6 +175,14 @@ const AdminProducts = () => {
           <p className="text-gray-500 mt-1">Manage your bakery inventory and catalog.</p>
         </div>
         <div className="flex flex-wrap gap-3">
+          <button
+            onClick={handleSeedCategories}
+            disabled={isSyncing}
+            className="flex items-center justify-center gap-2 bg-indigo-500 text-white px-4 py-2.5 rounded-2xl font-bold shadow-lg shadow-indigo-500/20 hover:bg-indigo-600 transition-all text-xs disabled:opacity-50"
+          >
+            {isSyncing ? <Loader2 className="animate-spin" size={16} /> : <RefreshCcw size={16} />}
+            <span>Seed Categories</span>
+          </button>
           <button
             onClick={handleMigrateWeights}
             disabled={isSyncing}
