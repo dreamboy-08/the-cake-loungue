@@ -5,7 +5,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 const FeaturedProducts = () => {
-  const featured = products.slice(0, 8);
+  const featuredIds = [1, 2, 3, 5, 6, 7, 9, 11, 13, 17, 55, 59, 103, 114, 325, 327];
+
+  const featured = featuredIds
+    .map(id => products.find(p => p.id === id))
+    .filter((p): p is typeof products[0] => p !== undefined);
 
   return (
     <section id="products" className="py-20 bg-cream-dark">
