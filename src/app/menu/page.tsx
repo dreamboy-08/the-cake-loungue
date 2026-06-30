@@ -5,6 +5,7 @@ import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
 import { ArrowLeft } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
+import BackButton from '@/components/BackButton';
 import { filterProducts } from '@/utils/filterProducts';
 
 const MenuPage = () => {
@@ -21,8 +22,9 @@ const MenuPage = () => {
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <div className="pt-40 md:pt-52 pb-20 bg-cream min-h-screen">
       <div className="container mx-auto px-6">
+        <BackButton fallbackRoute="/" />
         <section className="text-center mb-12">
           <p className="section-label">Full Bakery Menu</p>
           <h1 className="section-title text-4xl md:text-5xl mb-5">Explore Our Complete Collection</h1>
