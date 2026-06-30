@@ -175,7 +175,9 @@ const AdminCategories = () => {
         <CategoryForm
           category={selectedCategory}
           onClose={() => setIsFormOpen(false)}
-          onSuccess={() => {}}
+          onSuccess={() => {
+            console.log("AdminCategories: onSuccess triggered, closing form and refreshing...");
+          }}
         />
       )}
 

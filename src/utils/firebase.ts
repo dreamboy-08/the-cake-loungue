@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase only if API key is present
-let app;
+let app: FirebaseApp;
 if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "your_api_key") {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 } else {

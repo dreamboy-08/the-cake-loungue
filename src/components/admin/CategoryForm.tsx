@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { db, storage } from '@/utils/firebase';
-import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { db, storage, app } from '@/utils/firebase';
+import { updateDoc, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { X, Loader2, Upload, Trash2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -35,38 +35,60 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const projectId = (app as any).options?.projectId;
+    console.log("CategoryForm: handleSubmit triggered. Project ID:", projectId);
+
+    if (!projectId || projectId === "missing") {
+      alert("CRITICAL ERROR: Firebase configuration is missing. Documents cannot be saved.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       let finalImageUrl = category?.image || '';
 
       if (imageFile) {
+        console.log("CategoryForm: Uploading image...");
         const storageRef = ref(storage, `categories/${Date.now()}_${imageFile.name}`);
         const uploadResult = await uploadBytes(storageRef, imageFile);
         finalImageUrl = await getDownloadURL(uploadResult.ref);
+        console.log("CategoryForm: Image uploaded, URL:", finalImageUrl);
       }
 
+      const slug = formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
       const categoryData = {
         ...formData,
         image: finalImageUrl,
-        slug: formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        slug: slug,
         updatedAt: new Date().toISOString(),
       };
 
+      console.log("CategoryForm: Data to save:", categoryData);
+
       if (category?.id) {
-        await updateDoc(doc(db, 'categories', category.id), categoryData);
+        console.log("CategoryForm: Updating existing document:", category.id);
+        const docRef = doc(db, 'categories', category.id);
+        await updateDoc(docRef, categoryData);
+        console.log("CategoryForm: Update successful at path:", docRef.path);
       } else {
-        await addDoc(collection(db, 'categories'), {
+        // Use slug as the document ID for cleaner organization and predictable paths
+        console.log("CategoryForm: Creating new document in 'categories' collection with ID:", slug);
+        const docRef = doc(db, 'categories', slug);
+        await setDoc(docRef, {
           ...categoryData,
           createdAt: new Date().toISOString(),
           productCount: 0
         });
+        console.log("CategoryForm: Save successful at path:", docRef.path);
       }
 
+      alert("Category saved successfully!");
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error saving category:", error);
+      alert(`FIREBASE ERROR (${error.code || 'UNKNOWN'}): ${error.message}`);
     } finally {
       setLoading(false);
     }

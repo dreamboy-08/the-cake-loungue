@@ -22,21 +22,30 @@ export const seedCategories = async () => {
     let count = 0;
     const now = new Date().toISOString();
 
+    const coreMetadata: Record<string, any> = {
+      'Birthday Cakes': { tag: 'Popular', image: '/images/categories/Birthday Cakes.jpg' },
+      'Wedding Cakes': { tag: null, image: '/images/categories/Wedding Cakes.jpg' },
+      'Chocolate Cakes': { tag: 'Bestseller', image: '/images/categories/Chocolate Cakes.jpg' },
+      'Custom Cakes': { tag: 'Open', image: '/images/categories/Custom Cakes.png' },
+    };
+
     for (const name of uniqueCategoryNames) {
       if (existingNames.has(name)) continue;
 
-      const categoryRef = doc(collection(db, 'categories'));
-      const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const slug = name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const categoryRef = doc(db, 'categories', slug);
+      const metadata = coreMetadata[name] || {};
 
       batch.set(categoryRef, {
         name,
         slug,
-        description: `Premium collection of ${name}.`,
-        image: '', // Will be updated via Admin UI or can be matched with static assets if needed
+        description: `Explore our exquisite collection of ${name.toLowerCase()}, handcrafted for your special moments.`,
+        image: metadata.image || '',
+        tag: metadata.tag || null,
         active: true,
         createdAt: now,
         updatedAt: now,
-        productCount: 0
+        productCount: products.filter(p => p.category === name).length
       });
 
       count++;
