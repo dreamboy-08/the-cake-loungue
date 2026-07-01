@@ -1,49 +1,20 @@
 import { db } from './firebase';
 import { collection, doc, writeBatch, getDocs, query, where } from 'firebase/firestore';
 import { products } from '../constants/products';
-import { MEGA_MENU } from '../constants/navigation';
 
 /**
- * seedCategories - Extracts unique categories from products and navigation
+ * seedCategories - Extracts unique categories from the products constant
  * and populates the 'categories' collection in Firestore.
  */
 export const seedCategories = async () => {
   try {
     console.log('[Seeding] Starting category seeding process...');
 
-    // 1. Extract categories from products constant
-    const productCategories = products.map(p => p.category);
+    // 1. Extract unique category names from products
+    const uniqueCategoryNames = Array.from(new Set(products.map(p => p.category)));
+    console.log(`[Seeding] Found ${uniqueCategoryNames.length} unique categories.`);
 
-    // 2. Extract categories from MEGA_MENU navigation constant
-    const navCategories: string[] = [];
-    MEGA_MENU.forEach(menuItem => {
-      // Top level labels (e.g., "Bento", "Theme Cakes", "Desserts")
-      if (menuItem.label) navCategories.push(menuItem.label);
-
-      if (menuItem.columns) {
-        menuItem.columns.forEach(column => {
-          // Column titles can be categories too (e.g., "Kids Cakes", "Romantic Cakes")
-          // But we skip generic ones
-          const genericTitles = ['Category', 'Designer', 'Flavours', 'Occasions', 'Designs', 'Combos', 'Family', 'Couples', 'Friends', 'Special', 'Hampers', 'Premium', 'Special Gifts'];
-          if (column.title && !genericTitles.includes(column.title)) {
-            navCategories.push(column.title);
-          }
-
-          column.items.forEach(item => {
-            navCategories.push(item.label);
-          });
-        });
-      }
-    });
-
-    // 3. Combine and get unique names
-    const uniqueCategoryNames = Array.from(new Set([...productCategories, ...navCategories]))
-      .filter(name => name && name.trim() !== '')
-      .sort();
-
-    console.log(`[Seeding] Found ${uniqueCategoryNames.length} unique categories total.`);
-
-    // 4. Check existing categories to avoid duplicates
+    // 2. Check existing categories to avoid duplicates
     const existingCatsSnapshot = await getDocs(collection(db, 'categories'));
     const existingNames = new Set(existingCatsSnapshot.docs.map(doc => doc.data().name));
 
@@ -55,14 +26,13 @@ export const seedCategories = async () => {
       if (existingNames.has(name)) continue;
 
       const categoryRef = doc(collection(db, 'categories'));
-      // Consistent slug generation
-      const slug = name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
       batch.set(categoryRef, {
-        name: name.trim(),
+        name,
         slug,
         description: `Premium collection of ${name}.`,
-        image: '',
+        image: '', // Will be updated via Admin UI or can be matched with static assets if needed
         active: true,
         createdAt: now,
         updatedAt: now,

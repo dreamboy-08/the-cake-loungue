@@ -42,14 +42,6 @@ const AdminCategories = () => {
     const q = query(collection(db, 'categories'));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      if (snapshot.empty && !loading) {
-        console.log("Categories collection empty, triggering auto-seed...");
-        const { seedCategories } = await import('@/utils/seedCategories');
-        await seedCategories();
-        // The snapshot listener will fire again once seeded
-        return;
-      }
-
       const fetchedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
       setCategories(fetchedCategories);
 

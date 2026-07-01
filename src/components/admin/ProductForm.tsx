@@ -103,13 +103,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setCatLoading(true);
     console.log("Firestore Path: categories");
     const q = query(collection(db, 'categories'));
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
-      if (snapshot.empty && !catLoading) {
-        console.log("Categories collection empty, triggering auto-seed from ProductForm...");
-        const { seedCategories } = await import('@/utils/seedCategories');
-        await seedCategories();
-        return;
-      }
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       console.log(`Categories returned: ${snapshot.docs.length}`);
       setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       setCatLoading(false);
