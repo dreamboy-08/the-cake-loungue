@@ -105,7 +105,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     const q = query(collection(db, 'categories'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       console.log(`Categories returned: ${snapshot.docs.length}`);
-      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       setCatLoading(false);
     }, (error) => {
       console.error("Error listening to categories:", error);

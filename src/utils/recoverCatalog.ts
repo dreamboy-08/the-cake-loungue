@@ -20,10 +20,11 @@ export const recoverCatalog = async () => {
 
     for (const product of products) {
       // Use the numeric ID as the document ID for consistency
-      const productRef = doc(collection(db, 'products'), product.id.toString());
+      const { id, ...productData } = product;
+      const productRef = doc(collection(db, 'products'), id.toString());
 
       batch.set(productRef, {
-        ...product,
+        ...productData,
         createdAt: now,
         updatedAt: now
       });
