@@ -43,8 +43,10 @@ interface ProductFormProps {
 
 const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const [loading, setLoading] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>(product?.images || product?.img ? [product?.img, ...(product?.images || [])].filter(Boolean) : []);
+  const [imageItems, setImageItems] = useState<Array<{ file: File | null; preview: string; isExisting: boolean }>>(() => {
+    const existingImages: string[] = [product?.img, ...(product?.images || [])].filter(Boolean);
+    return existingImages.map(url => ({ file: null, preview: url, isExisting: true }));
+  });
   const [categories, setCategories] = useState<any[]>([]);
   const [catLoading, setCatLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -117,27 +119,33 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setImageFiles(prev => [...prev, ...files]);
-      const newPreviews = files.map(file => URL.createObjectURL(file));
-      setImagePreviews(prev => [...prev, ...newPreviews]);
+      const newItems = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file),
+        isExisting: false
+      }));
+      setImageItems(prev => [...prev, ...newItems]);
       setUploadError(null);
     }
   };
 
   const removePreview = (index: number) => {
-    const newPreviews = [...imagePreviews];
-    newPreviews.splice(index, 1);
-    setImagePreviews(newPreviews);
-
-    // Also remove from imageFiles if it's a new upload
-    // This is a bit simplified, ideally we track which preview belongs to which file/existing URL
+    setImageItems(prev => {
+      const newItems = [...prev];
+      const itemToRemove = newItems[index];
+      if (itemToRemove && !itemToRemove.isExisting && itemToRemove.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(itemToRemove.preview);
+      }
+      newItems.splice(index, 1);
+      return newItems;
+    });
   };
 
   const validateForm = () => {
     if (!formData.name.trim()) return "Product name is required.";
     if (!formData.category) return "Please select a category.";
     if (!formData.price || Number(formData.price) <= 0) return "Base price must be greater than zero.";
-    if (imagePreviews.length === 0 && !formData.imageUrl) return "At least one product image is required.";
+    if (imageItems.length === 0) return "At least one product image is required.";
     if (formData.weights.length === 0) return "At least one weight variant is required.";
     if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All variants must have a valid price.";
     if (!formData.description.trim()) return "Product description is required.";
@@ -159,22 +167,50 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setLoading(true);
 
     try {
-      let finalImages = [...imagePreviews.filter(p => p.startsWith('http'))];
+      const finalImages: string[] = [];
 
-      // Upload new files
-      for (const file of imageFiles) {
-        try {
-          const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
-          const uploadResult = await uploadBytes(storageRef, file);
-          const url = await getDownloadURL(uploadResult.ref);
-          finalImages.push(url);
-        } catch (storageError) {
-          console.error("Storage upload failed:", storageError);
+      // Process images: keep existing or upload new ones
+      for (const item of imageItems) {
+        if (item.isExisting) {
+          finalImages.push(item.preview);
+        } else if (item.file) {
+          try {
+            const storagePath = `products/${Date.now()}_${item.file.name}`;
+
+            // Log before ref()
+            console.log("Before ref():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const storageRef = ref(storage, storagePath);
+
+            // Log before uploadBytes()
+            console.log("Before uploadBytes():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const uploadResult = await uploadBytes(storageRef, item.file);
+
+            // Log before getDownloadURL()
+            console.log("Before getDownloadURL():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const url = await getDownloadURL(uploadResult.ref);
+            finalImages.push(url);
+          } catch (storageError: any) {
+            console.error("Storage operation failed:", storageError);
+            const errorMsg = storageError?.code === 'storage/quota-exceeded'
+              ? "Storage quota exceeded. Please upgrade your plan."
+              : "Failed to upload image. Please check your connection or storage permissions.";
+            showToast(errorMsg, "error");
+            setLoading(false);
+            return; // Stop the entire save if a new image fails to upload
+          }
         }
-      }
-
-      if (finalImages.length === 0 && formData.imageUrl) {
-        finalImages.push(formData.imageUrl);
       }
 
       if (finalImages.length === 0) {
@@ -183,11 +219,19 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         return;
       }
 
-      const { imageUrl, ...restData } = formData;
-      const productData = {
-        ...restData,
+      const productData: any = {
+        name: formData.name,
+        description: formData.description,
         price: Number(formData.price),
         oldPrice: Number(formData.oldPrice),
+        category: formData.category,
+        flavor: formData.flavor,
+        tag: formData.tag,
+        isFeatured: formData.isFeatured,
+        isBestSeller: formData.isBestSeller,
+        isNewArrival: formData.isNewArrival,
+        inStock: formData.inStock,
+        active: formData.active,
         weights: formData.weights.map((w: any) => ({
           label: w.label,
           price: Number(w.price)
@@ -198,7 +242,33 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       };
 
       if (product?.id) {
-        await updateDoc(doc(db, 'products', product.id), productData);
+        // Save only modified fields
+        const updates: any = { updatedAt: productData.updatedAt };
+        let hasChanges = false;
+
+        Object.keys(productData).forEach(key => {
+          if (key === 'updatedAt') return;
+
+          const newVal = productData[key];
+          const oldVal = product[key];
+
+          // Arrays (weights, images) comparison
+          if (Array.isArray(newVal)) {
+            if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+              updates[key] = newVal;
+              hasChanges = true;
+            }
+          }
+          // Primitive or object comparison
+          else if (newVal !== oldVal) {
+            updates[key] = newVal;
+            hasChanges = true;
+          }
+        });
+
+        if (hasChanges) {
+          await updateDoc(doc(db, 'products', product.id), updates);
+        }
       } else {
         await addDoc(collection(db, 'products'), {
           ...productData,
@@ -249,9 +319,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
               <label className="block text-sm font-black text-chocolate uppercase tracking-widest">Product Gallery</label>
 
               <div className="grid grid-cols-3 gap-4">
-                {imagePreviews.map((preview, idx) => (
+                {imageItems.map((item, idx) => (
                   <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-gray-100 group">
-                    <Image src={preview} alt="Preview" fill className="object-cover" />
+                    <Image src={item.preview} alt="Preview" fill className="object-cover" />
                     <button
                       type="button"
                       onClick={() => removePreview(idx)}
