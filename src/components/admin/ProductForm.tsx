@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { db } from '@/utils/firebase';
 import { uploadToCloudinary } from '@/utils/cloudinary';
 import {
@@ -38,6 +39,7 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageItems, setImageItems] = useState<Array<{ file: File | null; preview: string; isExisting: boolean }>>(() => {
     const existingImages: string[] = [product?.img, ...(product?.images || [])].filter(Boolean);
@@ -96,6 +98,17 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
+
+  useEffect(() => {
+    setMounted(true);
+    const scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
 
   useEffect(() => {
     setCatLoading(true);
@@ -255,15 +268,15 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-chocolate/60 ">
+  const formContent = (
+    <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-300">
       <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[500] px-6 py-3 rounded-[22px] shadow-2xl flex items-center gap-3 font-bold text-sm ${
+            className={`fixed top-8 left-1/2 -translate-x-1/2 z-[700] px-6 py-3 rounded-[22px] shadow-2xl flex items-center gap-3 font-bold text-sm ${
               toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
             }`}
           >
@@ -273,15 +286,21 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         )}
       </AnimatePresence>
 
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-up">
-        <div className="p-6 border-b flex items-center justify-between bg-chocolate text-white">
-          <h2 className="text-xl font-bold font-playfair">{product ? 'Edit Product' : 'Add New Product'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-rose rounded-full transition-colors">
+      <div
+        className="bg-white rounded-[40px] shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-up"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-8 border-b flex items-center justify-between bg-chocolate text-white shrink-0">
+          <div>
+            <h2 className="text-2xl font-bold font-playfair">{product ? 'Edit Product' : 'New Product'}</h2>
+            <p className="text-[10px] text-white/60 uppercase tracking-widest mt-1">Manage Bakery Item</p>
+          </div>
+          <button onClick={onClose} className="p-3 hover:bg-rose rounded-full transition-colors">
             <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 overflow-y-auto space-y-8">
+        <form onSubmit={handleSubmit} className="p-8 space-y-8 overflow-y-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Image Gallery Section */}
             <div className="space-y-6">
@@ -514,6 +533,15 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         </form>
       </div>
     </div>
+  );
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[600]" onClick={onClose}>
+      {formContent}
+    </div>,
+    document.body
   );
 };
 
