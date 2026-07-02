@@ -5,6 +5,7 @@ import { Shield, FileText, RefreshCcw, Truck } from 'lucide-react';
 import PolicyCard from '@/components/policies/PolicyCard';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const PoliciesContent = () => {
   const policies = [
@@ -35,7 +36,7 @@ const PoliciesContent = () => {
   ];
 
   return (
-    <div className="pt-24 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6">
         <div className="max-w-7xl mx-auto mb-8">
           <BackButton />
@@ -106,7 +107,7 @@ const PoliciesContent = () => {
           </div>
         </motion.div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

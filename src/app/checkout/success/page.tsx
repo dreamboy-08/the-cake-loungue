@@ -6,6 +6,7 @@ import { CheckCircle2, ShoppingBag, ArrowRight, Calendar, MapPin, Package } from
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const SuccessContent = () => {
   const searchParams = useSearchParams();
@@ -43,7 +44,7 @@ const SuccessContent = () => {
   }, [orderId, router]);
 
   return (
-    <div className="pt-32 md:pt-40 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6 max-w-2xl">
         <BackButton className="mb-8" />
         <motion.div
@@ -124,7 +125,7 @@ const SuccessContent = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

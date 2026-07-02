@@ -12,6 +12,7 @@ import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -79,22 +80,22 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+      <PageWrapper loading className="gap-4">
         <Loader2 className="animate-spin text-rose-deep" size={48} />
         <p className="text-chocolate font-medium">Loading delicious details...</p>
-      </div>
+      </PageWrapper>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 text-center px-6">
+      <PageWrapper loading className="gap-6 text-center px-6">
         <div className="w-20 h-20 bg-cream-dark rounded-full flex items-center justify-center text-rose-deep">
           <AlertCircle size={40} />
         </div>
         <h2 className="text-2xl font-bold text-chocolate">{error || 'Product Not Found'}</h2>
         <Link href="/menu" className="btn btn-primary px-8 py-3">Back to Menu</Link>
-      </div>
+      </PageWrapper>
     );
   }
 
@@ -120,7 +121,7 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="pt-40 md:pt-52 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6">
         <BackButton fallbackRoute="/menu" />
 
@@ -270,7 +271,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 
