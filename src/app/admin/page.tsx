@@ -146,7 +146,7 @@ const AdminDashboard = () => {
     // Historical stats are fetched once in fetchInitialStats
     const qRecentOrdersSync = query(collection(db, 'orders'), orderBy('createdAt', 'desc'), limit(50));
     const unsubOrders = onSnapshot(qRecentOrdersSync, (snapshot) => {
-      const recentOrdersList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const recentOrdersList = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       // Update Recent Orders UI (Top 5)
       setRecentOrders(recentOrdersList.slice(0, 5));
@@ -182,7 +182,7 @@ const AdminDashboard = () => {
 
     const qRecentUsers = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(5));
     const unsubRecentUsers = onSnapshot(qRecentUsers, (snapshot) => {
-      setRecentCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setRecentCustomers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     });
 
     return () => {

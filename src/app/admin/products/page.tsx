@@ -56,7 +56,7 @@ const AdminProducts = () => {
       }
 
       const snapshot = await getDocs(q);
-      const newProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const newProducts = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       if (isNext) {
         setProducts(prev => {
@@ -88,7 +88,7 @@ const AdminProducts = () => {
 
   useEffect(() => {
     const unsubCats = onSnapshot(collection(db, 'categories'), (snapshot) => {
-      setCategories(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     }, (error) => {
       console.error("Error listening to categories:", error);
     });

@@ -61,7 +61,7 @@ const AdminOrders = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const liveOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const liveOrders = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setOrders(prev => {
         // Robust ID-based merge to prevent duplicates and data loss
         const liveIds = new Set(liveOrders.map(o => o.id));
@@ -96,7 +96,7 @@ const AdminOrders = () => {
         limit(PAGE_SIZE)
       );
       const snapshot = await getDocs(q);
-      const newOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const newOrders = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       setOrders(prev => {
         const merged = [...prev, ...newOrders];
@@ -122,7 +122,7 @@ const AdminOrders = () => {
          setLoading(true);
          const q = query(collection(db, 'orders'), orderBy(sortField, sortOrder), limit(PAGE_SIZE));
          const snapshot = await getDocs(q);
-         setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+         setOrders(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
          setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
          setHasMore(snapshot.docs.length === PAGE_SIZE);
          setLoading(false);

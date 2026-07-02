@@ -57,7 +57,7 @@ const AdminUsers = () => {
     const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const fetchedUsers = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
       setUsers(fetchedUsers);
       setLoading(false);
     }, (error) => {

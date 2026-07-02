@@ -42,7 +42,7 @@ const AdminCategories = () => {
     const q = query(collection(db, 'categories'));
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const fetchedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
+      const fetchedCategories = snapshot.docs.map(doc => ({ ...(doc.data() as any), id: doc.id }));
       setCategories(fetchedCategories);
 
       // Fetch product counts for each category

@@ -26,7 +26,7 @@ const ProfilePage = () => {
           limit(3)
         );
         const snapshot = await getDocs(q);
-        setRecentOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setRecentOrders(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       } catch (error) {
         console.error("Error fetching recent orders:", error);
       } finally {

@@ -56,7 +56,7 @@ const AdminCustomers = () => {
       }
 
       const snapshot = await getDocs(q);
-      const newUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const newUsers = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       if (isNext) {
         setUsers(prev => {
@@ -90,7 +90,7 @@ const AdminCustomers = () => {
     try {
       const addrQ = query(collection(db, 'savedAddresses'), where('userId', '==', customer.id));
       const addrSnapshot = await getDocs(addrQ);
-      const addresses = addrSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const addresses = addrSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       // Combine with addresses in user document if any
       const userDocAddresses = customer.addresses || [];
@@ -131,7 +131,7 @@ const AdminCustomers = () => {
         snapshot = await getDocs(q);
       }
 
-      setCustomerOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setCustomerOrders(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     } catch (error) {
       console.error("Error fetching customer history:", error);
     } finally {

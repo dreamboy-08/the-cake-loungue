@@ -36,7 +36,7 @@ const ProductDetail = () => {
 
         if (docSnap.exists()) {
           const data = docSnap.data() as any;
-          const productData = { id: docSnap.id, ...data } as Product;
+          const productData = { ...data, id: docSnap.id } as Product;
           setProduct(productData);
           if (productData.weights && productData.weights.length > 0) {
             setSelectedWeight(productData.weights[0].label);
