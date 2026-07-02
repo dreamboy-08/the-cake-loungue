@@ -45,9 +45,12 @@ const AdminProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [allProducts, setAllProducts] = useState<any[] | null>(null);
+  const [isSearchingAll, setIsSearchingAll] = useState(false);
 
   const fetchProducts = useCallback(async (isNext = false) => {
     setLoading(true);
+    if (!isNext) setAllProducts(null);
     try {
       let q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
@@ -96,9 +99,31 @@ const AdminProducts = () => {
     return () => unsubCats();
   }, []);
 
+  // Search full catalog logic
+  useEffect(() => {
+    const fetchAllForSearch = async () => {
+      if (searchTerm && !allProducts && hasMore) {
+        setIsSearchingAll(true);
+        try {
+          const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+          const snapshot = await getDocs(q);
+          const allFetched = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+          setAllProducts(allFetched);
+        } catch (error) {
+          console.error("Error fetching all products for search:", error);
+        } finally {
+          setIsSearchingAll(false);
+        }
+      }
+    };
+
+    fetchAllForSearch();
+  }, [searchTerm, allProducts, hasMore]);
+
   const handleSyncCatalog = async () => {
     if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
     setIsSyncing(true);
+    setAllProducts(null);
     try {
       const { recoverCatalog } = await import("@/utils/recoverCatalog");
       const success = await recoverCatalog();
@@ -113,6 +138,7 @@ const AdminProducts = () => {
   const handleSeedCategories = async () => {
     if (!confirm("This will populate categories from the static products list. Continue?")) return;
     setIsSyncing(true);
+    setAllProducts(null);
     try {
       const { seedCategories } = await import("@/utils/seedCategories");
       const success = await seedCategories();
@@ -128,6 +154,7 @@ const AdminProducts = () => {
   const handleMigrateWeights = async () => {
     if (!confirm("This will add MULTIPLE weight options (0.5 Kg, 1 Kg, 2 Kg) to all products in Firestore. Continue?")) return;
     setIsSyncing(true);
+    setAllProducts(null);
     try {
       const { migrateWeights } = await import("@/utils/migrateWeights");
       const success = await migrateWeights();
@@ -151,7 +178,10 @@ const AdminProducts = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    return products.filter(p => {
+    // If we're searching and have the full catalog, use that; otherwise use paginated list
+    const sourceProducts = (searchTerm && allProducts) ? allProducts : products;
+
+    return sourceProducts.filter(p => {
       const name = p.name || '';
       const category = p.category || '';
       const status = p.status || 'active';
@@ -165,7 +195,7 @@ const AdminProducts = () => {
 
       return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [products, searchTerm, categoryFilter, statusFilter]);
+  }, [products, allProducts, searchTerm, categoryFilter, statusFilter]);
 
   return (
     <div className="space-y-8 animate-fade-up pb-12">
@@ -267,11 +297,13 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {loading && products.length === 0 ? (
+              {(loading && products.length === 0) || (searchTerm && isSearchingAll && filteredProducts.length === 0) ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-24 text-center">
                     <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={40} />
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading Catalog...</p>
+                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">
+                      {searchTerm ? 'Searching entire catalog...' : 'Loading Catalog...'}
+                    </p>
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
@@ -379,7 +411,7 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {hasMore && (
+      {hasMore && !searchTerm && (
         <div className="flex justify-center mt-8">
           <button
             disabled={loading}
