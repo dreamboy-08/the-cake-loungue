@@ -8,6 +8,7 @@ import { CreditCard, ShoppingBag, MapPin, Loader2, CheckCircle2, AlertCircle, Sh
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 import { Calendar, Clock } from 'lucide-react';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
@@ -307,7 +308,7 @@ const CheckoutPage = () => {
   }
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Main Content */}
@@ -537,7 +538,7 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

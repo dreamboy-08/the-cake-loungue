@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
@@ -52,16 +53,16 @@ const OrderDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+      <PageWrapper loading className="gap-4">
         <Loader2 className="animate-spin text-rose-deep" size={40} />
         <p className="text-chocolate font-medium">Loading order details...</p>
-      </div>
+      </PageWrapper>
     );
   }
 
   if (!order) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-6 px-6 text-center">
+      <PageWrapper loading className="gap-6 px-6 text-center">
         <div className="w-20 h-20 bg-cream-dark rounded-full flex items-center justify-center text-rose-deep">
           <Package size={40} />
         </div>
@@ -70,14 +71,14 @@ const OrderDetailsPage = () => {
         <Link href="/orders" className="bg-rose-deep text-white px-8 py-3 rounded-full font-bold shadow-lg">
           Back to Orders
         </Link>
-      </div>
+      </PageWrapper>
     );
   }
 
   const currentStep = getStatusStep(order.status);
 
   return (
-    <div className="pt-24 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6 max-w-4xl">
         <BackButton fallbackRoute="/orders" ariaLabel="Go back to order history" />
 
@@ -223,7 +224,7 @@ const OrderDetailsPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

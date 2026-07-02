@@ -11,6 +11,7 @@ import { db } from '@/utils/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toSlug } from '@/utils/slug';
+import PageWrapper from '@/components/PageWrapper';
 
 const MenuContent = () => {
   const router = useRouter();
@@ -94,7 +95,7 @@ const MenuContent = () => {
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="pt-40 md:pt-52 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6">
         <BackButton fallbackRoute="/" />
         <section className="text-center mb-12">
@@ -169,7 +170,7 @@ const MenuContent = () => {
           </div>
         )}
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

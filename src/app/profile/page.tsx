@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const ProfilePage = () => {
   const { user, userData, logout } = useAuth();
@@ -39,17 +40,17 @@ const ProfilePage = () => {
 
   if (!user && !loading) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center px-6 text-center">
+      <PageWrapper loading className="px-6 text-center">
         <h2 className="text-2xl font-bold text-chocolate mb-4">Please log in</h2>
         <Link href="/login" className="bg-rose-deep text-white px-8 py-3 rounded-full font-bold shadow-lg">
           Log In / Sign Up
         </Link>
-      </div>
+      </PageWrapper>
     );
   }
 
   return (
-    <div className="pt-24 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6 max-w-5xl">
         <BackButton fallbackRoute="/" ariaLabel="Go back to home" />
         
@@ -212,7 +213,7 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

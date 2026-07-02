@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { MessageCircle } from 'lucide-react';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const CustomCakePage = () => {
   const sendWhatsApp = () => {
@@ -12,7 +13,7 @@ const CustomCakePage = () => {
   };
 
   return (
-    <div className="pt-32 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6">
         <div className="max-w-[1200px] mx-auto mb-12">
           <BackButton />
@@ -95,7 +96,7 @@ const CustomCakePage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

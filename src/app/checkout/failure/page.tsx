@@ -6,13 +6,14 @@ import { XCircle, AlertCircle, RefreshCcw, ArrowLeft, HelpCircle } from 'lucide-
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const FailureContent = () => {
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'The payment was unsuccessful or cancelled.';
 
   return (
-    <div className="pt-32 md:pt-40 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6 max-w-2xl">
         <BackButton className="mb-8" />
         <motion.div
@@ -83,7 +84,7 @@ const FailureContent = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 

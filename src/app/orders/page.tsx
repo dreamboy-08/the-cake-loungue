@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
+import PageWrapper from '@/components/PageWrapper';
 
 const OrdersPage = () => {
   const { user } = useAuth();
@@ -60,15 +61,15 @@ const OrdersPage = () => {
 
   if (loading) {
     return (
-      <div className="pt-32 pb-20 bg-cream min-h-screen flex flex-col items-center justify-center gap-4">
+      <PageWrapper loading className="gap-4">
         <Loader2 className="animate-spin text-rose-deep" size={40} />
         <p className="text-chocolate font-medium">Fetching your orders...</p>
-      </div>
+      </PageWrapper>
     );
   }
 
   return (
-    <div className="pt-24 pb-20 bg-cream min-h-screen">
+    <PageWrapper>
       <div className="container mx-auto px-6 max-w-5xl">
         <BackButton fallbackRoute="/profile" ariaLabel="Go back to profile" />
         
@@ -198,7 +199,7 @@ const OrdersPage = () => {
           )}
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
 
