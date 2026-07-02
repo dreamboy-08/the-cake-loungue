@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '@/utils/firebase';
+import { db } from '@/utils/firebase';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 import {
   collection,
   addDoc,
@@ -12,11 +13,6 @@ import {
   orderBy,
   onSnapshot
 } from 'firebase/firestore';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
 import {
   X,
   Upload,
@@ -175,38 +171,11 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
           finalImages.push(item.preview);
         } else if (item.file) {
           try {
-            const storagePath = `products/${Date.now()}_${item.file.name}`;
-
-            // Log before ref()
-            console.log("Before ref():", {
-              "typeof image": typeof item.file,
-              "image value": item.file,
-              "typeof storagePath": typeof storagePath
-            });
-            const storageRef = ref(storage, storagePath);
-
-            // Log before uploadBytes()
-            console.log("Before uploadBytes():", {
-              "typeof image": typeof item.file,
-              "image value": item.file,
-              "typeof storagePath": typeof storagePath
-            });
-            const uploadResult = await uploadBytes(storageRef, item.file);
-
-            // Log before getDownloadURL()
-            console.log("Before getDownloadURL():", {
-              "typeof image": typeof item.file,
-              "image value": item.file,
-              "typeof storagePath": typeof storagePath
-            });
-            const url = await getDownloadURL(uploadResult.ref);
+            const url = await uploadToCloudinary(item.file);
             finalImages.push(url);
-          } catch (storageError: any) {
-            console.error("Storage operation failed:", storageError);
-            const errorMsg = storageError?.code === 'storage/quota-exceeded'
-              ? "Storage quota exceeded. Please upgrade your plan."
-              : "Failed to upload image. Please check your connection or storage permissions.";
-            showToast(errorMsg, "error");
+          } catch (uploadError: any) {
+            console.error("Cloudinary upload failed:", uploadError);
+            showToast("Failed to upload image to Cloudinary. Please check your connection.", "error");
             setLoading(false);
             return; // Stop the entire save if a new image fails to upload
           }
