@@ -174,32 +174,42 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         if (item.isExisting) {
           finalImages.push(item.preview);
         } else if (item.file) {
-          const storagePath = `products/${Date.now()}_${item.file.name}`;
+          try {
+            const storagePath = `products/${Date.now()}_${item.file.name}`;
 
-          // Log before ref()
-          console.log("Before ref():", {
-            "typeof image": typeof item.file,
-            "image value": item.file,
-            "typeof storagePath": typeof storagePath
-          });
-          const storageRef = ref(storage, storagePath);
+            // Log before ref()
+            console.log("Before ref():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const storageRef = ref(storage, storagePath);
 
-          // Log before uploadBytes()
-          console.log("Before uploadBytes():", {
-            "typeof image": typeof item.file,
-            "image value": item.file,
-            "typeof storagePath": typeof storagePath
-          });
-          const uploadResult = await uploadBytes(storageRef, item.file);
+            // Log before uploadBytes()
+            console.log("Before uploadBytes():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const uploadResult = await uploadBytes(storageRef, item.file);
 
-          // Log before getDownloadURL()
-          console.log("Before getDownloadURL():", {
-            "typeof image": typeof item.file,
-            "image value": item.file,
-            "typeof storagePath": typeof storagePath
-          });
-          const url = await getDownloadURL(uploadResult.ref);
-          finalImages.push(url);
+            // Log before getDownloadURL()
+            console.log("Before getDownloadURL():", {
+              "typeof image": typeof item.file,
+              "image value": item.file,
+              "typeof storagePath": typeof storagePath
+            });
+            const url = await getDownloadURL(uploadResult.ref);
+            finalImages.push(url);
+          } catch (storageError: any) {
+            console.error("Storage operation failed:", storageError);
+            const errorMsg = storageError?.code === 'storage/quota-exceeded'
+              ? "Storage quota exceeded. Please upgrade your plan."
+              : "Failed to upload image. Please check your connection or storage permissions.";
+            showToast(errorMsg, "error");
+            setLoading(false);
+            return; // Stop the entire save if a new image fails to upload
+          }
         }
       }
 
