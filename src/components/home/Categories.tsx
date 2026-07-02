@@ -2,12 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { db } from '@/utils/firebase';
 import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
+import { toSlug } from '@/utils/slug';
+import { useProductAvailability } from '@/hooks/useProductAvailability';
+import Toast from '@/components/Toast';
 
 const Categories = () => {
+  const router = useRouter();
+  const availableSlugs = useProductAvailability();
   const [cats, setCats] = useState<any[]>([]);
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({
+    message: '',
+    visible: false
+  });
 
   useEffect(() => {
     // We prioritize featured or specifically chosen categories for the home page
@@ -25,17 +34,17 @@ const Categories = () => {
           designs: data.productCount ? `${data.productCount}+` : 'Explore',
           tag: data.isFeatured ? 'Featured' : data.isBestSeller ? 'Bestseller' : null,
           img: data.image || `/images/categories/${data.name}.jpg`,
-          href: `/shop/${data.slug}`
+          slug: data.slug || toSlug(data.name)
         };
       });
 
       // Fallback if Firestore is empty (initial state)
       if (fetchedCats.length === 0) {
         setCats([
-          { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg', href: '/shop/birthday-cakes' },
-          { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg', href: '/shop/wedding-cakes' },
-          { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg', href: '/shop/chocolate-cakes' },
-          { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png', href: '/custom-cake' },
+          { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
+          { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
+          { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
+          { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
         ]);
       } else {
         setCats(fetchedCats);
@@ -44,15 +53,27 @@ const Categories = () => {
       console.error("Error listening to home categories:", error);
       // Fallback on error
       setCats([
-        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg', href: '/shop/birthday-cakes' },
-        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg', href: '/shop/wedding-cakes' },
-        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg', href: '/shop/chocolate-cakes' },
-        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png', href: '/custom-cake' },
+        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
+        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
+        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
+        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
       ]);
     });
 
     return () => unsubscribe();
   }, []);
+
+  const handleCategoryClick = (catName: string) => {
+    const slug = toSlug(catName);
+    if (availableSlugs.has(slug)) {
+      router.push(`/menu?category=${slug}`);
+    } else {
+      setToast({
+        message: `${catName} collection is coming soon!`,
+        visible: true
+      });
+    }
+  };
 
   return (
     <section id="categories" className="py-[90px] bg-cream">
@@ -65,11 +86,18 @@ const Categories = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {cats.map((cat, i) => (
-            <Link
+            <div
               key={i}
-              href={cat.href}
-              className="group bg-white rounded-[22px] overflow-hidden border border-cream-dark shadow-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-md animate-fade-up flex flex-col"
+              onClick={() => handleCategoryClick(cat.name)}
+              className="group bg-white rounded-[22px] overflow-hidden border border-cream-dark shadow-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-md animate-fade-up flex flex-col cursor-pointer"
               style={{ animationDelay: `${i * 0.1}s` }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleCategoryClick(cat.name);
+                }
+              }}
             >
               <div className="relative aspect-square overflow-hidden bg-cream-dark m-3 rounded-[18px]">
                 <Image
@@ -97,10 +125,17 @@ const Categories = () => {
                   Explore <span className="text-lg">→</span>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>
+
+      <Toast
+        message={toast.message}
+        isVisible={toast.visible}
+        onClose={() => setToast(prev => ({ ...prev, visible: false }))}
+        type="info"
+      />
     </section>
   );
 };
