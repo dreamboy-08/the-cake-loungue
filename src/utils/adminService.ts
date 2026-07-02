@@ -241,7 +241,7 @@ export const getBanners = async (): Promise<Banner[]> => {
   try {
     const q = query(collection(db, 'banners'), orderBy('createdAt', 'desc'));
     const snapshot = await withTimeout(getDocs(q), 5000);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Banner));
+    return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Banner));
   } catch (error) {
     console.error("Error fetching banners:", error);
     return [];
