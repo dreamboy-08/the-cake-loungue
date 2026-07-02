@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Suspense } from 'react';
 import { products, Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -8,41 +8,85 @@ import SearchBar from '@/components/shop/SearchBar';
 import BackButton from '@/components/BackButton';
 import { filterProducts } from '@/utils/filterProducts';
 import { db } from '@/utils/firebase';
-import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { toSlug } from '@/utils/slug';
 
-const MenuPage = () => {
+const MenuContent = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If Firebase is not configured (common in dev/test), fallback immediately to static
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      console.warn("Firebase not configured, falling back to static categories.");
+      setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+      setLoading(false);
+      return;
+    }
+
     const q = query(
       collection(db, 'categories'),
       where('active', '==', true)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      let cats: string[] = [];
       if (snapshot.empty) {
         // Fallback to static if Firestore is empty
-        setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+        cats = Array.from(new Set(products.map(p => p.category)));
       } else {
-        const cats = snapshot.docs.map(doc => doc.data().name);
-        setDynamicCategories(cats);
+        cats = snapshot.docs.map(doc => doc.data().name);
       }
+      setDynamicCategories(cats);
       setLoading(false);
     }, (err) => {
       console.error("Error fetching menu categories:", err);
-      setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+      const cats = Array.from(new Set(products.map(p => p.category)));
+      setDynamicCategories(cats);
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
+  // Update active category based on URL parameter
+  useEffect(() => {
+    if (!loading && dynamicCategories.length > 0) {
+      if (!categoryParam) {
+        setActiveCategory('All');
+      } else {
+        const matchedCategory = dynamicCategories.find(cat => toSlug(cat) === categoryParam);
+        if (matchedCategory) {
+          setActiveCategory(matchedCategory);
+        } else {
+          // If no match found for the slug, set to a non-existent state to show empty results
+          setActiveCategory(`INVALID_${categoryParam}`);
+        }
+      }
+    }
+  }, [categoryParam, dynamicCategories, loading]);
+
+  const handleCategoryChange = (cat: string) => {
+    if (cat === 'All') {
+      router.push('/menu');
+    } else {
+      router.push(`/menu?category=${toSlug(cat)}`);
+    }
+  };
+
   const categories = ['All', ...dynamicCategories];
 
   const filteredProducts = useMemo(() => {
+    if (activeCategory.startsWith('INVALID_')) {
+      return [];
+    }
     const categoryFiltered = products.filter(product =>
       activeCategory === 'All' || product.category === activeCategory
     );
@@ -70,7 +114,7 @@ const MenuPage = () => {
             <>
           {activeCategory !== 'All' && (
             <button
-              onClick={() => setActiveCategory('All')}
+              onClick={() => handleCategoryChange('All')}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-chocolate text-white hover:bg-brown transition-all duration-300 shadow-md group"
             >
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
@@ -78,11 +122,15 @@ const MenuPage = () => {
             </button>
           )}
           {categories
-            .filter(cat => activeCategory === 'All' || cat === activeCategory)
+            .filter(cat => {
+              if (activeCategory === 'All') return true;
+              if (activeCategory.startsWith('INVALID_')) return false;
+              return cat === activeCategory;
+            })
             .map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border-none cursor-pointer ${
                   activeCategory === cat
                     ? 'bg-rose-deep text-white shadow-md'
@@ -92,6 +140,13 @@ const MenuPage = () => {
                 {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}
               </button>
             ))}
+            {activeCategory.startsWith('INVALID_') && (
+               <button
+               className="inline-flex items-center px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border-none bg-rose-deep text-white shadow-md"
+             >
+               Unknown Category: {categoryParam}
+             </button>
+            )}
             </>
           )}
         </div>
@@ -115,6 +170,18 @@ const MenuPage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+const MenuPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-cream flex items-center justify-center">
+        <Loader2 className="animate-spin text-rose-deep" size={48} />
+      </div>
+    }>
+      <MenuContent />
+    </Suspense>
   );
 };
 
