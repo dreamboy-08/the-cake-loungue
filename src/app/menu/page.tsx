@@ -17,15 +17,13 @@ const MenuContent = () => {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
 
-  const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Load categories for the tabs
   useEffect(() => {
-    // If Firebase is not configured (common in dev/test), fallback immediately to static
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
-      console.warn("Firebase not configured, falling back to static categories.");
       setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
       setLoading(false);
       return;
@@ -39,7 +37,6 @@ const MenuContent = () => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       let cats: string[] = [];
       if (snapshot.empty) {
-        // Fallback to static if Firestore is empty
         cats = Array.from(new Set(products.map(p => p.category)));
       } else {
         cats = snapshot.docs.map(doc => doc.data().name);
@@ -56,22 +53,20 @@ const MenuContent = () => {
     return () => unsubscribe();
   }, []);
 
-  // Update active category based on URL parameter
-  useEffect(() => {
-    if (!loading && dynamicCategories.length > 0) {
-      if (!categoryParam) {
-        setActiveCategory('All');
-      } else {
-        const matchedCategory = dynamicCategories.find(cat => toSlug(cat) === categoryParam);
-        if (matchedCategory) {
-          setActiveCategory(matchedCategory);
-        } else {
-          // If no match found for the slug, set to a non-existent state to show empty results
-          setActiveCategory(`INVALID_${categoryParam}`);
-        }
-      }
-    }
-  }, [categoryParam, dynamicCategories, loading]);
+  // Derive active category name from the URL parameter for consistent state
+  const activeCategory = useMemo(() => {
+    if (!categoryParam) return 'All';
+
+    // Find the category name that matches this slug from the products constant
+    const matched = products.find(p => toSlug(p.category) === categoryParam);
+    if (matched) return matched.category;
+
+    // If not found in static products, check dynamic categories if they are loaded
+    const matchedDynamic = dynamicCategories.find(cat => toSlug(cat) === categoryParam);
+    if (matchedDynamic) return matchedDynamic;
+
+    return `INVALID_${categoryParam}`;
+  }, [categoryParam, dynamicCategories]);
 
   const handleCategoryChange = (cat: string) => {
     if (cat === 'All') {
@@ -87,9 +82,13 @@ const MenuContent = () => {
     if (activeCategory.startsWith('INVALID_')) {
       return [];
     }
-    const categoryFiltered = products.filter(product =>
-      activeCategory === 'All' || product.category === activeCategory
-    );
+
+    const categoryFiltered = products.filter(product => {
+      if (activeCategory === 'All') return true;
+      // Use slug-based comparison for robustness
+      return toSlug(product.category) === toSlug(activeCategory);
+    });
+
     return filterProducts(categoryFiltered, searchQuery);
   }, [activeCategory, searchQuery]);
 
@@ -108,7 +107,7 @@ const MenuContent = () => {
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-4 justify-center mb-12 items-center min-h-[50px]">
-          {loading ? (
+          {loading && !categoryParam ? (
              <Loader2 className="animate-spin text-rose-deep" size={24} />
           ) : (
             <>
@@ -125,6 +124,7 @@ const MenuContent = () => {
             .filter(cat => {
               if (activeCategory === 'All') return true;
               if (activeCategory.startsWith('INVALID_')) return false;
+              // Only show the active category button when a category is selected
               return cat === activeCategory;
             })
             .map((cat) => (
@@ -137,7 +137,7 @@ const MenuContent = () => {
                     : 'bg-cream-dark text-brown-dark hover:bg-cream-dark'
                 }`}
               >
-                {cat} {cat !== 'All' && `(${products.filter(p => p.category === cat).length})`}
+                {cat} {cat !== 'All' && `(${products.filter(p => toSlug(p.category) === toSlug(cat)).length})`}
               </button>
             ))}
             {activeCategory.startsWith('INVALID_') && (
