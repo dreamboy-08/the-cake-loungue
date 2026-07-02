@@ -13,6 +13,8 @@ import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useProductAvailability } from '@/hooks/useProductAvailability';
+import Toast from './Toast';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,9 +29,11 @@ const Navbar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [showSoonToast, setShowSoonToast] = useState(false);
   const { cartCount } = useCart();
   const { user, logout, isAdmin } = useAuth();
   const { bounceCount } = useFlyToCart();
+  const availableCategories = useProductAvailability();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -66,6 +70,23 @@ const Navbar = () => {
   }, [pathname]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  const handleSubItemClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+
+    // Extract category slug from href (e.g., /menu?category=birthday-cakes -> birthday-cakes)
+    const url = new URL(href, window.location.origin);
+    const categorySlug = url.searchParams.get('category');
+
+    if (categorySlug && !availableCategories.has(categorySlug)) {
+      setShowSoonToast(true);
+      setTimeout(() => setShowSoonToast(false), 4000);
+      return;
+    }
+
+    setIsMobileMenuOpen(false);
+    router.push(href);
+  };
 
   return (
     <>
@@ -294,13 +315,14 @@ const Navbar = () => {
                           <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
                           <div className="flex flex-col gap-2">
                             {col.items.map((sub, sIdx) => (
-                              <Link
+                              <button
                                 key={sIdx}
-                                href={sub.href}
-                                className="text-chocolate/80 hover:text-rose-deep hover:translate-x-1 transition-all duration-300 text-[13px] font-medium"
+                                type="button"
+                                onClick={(e) => handleSubItemClick(e, sub.href)}
+                                className="text-chocolate/80 hover:text-rose-deep hover:translate-x-1 transition-all duration-300 text-[13px] font-medium text-left"
                               >
                                 {sub.label}
-                              </Link>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -350,14 +372,14 @@ const Navbar = () => {
                       <div key={idx} className="flex flex-col gap-2">
                         <p className="text-rose font-bold text-[11px] uppercase tracking-wider">{col.title}</p>
                         {col.items.map((sub, sIdx) => (
-                          <Link
+                          <button
                             key={sIdx}
-                            href={sub.href}
-                            className="text-chocolate/80 text-sm font-medium"
-                            onClick={() => setIsMobileMenuOpen(false)}
+                            type="button"
+                            className="text-chocolate/80 text-sm font-medium text-left"
+                            onClick={(e) => handleSubItemClick(e, sub.href)}
                           >
                             {sub.label}
-                          </Link>
+                          </button>
                         ))}
                       </div>
                     ))}
@@ -422,6 +444,11 @@ const Navbar = () => {
       </div>
 
       <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
+      <Toast
+        message="We're adding products to this category soon. Stay tuned!"
+        isVisible={showSoonToast}
+        onClose={() => setShowSoonToast(false)}
+      />
     </>
   );
 };
