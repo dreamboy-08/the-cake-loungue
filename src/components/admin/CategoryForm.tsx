@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { db } from '@/utils/firebase';
 import { uploadToCloudinary } from '@/utils/cloudinary';
 import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
@@ -14,7 +15,20 @@ interface CategoryFormProps {
 }
 
 const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
+  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(category?.image || '');
 
@@ -70,10 +84,13 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-chocolate/60 ">
-      <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col animate-fade-up">
-        <div className="p-8 border-b flex items-center justify-between bg-chocolate text-white">
+  const formContent = (
+    <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-300">
+      <div
+        className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col animate-fade-up"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-8 border-b flex items-center justify-between bg-chocolate text-white shrink-0">
           <div>
             <h2 className="text-2xl font-bold font-playfair">{category ? 'Edit Category' : 'New Category'}</h2>
             <p className="text-[10px] text-white/60 uppercase tracking-widest mt-1">Manage shop collections</p>
@@ -83,7 +100,7 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-10 space-y-8">
+        <form onSubmit={handleSubmit} className="p-10 space-y-8 overflow-y-auto">
           <div className="flex flex-col items-center gap-4">
              <div
                className="relative w-32 h-32 rounded-[32px] border-2 border-dashed border-gray-200 bg-gray-50 overflow-hidden group cursor-pointer"
@@ -162,6 +179,15 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
         </form>
       </div>
     </div>
+  );
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[600]" onClick={onClose}>
+      {formContent}
+    </div>,
+    document.body
   );
 };
 
