@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { db, storage } from '@/utils/firebase';
+import { db } from '@/utils/firebase';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { X, Loader2, Upload, Trash2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 
@@ -41,9 +41,7 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
       let finalImageUrl = category?.image || '';
 
       if (imageFile) {
-        const storageRef = ref(storage, `categories/${Date.now()}_${imageFile.name}`);
-        const uploadResult = await uploadBytes(storageRef, imageFile);
-        finalImageUrl = await getDownloadURL(uploadResult.ref);
+        finalImageUrl = await uploadToCloudinary(imageFile);
       }
 
       const categoryData = {
