@@ -12,7 +12,8 @@ import {
   limit,
   getCountFromServer,
   where,
-  onSnapshot
+  onSnapshot,
+  updateDoc
 } from 'firebase/firestore';
 import {
   Plus,
@@ -24,10 +25,12 @@ import {
   Package,
   Eye,
   EyeOff,
+  CheckCircle2,
   Image as ImageIcon
 } from 'lucide-react';
 import CategoryForm from '@/components/admin/CategoryForm';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
@@ -36,6 +39,16 @@ const AdminCategories = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+
+  // Status toggle states
+  const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
+  const [showStatusConfirm, setShowStatusConfirm] = useState<{id: string, name: string, active: boolean} | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -70,14 +83,48 @@ const AdminCategories = () => {
     try {
       await deleteDoc(doc(db, 'categories', id));
       setShowDeleteConfirm(null);
+      showToast("Category deleted successfully.");
     } catch (error) {
       console.error("Error deleting category:", error);
-      alert("Failed to delete category.");
+      showToast("Failed to delete category.", "error");
+    }
+  };
+
+  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    setStatusUpdating(id);
+    try {
+      await updateDoc(doc(db, 'categories', id), {
+        active: !currentStatus,
+        updatedAt: new Date().toISOString()
+      });
+      showToast(`Category is now ${!currentStatus ? 'Live' : 'Hidden'}.`);
+    } catch (error) {
+      console.error("Error toggling category status:", error);
+      showToast("Failed to update status.", "error");
+    } finally {
+      setStatusUpdating(null);
+      setShowStatusConfirm(null);
     }
   };
 
   return (
     <div className="space-y-8 animate-fade-up pb-12">
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className={`fixed top-8 left-1/2 z-[500] px-6 py-3 rounded-[22px] shadow-2xl flex items-center gap-3 font-bold text-sm ${
+              toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            {toast.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Category Management</h1>
@@ -118,12 +165,23 @@ const AdminCategories = () => {
                   </div>
                 )}
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md flex items-center gap-1.5 ${
-                    category.active === false ? 'bg-black/20 text-white' : 'bg-green-500/80 text-white'
-                  }`}>
-                    {category.active === false ? <EyeOff size={10} /> : <Eye size={10} />}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowStatusConfirm({ id: category.id, name: category.name, active: category.active !== false });
+                    }}
+                    disabled={statusUpdating === category.id}
+                    className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 ${
+                      category.active === false ? 'bg-black/20 text-white hover:bg-black/40' : 'bg-green-500/80 text-white hover:bg-green-600/90'
+                    } ${statusUpdating === category.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {statusUpdating === category.id ? (
+                      <Loader2 size={10} className="animate-spin" />
+                    ) : (
+                      category.active === false ? <EyeOff size={10} /> : <Eye size={10} />
+                    )}
                     {category.active === false ? 'Hidden' : 'Live'}
-                  </div>
+                  </button>
                 </div>
               </div>
 
@@ -177,6 +235,42 @@ const AdminCategories = () => {
           onClose={() => setIsFormOpen(false)}
           onSuccess={() => {}}
         />
+      )}
+
+      {showStatusConfirm && (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${showStatusConfirm.active ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-500'}`}>
+              {showStatusConfirm.active ? <EyeOff size={40} /> : <Eye size={40} />}
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold text-chocolate">{showStatusConfirm.active ? 'Hide Category?' : 'Go Live?'}</h3>
+              <p className="text-gray-500 text-sm font-medium">
+                {showStatusConfirm.active
+                  ? `Category "${showStatusConfirm.name}" will be hidden from the shop menu.`
+                  : `Category "${showStatusConfirm.name}" will be visible to all customers.`}
+              </p>
+            </div>
+            <div className="flex gap-4 pt-4">
+              <button
+                onClick={() => setShowStatusConfirm(null)}
+                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleToggleActive(showStatusConfirm.id, showStatusConfirm.active)}
+                className={`flex-1 px-6 py-4 text-white rounded-2xl font-bold shadow-xl transition-all text-sm ${
+                  showStatusConfirm.active
+                    ? 'bg-gray-500 shadow-gray-500/20 hover:bg-gray-600'
+                    : 'bg-green-500 shadow-green-500/20 hover:bg-green-600'
+                }`}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showDeleteConfirm && (
