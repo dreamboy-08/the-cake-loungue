@@ -37,6 +37,7 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
     description: category?.description || '',
     active: category?.active !== undefined ? category?.active : true,
     slug: category?.slug || '',
+    displayOrder: category?.displayOrder || 0,
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,6 +144,19 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold resize-none"
               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Display Order</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.displayOrder}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                placeholder="e.g. 1, 2, 3..."
+              />
+              <p className="text-[9px] text-gray-400 font-medium">Lower numbers appear first. 0 or empty appears last.</p>
             </div>
 
             <label className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100 cursor-pointer group">

@@ -12,6 +12,7 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toSlug } from '@/utils/slug';
 import PageWrapper from '@/components/PageWrapper';
+import { sortCategories } from '@/utils/categorySorting';
 
 const MenuContent = () => {
   const router = useRouter();
@@ -43,7 +44,11 @@ const MenuContent = () => {
         // Fallback to static if Firestore is empty
         cats = Array.from(new Set(products.map(p => p.category)));
       } else {
-        cats = snapshot.docs.map(doc => doc.data().name);
+        const fetchedCats = snapshot.docs.map(doc => ({
+          name: doc.data().name,
+          displayOrder: doc.data().displayOrder
+        }));
+        cats = sortCategories(fetchedCats).map(c => c.name);
       }
       setDynamicCategories(cats);
       setLoading(false);

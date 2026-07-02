@@ -34,6 +34,7 @@ export const seedCategories = async () => {
         description: `Premium collection of ${name}.`,
         image: '', // Will be updated via Admin UI or can be matched with static assets if needed
         active: true,
+        displayOrder: count + 1,
         createdAt: now,
         updatedAt: now,
         productCount: 0
