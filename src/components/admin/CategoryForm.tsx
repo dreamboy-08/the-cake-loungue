@@ -4,17 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { db } from '@/utils/firebase';
 import { uploadToCloudinary } from '@/utils/cloudinary';
-import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { getReorderBatch } from '@/utils/categoryOrdering';
 import { X, Loader2, Upload, Trash2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 
 interface CategoryFormProps {
   category?: any;
+  allCategories: any[];
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (message: string) => void;
 }
 
-const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
+const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryFormProps) => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,7 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
     description: category?.description || '',
     active: category?.active !== undefined ? category?.active : true,
     slug: category?.slug || '',
-    displayOrder: category?.displayOrder || 0,
+    displayOrder: category?.displayOrder || (allCategories.length + 1),
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,23 +61,24 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
       }
 
       const categoryData = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
+        active: formData.active,
         image: finalImageUrl,
         slug: formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-        updatedAt: new Date().toISOString(),
       };
 
-      if (category?.id) {
-        await updateDoc(doc(db, 'categories', category.id), categoryData);
-      } else {
-        await addDoc(collection(db, 'categories'), {
-          ...categoryData,
-          createdAt: new Date().toISOString(),
-          productCount: 0
-        });
-      }
+      const batch = getReorderBatch(
+        db,
+        allCategories,
+        category?.id || null,
+        formData.displayOrder,
+        categoryData
+      );
 
-      onSuccess();
+      await batch.commit();
+
+      onSuccess(category ? 'Category updated successfully' : 'Category created successfully');
       onClose();
     } catch (error) {
       console.error("Error saving category:", error);
@@ -150,13 +152,14 @@ const CategoryForm = ({ category, onClose, onSuccess }: CategoryFormProps) => {
               <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Display Order</label>
               <input
                 type="number"
-                min="0"
+                min="1"
+                max={allCategories.length + (category ? 0 : 1)}
                 value={formData.displayOrder}
-                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, displayOrder: parseInt(e.target.value) || 1 })}
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
                 placeholder="e.g. 1, 2, 3..."
               />
-              <p className="text-[9px] text-gray-400 font-medium">Lower numbers appear first. 0 or empty appears last.</p>
+              <p className="text-[9px] text-gray-400 font-medium">Enter a position from 1 to {allCategories.length + (category ? 0 : 1)}. Others will shift automatically.</p>
             </div>
 
             <label className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100 cursor-pointer group">
