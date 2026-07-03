@@ -5,17 +5,16 @@ import { db } from '@/utils/firebase';
 import {
   collection,
   getDocs,
-  deleteDoc,
   doc,
   query,
   orderBy,
   limit,
-  writeBatch,
   getCountFromServer,
   where,
   onSnapshot,
   updateDoc
 } from 'firebase/firestore';
+import { getDeleteBatch, getRepairBatch } from '@/utils/categoryOrdering';
 import {
   Plus,
   Edit2,
@@ -82,7 +81,8 @@ const AdminCategories = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteDoc(doc(db, 'categories', id));
+      const batch = getDeleteBatch(db, categories, id);
+      await batch.commit();
       setShowDeleteConfirm(null);
       showToast("Category deleted successfully.");
     } catch (error) {
@@ -94,16 +94,7 @@ const AdminCategories = () => {
   const handleRepairOrders = async () => {
     setLoading(true);
     try {
-      const batch = writeBatch(db);
-      // Sort existing categories based on current state (alphabetical fallback if no order)
-      const sorted = sortCategories(categories);
-      sorted.forEach((cat, index) => {
-        const docRef = doc(db, 'categories', cat.id);
-        batch.update(docRef, {
-          displayOrder: index + 1,
-          updatedAt: new Date().toISOString()
-        });
-      });
+      const batch = getRepairBatch(db, categories);
       await batch.commit();
       showToast("Category orders repaired successfully.");
     } catch (error) {
@@ -273,8 +264,9 @@ const AdminCategories = () => {
       {isFormOpen && (
         <CategoryForm
           category={selectedCategory}
+          allCategories={categories}
           onClose={() => setIsFormOpen(false)}
-          onSuccess={() => {}}
+          onSuccess={(message) => showToast(message)}
         />
       )}
 
