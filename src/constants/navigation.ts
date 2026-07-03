@@ -36,7 +36,7 @@ export const MEGA_MENU: MegaMenuItem[] = [
           { label: "Designer Cakes", href: "/menu?category=designer-cakes" },
           { label: "Fondant Cakes", href: "/menu?category=designer-cakes" },
           { label: "Tier Cakes", href: "/menu?category=wedding-cakes" },
-          { label: "Half Cakes", href: "/menu?category=custom-cakes" },
+          { label: "Half Cakes", href: "/custom-cake" },
         ]
       },
       {
@@ -155,8 +155,8 @@ export const MEGA_MENU: MegaMenuItem[] = [
         items: [
           { label: "Mom Cakes", href: "/menu?category=mothers-day-cakes" },
           { label: "Dad Cakes", href: "/menu?category=fathers-day-cakes" },
-          { label: "Brother Cakes", href: "/menu?category=custom-cakes" },
-          { label: "Sister Cakes", href: "/menu?category=custom-cakes" },
+          { label: "Brother Cakes", href: "/custom-cake" },
+          { label: "Sister Cakes", href: "/custom-cake" },
         ]
       },
       {
@@ -219,7 +219,7 @@ export const MEGA_MENU: MegaMenuItem[] = [
         title: "Premium",
         items: [
           { label: "Luxury Hampers", href: "/menu?category=luxury-cakes" },
-          { label: "Custom Gifts", href: "/menu?category=custom-cakes" },
+          { label: "Custom Gifts", href: "/custom-cake" },
           { label: "Festival Hampers", href: "/menu?category=festival-cakes" },
         ]
       }
@@ -235,7 +235,7 @@ export const MEGA_MENU: MegaMenuItem[] = [
           { label: "Kids Birthday Cakes", href: "/menu?category=kids-cakes" },
           { label: "Adult Cakes", href: "/menu?category=premium-cakes" },
           { label: "Photo Cakes", href: "/menu?category=photo-cakes" },
-          { label: "Number Cakes", href: "/menu?category=custom-cakes" },
+          { label: "Number Cakes", href: "/custom-cake" },
         ]
       },
       {

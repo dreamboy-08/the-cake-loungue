@@ -64,6 +64,13 @@ const MenuContent = () => {
 
   // Update active category based on URL parameter
   useEffect(() => {
+    // Special case: Custom Cakes category param redirects to builder
+    // We check this regardless of loading state for immediate response
+    if (categoryParam === 'custom-cakes') {
+      router.push('/custom-cake');
+      return;
+    }
+
     if (!loading && dynamicCategories.length > 0) {
       if (!categoryParam) {
         setActiveCategory('All');
@@ -77,11 +84,13 @@ const MenuContent = () => {
         }
       }
     }
-  }, [categoryParam, dynamicCategories, loading]);
+  }, [categoryParam, dynamicCategories, loading, router]);
 
   const handleCategoryChange = (cat: string) => {
     if (cat === 'All') {
       router.push('/menu');
+    } else if (toSlug(cat) === 'custom-cakes') {
+      router.push('/custom-cake');
     } else {
       router.push(`/menu?category=${toSlug(cat)}`);
     }
