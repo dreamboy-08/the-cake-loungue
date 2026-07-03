@@ -63,7 +63,7 @@ const PoliciesContent = () => {
             transition={{ delay: 0.2 }}
             className="text-text-soft text-lg"
           >
-            We believe in transparency and want to ensure you have the best experience with Cake Lounge.
+            We believe in transparency and want to ensure you have the best experience with The Cake Lounge.
             Please review our policies below.
           </motion.p>
         </header>

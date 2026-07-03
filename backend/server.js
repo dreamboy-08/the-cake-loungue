@@ -84,7 +84,7 @@ try {
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'Cake Lounge backend is running',
+    message: 'The Cake Lounge backend is running',
     environment: process.env.NODE_ENV || 'development',
     razorpayConfigured: !!razorpay,
     firebaseConfigured: !!db
@@ -319,10 +319,10 @@ app.post('/api/contact', async (req, res) => {
     const dateTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
     const mailOptions = {
-      from: `"Cake Lounge Website" <${process.env.SMTP_USER}>`,
+      from: `"The Cake Lounge Website" <${process.env.SMTP_USER}>`,
       to: 'thecakeloungegurgaon@gmail.com',
       replyTo: email,
-      subject: 'New Contact Form Inquiry – Cake Lounge',
+      subject: 'New Contact Form Inquiry – The Cake Lounge',
       text: `
 Customer Name:
 ${name}

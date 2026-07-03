@@ -58,7 +58,7 @@ const SuccessContent = () => {
 
           <h1 className="text-3xl md:text-4xl font-bold font-playfair text-chocolate mb-4">Order Confirmed!</h1>
           <p className="text-text-soft text-lg mb-8">
-            Thank you for choosing Cake Lounge. Your delicious treats are being prepared!
+            Thank you for choosing The Cake Lounge. Your delicious treats are being prepared!
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 text-left">

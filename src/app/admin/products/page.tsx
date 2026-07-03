@@ -99,10 +99,11 @@ const AdminProducts = () => {
     return () => unsubCats();
   }, []);
 
-  // Search full catalog logic
+  // Search and Filter full catalog logic
   useEffect(() => {
-    const fetchAllForSearch = async () => {
-      if (searchTerm && !allProducts && hasMore) {
+    const fetchAllForFilter = async () => {
+      const isFiltering = searchTerm || categoryFilter !== 'All' || statusFilter !== 'All';
+      if (isFiltering && !allProducts && hasMore) {
         setIsSearchingAll(true);
         try {
           const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
@@ -110,15 +111,15 @@ const AdminProducts = () => {
           const allFetched = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
           setAllProducts(allFetched);
         } catch (error) {
-          console.error("Error fetching all products for search:", error);
+          console.error("Error fetching all products for filtering:", error);
         } finally {
           setIsSearchingAll(false);
         }
       }
     };
 
-    fetchAllForSearch();
-  }, [searchTerm, allProducts, hasMore]);
+    fetchAllForFilter();
+  }, [searchTerm, categoryFilter, statusFilter, allProducts, hasMore]);
 
   const handleSyncCatalog = async () => {
     if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
@@ -178,8 +179,9 @@ const AdminProducts = () => {
   };
 
   const filteredProducts = useMemo(() => {
-    // If we're searching and have the full catalog, use that; otherwise use paginated list
-    const sourceProducts = (searchTerm && allProducts) ? allProducts : products;
+    const isFiltering = searchTerm || categoryFilter !== 'All' || statusFilter !== 'All';
+    // If we're filtering and have the full catalog, use that; otherwise use paginated list
+    const sourceProducts = (isFiltering && allProducts) ? allProducts : products;
 
     return sourceProducts.filter(p => {
       const name = p.name || '';
@@ -297,12 +299,12 @@ const AdminProducts = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {(loading && products.length === 0) || (searchTerm && isSearchingAll && filteredProducts.length === 0) ? (
+              {(loading && products.length === 0) || ((searchTerm || categoryFilter !== 'All' || statusFilter !== 'All') && isSearchingAll && filteredProducts.length === 0) ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-24 text-center">
                     <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={40} />
                     <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">
-                      {searchTerm ? 'Searching entire catalog...' : 'Loading Catalog...'}
+                      {(searchTerm || categoryFilter !== 'All' || statusFilter !== 'All') ? 'Fetching filtered results...' : 'Loading Catalog...'}
                     </p>
                   </td>
                 </tr>
@@ -411,7 +413,7 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {hasMore && !searchTerm && (
+      {hasMore && !searchTerm && categoryFilter === 'All' && statusFilter === 'All' && (
         <div className="flex justify-center mt-8">
           <button
             disabled={loading}

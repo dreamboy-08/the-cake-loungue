@@ -158,7 +158,7 @@ const CheckoutPage = () => {
         key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
-        name: 'Cake Lounge',
+        name: 'The Cake Lounge',
         description: `Order for ${cart.length} item${cart.length > 1 ? 's' : ''}`,
         order_id: order.id,
         handler: async (response: any) => {

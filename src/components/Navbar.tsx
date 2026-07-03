@@ -89,7 +89,7 @@ const Navbar = () => {
               "font-playfair text-[1.6rem] font-bold transition-colors duration-300",
               (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
             )}>
-              Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+              The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
             </Link>
 
             <div className="flex items-center gap-4 md:gap-6">

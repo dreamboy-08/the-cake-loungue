@@ -1,7 +1,7 @@
 {
   "name": "cake-lounge-backend",
   "version": "1.0.0",
-  "description": "Backend for Cake Lounge with Razorpay integration",
+  "description": "Backend for The Cake Lounge with Razorpay integration",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -67,8 +67,8 @@ const AdminContent = () => {
         ]);
 
         setSiteSettings(settings || {
-          logoText: 'Cake Lounge',
-          copyrightText: '© 2025 Cake Lounge Patisserie. All rights reserved.',
+          logoText: 'The Cake Lounge',
+          copyrightText: '© 2025 The Cake Lounge Patisserie. All rights reserved.',
           announcementBar: {
             enabled: true,
             text: 'Free Delivery Above ₹499',
@@ -99,7 +99,7 @@ const AdminContent = () => {
           },
           about: {
             title: 'Baked with Passion, Served with Love',
-            description: 'Cake Lounge was born from a grandmother\'s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.'
+            description: 'The Cake Lounge was born from a grandmother\'s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.'
           },
           gallery: [],
           testimonials: [
