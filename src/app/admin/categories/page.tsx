@@ -42,7 +42,6 @@ const AdminCategories = () => {
 
   // Status toggle states
   const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
-  const [showStatusConfirm, setShowStatusConfirm] = useState<{id: string, name: string, active: boolean} | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -97,13 +96,12 @@ const AdminCategories = () => {
         active: !currentStatus,
         updatedAt: new Date().toISOString()
       });
-      showToast(`Category is now ${!currentStatus ? 'Live' : 'Hidden'}.`);
+      showToast(`Category is now ${!currentStatus ? 'Live' : 'Hidden'}`);
     } catch (error) {
       console.error("Error toggling category status:", error);
       showToast("Failed to update status.", "error");
     } finally {
       setStatusUpdating(null);
-      setShowStatusConfirm(null);
     }
   };
 
@@ -168,7 +166,7 @@ const AdminCategories = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      setShowStatusConfirm({ id: category.id, name: category.name, active: category.active !== false });
+                      handleToggleActive(category.id, category.active !== false);
                     }}
                     disabled={statusUpdating === category.id}
                     className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 ${
@@ -235,42 +233,6 @@ const AdminCategories = () => {
           onClose={() => setIsFormOpen(false)}
           onSuccess={() => {}}
         />
-      )}
-
-      {showStatusConfirm && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
-            <div className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${showStatusConfirm.active ? 'bg-gray-100 text-gray-500' : 'bg-green-50 text-green-500'}`}>
-              {showStatusConfirm.active ? <EyeOff size={40} /> : <Eye size={40} />}
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-chocolate">{showStatusConfirm.active ? 'Hide Category?' : 'Go Live?'}</h3>
-              <p className="text-gray-500 text-sm font-medium">
-                {showStatusConfirm.active
-                  ? `Category "${showStatusConfirm.name}" will be hidden from the shop menu.`
-                  : `Category "${showStatusConfirm.name}" will be visible to all customers.`}
-              </p>
-            </div>
-            <div className="flex gap-4 pt-4">
-              <button
-                onClick={() => setShowStatusConfirm(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleToggleActive(showStatusConfirm.id, showStatusConfirm.active)}
-                className={`flex-1 px-6 py-4 text-white rounded-2xl font-bold shadow-xl transition-all text-sm ${
-                  showStatusConfirm.active
-                    ? 'bg-gray-500 shadow-gray-500/20 hover:bg-gray-600'
-                    : 'bg-green-500 shadow-green-500/20 hover:bg-green-600'
-                }`}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
       )}
 
       {showDeleteConfirm && (
