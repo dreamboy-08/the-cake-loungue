@@ -68,7 +68,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
         <div className="flex flex-col h-full p-6">
           <div className="mb-10 pt-4 lg:pt-0">
             <Link href="/" className="font-playfair text-2xl font-bold">
-              Cake <span className="text-blush">Lounge</span>
+              The Cake <span className="text-blush">Lounge</span>
               <span className="block text-[10px] uppercase tracking-[0.2em] text-blush/60 mt-1 font-poppins">Admin Dashboard</span>
             </Link>
           </div>
