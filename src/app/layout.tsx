@@ -22,7 +22,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "cake lounge — Artisan Bakery & Patisserie",
+  title: "The Cake Lounge — Artisan Bakery & Patisserie",
   description: "Handcrafted cakes and desserts delivered fresh to your door.",
 };
 

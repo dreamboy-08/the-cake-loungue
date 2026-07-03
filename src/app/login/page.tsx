@@ -43,7 +43,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full bg-white rounded-[40px] shadow-2xl overflow-hidden animate-fade-up">
         <div className="bg-rose-deep pt-12 pb-10 px-8 text-center">
           <h1 className="font-playfair text-4xl font-bold text-white leading-tight">Welcome Back</h1>
-          <p className="text-white/80 mt-2 font-medium">Login to your Cake Lounge account</p>
+          <p className="text-white/80 mt-2 font-medium">Login to your The Cake Lounge account</p>
         </div>
 
         <div className="p-8">

@@ -9,7 +9,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-[50px]">
           <div className="footer-brand sm:col-span-2 lg:col-span-1">
             <div className="font-playfair text-[1.6rem] font-bold text-white mb-[14px]">
-              Cake <span className="text-blush">Lounge</span>
+              The Cake <span className="text-blush">Lounge</span>
             </div>
             <p className="text-[0.85rem] leading-[1.7] text-[rgba(255,255,255,0.55)] mb-6">
               Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.
@@ -75,7 +75,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-[rgba(255,255,255,0.08)] pt-6 flex flex-col md:flex-row items-center justify-between text-[0.8rem] text-[rgba(255,255,255,0.35)] gap-[10px]">
-          <span>© 2025 Cake Lounge Patisserie. All rights reserved.</span>
+          <span>© 2025 The Cake Lounge Patisserie. All rights reserved.</span>
           <div className="flex items-center gap-1">
             Made with <span className="text-rose">❤️</span> in India
           </div>

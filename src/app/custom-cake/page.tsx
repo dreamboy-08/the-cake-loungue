@@ -8,7 +8,7 @@ import PageWrapper from '@/components/PageWrapper';
 
 const CustomCakePage = () => {
   const sendWhatsApp = () => {
-    const text = "Hello Cake Lounge! I would like to order a custom cake. I have attached my reference design and would like to discuss the details.";
+    const text = "Hello The Cake Lounge! I would like to order a custom cake. I have attached my reference design and would like to discuss the details.";
     window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
   };
 

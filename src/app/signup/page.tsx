@@ -44,7 +44,7 @@ export default function SignupPage() {
       <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-up">
         <div className="bg-rose-deep py-8 px-6 text-center">
           <h1 className="font-playfair text-3xl font-bold text-white">Create Account</h1>
-          <p className="text-white/80 mt-2">Join the Cake Lounge family today</p>
+          <p className="text-white/80 mt-2">Join The Cake Lounge family today</p>
         </div>
 
         <div className="p-8">

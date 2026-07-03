@@ -66,7 +66,7 @@ const ProfilePage = () => {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-chocolate font-playfair">{user?.displayName || 'Valued Member'}</h2>
-                  <p className="text-xs font-bold text-rose-deep uppercase tracking-widest mt-1">Cake Lounge Member</p>
+                  <p className="text-xs font-bold text-rose-deep uppercase tracking-widest mt-1">The Cake Lounge Member</p>
                 </div>
 
                 <div className="pt-6 space-y-4 text-left">
@@ -141,7 +141,7 @@ const ProfilePage = () => {
                   <ShoppingBag size={40} />
                 </div>
                 <h3 className="text-xl font-bold text-chocolate mb-2">No orders placed yet</h3>
-                <p className="text-text-soft mb-8">Start your sweet journey with Cake Lounge!</p>
+                <p className="text-text-soft mb-8">Start your sweet journey with The Cake Lounge!</p>
                 <Link
                   href="/menu"
                   className="inline-block bg-rose-deep text-white px-8 py-4 rounded-full font-bold shadow-lg hover:bg-brown transition-all"

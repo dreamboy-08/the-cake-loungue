@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { products } from '@/constants/products';
 
 const Gallery = () => {
@@ -27,10 +28,11 @@ const Gallery = () => {
       )[0];
 
       return {
+        id: bestProduct.id,
         src: bestProduct.img,
         label: bestProduct.name
       };
-    }).filter((img): img is { src: string; label: string } => img !== null);
+    }).filter((img): img is { id: number; src: string; label: string } => img !== null);
   }, []);
 
   return (
@@ -43,7 +45,11 @@ const Gallery = () => {
       <div className="mt-11 relative">
         <div className="flex gap-[18px] w-max animate-slider hover:[animation-play-state:paused]">
           {[...galleryImgs, ...galleryImgs].map((img, i) => (
-            <div key={i} className="w-[280px] h-[340px] min-w-[280px] rounded-[18px] overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group">
+            <Link
+              key={i}
+              href={`/shop/${img.id}`}
+              className="w-[280px] h-[340px] min-w-[280px] rounded-[18px] overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group block"
+            >
               <Image
                 src={img.src}
                 alt={img.label}
@@ -55,7 +61,7 @@ const Gallery = () => {
               <div className="absolute bottom-5 left-0 right-0 text-center text-white text-[0.9rem] font-semibold opacity-0 translate-y-2.5 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
                 {img.label}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
