@@ -60,6 +60,12 @@ const AdminReviews = () => {
       })) as Review[];
       setReviews(fetchedReviews);
       setLoading(false);
+    }, (error) => {
+      console.error("Firestore error in AdminReviews:", error);
+      setToastMessage("Failed to sync reviews from database.");
+      setToastType('error');
+      setShowToast(true);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -154,7 +160,8 @@ const AdminReviews = () => {
       message: review.message,
       rating: review.rating,
       name: review.name,
-      status: review.status
+      status: review.status,
+      adminReply: review.adminReply || ''
     });
     setIsEditing(true);
   };
@@ -513,6 +520,17 @@ const AdminReviews = () => {
                   value={editData.message}
                   onChange={(e) => setEditData({ ...editData, message: e.target.value })}
                   className="w-full px-5 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-chocolate text-sm font-medium resize-none"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-rose-deep uppercase tracking-widest ml-1">Bakery Response (Admin Reply)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Thank the customer or address their concerns..."
+                  value={editData.adminReply}
+                  onChange={(e) => setEditData({ ...editData, adminReply: e.target.value })}
+                  className="w-full px-5 py-3 rounded-2xl bg-rose/5 border border-rose/10 focus:ring-2 focus:ring-rose/20 outline-none transition-all text-chocolate text-sm font-medium resize-none"
                 />
               </div>
 

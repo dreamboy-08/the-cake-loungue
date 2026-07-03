@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, Loader2 } from 'lucide-react';
+import { X, Star, Loader2, Upload, Trash2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/utils/firebase';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 import { collection, addDoc, serverTimestamp, query, limit, getDocs } from 'firebase/firestore';
 import Toast from '@/components/Toast';
+import Image from 'next/image';
 
 interface ReviewFormModalProps {
   isOpen: boolean;
@@ -23,6 +25,7 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose }) =>
     title: '',
     message: ''
   });
+  const [selectedImages, setSelectedImages] = useState<Array<{ file: File; preview: string }>>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -38,6 +41,26 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose }) =>
       }));
     }
   }, [user, userData]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      const newImages = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }));
+      setSelectedImages(prev => [...prev, ...newImages]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages(prev => {
+      const newImages = [...prev];
+      URL.revokeObjectURL(newImages[index].preview);
+      newImages.splice(index, 1);
+      return newImages;
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +82,18 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose }) =>
         isVerified = !orderSnap.empty;
       }
 
+      // Upload images to Cloudinary
+      const imageUrls: string[] = [];
+      for (const img of selectedImages) {
+        const url = await uploadToCloudinary(img.file);
+        imageUrls.push(url);
+      }
+
       await addDoc(collection(db, 'reviews'), {
         ...formData,
         userId: user?.uid || null,
         isVerified,
+        images: imageUrls,
         status: 'Pending',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -79,6 +110,7 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose }) =>
         title: '',
         message: ''
       }));
+      setSelectedImages([]);
 
       // Close modal after a delay
       setTimeout(() => {
@@ -195,6 +227,42 @@ const ReviewFormModal: React.FC<ReviewFormModalProps> = ({ isOpen, onClose }) =>
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell us what you loved about our cakes..."
                     className="w-full px-5 py-3 rounded-2xl bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-chocolate font-medium resize-none"
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <label className="text-xs font-bold text-chocolate uppercase tracking-widest ml-1">Upload Photos (Optional)</label>
+                  <div className="grid grid-cols-4 gap-3">
+                    {selectedImages.map((img, idx) => (
+                      <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-cream shadow-sm group">
+                        <Image src={img.preview} alt="Review" fill className="object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(idx)}
+                          className="absolute top-1.5 right-1.5 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ))}
+                    {selectedImages.length < 4 && (
+                      <button
+                        type="button"
+                        onClick={() => document.getElementById('review-images')?.click()}
+                        className="aspect-square rounded-xl border-2 border-dashed border-chocolate/10 bg-white flex flex-col items-center justify-center text-chocolate/40 hover:border-rose-deep/30 hover:bg-rose/5 transition-all"
+                      >
+                        <Upload size={20} />
+                        <span className="text-[10px] font-bold mt-1 uppercase">Add Photo</span>
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    id="review-images"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
                   />
                 </div>
 

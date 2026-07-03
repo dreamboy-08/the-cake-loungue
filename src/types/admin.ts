@@ -204,6 +204,8 @@ export interface Review {
   createdAt: string;
   updatedAt: string;
   isVerified?: boolean;
+  adminReply?: string;
+  images?: string[];
 }
 
 // ============= BANNERS =============
