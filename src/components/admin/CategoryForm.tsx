@@ -159,7 +159,7 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
                 placeholder="e.g. 1, 2, 3..."
               />
-              <p className="text-[9px] text-gray-400 font-medium">Enter a position from 1 to {allCategories.length + (category ? 0 : 1)}. Others will shift automatically.</p>
+              <p className="text-[9px] text-gray-400 font-medium">Enter a position from 1 to {allCategories.length + (category ? 0 : 1)}. The category currently at that position will swap with this one.</p>
             </div>
 
             <label className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100 cursor-pointer group">

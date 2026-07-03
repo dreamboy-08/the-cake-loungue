@@ -2,7 +2,7 @@ import { writeBatch, doc, collection, Firestore, WriteBatch } from 'firebase/fir
 
 /**
  * Generates a Firestore WriteBatch to handle category reordering atomically.
- * Ensures 1-N continuous numbering and uniqueness.
+ * Implements Swap-Based Ordering: only the target and the occupant of the target position are updated.
  */
 export const getReorderBatch = (
   db: Firestore,
@@ -13,58 +13,57 @@ export const getReorderBatch = (
 ): WriteBatch => {
   const batch = writeBatch(db);
 
-  // 1. Filter out the target category and sort remaining by displayOrder
-  const others = allCategories
-    .filter(c => c.id !== targetCategoryId)
-    .sort((a, b) => (a.displayOrder || Infinity) - (b.displayOrder || Infinity));
+  if (targetCategoryId) {
+    // UPDATE CASE
+    const targetCategory = allCategories.find(c => c.id === targetCategoryId);
+    const oldOrder = targetCategory?.displayOrder;
+    const hasValidOldOrder = typeof oldOrder === 'number' && oldOrder > 0;
 
-  // 2. Clamp newOrder within valid range [1, others.length + 1]
-  const clampedOrder = Math.max(1, Math.min(newOrder, others.length + 1));
+    // Find the category currently occupying the target position
+    const occupant = allCategories.find(c => c.displayOrder === newOrder && c.id !== targetCategoryId);
 
-  // 3. Reconstruct the full list with target at its new position
-  const newSequence = [...others];
-  // Note: we use a placeholder object for the target category
-  const targetPlaceholder = { ...targetCategoryData, id: targetCategoryId, isTarget: true };
-  newSequence.splice(clampedOrder - 1, 0, targetPlaceholder);
+    // 1. Update the target category to the new order
+    const targetRef = doc(db, 'categories', targetCategoryId);
+    batch.update(targetRef, {
+      ...targetCategoryData,
+      displayOrder: newOrder,
+      updatedAt: new Date().toISOString(),
+    });
 
-  // 4. Update all categories to match their new index-based order
-  newSequence.forEach((cat, index) => {
-    const expectedOrder = index + 1;
-    const isTarget = cat.isTarget;
+    // 2. Handle the occupant
+    if (occupant && newOrder !== oldOrder) {
+      // If target had a valid old position, swap occupant to it.
+      // Otherwise, move occupant to the end of the list.
+      const swapToOrder = hasValidOldOrder ? oldOrder : allCategories.length;
 
-    if (isTarget) {
-      // For the target category (new or existing)
-      const docRef = targetCategoryId
-        ? doc(db, 'categories', targetCategoryId)
-        : doc(collection(db, 'categories'));
-
-      const data = {
-        ...targetCategoryData,
-        displayOrder: expectedOrder,
+      batch.update(doc(db, 'categories', occupant.id), {
+        displayOrder: swapToOrder,
         updatedAt: new Date().toISOString(),
-      };
-
-      if (!targetCategoryId) {
-        // Create new
-        batch.set(docRef, {
-          ...data,
-          createdAt: new Date().toISOString(),
-          productCount: 0
-        });
-      } else {
-        // Update existing
-        batch.update(docRef, data);
-      }
-    } else {
-      // For other categories, only update if their order changed
-      if (cat.displayOrder !== expectedOrder) {
-        batch.update(doc(db, 'categories', cat.id), {
-          displayOrder: expectedOrder,
-          updatedAt: new Date().toISOString()
-        });
-      }
+      });
     }
-  });
+  } else {
+    // CREATE CASE
+    const docRef = doc(collection(db, 'categories'));
+    const occupant = allCategories.find(c => c.displayOrder === newOrder);
+
+    // 1. Create the new category at the target position
+    batch.set(docRef, {
+      ...targetCategoryData,
+      displayOrder: newOrder,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      productCount: 0
+    });
+
+    // 2. If there's an occupant at the target position, move them to the end
+    if (occupant) {
+      const nextAvailableOrder = allCategories.length + 1;
+      batch.update(doc(db, 'categories', occupant.id), {
+        displayOrder: nextAvailableOrder,
+        updatedAt: new Date().toISOString(),
+      });
+    }
+  }
 
   return batch;
 };
