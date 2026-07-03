@@ -189,6 +189,25 @@ export interface HomepageContent {
   updatedAt?: string;
 }
 
+// ============= REVIEWS =============
+export type ReviewStatus = 'Pending' | 'Approved' | 'Rejected';
+
+export interface Review {
+  id: string;
+  name: string;
+  email: string;
+  userId?: string;
+  rating: number;
+  title: string;
+  message: string;
+  status: ReviewStatus;
+  createdAt: string;
+  updatedAt: string;
+  isVerified?: boolean;
+  adminReply?: string;
+  images?: string[];
+}
+
 // ============= BANNERS =============
 export interface Banner {
   id?: string;

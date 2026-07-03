@@ -12,6 +12,7 @@ import {
   Users,
   ShieldCheck,
   LogOut,
+  MessageSquare,
   ChevronRight,
   Menu,
   X
@@ -47,6 +48,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
     { label: 'Customers', href: '/admin/customers', icon: <Users size={20} /> },
+    { label: 'Reviews', href: '/admin/reviews', icon: <MessageSquare size={20} /> },
     { label: 'Team Roles', href: '/admin/users', icon: <ShieldCheck size={20} /> },
   ];
 
