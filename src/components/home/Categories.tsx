@@ -67,6 +67,13 @@ const Categories = () => {
 
   const handleCategoryClick = (catName: string) => {
     const slug = toSlug(catName);
+
+    // Special case: Custom Cakes card always goes to the builder
+    if (slug === 'custom-cakes') {
+      router.push('/custom-cake');
+      return;
+    }
+
     if (availableSlugs.has(slug)) {
       router.push(`/menu?category=${slug}`);
     } else {
