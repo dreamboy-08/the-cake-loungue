@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { db } from '@/utils/firebase';
-import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { toSlug } from '@/utils/slug';
+import { sortCategories } from '@/utils/categorySorting';
 import { useProductAvailability } from '@/hooks/useProductAvailability';
 import Toast from '@/components/Toast';
 
@@ -22,8 +23,7 @@ const Categories = () => {
     // We prioritize featured or specifically chosen categories for the home page
     const q = query(
       collection(db, 'categories'),
-      where('active', '==', true),
-      limit(4)
+      where('active', '==', true)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -34,7 +34,8 @@ const Categories = () => {
           designs: data.productCount ? `${data.productCount}+` : 'Explore',
           tag: data.isFeatured ? 'Featured' : data.isBestSeller ? 'Bestseller' : null,
           img: data.image || `/images/categories/${data.name}.jpg`,
-          slug: data.slug || toSlug(data.name)
+          slug: data.slug || toSlug(data.name),
+          displayOrder: data.displayOrder
         };
       });
 
@@ -47,7 +48,8 @@ const Categories = () => {
           { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
         ]);
       } else {
-        setCats(fetchedCats);
+        // Sort by displayOrder and take top 4
+        setCats(sortCategories(fetchedCats).slice(0, 4));
       }
     }, (error) => {
       console.error("Error listening to home categories:", error);

@@ -10,6 +10,7 @@ import {
   query,
   orderBy,
   limit,
+  writeBatch,
   getCountFromServer,
   where,
   onSnapshot,
@@ -31,6 +32,7 @@ import {
 import CategoryForm from '@/components/admin/CategoryForm';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { sortCategories } from '@/utils/categorySorting';
 
 const AdminCategories = () => {
   const [categories, setCategories] = useState<any[]>([]);
@@ -55,7 +57,7 @@ const AdminCategories = () => {
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const fetchedCategories = snapshot.docs.map(doc => ({ ...(doc.data() as any), id: doc.id }));
-      setCategories(fetchedCategories);
+      setCategories(sortCategories(fetchedCategories));
 
       // Fetch product counts for each category
       const counts: Record<string, number> = {};
@@ -86,6 +88,29 @@ const AdminCategories = () => {
     } catch (error) {
       console.error("Error deleting category:", error);
       showToast("Failed to delete category.", "error");
+    }
+  };
+
+  const handleRepairOrders = async () => {
+    setLoading(true);
+    try {
+      const batch = writeBatch(db);
+      // Sort existing categories based on current state (alphabetical fallback if no order)
+      const sorted = sortCategories(categories);
+      sorted.forEach((cat, index) => {
+        const docRef = doc(db, 'categories', cat.id);
+        batch.update(docRef, {
+          displayOrder: index + 1,
+          updatedAt: new Date().toISOString()
+        });
+      });
+      await batch.commit();
+      showToast("Category orders repaired successfully.");
+    } catch (error) {
+      console.error("Error repairing orders:", error);
+      showToast("Failed to repair category orders.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -128,16 +153,27 @@ const AdminCategories = () => {
           <h1 className="text-3xl font-playfair font-bold text-chocolate">Category Management</h1>
           <p className="text-gray-500 mt-1">Organize your products into logical collections.</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedCategory(null);
-            setIsFormOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full md:w-auto"
-        >
-          <Plus size={20} />
-          <span>Add New Category</span>
-        </button>
+        <div className="flex flex-col md:flex-row gap-3">
+          <button
+            onClick={handleRepairOrders}
+            disabled={loading || categories.length === 0}
+            className="flex items-center justify-center gap-2 bg-cream-dark text-chocolate px-6 py-3 rounded-2xl font-bold hover:bg-rose/10 transition-all w-full md:w-auto border border-rose/10 disabled:opacity-50"
+            title="Automatically assign sequential order numbers (1, 2, 3...) to all categories"
+          >
+            <Tags size={20} className="text-rose-deep" />
+            <span>Repair Orders</span>
+          </button>
+          <button
+            onClick={() => {
+              setSelectedCategory(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full md:w-auto"
+          >
+            <Plus size={20} />
+            <span>Add New Category</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -185,8 +221,15 @@ const AdminCategories = () => {
 
               <div className="p-8 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-chocolate mb-1">{category.name}</h3>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                       <h3 className="text-xl font-bold text-chocolate">{category.name}</h3>
+                       {category.displayOrder > 0 && (
+                         <span className="px-2 py-0.5 bg-rose/10 text-rose-deep text-[9px] font-black rounded-full border border-rose/20">
+                           #{category.displayOrder}
+                         </span>
+                       )}
+                    </div>
                     <p className="text-[10px] text-rose-deep font-black uppercase tracking-widest">/{category.slug}</p>
                   </div>
                   <div className="flex gap-2">
