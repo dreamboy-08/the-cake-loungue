@@ -23,7 +23,7 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Find Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed">
-                Cake lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana
+                The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana
               </p>
             </div>
 
