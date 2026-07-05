@@ -135,10 +135,29 @@ const AdminOrders = () => {
     setUpdatingId(orderId);
     try {
       const orderRef = doc(db, 'orders', orderId);
-      await updateDoc(orderRef, { status: newStatus });
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      const timestamp = new Date().toISOString();
+      const statusUpdate = {
+        status: newStatus,
+        [`statusHistory.${newStatus}`]: timestamp,
+        updatedAt: timestamp
+      };
+
+      await updateDoc(orderRef, statusUpdate);
+
+      setOrders(prev => prev.map(o => o.id === orderId ? {
+        ...o,
+        status: newStatus,
+        statusHistory: { ...(o.statusHistory || {}), [newStatus]: timestamp },
+        updatedAt: timestamp
+      } : o));
+
       if (selectedOrder?.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: newStatus });
+        setSelectedOrder({
+          ...selectedOrder,
+          status: newStatus,
+          statusHistory: { ...(selectedOrder.statusHistory || {}), [newStatus]: timestamp },
+          updatedAt: timestamp
+        });
       }
     } catch (error) {
       console.error("Error updating status:", error);
