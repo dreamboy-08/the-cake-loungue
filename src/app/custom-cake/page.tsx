@@ -2,14 +2,19 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Sparkles } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
+import AIAvatar from '@/components/ai/AIAvatar';
 
 const CustomCakePage = () => {
   const sendWhatsApp = () => {
     const text = "Hello The Cake Lounge! I would like to order a custom cake. I have attached my reference design and would like to discuss the details.";
     window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const openAIChat = () => {
+    window.dispatchEvent(new CustomEvent('open-ai-chat'));
   };
 
   return (
@@ -33,15 +38,27 @@ const CustomCakePage = () => {
                 We&apos;ll personally help you create the perfect custom cake for your special moment.
               </p>
 
-              <button
-                onClick={sendWhatsApp}
-                className="group flex items-center gap-4 bg-rose-deep text-white px-8 py-5 rounded-full font-bold text-lg shadow-lg hover:bg-brown transition-all duration-300 hover:scale-105 active:scale-95"
-              >
-                <div className="bg-white/20 p-2 rounded-full group-hover:rotate-12 transition-transform duration-300">
-                  <MessageCircle size={24} />
-                </div>
-                <span>Send Your Cake Design on WhatsApp</span>
-              </button>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <button
+                  onClick={sendWhatsApp}
+                  className="w-full sm:w-auto group flex items-center gap-4 bg-rose-deep text-white px-8 py-5 rounded-full font-bold text-lg shadow-lg hover:bg-brown transition-all duration-300 hover:scale-105 active:scale-95"
+                >
+                  <div className="bg-white/20 p-2 rounded-full group-hover:rotate-12 transition-transform duration-300">
+                    <MessageCircle size={24} />
+                  </div>
+                  <span>Send on WhatsApp</span>
+                </button>
+
+                <button
+                  onClick={openAIChat}
+                  className="w-full sm:w-auto group flex items-center gap-4 bg-chocolate text-white px-8 py-5 rounded-full font-bold text-lg shadow-lg hover:bg-rose-deep transition-all duration-300 hover:scale-105 active:scale-95"
+                >
+                  <div className="bg-white rounded-full p-1 group-hover:rotate-12 transition-transform duration-300">
+                    <AIAvatar size="sm" />
+                  </div>
+                  <span>Ask Cake Lounge AI</span>
+                </button>
+              </div>
 
               <div className="mt-12 flex items-center gap-6">
                 <div className="flex -space-x-4">

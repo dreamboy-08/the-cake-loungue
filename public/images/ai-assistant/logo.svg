@@ -1,0 +1,17 @@
+<svg width="800" height="300" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0, -50) scale(0.6)">
+    <circle cx="180" cy="260" r="60" fill="#f2c4b0"/>
+    <circle cx="332" cy="260" r="60" fill="#f2c4b0"/>
+    <circle cx="256" cy="220" r="80" fill="#f2c4b0"/>
+    <circle cx="256" cy="270" r="70" fill="#f2c4b0"/>
+    <path d="M160 280L185 420H327L352 280H160Z" fill="#3d1f10"/>
+    <path d="M160 280L170 340H342L352 280H160Z" fill="#6b3a2a"/>
+    <path d="M210 160C210 110 230 90 256 90C282 90 302 110 302 160H210Z" fill="#ffffff"/>
+    <rect x="215" y="150" width="82" height="25" rx="5" fill="#ffffff"/>
+    <circle cx="210" cy="260" r="8" fill="#3d1f10"/>
+    <circle cx="302" cy="260" r="8" fill="#3d1f10"/>
+    <path d="M236 300C236 300 246 315 256 315C266 315 276 300 276 300" stroke="#3d1f10" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="320" y="140" font-family="Playfair Display, serif" font-size="72" font-weight="bold" fill="#3d1f10">The Cake Lounge</text>
+  <text x="320" y="210" font-family="Poppins, sans-serif" font-size="64" font-weight="black" fill="#c9614a">AI ASSISTANT</text>
+</svg>

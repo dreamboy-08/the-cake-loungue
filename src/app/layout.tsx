@@ -7,6 +7,7 @@ import { FlyToCartProvider } from "@/context/FlyToCartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartBubble from "@/components/CartBubble";
+import AIChatWidget from "@/components/ai/AIChatWidget";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
               <main>{children}</main>
               <Footer />
               <CartBubble />
+              <AIChatWidget />
             </FlyToCartProvider>
           </CartProvider>
         </AuthProvider>

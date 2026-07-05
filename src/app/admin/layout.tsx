@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   Users,
   ShieldCheck,
+  Sparkles,
   LogOut,
   ChevronRight,
   Menu,
@@ -47,6 +48,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
     { label: 'Customers', href: '/admin/customers', icon: <Users size={20} /> },
+    { label: 'AI Assistant', href: '/admin/ai-features', icon: <Sparkles size={20} /> },
     { label: 'Team Roles', href: '/admin/users', icon: <ShieldCheck size={20} /> },
   ];
 
