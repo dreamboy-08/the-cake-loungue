@@ -1,62 +1,159 @@
-import React from 'react';
-import Image from 'next/image';
-import { Star } from 'lucide-react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, MessageSquare, Star } from 'lucide-react';
+import ReviewCard from '@/components/reviews/ReviewCard';
+import { Review } from '@/types/review';
+import { db } from '@/utils/firebase';
+import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import Link from 'next/link';
 
 const Testimonials = () => {
-  const reviews = [
-    {
-      name: "Priya Sharma",
-      tag: "Loyal Customer · 3 yrs",
-      avatar: "https://i.pravatar.cc/100?img=47",
-      text: "Ordered a custom birthday cake for my daughter and I was absolutely blown away. The attention to detail was incredible — it looked exactly like the design I requested, and it tasted even better!",
-      rating: 5,
-    },
-    {
-      name: "Rohan Mehta",
-      tag: "Verified Buyer",
-      avatar: "https://i.pravatar.cc/100?img=12",
-      text: "The Belgian chocolate truffle cake was an absolute showstopper at our anniversary dinner. Our guests couldn't stop talking about it. Delivery was on time and packaging was beautiful!",
-      rating: 5,
-    },
-    {
-      name: "Ananya Kapoor",
-      tag: "Premium Member",
-      avatar: "https://i.pravatar.cc/100?img=32",
-      text: "I've ordered from La Douceur 5 times now — red velvet, mango mousse, tiramisu — every single one is perfection. This is my go-to bakery for every celebration!",
-      rating: 4.5,
-    },
-  ];
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'reviews'),
+      where('status', '==', 'approved'),
+      where('isFeatured', '==', true),
+      orderBy('createdAt', 'desc'),
+      limit(10)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedReviews = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      } as Review));
+      setReviews(fetchedReviews);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching featured reviews:", error);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (loading || reviews.length <= 1 || isHovered) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [loading, reviews.length, isHovered]);
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+  };
+
+  if (loading) {
+    return (
+      <section className="py-24 bg-cream-dark/30">
+        <div className="container mx-auto px-6 text-center">
+          <div className="animate-pulse space-y-8">
+            <div className="h-8 w-64 bg-gray-200 mx-auto rounded-full" />
+            <div className="h-12 w-96 bg-gray-200 mx-auto rounded-full" />
+            <div className="max-w-4xl mx-auto h-[400px] bg-white rounded-[40px]" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (reviews.length === 0) return null;
 
   return (
-    <section id="testimonials" className="py-[100px] bg-cream-dark">
+    <section id="testimonials" className="py-24 bg-cream-dark/30 overflow-hidden">
       <div className="container mx-auto px-6">
-        <div className="text-center">
-          <p className="section-label">Happy Customers</p>
-          <h2 className="section-title">What People Are Saying</h2>
+        <div className="text-center space-y-4 mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-rose/10 rounded-full text-rose-deep text-[10px] font-black uppercase tracking-widest">
+            <MessageSquare size={14} /> Happy Customers
+          </div>
+          <h2 className="text-4xl md:text-5xl font-playfair font-bold text-chocolate">
+            Voices of Delight
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Discover why thousands of customers trust The Cake Lounge for their most precious celebrations.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-[50px]">
-          {reviews.map((review, i) => (
-            <div key={i} className="bg-white rounded-[14px] p-8 shadow-sm transition-all duration-350 relative hover:translate-y-[-6px] hover:shadow-md before:content-['\201C'] before:font-playfair before:text-[6rem] before:text-cream-dark before:absolute before:top-2.5 before:left-5 before:leading-none">
-              <div className="flex gap-[3px] text-gold text-[0.9rem] mb-4">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={16} fill={j < Math.floor(review.rating) ? "currentColor" : "none"} className={j < Math.floor(review.rating) ? "text-gold" : "text-text-soft/30"} />
-                ))}
-              </div>
-              <p className="text-[0.9rem] text-text-mid leading-[1.75] relative z-10 mb-6">
-                &quot;{review.text}&quot;
-              </p>
-              <div className="flex items-center gap-[14px]">
-                <div className="w-[46px] h-[46px] rounded-full overflow-hidden border-2 border-blush relative">
-                  <Image src={review.avatar} alt={review.name} fill sizes="46px" className="object-cover" />
-                </div>
-                <div>
-                  <div className="text-[0.9rem] font-semibold text-chocolate">{review.name}</div>
-                  <div className="text-[0.75rem] text-text-soft">{review.tag}</div>
-                </div>
-              </div>
+        <div
+          className="relative max-w-4xl mx-auto"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Main Carousel Area */}
+          <div className="relative overflow-visible px-4 py-12">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -100, scale: 0.9 }}
+                transition={{ duration: 0.5, ease: "circOut" }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.x < -50) handleNext();
+                  if (info.offset.x > 50) handlePrev();
+                }}
+                className="w-full cursor-grab active:cursor-grabbing"
+              >
+                <ReviewCard review={reviews[currentIndex]} isFeatured={true} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-6 mt-8">
+            <button
+              onClick={handlePrev}
+              className="p-4 bg-white rounded-2xl text-chocolate shadow-sm border border-gray-100 hover:bg-rose-deep hover:text-white hover:-translate-x-1 transition-all group"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <div className="flex gap-2">
+              {reviews.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    currentIndex === idx ? 'w-8 bg-rose-deep' : 'w-2 bg-gray-200'
+                  }`}
+                />
+              ))}
             </div>
-          ))}
+
+            <button
+              onClick={handleNext}
+              className="p-4 bg-white rounded-2xl text-chocolate shadow-sm border border-gray-100 hover:bg-rose-deep hover:text-white hover:translate-x-1 transition-all group"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-20 text-center">
+          <Link
+            href="/reviews"
+            className="inline-flex items-center gap-3 px-10 py-5 bg-chocolate text-white rounded-[24px] font-bold text-lg shadow-xl shadow-chocolate/20 hover:bg-brown transition-all hover:translate-y-[-2px]"
+          >
+            Read All Reviews
+            <ChevronRight size={20} />
+          </Link>
         </div>
       </div>
     </section>
