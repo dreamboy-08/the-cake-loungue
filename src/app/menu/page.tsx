@@ -6,6 +6,9 @@ import ProductCard from '@/components/ProductCard';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
 import BackButton from '@/components/BackButton';
+import Link from 'next/link';
+import { Sparkles } from 'lucide-react';
+import AIAvatar from '@/components/ai/AIAvatar';
 import { filterProducts } from '@/utils/filterProducts';
 import { db } from '@/utils/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -120,6 +123,34 @@ const MenuContent = () => {
 
         {/* Search Bar */}
         <SearchBar onSearch={setSearchQuery} />
+
+        {/* AI Recommendations Banner */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="bg-gradient-to-r from-chocolate to-brown p-1 rounded-[24px] shadow-lg">
+            <div className="bg-cream/5 rounded-[22px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-rose-deep/10 rounded-full blur-3xl -mr-16 -mt-16" />
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-blush/10 rounded-full blur-2xl -ml-12 -mb-12" />
+
+              <div className="flex items-center gap-5 relative z-10">
+                <div className="bg-white rounded-full p-2 shadow-inner">
+                  <AIAvatar size="md" />
+                </div>
+                <div className="text-left">
+                  <h3 className="font-playfair font-bold text-xl text-white">AI-Powered Suggestions</h3>
+                  <p className="text-blush/80 text-sm font-medium">Let our AI consultant help you find the perfect cake!</p>
+                </div>
+              </div>
+
+              <Link
+                href="/ai-recommendations"
+                className="group flex items-center gap-3 bg-rose-deep text-white px-6 py-3 rounded-full font-bold text-sm shadow-md hover:bg-white hover:text-chocolate transition-all duration-300 relative z-10"
+              >
+                <Sparkles size={16} className="group-hover:rotate-12 transition-transform" />
+                Get Personalized Recommendations
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-4 justify-center mb-12 items-center min-h-[50px]">
