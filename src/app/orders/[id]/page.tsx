@@ -318,7 +318,7 @@ const OrderDetailsPage = () => {
                     <CheckCircle2 size={32} />
                   </div>
                   <h2 className="text-2xl font-bold text-chocolate">Order Delivered Successfully!</h2>
-                  <p className="text-text-soft">We hope you love your The Cake Lounge treats. How was your experience?</p>
+                  <p className="text-text-soft">We hope you love your Cake Lounge treats. How was your experience?</p>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                     <Link
                       href={`/reviews?orderId=${order.id}`}

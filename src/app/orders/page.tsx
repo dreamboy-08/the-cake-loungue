@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { db } from '@/utils/firebase';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import { ShoppingBag, Package, Calendar, Clock, ChevronRight, Loader2, Search, CreditCard, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Package, Calendar, ChevronRight, Loader2, Search, CreditCard, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -25,10 +25,9 @@ const OrdersPage = () => {
     }
 
     setLoading(true);
-    console.log("Fetching orders for user:", user.uid);
+    console.log("Fetching orders from path: users/", user.uid, "/orders");
     const q = query(
-      collection(db, 'orders'),
-      where('userId', '==', user.uid),
+      collection(db, 'users', user.uid, 'orders'),
       orderBy('createdAt', 'desc')
     );
 
