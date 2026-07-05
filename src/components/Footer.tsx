@@ -37,6 +37,7 @@ const Footer = () => {
             <div className="flex flex-col gap-[10px]">
               <Link href="/" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Home</Link>
               <Link href="/menu" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Our Menu</Link>
+              <Link href="/reviews" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Customer Reviews</Link>
               <Link href="/custom-cake" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Custom Cake</Link>
               <Link href="/#about" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Our Story</Link>
               <Link href="/#contact" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Contact</Link>

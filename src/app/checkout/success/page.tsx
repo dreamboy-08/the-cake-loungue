@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
+import ReviewRequestModal from '@/components/reviews/ReviewRequestModal';
 
 const SuccessContent = () => {
   const searchParams = useSearchParams();
@@ -125,6 +126,11 @@ const SuccessContent = () => {
           </div>
         </div>
       </div>
+      <ReviewRequestModal
+        orderId={orderId || undefined}
+        productName={orderDetails?.items?.[0]?.name}
+        productId={orderDetails?.items?.[0]?.id?.toString()}
+      />
     </PageWrapper>
   );
 };

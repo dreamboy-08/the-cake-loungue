@@ -416,6 +416,7 @@ const Navbar = () => {
             )}
             <Link href="/menu" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Full Menu</Link>
             <Link href="/#about" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+            <Link href="/reviews" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Reviews</Link>
             <Link href="/#contact" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
           </div>
         </div>
