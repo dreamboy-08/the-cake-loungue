@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import { Calendar, Clock } from 'lucide-react';
+import { DELIVERY_TIME_SLOTS, MIDNIGHT_DELIVERY_SLOT, MIDNIGHT_DELIVERY_CHARGE } from '@/constants/delivery';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -58,6 +59,84 @@ const CheckoutPage = () => {
     }
     return date.toISOString().split('T')[0];
   }, [hasCustomCake]);
+
+  // Dropdown States
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownActiveIndex, setDropdownActiveIndex] = useState(-1);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  const tomorrowDateStr = useMemo(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  }, []);
+
+  const handleDateChange = (val: string) => {
+    if (!val) {
+      setDeliveryDate('');
+      setDeliveryTimeSlot('');
+      return;
+    }
+    // Strict verification:
+    if (val < earliestDate) {
+      setErrorMessage(`Same-day delivery is not available. Please select ${earliestDate === tomorrowDateStr ? 'tomorrow' : 'the day after tomorrow'} onwards.`);
+      setDeliveryDate('');
+      setDeliveryTimeSlot('');
+    } else {
+      setDeliveryDate(val);
+      setDeliveryTimeSlot('');
+      setErrorMessage(null);
+    }
+  };
+
+  const handleDropdownKeyDown = (e: React.KeyboardEvent) => {
+    if (!deliveryDate) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setIsDropdownOpen(true);
+      setDropdownActiveIndex((prev) => (prev + 1) % DELIVERY_TIME_SLOTS.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setIsDropdownOpen(true);
+      setDropdownActiveIndex((prev) => (prev - 1 + DELIVERY_TIME_SLOTS.length) % DELIVERY_TIME_SLOTS.length);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (!isDropdownOpen) {
+        setIsDropdownOpen(true);
+        const currentIdx = DELIVERY_TIME_SLOTS.indexOf(deliveryTimeSlot);
+        setDropdownActiveIndex(currentIdx >= 0 ? currentIdx : 0);
+      } else {
+        if (dropdownActiveIndex >= 0 && dropdownActiveIndex < DELIVERY_TIME_SLOTS.length) {
+          setDeliveryTimeSlot(DELIVERY_TIME_SLOTS[dropdownActiveIndex]);
+          setIsDropdownOpen(false);
+        }
+      }
+    } else if (e.key === 'Escape' || e.key === 'Tab') {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  const midnightCharge = useMemo(() => {
+    if (deliveryTimeSlot === MIDNIGHT_DELIVERY_SLOT) {
+      return MIDNIGHT_DELIVERY_CHARGE;
+    }
+    return 0;
+  }, [deliveryTimeSlot]);
+
+  // Dropdown Close on Click Outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Get API URL from environment variables with fallback
   const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
@@ -109,7 +188,7 @@ const CheckoutPage = () => {
   }, [API_URL]);
 
   const shippingFee = useMemo(() => cartTotal >= 499 ? 0 : 50, [cartTotal]);
-  const finalTotal = useMemo(() => cartTotal + shippingFee, [cartTotal, shippingFee]);
+  const finalTotal = useMemo(() => cartTotal + shippingFee + midnightCharge, [cartTotal, shippingFee, midnightCharge]);
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -141,6 +220,8 @@ const CheckoutPage = () => {
           customerName: selectedAddress.name,
           customerEmail: user?.email || 'guest@example.com',
           customerPhone: selectedAddress.phone,
+          deliveryDate,
+          deliveryTimeSlot,
         }),
       });
 
@@ -200,6 +281,7 @@ const CheckoutPage = () => {
               totalAmount: finalTotal,
               shippingFee,
               subtotal: cartTotal,
+              midnightCharge,
               discount: 0,
               taxes: 0,
               coupon: null,
@@ -329,9 +411,9 @@ const CheckoutPage = () => {
                 <h3 className="text-xl font-bold text-chocolate mb-6">
                   Delivery Date & Time
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                   <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none z-10">
                       <Calendar size={18} />
                     </div>
                     <input
@@ -339,29 +421,96 @@ const CheckoutPage = () => {
                       required
                       min={earliestDate}
                       value={deliveryDate}
-                      onChange={(e) => setDeliveryDate(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer z-0"
                     />
                   </div>
 
-                  <div className="relative">
-                    <select
-                      value={deliveryTimeSlot}
-                      onChange={(e) => setDeliveryTimeSlot(e.target.value)}
-                      required
-                      className="w-full px-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate appearance-none"
+                  {/* Custom Delivery Time Slot Selector */}
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (deliveryDate) {
+                          setIsDropdownOpen(!isDropdownOpen);
+                          if (!isDropdownOpen) {
+                            const currentIdx = DELIVERY_TIME_SLOTS.indexOf(deliveryTimeSlot);
+                            setDropdownActiveIndex(currentIdx >= 0 ? currentIdx : 0);
+                          }
+                        }
+                      }}
+                      onKeyDown={handleDropdownKeyDown}
+                      disabled={!deliveryDate}
+                      className={`w-full px-6 py-4 rounded-[22px] border-2 border-transparent outline-none transition-all font-bold text-left flex items-center justify-between ${
+                        !deliveryDate
+                          ? 'bg-cream text-text-soft opacity-60 cursor-not-allowed'
+                          : isDropdownOpen
+                          ? 'bg-cream border-rose-deep text-chocolate'
+                          : 'bg-cream text-chocolate focus:border-rose-deep'
+                      }`}
                     >
-                      <option value="">Select Time Slot</option>
-                      <option value="10:00 AM - 01:00 PM">10:00 AM - 01:00 PM</option>
-                      <option value="01:00 PM - 04:00 PM">01:00 PM - 04:00 PM</option>
-                      <option value="04:00 PM - 07:00 PM">04:00 PM - 07:00 PM</option>
-                      <option value="07:00 PM - 10:00 PM">07:00 PM - 10:00 PM</option>
-                    </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
-                      <Clock size={18} />
-                    </div>
+                      <span className="truncate">
+                        {deliveryTimeSlot || (deliveryDate ? 'Select Time Slot' : 'Select Delivery Date First')}
+                      </span>
+                      <div className="text-rose-deep shrink-0">
+                        <Clock size={18} />
+                      </div>
+                    </button>
+
+                    {isDropdownOpen && deliveryDate && (
+                      <div className="absolute left-0 right-0 mt-2 bg-white rounded-[22px] border-2 border-rose-100 shadow-2xl overflow-hidden z-[600] animate-fadeIn">
+                        <div className="max-h-60 overflow-y-auto py-2 custom-scrollbar">
+                          {DELIVERY_TIME_SLOTS.map((slot, index) => {
+                            const isSelected = deliveryTimeSlot === slot;
+                            const isActive = dropdownActiveIndex === index;
+                            return (
+                              <button
+                                type="button"
+                                key={slot}
+                                onClick={() => {
+                                  setDeliveryTimeSlot(slot);
+                                  setIsDropdownOpen(false);
+                                }}
+                                onMouseEnter={() => setDropdownActiveIndex(index)}
+                                className={`w-full text-left px-6 py-3.5 font-bold text-sm transition-colors flex items-center justify-between ${
+                                  isSelected
+                                    ? 'bg-rose-deep text-white'
+                                    : isActive
+                                    ? 'bg-rose-50 text-rose-deep'
+                                    : 'text-chocolate hover:bg-cream-dark'
+                                }`}
+                              >
+                                <span>{slot}</span>
+                                {isSelected && (
+                                  <span className="text-white">✓</span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Midnight Delivery Notice */}
+                <div
+                  className={`mt-6 p-5 rounded-[22px] border-l-4 transition-all duration-300 flex gap-4 ${
+                    deliveryTimeSlot === MIDNIGHT_DELIVERY_SLOT
+                      ? 'bg-rose-50 border-rose-600 text-rose-950 shadow-md scale-[1.01]'
+                      : 'bg-amber-50/60 border-amber-400 text-amber-900'
+                  }`}
+                >
+                  <div className={`shrink-0 mt-0.5 ${
+                    deliveryTimeSlot === MIDNIGHT_DELIVERY_SLOT ? 'text-rose-deep' : 'text-amber-500'
+                  }`}>
+                    <AlertCircle size={20} />
+                  </div>
+                  <div className="text-sm leading-relaxed font-bold">
+                    ⚠️ IMPORTANT: <span>The 10:00 PM – 12:00 AM slot is considered a Midnight Delivery. Additional delivery charges will apply for this time slot.</span>
+                  </div>
+                </div>
+
                 <p className="mt-3 text-sm text-text-soft flex items-center gap-2">
                   <AlertCircle size={14} className="text-rose-deep" />
                   {hasCustomCake
@@ -463,6 +612,15 @@ const CheckoutPage = () => {
                 ) : (
                   <div className="bg-cream-dark p-3 rounded-xl">
                     <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
+                  </div>
+                )}
+                {midnightCharge > 0 && (
+                  <div className="flex justify-between text-text-mid bg-yellow-50/50 p-3 rounded-xl border border-yellow-100">
+                    <span className="text-xs font-bold flex items-center gap-2 text-rose-deep">
+                      <AlertCircle size={14} className="text-rose-deep" />
+                      Midnight Delivery Charge
+                    </span>
+                    <span className="text-xs font-bold text-rose-deep">₹{midnightCharge}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
