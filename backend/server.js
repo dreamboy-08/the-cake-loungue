@@ -82,6 +82,48 @@ try {
   console.error('Failed to initialize Razorpay:', error.message);
 }
 
+// Delivery Configurations & Validation Helpers
+const VALID_SLOTS = [
+  "10:00 AM – 12:00 PM",
+  "12:00 PM – 02:00 PM",
+  "02:00 PM – 04:00 PM",
+  "04:00 PM – 06:00 PM",
+  "06:00 PM – 08:00 PM",
+  "08:00 PM – 10:00 PM",
+  "10:00 PM – 12:00 AM"
+];
+
+const MIDNIGHT_SLOT = "10:00 PM – 12:00 AM";
+const MIDNIGHT_CHARGE = 150;
+
+const getTodayISTString = () => {
+  const d = new Date();
+  const istDate = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  const year = istDate.getFullYear();
+  const month = String(istDate.getMonth() + 1).padStart(2, '0');
+  const day = String(istDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTomorrowISTString = () => {
+  const d = new Date();
+  const istDate = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+  istDate.setDate(istDate.getDate() + 1);
+  const year = istDate.getFullYear();
+  const month = String(istDate.getMonth() + 1).padStart(2, '0');
+  const day = String(istDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const isTimeSlotValid = (slot) => {
+  if (!slot) return false;
+  const normalized = slot.replace(/\s+/g, ' ').replace(/[-–—]/g, '-').trim().toLowerCase();
+  return VALID_SLOTS.some(s => {
+    const normS = s.replace(/\s+/g, ' ').replace(/[-–—]/g, '-').trim().toLowerCase();
+    return normS === normalized;
+  });
+};
+
 app.get('/', (req, res) => {
   res.json({
     message: 'The Cake Lounge backend is running',
@@ -94,10 +136,38 @@ app.get('/', (req, res) => {
 // Create Order for Razorpay
 app.post('/api/orders', async (req, res) => {
   try {
-    const { totalAmount, items, customerName, customerEmail, customerPhone } = req.body;
+    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot } = req.body;
 
     if (!totalAmount || !items || !items.length) {
       return res.status(400).json({ error: 'Missing order details: amount and items are required' });
+    }
+
+    // Backend Validation for Delivery Date & Time Slot
+    const tomorrowIST = getTomorrowISTString();
+    if (!deliveryDate || deliveryDate < tomorrowIST) {
+      return res.status(400).json({ error: 'Same-day delivery is not available. Please select a valid delivery date from tomorrow onwards.' });
+    }
+
+    if (!deliveryTimeSlot || !isTimeSlotValid(deliveryTimeSlot)) {
+      return res.status(400).json({ error: 'Invalid delivery time slot selected.' });
+    }
+
+    // Recalculate and verify the total amount (including Midnight Delivery Charge)
+    let expectedSubtotal = 0;
+    for (const item of items) {
+      expectedSubtotal += Number(item.price) * Number(item.quantity);
+    }
+    const expectedShipping = expectedSubtotal >= 499 ? 0 : 50;
+
+    // Check if midnight slot
+    const isMidnight = deliveryTimeSlot && (
+      deliveryTimeSlot.replace(/\s+/g, ' ').replace(/[-–—]/g, '-').trim().toLowerCase() === "10:00 pm - 12:00 am"
+    );
+    const expectedMidnightCharge = isMidnight ? MIDNIGHT_CHARGE : 0;
+    const expectedTotal = expectedSubtotal + expectedShipping + expectedMidnightCharge;
+
+    if (Math.abs(Number(totalAmount) - expectedTotal) > 0.01) {
+      return res.status(400).json({ error: `Amount verification failed. Expected: ₹${expectedTotal}, Received: ₹${totalAmount}` });
     }
 
     if (!razorpay) {
@@ -173,6 +243,52 @@ app.post('/api/verify-payment', async (req, res) => {
 
     if (generatedSignature === razorpay_signature) {
       console.log('Payment verified successfully:', razorpay_payment_id);
+
+      if (!orderDetails) {
+        return res.status(400).json({
+          success: false,
+          error: 'Missing orderDetails for verification'
+        });
+      }
+
+      // Backend Validation for Delivery Date & Time Slot
+      const { deliveryDate, deliveryTimeSlot, totalAmount } = orderDetails;
+      const tomorrowIST = getTomorrowISTString();
+      if (!deliveryDate || deliveryDate < tomorrowIST) {
+        return res.status(400).json({
+          success: false,
+          error: 'Same-day delivery is not available. Please select a valid delivery date from tomorrow onwards.'
+        });
+      }
+
+      if (!deliveryTimeSlot || !isTimeSlotValid(deliveryTimeSlot)) {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid delivery time slot selected.'
+        });
+      }
+
+      // Recalculate and verify the total amount (including Midnight Delivery Charge)
+      let expectedSubtotal = 0;
+      for (const item of orderDetails.items) {
+        const price = item.price || item.unitPrice;
+        expectedSubtotal += Number(price) * Number(item.quantity);
+      }
+      const expectedShipping = expectedSubtotal >= 499 ? 0 : 50;
+
+      // Check if midnight slot
+      const isMidnight = deliveryTimeSlot && (
+        deliveryTimeSlot.replace(/\s+/g, ' ').replace(/[-–—]/g, '-').trim().toLowerCase() === "10:00 pm - 12:00 am"
+      );
+      const expectedMidnightCharge = isMidnight ? MIDNIGHT_CHARGE : 0;
+      const expectedTotal = expectedSubtotal + expectedShipping + expectedMidnightCharge;
+
+      if (Math.abs(Number(totalAmount) - expectedTotal) > 0.01) {
+        return res.status(400).json({
+          success: false,
+          error: `Order amount verification failed. Expected: ₹${expectedTotal}, Got: ₹${totalAmount}`
+        });
+      }
 
       // Store order in Firestore if db is initialized
       if (db && orderDetails) {
