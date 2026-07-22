@@ -82,6 +82,66 @@ try {
   console.error('Failed to initialize Razorpay:', error.message);
 }
 
+const VALID_SLOTS = [
+  "10:00 AM – 12:00 PM",
+  "12:00 PM – 02:00 PM",
+  "02:00 PM – 04:00 PM",
+  "04:00 PM – 06:00 PM",
+  "06:00 PM – 08:00 PM",
+  "08:00 PM – 10:00 PM",
+  "10:00 PM – 12:00 AM (Midnight Delivery)"
+];
+
+function validateDeliveryDate(dateStr, items = []) {
+  if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return { valid: false, error: 'Invalid date format. Expected YYYY-MM-DD.' };
+  }
+
+  const deliveryDateObj = new Date(dateStr + 'T00:00:00');
+  if (isNaN(deliveryDateObj.getTime())) {
+    return { valid: false, error: 'Invalid date.' };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (deliveryDateObj.getTime() <= today.getTime()) {
+    return { valid: false, error: 'Same-day and past deliveries are not allowed.' };
+  }
+
+  const hasCustomCake = items.some(item => {
+    const category = item.category || '';
+    return category === 'Custom Cakes' || item.name.toLowerCase().includes('custom');
+  });
+
+  const minDays = hasCustomCake ? 2 : 1;
+  const minRequiredDateObj = new Date(today);
+  minRequiredDateObj.setDate(today.getDate() + minDays);
+
+  if (deliveryDateObj.getTime() < minRequiredDateObj.getTime()) {
+    return {
+      valid: false,
+      error: `Custom cakes require at least 2 days preparation. Minimum selectable date is ${minRequiredDateObj.toISOString().split('T')[0]}`
+    };
+  }
+
+  return { valid: true };
+}
+
+function calculateExpectedAmount(items, deliveryTimeSlot) {
+  let subtotal = 0;
+  for (const item of items) {
+    const price = Number(item.price);
+    const qty = Number(item.quantity) || 1;
+    subtotal += price * qty;
+  }
+
+  const shippingFee = subtotal >= 499 ? 0 : 50;
+  const midnightCharge = (deliveryTimeSlot === "10:00 PM – 12:00 AM (Midnight Delivery)") ? 150 : 0;
+
+  return subtotal + shippingFee + midnightCharge;
+}
+
 app.get('/', (req, res) => {
   res.json({
     message: 'The Cake Lounge backend is running',
@@ -94,10 +154,27 @@ app.get('/', (req, res) => {
 // Create Order for Razorpay
 app.post('/api/orders', async (req, res) => {
   try {
-    const { totalAmount, items, customerName, customerEmail, customerPhone } = req.body;
+    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot } = req.body;
 
     if (!totalAmount || !items || !items.length) {
       return res.status(400).json({ error: 'Missing order details: amount and items are required' });
+    }
+
+    // 1. Validate date
+    const dateCheck = validateDeliveryDate(deliveryDate, items);
+    if (!dateCheck.valid) {
+      return res.status(400).json({ error: dateCheck.error });
+    }
+
+    // 2. Validate time slot
+    if (!deliveryTimeSlot || !VALID_SLOTS.includes(deliveryTimeSlot)) {
+      return res.status(400).json({ error: 'Invalid or missing delivery time slot.' });
+    }
+
+    // 3. Verify totalAmount matches recalculation
+    const expectedAmount = calculateExpectedAmount(items, deliveryTimeSlot);
+    if (Math.round(totalAmount) !== Math.round(expectedAmount)) {
+      return res.status(400).json({ error: `Mismatched order total amount. Expected ₹${expectedAmount}, got ₹${totalAmount}. Request may be manipulated.` });
     }
 
     if (!razorpay) {
@@ -173,6 +250,23 @@ app.post('/api/verify-payment', async (req, res) => {
 
     if (generatedSignature === razorpay_signature) {
       console.log('Payment verified successfully:', razorpay_payment_id);
+
+      // Validate order details to prevent any parameter tampering
+      if (orderDetails) {
+        const dateCheck = validateDeliveryDate(orderDetails.deliveryDate, orderDetails.items);
+        if (!dateCheck.valid) {
+          return res.status(400).json({ success: false, error: dateCheck.error });
+        }
+
+        if (!orderDetails.deliveryTimeSlot || !VALID_SLOTS.includes(orderDetails.deliveryTimeSlot)) {
+          return res.status(400).json({ success: false, error: 'Invalid or missing delivery time slot.' });
+        }
+
+        const expectedAmount = calculateExpectedAmount(orderDetails.items, orderDetails.deliveryTimeSlot);
+        if (Math.round(orderDetails.totalAmount) !== Math.round(expectedAmount)) {
+          return res.status(400).json({ success: false, error: `Mismatched order details total amount. Expected ₹${expectedAmount}, got ₹${orderDetails.totalAmount}.` });
+        }
+      }
 
       // Store order in Firestore if db is initialized
       if (db && orderDetails) {
