@@ -9,7 +9,11 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, MessageSquare } from 'lucide-react';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE } from '@/constants/delivery';
+import { getContactInfo } from '@/utils/adminService';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -28,9 +32,25 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>('');
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
+  const [contactWhatsapp, setContactWhatsapp] = useState<string>('917703870170');
+
+  const desktopCalendarRef = React.useRef<HTMLDivElement>(null);
+
+  // Fetch WhatsApp number dynamically from CMS on mount
+  useEffect(() => {
+    getContactInfo().then((info) => {
+      if (info && info.whatsapp) {
+        setContactWhatsapp(info.whatsapp);
+      }
+    }).catch((err) => {
+      console.error("Failed to load contact info:", err);
+    });
+  }, []);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const verificationStarted = React.useRef(false);
 
@@ -59,8 +79,32 @@ const CheckoutPage = () => {
     return date.toISOString().split('T')[0];
   }, [hasCustomCake]);
 
+  const minSelectableDate = useMemo(() => {
+    const today = new Date();
+    const minDate = new Date(today);
+    if (hasCustomCake) {
+      minDate.setDate(today.getDate() + 2);
+    } else {
+      minDate.setDate(today.getDate() + 1);
+    }
+    minDate.setHours(0, 0, 0, 0);
+    return minDate;
+  }, [hasCustomCake]);
+
   // Get API URL from environment variables with fallback
   const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
+
+  // Sync selectedDate to deliveryDate state
+  useEffect(() => {
+    if (selectedDate) {
+      const yyyy = selectedDate.getFullYear();
+      const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const dd = String(selectedDate.getDate()).padStart(2, '0');
+      setDeliveryDate(`${yyyy}-${mm}-${dd}`);
+    } else {
+      setDeliveryDate('');
+    }
+  }, [selectedDate]);
 
   // Load persisted checkout data
   useEffect(() => {
@@ -71,7 +115,13 @@ const CheckoutPage = () => {
     const savedInstructions = sessionStorage.getItem('checkout_delivery_instructions');
 
     if (savedAddress) setSelectedAddress(JSON.parse(savedAddress));
-    if (savedDate) setDeliveryDate(savedDate);
+    if (savedDate) {
+      setDeliveryDate(savedDate);
+      const parsedDate = new Date(savedDate);
+      if (!isNaN(parsedDate.getTime())) {
+        setSelectedDate(parsedDate);
+      }
+    }
     if (savedSlot) setDeliveryTimeSlot(savedSlot);
     if (savedInstructions) setDeliveryInstructions(savedInstructions);
   }, []);
@@ -83,6 +133,19 @@ const CheckoutPage = () => {
     if (deliveryTimeSlot) sessionStorage.setItem('checkout_delivery_slot', deliveryTimeSlot);
     if (deliveryInstructions) sessionStorage.setItem('checkout_delivery_instructions', deliveryInstructions);
   }, [selectedAddress, deliveryDate, deliveryTimeSlot, deliveryInstructions]);
+
+  // Handle click outside for desktop calendar popover
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (desktopCalendarRef.current && !desktopCalendarRef.current.contains(event.target as Node)) {
+        setIsCalendarOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Set default address if available and no address is selected (for logged in users)
   useEffect(() => {
@@ -108,8 +171,16 @@ const CheckoutPage = () => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
 
+  const isMidnightSlot = useMemo(() => {
+    return deliveryTimeSlot === "10:00 PM – 12:00 AM (Midnight Delivery)";
+  }, [deliveryTimeSlot]);
+
+  const midnightCharge = useMemo(() => {
+    return isMidnightSlot ? 150 : 0;
+  }, [isMidnightSlot]);
+
   const shippingFee = useMemo(() => cartTotal >= 499 ? 0 : 50, [cartTotal]);
-  const finalTotal = useMemo(() => cartTotal + shippingFee, [cartTotal, shippingFee]);
+  const finalTotal = useMemo(() => cartTotal + shippingFee + midnightCharge, [cartTotal, shippingFee, midnightCharge]);
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -141,6 +212,8 @@ const CheckoutPage = () => {
           customerName: selectedAddress.name,
           customerEmail: user?.email || 'guest@example.com',
           customerPhone: selectedAddress.phone,
+          deliveryDate,
+          deliveryTimeSlot,
         }),
       });
 
@@ -199,6 +272,7 @@ const CheckoutPage = () => {
               })),
               totalAmount: finalTotal,
               shippingFee,
+              midnightCharge,
               subtotal: cartTotal,
               discount: 0,
               taxes: 0,
@@ -330,32 +404,108 @@ const CheckoutPage = () => {
                   Delivery Date & Time
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
+                  {/* Modern Date Picker Calendar Component */}
+                  <div className="relative" ref={desktopCalendarRef}>
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none z-10">
                       <Calendar size={18} />
                     </div>
-                    <input
-                      type="date"
-                      required
-                      min={earliestDate}
-                      value={deliveryDate}
-                      onChange={(e) => setDeliveryDate(e.target.value)}
-                      className="w-full pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate [appearance:none] [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsCalendarOpen(!isCalendarOpen)}
+                      className="w-full text-left pl-12 pr-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate"
+                    >
+                      {selectedDate ? (
+                        selectedDate.toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })
+                      ) : (
+                        <span className="text-text-soft font-normal">Select Delivery Date</span>
+                      )}
+                    </button>
+
+                    <AnimatePresence>
+                      {isCalendarOpen && (
+                        <>
+                          {/* Desktop Popover Calendar */}
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="hidden md:block absolute left-0 top-full mt-2 bg-white rounded-[28px] p-4 shadow-xl border border-cream z-[500]"
+                          >
+                            <DatePicker
+                              selected={selectedDate}
+                              onChange={(date: Date | null) => {
+                                setSelectedDate(date);
+                                setIsCalendarOpen(false);
+                              }}
+                              inline
+                              minDate={minSelectableDate}
+                            />
+                          </motion.div>
+
+                          {/* Mobile Bottom Sheet Modal */}
+                          <div className="md:hidden">
+                            {/* Backdrop */}
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              onClick={() => setIsCalendarOpen(false)}
+                              className="fixed inset-0 bg-black/40 z-[550]"
+                            />
+                            {/* Bottom Sheet */}
+                            <motion.div
+                              initial={{ y: '100%' }}
+                              animate={{ y: 0 }}
+                              exit={{ y: '100%' }}
+                              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+                              className="fixed bottom-0 left-0 right-0 w-full bg-white rounded-t-[40px] p-6 pb-10 shadow-2xl border-t border-cream z-[600] flex flex-col items-center"
+                            >
+                              <div className="w-12 h-1.5 bg-gray-200 rounded-full mb-6" />
+                              <h4 className="text-lg font-bold text-chocolate mb-4 font-playfair">Select Delivery Date</h4>
+                              <DatePicker
+                                selected={selectedDate}
+                                onChange={(date: Date | null) => {
+                                  setSelectedDate(date);
+                                  setIsCalendarOpen(false);
+                                }}
+                                inline
+                                minDate={minSelectableDate}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setIsCalendarOpen(false)}
+                                className="mt-6 w-full py-4 bg-chocolate text-white rounded-[22px] font-bold"
+                              >
+                                Close
+                              </button>
+                            </motion.div>
+                          </div>
+                        </>
+                      )}
+                    </AnimatePresence>
                   </div>
 
+                  {/* Time Slot dropdown */}
                   <div className="relative">
                     <select
                       value={deliveryTimeSlot}
                       onChange={(e) => setDeliveryTimeSlot(e.target.value)}
                       required
-                      className="w-full px-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate appearance-none"
+                      disabled={!selectedDate}
+                      className="w-full px-6 py-4 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-bold text-chocolate appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="">Select Time Slot</option>
-                      <option value="10:00 AM - 01:00 PM">10:00 AM - 01:00 PM</option>
-                      <option value="01:00 PM - 04:00 PM">01:00 PM - 04:00 PM</option>
-                      <option value="04:00 PM - 07:00 PM">04:00 PM - 07:00 PM</option>
-                      <option value="07:00 PM - 10:00 PM">07:00 PM - 10:00 PM</option>
+                      <option value="">
+                        {selectedDate ? "Select Time Slot" : "Select delivery date first"}
+                      </option>
+                      {selectedDate && DELIVERY_SLOTS.map((slot) => (
+                        <option key={slot} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
                       <Clock size={18} />
@@ -368,6 +518,79 @@ const CheckoutPage = () => {
                     ? "Custom Cakes require at least 2 days preparation."
                     : "Standard Cakes can be delivered as early as tomorrow."}
                 </p>
+              </div>
+
+              {/* Premium Same-Day Delivery & WhatsApp Layout Card */}
+              <div className="bg-green-50/60 rounded-[30px] p-6 border-2 border-green-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex gap-4 items-center">
+                  <div className="w-12 h-12 bg-[#25d366] rounded-full flex items-center justify-center text-white shrink-0 shadow-md">
+                    <MessageSquare size={24} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-green-800 text-lg flex items-center gap-2">
+                      🚨 Need Same-Day Delivery?
+                    </h4>
+                    <p className="text-sm text-green-700 font-medium">
+                      Same-day delivery is not available through online checkout.
+                    </p>
+                    <p className="text-xs text-green-600 font-bold">
+                      Please contact us on WhatsApp. Our team will check availability and assist you manually.
+                    </p>
+                  </div>
+                </div>
+                <div className="shrink-0 flex items-center justify-center">
+                  <a
+                    href={`https://wa.me/${contactWhatsapp}?text=${encodeURIComponent("Hello, I would like to enquire about Same-Day Delivery.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-4 bg-[#25d366] text-white rounded-[22px] font-bold shadow-md hover:bg-[#128c7e] transition-all hover:-translate-y-0.5 whitespace-nowrap"
+                  >
+                    <MessageSquare size={18} />
+                    Contact WhatsApp
+                  </a>
+                </div>
+              </div>
+
+              {/* Midnight Delivery Notice Card */}
+              <div className={`p-6 rounded-[30px] border-2 transition-all duration-300 ${
+                isMidnightSlot
+                  ? "bg-rose-50/80 border-rose-deep shadow-md scale-[1.02]"
+                  : "bg-amber-50/50 border-amber-200"
+              }`}>
+                <div className="flex gap-4 items-start">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
+                    isMidnightSlot
+                      ? "bg-rose-deep text-white animate-pulse"
+                      : "bg-amber-500 text-white"
+                  }`}>
+                    <AlertCircle size={24} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className={`font-bold text-lg ${
+                      isMidnightSlot
+                        ? "text-rose-900"
+                        : "text-amber-800"
+                    }`}>
+                      ⚠ IMPORTANT — Midnight Delivery
+                    </h4>
+                    <p className={`text-sm font-medium ${
+                      isMidnightSlot
+                        ? "text-rose-700"
+                        : "text-amber-700"
+                    }`}>
+                      10:00 PM – 12:00 AM is considered a Midnight Delivery.
+                    </p>
+                    <p className={`text-xs font-bold ${
+                      isMidnightSlot
+                        ? "text-rose-600"
+                        : "text-amber-600"
+                    }`}>
+                      {isMidnightSlot
+                        ? "🎉 Midnight Slot Selected! Additional ₹150 charge has been added to your order summary."
+                        : "Additional delivery charges (₹150) will apply if this slot is selected."}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -463,6 +686,15 @@ const CheckoutPage = () => {
                 ) : (
                   <div className="bg-cream-dark p-3 rounded-xl">
                     <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
+                  </div>
+                )}
+                {isMidnightSlot && (
+                  <div className="flex justify-between text-text-mid bg-rose-50/50 p-3 rounded-xl border border-rose-100">
+                    <span className="text-sm font-bold text-rose-deep flex items-center gap-2">
+                      <Clock size={14} />
+                      Midnight Delivery Charge
+                    </span>
+                    <span className="font-bold text-rose-deep">₹150</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-4 border-t-2 border-chocolate mt-4">
