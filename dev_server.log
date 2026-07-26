@@ -14,3 +14,277 @@ Firebase configuration is missing or invalid. Please check your environment vari
  GET / 200 in 17444ms
  ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
  GET / 200 in 204ms
+ ✓ Compiled in 5.5s (1593 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 426ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ ○ Compiling /menu ...
+ ✓ Compiled /menu in 8.4s (2286 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 4163ms
+ ○ Compiling /custom-cake ...
+ ✓ Compiled /custom-cake in 2.4s (2281 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /_next/static/css/app/layout.css?v=1785053751870 404 in 2895ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 2907ms
+ GET /_next/static/chunks/app/layout.js 404 in 2907ms
+ GET /_next/static/chunks/main-app.js?v=1785053751870 404 in 2918ms
+ GET /_next/static/chunks/app/page.js 404 in 2881ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 2.6s (1976 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/products?bypass=true 200 in 3152ms
+ GET /admin/products?bypass=true 200 in 3156ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 533ms (1979 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /_next/static/css/app/layout.css?v=1785053825141 404 in 1254ms
+ GET /_next/static/css/app/layout.css?v=1785053825139 404 in 1258ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 1289ms
+ GET /_next/static/chunks/main-app.js?v=1785053825141 404 in 1289ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 1294ms
+ GET /_next/static/chunks/main-app.js?v=1785053825139 404 in 1305ms
+ GET /_next/static/chunks/app/layout.js 404 in 1276ms
+ GET /_next/static/chunks/app/layout.js 404 in 1291ms
+ ○ Compiling /menu ...
+ ✓ Compiled /menu in 555ms (913 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /menu 200 in 1238ms
+ GET /_next/static/css/app/layout.css?v=1785053828143 404 in 153ms
+ GET /_next/static/chunks/main-app.js?v=1785053828143 404 in 242ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 222ms
+ GET /_next/static/chunks/app/layout.js 404 in 207ms
+ GET /admin/products?bypass=true 200 in 86ms
+ GET /_next/static/css/app/layout.css?v=1785053853135 404 in 95ms
+ GET /_next/static/chunks/main-app.js?v=1785053853135 404 in 273ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 282ms
+ GET /_next/static/chunks/app/layout.js 404 in 223ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 2.6s (2177 modules)
+ GET / 404 in 2906ms
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /_next/static/media/0484562807a97172-s.p.woff2 404 in 189ms
+ GET /_next/static/media/4c285fdca692ea22-s.p.woff2 404 in 191ms
+ GET /_next/static/media/b957ea75a84b6ea7-s.p.woff2 404 in 187ms
+ GET /_next/static/media/8888a3826f4a3af4-s.p.woff2 404 in 188ms
+ GET /_next/static/media/eaead17c7dbfcd5d-s.p.woff2 404 in 190ms
+ GET / 200 in 795ms
+ GET /_next/static/css/app/layout.css?v=1785054052347 404 in 73ms
+ GET /_next/static/media/eafabf029ad39a43-s.p.woff2 404 in 181ms
+ GET /_next/static/chunks/main-app.js?v=1785054052347 404 in 139ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 139ms
+ GET /_next/static/chunks/app/layout.js 404 in 117ms
+ GET /_next/static/chunks/app/page.js 404 in 113ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/clsx.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected /app/.next/server/vendor-chunks/clsx.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/motion-utils' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/motion-utils.js', but to 'Error: Can't resolve './vendor-chunks/motion-utils' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/motion-utils (expected /app/.next/server/vendor-chunks/motion-utils.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/idb' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/idb.js', but to 'Error: Can't resolve './vendor-chunks/idb' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/idb (expected /app/.next/server/vendor-chunks/idb.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file /app/node_modules/next/dist/compiled/loader-runner/LoaderRunner.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/bundle5.js
+<w>  at file dependencies /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file /app/node_modules/next/dist/compiled/webpack/webpack.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file /app/node_modules/next/dist/build/webpack/plugins/define-env-plugin.js
+<w>  at file dependencies /app/node_modules/next/dist/build/swc/index.js
+<w>  at file /app/node_modules/next/dist/build/swc/index.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-barrel-loader.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/vendor-chunks/clsx.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/clsx' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/clsx.js', but to 'Error: Can't resolve './vendor-chunks/clsx' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/clsx (expected /app/.next/server/vendor-chunks/clsx.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/motion-utils' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/motion-utils.js', but to 'Error: Can't resolve './vendor-chunks/motion-utils' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/motion-utils (expected /app/.next/server/vendor-chunks/motion-utils.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving './vendor-chunks/idb' in /app/.next/server for build dependencies doesn't lead to expected result '/app/.next/server/vendor-chunks/idb.js', but to 'Error: Can't resolve './vendor-chunks/idb' in '/app/.next/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ./vendor-chunks/idb (expected /app/.next/server/vendor-chunks/idb.js)
+<w>  at file dependencies /app/.next/server/webpack-runtime.js
+<w>  at file /app/.next/server/webpack-runtime.js
+<w>  at file dependencies /app/.next/server/app/_not-found/page.js
+<w>  at file /app/.next/server/app/_not-found/page.js
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET / 200 in 215ms
+ ✓ Compiled /admin/products in 373ms (946 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/products?bypass=true 200 in 861ms
+ GET /admin/products?bypass=true 200 in 866ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 828ms (2205 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /_next/static/chunks/app/admin/products/page.js 404 in 1140ms
+ GET /_next/static/chunks/app/admin/layout.js 404 in 1137ms
+ GET /_next/static/chunks/app/admin/products/page.js 404 in 1137ms
+ GET /_next/static/chunks/app/admin/layout.js 404 in 1141ms
+ ✓ Compiled /menu in 197ms (953 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /menu 200 in 924ms
+ GET /_next/static/chunks/app/menu/page.js 404 in 119ms
+ GET /admin/products?bypass=true 200 in 78ms
+ GET /_next/static/chunks/app/admin/layout.js 404 in 104ms
+ GET /_next/static/chunks/app/admin/products/page.js 404 in 114ms
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/custom-cake/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/custom-cake/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/custom-cake/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/custom-cake/page (expected /app/.next/server/app/custom-cake/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/app/custom-cake/page.js'
+ ○ Compiling /shop/[id] ...
+ ✓ Compiled /shop/[id] in 1564ms (2187 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /shop/1 200 in 2574ms
+ ✓ Compiled /menu in 241ms (932 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /menu 200 in 1172ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/app/custom-cake/page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/custom-cake/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/custom-cake/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/custom-cake/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/custom-cake/page (expected /app/.next/server/app/custom-cake/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+ GET /shop/1 200 in 152ms
+ GET /menu 200 in 608ms
+ GET /shop/1 200 in 111ms
+ GET /shop/1 200 in 127ms
+ GET /shop/1 200 in 94ms
+ GET /menu 200 in 622ms
+ GET /menu 200 in 646ms
+ GET /menu 200 in 697ms
+ GET / 200 in 253ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 327ms
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 656ms (958 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/products?bypass=true 200 in 1184ms
+ GET /admin/products?bypass=true 200 in 1219ms
+ GET /menu 200 in 621ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1798ms (966 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/products?bypass=true 200 in 315ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, lstat '/app/.next/server/app/custom-cake/page.js'
+<w> [webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo] Resolving '../../../../.next/server/app/custom-cake/page' in /app/node_modules/next/dist/server for build dependencies doesn't lead to expected result '/app/.next/server/app/custom-cake/page.js', but to 'Error: Can't resolve '../../../../.next/server/app/custom-cake/page' in '/app/node_modules/next/dist/server'' instead. Resolving dependencies are ignored for this path.
+<w>  at resolve commonjs file ../../../../.next/server/app/custom-cake/page (expected /app/.next/server/app/custom-cake/page.js)
+<w>  at file dependencies /app/node_modules/next/dist/server/require.js
+<w>  at file /app/node_modules/next/dist/server/require.js
+<w>  at file dependencies /app/node_modules/next/dist/server/load-components.js
+<w>  at file /app/node_modules/next/dist/server/load-components.js
+<w>  at file dependencies /app/node_modules/next/dist/build/utils.js
+<w>  at file /app/node_modules/next/dist/build/utils.js
+<w>  at file dependencies /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at file /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js
+<w>  at resolve commonjs /app/node_modules/next/dist/build/webpack/loaders/next-route-loader/index.js

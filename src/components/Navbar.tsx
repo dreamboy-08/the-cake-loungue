@@ -85,12 +85,26 @@ const Navbar = () => {
       >
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
-            <Link href="/" className={cn(
-              "font-playfair text-[1.6rem] font-bold transition-colors duration-300",
-              (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
-            )}>
-              The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
-            </Link>
+            <div className="flex items-center gap-2 md:gap-0">
+              {!isAuthPage && (
+                <button
+                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer"
+                  onClick={toggleMobileMenu}
+                  aria-label="Open menu"
+                >
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
+                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
+                </button>
+              )}
+
+              <Link href="/" className={cn(
+                "font-playfair text-[1.6rem] font-bold transition-colors duration-300",
+                (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
+              )}>
+                The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+              </Link>
+            </div>
 
             <div className="flex items-center gap-4 md:gap-6">
               <div className="flex items-center gap-3 md:gap-6">
@@ -232,18 +246,6 @@ const Navbar = () => {
                   )}
                 </button>
               </div>
-
-              {!isAuthPage && (
-                <button
-                  className="md:hidden flex flex-col gap-[5px] p-1 bg-none border-none cursor-pointer"
-                  onClick={toggleMobileMenu}
-                  aria-label="Open menu"
-                >
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
-                  <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
-                </button>
-              )}
             </div>
           </div>
         </div>
