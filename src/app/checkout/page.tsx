@@ -12,7 +12,7 @@ import PageWrapper from '@/components/PageWrapper';
 import { Calendar, Clock, MessageSquare } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE } from '@/constants/delivery';
+import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } from '@/constants/delivery';
 import { getContactInfo } from '@/utils/adminService';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
@@ -189,6 +189,10 @@ const CheckoutPage = () => {
     }
     if (!selectedAddress) {
       setErrorMessage('Please select or add a delivery address.');
+      return;
+    }
+    if (!isServiceableZipCode(selectedAddress.zipCode)) {
+      setErrorMessage('Sorry, we currently deliver only within Gurugram. Please select or add an address with a serviceable Gurugram Zip Code.');
       return;
     }
     if (!deliveryDate) {
@@ -638,7 +642,10 @@ const CheckoutPage = () => {
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
                   <div key={item.id} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
-                    <div className="relative w-20 h-20 rounded-[22px] bg-cream overflow-hidden flex-shrink-0 border border-cream">
+                    <div
+                      onClick={() => router.push(`/shop/${item.id}`)}
+                      className="relative w-20 h-20 rounded-[22px] bg-cream overflow-hidden flex-shrink-0 border border-cream cursor-pointer hover:opacity-90 transition-opacity"
+                    >
                       <Image
                         src={item.img}
                         alt={item.name}
@@ -647,8 +654,11 @@ const CheckoutPage = () => {
                         className="object-cover"
                       />
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <h4 className="text-sm font-bold text-chocolate line-clamp-1">{item.name}</h4>
+                    <div
+                      onClick={() => router.push(`/shop/${item.id}`)}
+                      className="flex-1 min-w-0 flex flex-col justify-center cursor-pointer group/item"
+                    >
+                      <h4 className="text-sm font-bold text-chocolate line-clamp-1 group-hover/item:text-rose-deep transition-colors">{item.name}</h4>
                       <p className="text-[10px] text-text-soft mt-0.5">
                         {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
                       </p>
@@ -722,7 +732,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || cart.length === 0 || !selectedAddress || !deliveryDate || !deliveryTimeSlot}
+                disabled={loading || cart.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -738,13 +748,15 @@ const CheckoutPage = () => {
                 )}
               </button>
 
-              {(!selectedAddress || !deliveryDate || !deliveryTimeSlot) && cart.length > 0 && (
+              {(!selectedAddress || (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode)) || !deliveryDate || !deliveryTimeSlot) && cart.length > 0 && (
                 <p className="mt-4 text-rose-deep text-xs font-bold text-center">
                   * Please select {
                     (!selectedAddress && !deliveryDate && !deliveryTimeSlot)
                     ? 'address, date and time slot'
                     : !selectedAddress
                     ? 'a delivery address'
+                    : (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode))
+                    ? 'a serviceable Gurugram address'
                     : !deliveryDate
                     ? 'a delivery date'
                     : 'a delivery time slot'

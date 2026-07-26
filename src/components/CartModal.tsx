@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
+import { products } from '@/constants/products';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -14,8 +15,50 @@ interface CartModalProps {
 }
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
-  const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, isLoading } = useCart();
+  const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, isLoading, addToCart } = useCart();
   const router = useRouter();
+
+  const recommendations = React.useMemo(() => {
+    if (cart.length === 0) {
+      // If cart is empty, show top popular bestseller products
+      return products
+        .filter(p => p.tag === 'Bestseller' || p.tag === 'Trending' || p.rating >= 4)
+        .slice(0, 4);
+    }
+
+    const cartItemIds = cart.map((item) => item.id);
+    const cartCategories = Array.from(new Set(cart.map((item) => {
+      // Retrieve category of product from constants using id fallback
+      const matchingProduct = products.find(p => p.id === item.id);
+      return matchingProduct ? matchingProduct.category : null;
+    }).filter(Boolean)));
+
+    // Exclude items already in the cart
+    const eligibleProducts = products.filter((p) => !cartItemIds.includes(p.id));
+
+    // Score and rank products
+    const scored = eligibleProducts.map((product) => {
+      let score = 0;
+      // 1. Same category
+      if (cartCategories.includes(product.category)) {
+        score += 100;
+      }
+      // 2. Similar / Bestseller tags
+      if (product.tag === 'Bestseller' || product.tag === 'Trending') {
+        score += 20;
+      }
+      // 3. Popularity (rating & reviews count)
+      score += product.rating * 5 + (product.reviews / 5);
+
+      return { product, score };
+    });
+
+    // Sort descending by score
+    scored.sort((a, b) => b.score - a.score);
+
+    // Take top 4 recommended products
+    return scored.slice(0, 4).map((s) => s.product);
+  }, [cart]);
 
   return (
     <AnimatePresence>
@@ -56,6 +99,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               <BackButton
                 className="mb-0"
                 ariaLabel="Go back"
+                onClick={onClose}
               />
             </div>
 
@@ -79,61 +123,139 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  <AnimatePresence>
-                    {cart.map((item) => (
-                      <motion.div
-                        key={item.cartItemId}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-white rounded-[22px] p-4 flex gap-4 shadow-sm border border-cream/50 group"
-                      >
-                        <div className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream">
-                          <Image src={item.img} alt={item.name} fill className="object-cover" />
-                        </div>
-
-                        <div className="flex-1 flex flex-col justify-between">
-                          <div>
-                            <div className="flex justify-between items-start gap-2">
-                              <h4 className="m-0 text-[0.95rem] font-bold text-chocolate line-clamp-1 leading-tight">{item.name}</h4>
-                              <button
-                                onClick={() => removeFromCart(item.cartItemId)}
-                                className="text-text-soft hover:text-rose-deep transition-colors shrink-0"
-                                aria-label={`Remove ${item.name} from cart`}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                            <p className="text-xs text-text-soft mt-1">
-                              {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
-                            </p>
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <AnimatePresence>
+                      {cart.map((item) => (
+                        <motion.div
+                          key={item.cartItemId}
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          className="bg-white rounded-[22px] p-4 flex gap-4 shadow-sm border border-cream/50 group"
+                        >
+                          <div
+                            onClick={() => {
+                              onClose();
+                              router.push(`/shop/${item.id}`);
+                            }}
+                            className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream cursor-pointer hover:opacity-90 transition-opacity"
+                          >
+                            <Image src={item.img} alt={item.name} fill className="object-cover" />
                           </div>
 
-                          <div className="flex justify-between items-center mt-2">
-                            <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
+                          <div className="flex-1 flex flex-col justify-between">
+                            <div
+                              onClick={() => {
+                                onClose();
+                                router.push(`/shop/${item.id}`);
+                              }}
+                              className="cursor-pointer group/details"
+                            >
+                              <div className="flex justify-between items-start gap-2">
+                                <h4 className="m-0 text-[0.95rem] font-bold text-chocolate group-hover/details:text-rose-deep line-clamp-1 leading-tight transition-colors">{item.name}</h4>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromCart(item.cartItemId);
+                                  }}
+                                  className="text-text-soft hover:text-rose-deep transition-colors shrink-0"
+                                  aria-label={`Remove ${item.name} from cart`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                              <p className="text-xs text-text-soft mt-1">
+                                {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
+                              </p>
+                            </div>
 
-                            <div className="flex items-center gap-3 bg-cream rounded-full px-2 py-1 border border-cream">
-                              <button
-                                onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
-                                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
-                              >
-                                <Minus size={14} />
-                              </button>
-                              <span className="text-sm font-bold text-chocolate min-w-[1.2rem] text-center">{item.quantity}</span>
-                              <button
-                                onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
-                                className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
-                              >
-                                <Plus size={14} />
-                              </button>
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex justify-between items-center mt-2"
+                            >
+                              <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
+
+                              <div className="flex items-center gap-3 bg-cream rounded-full px-2 py-1 border border-cream">
+                                <button
+                                  onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
+                                  className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
+                                >
+                                  <Minus size={14} />
+                                </button>
+                                <span className="text-sm font-bold text-chocolate min-w-[1.2rem] text-center">{item.quantity}</span>
+                                <button
+                                  onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
+                                  className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-white text-chocolate transition-colors"
+                                >
+                                  <Plus size={14} />
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Recommendations Section */}
+                  {recommendations.length > 0 && (
+                    <div className="mt-8 pt-6 border-t border-cream/80">
+                      <h4 className="text-chocolate font-bold text-base font-playfair mb-4 flex items-center gap-2">
+                        <span>✨</span> You May Also Like
+                      </h4>
+                      <div className="grid grid-cols-1 gap-4">
+                        {recommendations.map((prod) => (
+                          <div
+                            key={prod.id}
+                            className="bg-white rounded-[20px] p-3 flex gap-3 shadow-sm border border-cream/50 hover:shadow-md transition-all"
+                          >
+                            <div
+                              onClick={() => {
+                                onClose();
+                                router.push(`/shop/${prod.id}`);
+                              }}
+                              className="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream cursor-pointer hover:opacity-90 transition-opacity"
+                            >
+                              <Image src={prod.img} alt={prod.name} fill className="object-cover" />
+                            </div>
+
+                            <div className="flex-1 flex flex-col justify-between min-w-0">
+                              <div
+                                onClick={() => {
+                                  onClose();
+                                  router.push(`/shop/${prod.id}`);
+                                }}
+                                className="cursor-pointer group/rec min-w-0"
+                              >
+                                <h5 className="m-0 text-xs font-bold text-chocolate truncate group-hover/rec:text-rose-deep transition-colors leading-snug">{prod.name}</h5>
+                                <p className="text-[10px] text-text-soft mt-0.5 truncate">{prod.category}</p>
+                              </div>
+
+                              <div className="flex justify-between items-center mt-1">
+                                <span className="text-sm font-bold text-rose-deep">₹{prod.price}</span>
+                                <button
+                                  onClick={() => {
+                                    addToCart({
+                                      id: prod.id,
+                                      name: prod.name,
+                                      price: prod.price,
+                                      img: prod.img,
+                                      weight: prod.weights?.[0]?.label || '0.5 Kg',
+                                    });
+                                  }}
+                                  className="px-3 py-1 bg-rose-deep hover:bg-brown text-white rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95"
+                                >
+                                  Add to Cart
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

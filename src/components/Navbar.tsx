@@ -191,7 +191,7 @@ const Navbar = () => {
                         (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >
-                        Login
+                        Sign In
                       </Link>
                     )}
 
@@ -315,14 +315,28 @@ const Navbar = () => {
       </div>
       )}
 
+      {/* MOBILE MENU BACKDROP */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="fixed inset-0 bg-chocolate/40 z-[199] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* MOBILE MENU */}
       <div className={cn(
-        "fixed inset-0 bg-cream z-[200] flex-col items-center overflow-y-auto py-20 px-6 transition-all duration-300",
-        isMobileMenuOpen ? "flex" : "hidden"
+        "fixed inset-y-0 left-0 w-full max-w-[400px] bg-cream z-[200] flex flex-col items-center overflow-y-auto py-20 px-6 transition-transform duration-300 ease-in-out shadow-2xl md:hidden",
+        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <button
           className="absolute top-6 right-6 text-chocolate"
           onClick={() => setIsMobileMenuOpen(false)}
+          aria-label="Close menu"
         >
           <X size={32} />
         </button>
@@ -411,7 +425,7 @@ const Navbar = () => {
                 className="w-full bg-rose-deep text-white font-bold py-4 rounded-xl shadow-lg shadow-rose-deep/20 text-center"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Login / Sign Up
+                Sign In / Sign Up
               </Link>
             )}
             <Link href="/menu" className="font-playfair text-[1.8rem] font-bold text-chocolate hover:text-rose" onClick={() => setIsMobileMenuOpen(false)}>Full Menu</Link>

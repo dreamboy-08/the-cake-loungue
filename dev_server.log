@@ -1,0 +1,16 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1856ms
+ ○ Compiling / ...
+ ✓ Compiled / in 15.2s (1611 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ ✓ Compiled in 1885ms (715 modules)
+ GET / 200 in 17444ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 204ms

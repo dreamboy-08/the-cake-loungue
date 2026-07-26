@@ -10,6 +10,7 @@ interface BackButtonProps {
   fallbackRoute?: string;
   className?: string;
   ariaLabel?: string;
+  onClick?: () => void;
 }
 
 /**
@@ -19,7 +20,8 @@ interface BackButtonProps {
 const BackButton: React.FC<BackButtonProps> = ({
   fallbackRoute = "/",
   className = "mb-6",
-  ariaLabel = "Go back to previous page"
+  ariaLabel = "Go back to previous page",
+  onClick
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -34,6 +36,7 @@ const BackButton: React.FC<BackButtonProps> = ({
 
   const handleBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (onClick) onClick();
     if (canGoBack) {
       router.back();
     } else {
@@ -69,6 +72,9 @@ const BackButton: React.FC<BackButtonProps> = ({
       <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
         <Link
           href="/"
+          onClick={() => {
+            if (onClick) onClick();
+          }}
           className="w-10 h-10 flex items-center justify-center bg-white text-text-soft rounded-full shadow-sm border border-cream hover:text-rose-deep hover:border-rose/30 hover:shadow-md transition-all duration-300 group"
           aria-label="Go to homepage"
         >

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth, Address } from '@/context/AuthContext';
 import { Plus, Edit2, Trash2, CheckCircle2, MapPin, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { isServiceableZipCode } from '@/constants/delivery';
 
 const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Address) => void, selectedAddress?: Address | null }) => {
   const { user, userData, loading: authLoading, addAddress, updateAddress, deleteAddress, setDefaultAddress } = useAuth();
@@ -40,6 +41,29 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
     console.log("AddressManager: Form submitted", { isEditing: !!editingId, isUser: !!user });
     setLoading(true);
     setError(null);
+
+    const zip = formData.zipCode.trim();
+    if (!zip) {
+      setError("Zip Code is required.");
+      setLoading(false);
+      return;
+    }
+    if (!/^\d+$/.test(zip)) {
+      setError("Please enter a valid numeric Zip Code.");
+      setLoading(false);
+      return;
+    }
+    if (zip.length !== 6) {
+      setError("Please enter a valid 6-digit Zip Code.");
+      setLoading(false);
+      return;
+    }
+    if (!isServiceableZipCode(zip)) {
+      setError("Sorry, we currently deliver only within Gurugram.");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (user) {
         if (editingId) {
