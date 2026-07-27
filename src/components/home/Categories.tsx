@@ -20,6 +20,17 @@ const Categories = () => {
   });
 
   useEffect(() => {
+    // If Firebase is not configured, skip onSnapshot setup and use fallback
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      setCats([
+        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
+        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
+        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
+        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
+      ]);
+      return;
+    }
+
     // We prioritize featured or specifically chosen categories for the home page
     const q = query(
       collection(db, 'categories'),
