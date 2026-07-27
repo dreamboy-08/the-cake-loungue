@@ -120,8 +120,8 @@ const Navbar = () => {
         )}
       >
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-0">
+          <div className="flex items-center justify-between h-11">
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
               {!isAuthPage && (
                 <button
                   className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
@@ -135,15 +135,15 @@ const Navbar = () => {
               )}
 
               <Link href="/" className={cn(
-                "font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap leading-none shrink-0",
+                "flex items-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
                 The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
               </Link>
             </div>
 
-            <div className="flex items-center">
-              <div className="flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3.5 md:gap-5">
+            <div className="flex items-center h-11">
+              <div className="flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
                   <button
