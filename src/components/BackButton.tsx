@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { ArrowLeft, Home } from 'lucide-react';
 import Link from 'next/link';
@@ -32,6 +32,14 @@ const BackButton: React.FC<BackButtonProps> = ({
   const [isAtTop, setIsAtTop] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // States to track the dynamic position of the navbar
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavbarHidden, setIsNavbarHidden] = useState(false);
+  const lastScrollTopRef = useRef(0);
+
+  // State to track if any overlay/drawer is open
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== 'undefined' && window.history.length > 1) {
@@ -39,6 +47,7 @@ const BackButton: React.FC<BackButtonProps> = ({
     }
   }, []);
 
+  // Scroll listener for fading and positioning relative to Navbar
   useEffect(() => {
     if (!isFloating || !mounted) return;
 
@@ -47,8 +56,19 @@ const BackButton: React.FC<BackButtonProps> = ({
 
     const updateScrollState = () => {
       const currentScrollY = window.scrollY;
+      const lastScrollTop = lastScrollTopRef.current;
       const atTop = currentScrollY <= 10;
       setIsAtTop(atTop);
+
+      // Match Navbar scrolled state
+      const scrolled = currentScrollY > 50;
+      setIsScrolled(scrolled);
+
+      // Match Navbar hidden state
+      const navbarHidden = currentScrollY > lastScrollTop && currentScrollY > 120;
+      setIsNavbarHidden(navbarHidden);
+
+      lastScrollTopRef.current = currentScrollY <= 0 ? 0 : currentScrollY;
 
       if (atTop) {
         setIsScrolling(false);
@@ -83,6 +103,38 @@ const BackButton: React.FC<BackButtonProps> = ({
     };
   }, [isFloating, mounted]);
 
+  // Mutation observer to detect active overlays (modals, drawers, search)
+  useEffect(() => {
+    if (!isFloating || !mounted) return;
+
+    const checkOverlays = () => {
+      const bodyOverflowHidden = document.body.style.overflow === 'hidden';
+      const searchActive = !!document.querySelector('.z-\\[98\\]');
+      const cartActive = !!document.getElementById('cart-drawer-overlay');
+      const mobileMenuActive = !!document.getElementById('mobile-menu-overlay');
+      const modalActive = !!document.querySelector('[role="dialog"], [aria-modal="true"]');
+
+      setIsOverlayOpen(bodyOverflowHidden || searchActive || cartActive || mobileMenuActive || modalActive);
+    };
+
+    checkOverlays();
+
+    const observer = new MutationObserver(() => {
+      checkOverlays();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isFloating, mounted]);
+
   const handleBackClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (onClick) onClick();
@@ -102,6 +154,19 @@ const BackButton: React.FC<BackButtonProps> = ({
     return fallbackRoute;
   };
 
+  // Dynamically compute top position below the navbar
+  const getFloatingTopStyle = () => {
+    if (isNavbarHidden) {
+      return "calc(env(safe-area-inset-top) + 20px)";
+    }
+    if (isScrolled) {
+      return "calc(env(safe-area-inset-top) + 64px + 16px)"; // below scrolled navbar (64px + 16px offset)
+    }
+    return "calc(env(safe-area-inset-top) + 80px + 16px)"; // below non-scrolled navbar (80px + 16px offset)
+  };
+
+  const isVisible = mounted && !isOverlayOpen;
+
   if (isFloating) {
     return (
       <>
@@ -120,8 +185,15 @@ const BackButton: React.FC<BackButtonProps> = ({
         {/* Real Fixed / Floating BackButton */}
         {mounted && (
           <div
-            className={`fixed top-[calc(env(safe-area-inset-top)+20px)] left-5 z-[9999] flex items-center gap-3 transition-opacity duration-300 ease-in-out ${
-              (isAtTop || !isScrolling) ? 'opacity-100' : 'opacity-40'
+            style={{
+              top: getFloatingTopStyle(),
+            }}
+            className={`fixed left-5 z-[9999] flex items-center gap-3 transition-all duration-350 ease-in-out ${
+              !isVisible
+                ? 'opacity-0 pointer-events-none scale-95'
+                : (isAtTop || !isScrolling)
+                ? 'opacity-100 pointer-events-auto scale-100'
+                : 'opacity-40 pointer-events-auto scale-100'
             } hover:opacity-100`}
           >
             <motion.button

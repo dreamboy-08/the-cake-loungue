@@ -63,7 +63,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-end">
+        <div id="cart-drawer-overlay" className="fixed inset-0 z-[1000] flex items-center justify-end">
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
