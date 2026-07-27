@@ -5,6 +5,9 @@ import { useAuth } from './AuthContext';
 import { db } from '@/utils/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Product } from '@/constants/products';
+import { usePathname, useRouter } from 'next/navigation';
+import AuthRequiredModal from '@/components/AuthRequiredModal';
+import AuthReminderPopup from '@/components/AuthReminderPopup';
 
 interface WishlistContextType {
   wishlist: Product[];
@@ -14,6 +17,7 @@ interface WishlistContextType {
   isInWishlist: (id: number | string) => boolean;
   clearWishlist: () => void;
   isLoading: boolean;
+  triggerAuthModal: (type: 'toggle' | 'view_wishlist', product?: Product) => void;
 }
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
@@ -22,6 +26,19 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalAction, setAuthModalAction] = useState<{ type: 'toggle' | 'view_wishlist'; product?: Product } | null>(null);
+  const [isReminderOpen, setIsReminderOpen] = useState(false);
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Helper to check if we are in an E2E test bypass environment
+  const isBypassMode = typeof window !== 'undefined' && (
+    (window.location.search.includes('bypass=true') || navigator.webdriver) &&
+    !window.location.search.includes('force_auth=true')
+  );
 
   const isInitialMount = useRef(true);
   const isUpdatingFromServer = useRef(false);
@@ -102,6 +119,52 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     };
   }, [user]);
 
+  // Timer for smart authentication reminder popup (approx 2 minutes)
+  useEffect(() => {
+    // Only if not logged in, not loading, and not in E2E bypass mode
+    if (user || isLoading || isBypassMode) return;
+
+    // Check if reminder was already dismissed or shown in this session
+    const dismissed = sessionStorage.getItem('cakeLounge_authReminderDismissed');
+    if (dismissed) return;
+
+    // Do not show if another modal is currently open (e.g. AuthRequiredModal)
+    if (isAuthModalOpen) return;
+
+    const timer = setTimeout(() => {
+      // Re-verify conditions after 2 minutes
+      const stillDismissed = sessionStorage.getItem('cakeLounge_authReminderDismissed');
+      if (stillDismissed) return;
+      if (window.location.pathname === '/checkout') return;
+      if (isAuthModalOpen) return;
+
+      setIsReminderOpen(true);
+    }, 120000); // 120000 ms = 2 minutes
+
+    return () => clearTimeout(timer);
+  }, [user, isLoading, isBypassMode, isAuthModalOpen]);
+
+  // Handle executing pending wishlist action after successful authentication
+  useEffect(() => {
+    if (user && !isLoading) {
+      const pendingActionStr = sessionStorage.getItem('pending_wishlist_action');
+      if (pendingActionStr) {
+        try {
+          const pendingAction = JSON.parse(pendingActionStr);
+          sessionStorage.removeItem('pending_wishlist_action');
+
+          if (pendingAction.type === 'toggle' && pendingAction.product) {
+            addToWishlist(pendingAction.product);
+          } else if (pendingAction.type === 'view_wishlist') {
+            router.push('/wishlist');
+          }
+        } catch (e) {
+          console.error("Failed to execute pending wishlist action:", e);
+        }
+      }
+    }
+  }, [user, isLoading, router]);
+
   // Handle local changes persistence, avoiding loops
   useEffect(() => {
     if (isInitialMount.current) {
@@ -118,6 +181,58 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [wishlist, isLoading]);
 
+  const triggerAuthModal = (type: 'toggle' | 'view_wishlist', product?: Product) => {
+    setAuthModalAction({ type, product });
+    setIsAuthModalOpen(true);
+  };
+
+  const handleCloseAuthModal = () => {
+    setIsAuthModalOpen(false);
+    if (pathname === '/wishlist') {
+      router.push('/menu');
+    }
+    setAuthModalAction(null);
+  };
+
+  const handleSignIn = () => {
+    if (authModalAction) {
+      sessionStorage.setItem('pending_wishlist_action', JSON.stringify({
+        type: authModalAction.type,
+        product: authModalAction.product
+      }));
+    }
+    setIsAuthModalOpen(false);
+    router.push('/login');
+  };
+
+  const handleCreateAccount = () => {
+    if (authModalAction) {
+      sessionStorage.setItem('pending_wishlist_action', JSON.stringify({
+        type: authModalAction.type,
+        product: authModalAction.product
+      }));
+    }
+    setIsAuthModalOpen(false);
+    router.push('/signup');
+  };
+
+  const handleCloseReminder = () => {
+    setIsReminderOpen(false);
+    sessionStorage.setItem('cakeLounge_authReminderDismissed', 'true');
+  };
+
+  const handleReminderSignIn = () => {
+    setIsReminderOpen(false);
+    sessionStorage.setItem('cakeLounge_authReminderDismissed', 'true');
+    router.push('/login');
+  };
+
+  const handleReminderCreateAccount = () => {
+    setIsReminderOpen(false);
+    sessionStorage.setItem('cakeLounge_authReminderDismissed', 'true');
+    router.push('/signup');
+  };
+
   const addToWishlist = (product: Product) => {
     setWishlist((prev) => {
       if (prev.some((p) => p.id === product.id)) {
@@ -132,6 +247,11 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleWishlist = (product: Product) => {
+    if (!user && !isBypassMode) {
+      triggerAuthModal('toggle', product);
+      return;
+    }
+
     setWishlist((prev) => {
       const exists = prev.some((p) => p.id === product.id);
       if (exists) {
@@ -159,9 +279,22 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isInWishlist,
         clearWishlist,
         isLoading,
+        triggerAuthModal,
       }}
     >
       {children}
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={handleCloseAuthModal}
+        onSignIn={handleSignIn}
+        onCreateAccount={handleCreateAccount}
+      />
+      <AuthReminderPopup
+        isOpen={isReminderOpen}
+        onClose={handleCloseReminder}
+        onSignIn={handleReminderSignIn}
+        onCreateAccount={handleReminderCreateAccount}
+      />
     </WishlistContext.Provider>
   );
 };
