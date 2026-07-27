@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { FlyToCartProvider } from "@/context/FlyToCartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartBubble from "@/components/CartBubble";
@@ -37,10 +38,12 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <FlyToCartProvider>
-              <Navbar />
-              <main>{children}</main>
-              <Footer />
-              <CartBubble />
+              <WishlistProvider>
+                <Navbar />
+                <main>{children}</main>
+                <Footer />
+                <CartBubble />
+              </WishlistProvider>
             </FlyToCartProvider>
           </CartProvider>
         </AuthProvider>

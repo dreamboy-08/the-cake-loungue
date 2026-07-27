@@ -14,6 +14,11 @@ export const useProductAvailability = () => {
     // Initial set from static data
     setAvailableSlugs(new Set(staticSlugs));
 
+    // If Firebase is not configured, skip onSnapshot setup
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      return;
+    }
+
     // 2. Real-time sync with Firestore products to get additional categories
     // We only need to know which categories HAVE products.
     // However, to keep it simple and real-time, we listen to all active products.

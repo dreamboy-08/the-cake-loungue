@@ -2,45 +2,22 @@
 > cake-lounge-frontend@0.1.0 dev
 > next dev
 
-  ▲ Next.js 14.2.35
-  - Local:        http://localhost:3001
-
- ✓ Starting...
- ✓ Ready in 4.7s
- ○ Compiling / ...
- ✓ Compiled / in 10.8s (1611 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- ✓ Compiled in 1728ms (715 modules)
- GET / 200 in 12611ms
- GET / 200 in 151ms
- GET / 200 in 168ms
- ○ Compiling /menu ...
- ✓ Compiled /menu in 930ms (1537 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /menu 200 in 1896ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 768ms (1552 modules)
- ○ Compiling /admin/products ...
- ✓ Compiled /admin/products in 1328ms (1602 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/products?bypass=true 200 in 1797ms
- GET /admin/products?bypass=true 200 in 39ms
- ○ Compiling /login ...
- ✓ Compiled /login in 1432ms (1617 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /menu 200 in 859ms
- GET /menu 200 in 650ms
- GET /menu 200 in 680ms
- GET /menu 200 in 495ms
- GET /shop/1 200 in 88ms
- GET /shop/1 200 in 101ms
- GET /shop/1 200 in 112ms
- GET /shop/1 200 in 99ms
- GET /shop/1 200 in 80ms
- GET /menu 200 in 645ms
- GET /menu 200 in 564ms
- GET /shop/1 200 in 85ms
- GET /shop/1 200 in 121ms
- GET /shop/1 200 in 113ms
- GET /menu 200 in 508ms
- GET /shop/1 200 in 107ms
+ ⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use :::3001
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at /app/node_modules/next/dist/server/lib/start-server.js:280:16
+    at new Promise (<anonymous>)
+    at startServer (/app/node_modules/next/dist/server/lib/start-server.js:191:11)
+    at /app/node_modules/next/dist/server/lib/start-server.js:310:52
+    at Span.traceAsyncFn (/app/node_modules/next/dist/trace/trace.js:154:26)
+    at process.<anonymous> (/app/node_modules/next/dist/server/lib/start-server.js:310:35)
+    at process.emit (node:events:519:28) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3001
+}
+[?25h

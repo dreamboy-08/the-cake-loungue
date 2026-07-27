@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings, Search } from 'lucide-react';
+import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings, Search, Heart } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
@@ -30,6 +31,8 @@ const Navbar = () => {
   const { cartCount } = useCart();
   const { user, logout, isAdmin } = useAuth();
   const { bounceCount } = useFlyToCart();
+  const { wishlist } = useWishlist();
+  const wishlistCount = wishlist.length;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -83,12 +86,12 @@ const Navbar = () => {
           isAdminPage && "hidden"
         )}
       >
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 md:gap-0">
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-0">
               {!isAuthPage && (
                 <button
-                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer"
+                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
                   onClick={toggleMobileMenu}
                   aria-label="Open menu"
                 >
@@ -99,15 +102,15 @@ const Navbar = () => {
               )}
 
               <Link href="/" className={cn(
-                "font-playfair text-[1.6rem] font-bold transition-colors duration-300",
+                "font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap leading-none shrink-0",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
                 The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
               </Link>
             </div>
 
-            <div className="flex items-center gap-4 md:gap-6">
-              <div className="flex items-center gap-3 md:gap-6">
+            <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
+              <div className="flex items-center gap-1.5 sm:gap-3 md:gap-6">
                 {!isAuthPage && (
                   <>
                     {/* Search Toggle */}
@@ -214,6 +217,27 @@ const Navbar = () => {
                     </Link>
                   </>
                 )}
+
+                <Link
+                  href="/wishlist"
+                  className={cn(
+                    "relative p-2 rounded-full transition-all duration-300 block",
+                    (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
+                    (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
+                  )}
+                  aria-label="View Favourites"
+                >
+                  <Heart size={24} className={wishlistCount > 0 ? "fill-rose-deep text-rose-deep" : ""} />
+                  {wishlistCount > 0 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute top-1 right-1 bg-rose-deep text-white text-[0.65rem] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm"
+                    >
+                      {wishlistCount}
+                    </motion.div>
+                  )}
+                </Link>
 
                 <button
                   id="cart-icon-main"
@@ -345,6 +369,19 @@ const Navbar = () => {
 
         <div className="w-full max-w-sm flex flex-col gap-6">
           <Link href="/" className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose border-b border-rose/10 pb-2" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+
+          <Link
+            href="/wishlist"
+            className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose border-b border-rose/10 pb-2 flex items-center justify-between"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <span>My Favourites</span>
+            {wishlistCount > 0 && (
+              <span className="bg-rose-deep text-white text-[0.8rem] px-2.5 py-0.5 rounded-full font-sans font-bold">
+                {wishlistCount}
+              </span>
+            )}
+          </Link>
 
           <div className="flex flex-col gap-2">
             <p className="text-rose-deep font-bold uppercase tracking-widest text-xs mb-2">Categories</p>

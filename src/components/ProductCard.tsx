@@ -7,6 +7,7 @@ import { Star, Heart, Plus, Check } from 'lucide-react';
 import { Product } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductCardProps {
@@ -17,7 +18,10 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) => {
   const { cart, addToCart } = useCart();
   const { flyToCart } = useFlyToCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [localAdded, setLocalAdded] = useState(false);
+
+  const isWishlisted = isInWishlist(product.id);
 
   // Derive global added state from cart
   const isGloballyAdded = cart.some(item => item.id === product.id);
@@ -67,13 +71,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
           </div>
         )}
         <button
-          className="absolute top-3 right-3 w-[34px] h-[34px] bg-white rounded-full flex items-center justify-center text-text-soft text-sm cursor-pointer shadow-sm transition-all duration-350 border-none hover:text-rose-deep hover:scale-110"
+          className={`absolute top-3 right-3 w-[34px] h-[34px] bg-white rounded-full flex items-center justify-center text-sm cursor-pointer shadow-sm transition-all duration-350 border-none hover:scale-110 z-10 ${
+            isWishlisted ? "text-rose-deep" : "text-text-soft hover:text-rose-deep"
+          }`}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            toggleWishlist(product);
           }}
+          aria-label={isWishlisted ? "Remove from Favourites" : "Save to Favourites"}
         >
-          <Heart size={16} />
+          <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
         </button>
       </div>
 

@@ -10,6 +10,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { Product, products } from '@/constants/products';
 import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
@@ -18,9 +19,11 @@ const ProductDetail = () => {
   const { id } = useParams();
   const { cart, addToCart, isLoading: cartLoading } = useCart();
   const { flyToCart } = useFlyToCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [localAdded, setLocalAdded] = useState(false);
 
   const [product, setProduct] = useState<Product | null>(null);
+  const isWishlisted = product ? isInWishlist(product.id) : false;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
@@ -143,8 +146,14 @@ const ProductDetail = () => {
                 {product.tag}
               </div>
             )}
-            <button className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center text-text-soft shadow-md hover:text-rose-deep transition-colors border-none cursor-pointer">
-              <Heart size={24} />
+            <button
+              onClick={() => product && toggleWishlist(product)}
+              className={`absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md transition-all border-none cursor-pointer hover:scale-105 z-10 ${
+                isWishlisted ? "text-rose-deep" : "text-text-soft hover:text-rose-deep"
+              }`}
+              aria-label={isWishlisted ? "Remove from Favourites" : "Save to Favourites"}
+            >
+              <Heart size={24} fill={isWishlisted ? "currentColor" : "none"} />
             </button>
           </div>
 
