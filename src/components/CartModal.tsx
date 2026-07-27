@@ -100,6 +100,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                 className="mb-0"
                 ariaLabel="Go back"
                 onClick={onClose}
+                isFloating={false}
               />
             </div>
 
