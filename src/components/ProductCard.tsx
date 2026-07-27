@@ -79,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
             e.stopPropagation();
             toggleWishlist(product);
           }}
-          aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+          aria-label={isWishlisted ? "Remove from Favourites" : "Save to Favourites"}
         >
           <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
         </button>

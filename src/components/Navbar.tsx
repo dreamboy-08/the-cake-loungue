@@ -225,7 +225,7 @@ const Navbar = () => {
                     (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
-                  aria-label="View Wishlist"
+                  aria-label="View Favourites"
                 >
                   <Heart size={24} className={wishlistCount > 0 ? "fill-rose-deep text-rose-deep" : ""} />
                   {wishlistCount > 0 && (
@@ -375,7 +375,7 @@ const Navbar = () => {
             className="font-playfair text-[2rem] font-bold text-chocolate hover:text-rose border-b border-rose/10 pb-2 flex items-center justify-between"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <span>My Wishlist</span>
+            <span>My Favourites</span>
             {wishlistCount > 0 && (
               <span className="bg-rose-deep text-white text-[0.8rem] px-2.5 py-0.5 rounded-full font-sans font-bold">
                 {wishlistCount}

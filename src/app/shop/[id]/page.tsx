@@ -151,7 +151,7 @@ const ProductDetail = () => {
               className={`absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md transition-all border-none cursor-pointer hover:scale-105 z-10 ${
                 isWishlisted ? "text-rose-deep" : "text-text-soft hover:text-rose-deep"
               }`}
-              aria-label={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+              aria-label={isWishlisted ? "Remove from Favourites" : "Save to Favourites"}
             >
               <Heart size={24} fill={isWishlisted ? "currentColor" : "none"} />
             </button>

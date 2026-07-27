@@ -16,6 +16,10 @@ const WishlistPage = () => {
   const { addToCart } = useCart();
   const { flyToCart } = useFlyToCart();
 
+  React.useEffect(() => {
+    document.title = "My Favourites | The Cake Lounge";
+  }, []);
+
   const handleMoveToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault();
     e.stopPropagation();
@@ -45,7 +49,7 @@ const WishlistPage = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
             <h1 className="font-playfair text-3xl md:text-4xl font-bold text-chocolate mb-2">
-              My Premium Wishlist
+              My Favourites
             </h1>
             <p className="text-text-soft text-sm md:text-base">
               Your handpicked artisan cakes and delicious desserts, saved for your next celebration.
@@ -56,7 +60,7 @@ const WishlistPage = () => {
               onClick={clearWishlist}
               className="text-sm font-semibold text-rose hover:text-rose-deep border border-rose/20 hover:border-rose/50 px-4 py-2 rounded-full transition-all"
             >
-              Clear Entire Wishlist
+              Clear All Favourites
             </button>
           )}
         </div>
@@ -73,10 +77,10 @@ const WishlistPage = () => {
                 <Heart size={40} className="fill-rose" />
               </div>
               <h2 className="font-playfair text-2xl md:text-3xl font-bold text-chocolate mb-3">
-                ❤️ Your Wishlist is Empty
+                ❤️ No Favourites Yet
               </h2>
               <p className="text-text-mid max-w-md mb-8 leading-relaxed">
-                Save your favourite cakes and desserts here for quick access later. Explore our premium selection and curate your dream list.
+                Save your favourite cakes and desserts here so you can easily find them whenever you&apos;re ready to order.
               </p>
               <Link
                 href="/menu"
@@ -121,7 +125,7 @@ const WishlistPage = () => {
                       <button
                         onClick={() => removeFromWishlist(product.id)}
                         className="absolute top-3 right-3 w-9 h-9 bg-white hover:bg-red-50 text-text-soft hover:text-red-500 rounded-full flex items-center justify-center shadow-sm border-none cursor-pointer transition-colors"
-                        aria-label="Remove from Wishlist"
+                        aria-label="Remove from Favourites"
                       >
                         <Trash2 size={16} />
                       </button>
