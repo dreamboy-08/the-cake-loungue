@@ -22,7 +22,7 @@ test('measure performance and payload', async ({ page }) => {
   });
 
   console.log('--- Home Page ---');
-  await page.goto('http://localhost:3001');
+  await page.goto('http://localhost:3000');
   await page.waitForTimeout(2000); // Wait for lazy images if any
 
   const lcpHome = await page.evaluate(() => {
@@ -45,7 +45,7 @@ test('measure performance and payload', async ({ page }) => {
   totalTransferSize = 0;
 
   console.log('\n--- Menu Page ---');
-  await page.goto('http://localhost:3001/menu');
+  await page.goto('http://localhost:3000/menu');
   await page.waitForTimeout(2000);
 
   const lcpMenu = await page.evaluate(() => {

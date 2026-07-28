@@ -4,8 +4,8 @@ test.describe('Favourites System Flow', () => {
   test('should allow saving, removing, and moving items to cart in Favourites', async ({ page }) => {
     test.setTimeout(90000);
 
-    // 1. Start at menu page (using port 3001 as configured in baseURL)
-    await page.goto('http://localhost:3001/menu');
+    // 1. Start at menu page (using port 3000 as configured in baseURL)
+    await page.goto('http://localhost:3000/menu');
     await page.waitForTimeout(2000); // Allow complete hydration
 
     // 2. Locate first product card and title

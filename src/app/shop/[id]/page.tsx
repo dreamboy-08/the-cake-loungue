@@ -33,6 +33,23 @@ const ProductDetail = () => {
       if (!id) return;
       setLoading(true);
       setError(null);
+
+      // If Firebase is not configured, fallback immediately to static constants
+      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+        console.warn("Firebase not configured, falling back to static constants in ProductDetail.");
+        const fallbackProduct = products.find(p => p.id.toString() === id);
+        if (fallbackProduct) {
+          setProduct(fallbackProduct);
+          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
+            setSelectedWeight(fallbackProduct.weights[0].label);
+          }
+        } else {
+          setError('Product not found in our catalog');
+        }
+        setLoading(false);
+        return;
+      }
+
       try {
         // Step 1: Try Firestore
         const docRef = doc(db, 'products', id as string);
