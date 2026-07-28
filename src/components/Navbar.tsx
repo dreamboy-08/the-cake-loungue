@@ -119,9 +119,10 @@ const Navbar = () => {
           isAdminPage && "hidden"
         )}
       >
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-11">
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
+        <div className="container mx-auto px-2 min-[375px]:px-4 sm:px-6">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center h-11 w-full">
+            {/* Left Column (Menu Toggle) */}
+            <div className="flex items-center justify-start h-11">
               {!isAuthPage && (
                 <button
                   className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
@@ -133,17 +134,21 @@ const Navbar = () => {
                   <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
                 </button>
               )}
+            </div>
 
+            {/* Center Column (Logo) */}
+            <div className="flex items-center justify-center h-11">
               <Link href="/" className={cn(
-                "flex items-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
+                "flex items-center h-11 font-playfair text-[0.82rem] min-[340px]:text-[0.92rem] min-[375px]:text-[1.1rem] min-[400px]:text-[1.25rem] sm:text-[1.5rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
                 The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
               </Link>
             </div>
 
-            <div className="flex items-center h-11">
-              <div className="flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
+            {/* Right Column (Icons & Profile) */}
+            <div className="flex items-center justify-end h-11">
+              <div className="flex items-center gap-0.5 min-[375px]:gap-1 sm:gap-3.5 md:gap-5 h-11">
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
                   <button
@@ -232,7 +237,7 @@ const Navbar = () => {
                         <button
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
-                            "flex items-center gap-2 group p-1.5 rounded-full transition-all h-11 px-2.5",
+                            "flex items-center gap-1 sm:gap-2 group p-1 sm:p-1.5 rounded-full transition-all h-11 px-1 sm:px-2.5",
                             (isScrolled || isAuthPage) ? "hover:text-rose" : "hover:text-gold-light",
                             (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
                           )}
@@ -253,7 +258,7 @@ const Navbar = () => {
                           </span>
 
                           <ChevronDown size={14} className={cn(
-                            "transition-transform duration-300 ml-0.5 shrink-0",
+                            "hidden sm:inline-block transition-transform duration-300 ml-0.5 shrink-0",
                             isUserMenuOpen && "rotate-180",
                             (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
                           )} />
@@ -311,11 +316,11 @@ const Navbar = () => {
                         </AnimatePresence>
                       </div>
                     ) : (
-                      /* Sign In text link with proper padding & 44px height hit-box */
+                      /* Sign In text link with proper padding & 44px height hit-box (hidden on mobile) */
                       <Link
                         href="/login"
                         className={cn(
-                          "text-[0.85rem] font-semibold transition-colors h-11 flex items-center justify-center px-3.5 rounded-full shrink-0",
+                          "hidden sm:flex text-[0.85rem] font-semibold transition-colors h-11 items-center justify-center px-3.5 rounded-full shrink-0",
                           (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >

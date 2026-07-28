@@ -1,0 +1,43 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev -p 3001
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 1796ms
+ ○ Compiling / ...
+ ✓ Compiled / in 15.8s (1630 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ ✓ Compiled in 2.4s (724 modules)
+ GET / 200 in 18420ms
+ GET / 200 in 452ms
+ GET / 200 in 178ms
+ GET / 200 in 118ms
+ GET / 200 in 146ms
+ GET / 200 in 147ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 243ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 163ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 182ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ ✓ Compiled in 983ms (724 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 520ms (888 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 1223ms
+ GET / 200 in 146ms
+ GET / 200 in 160ms
+ GET / 200 in 151ms
+ GET / 200 in 123ms
+ GET / 200 in 151ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 178ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 146ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET / 200 in 106ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
