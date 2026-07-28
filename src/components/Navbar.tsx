@@ -120,8 +120,9 @@ const Navbar = () => {
         )}
       >
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-11">
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
+          <div className="flex items-center justify-between h-11 w-full">
+            {/* Left Column (Hamburger Menu on mobile/tablet) */}
+            <div className="flex-1 flex items-center justify-start h-11">
               {!isAuthPage && (
                 <button
                   className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
@@ -133,17 +134,21 @@ const Navbar = () => {
                   <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
                 </button>
               )}
+            </div>
 
+            {/* Center Column (Centered Logo) */}
+            <div className="flex-none flex items-center justify-center h-11">
               <Link href="/" className={cn(
-                "flex items-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
+                "flex items-center justify-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0 leading-none",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
                 The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
               </Link>
             </div>
 
-            <div className="flex items-center h-11">
-              <div className="flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
+            {/* Right Column (Icons + Primary Action) */}
+            <div className="flex-1 flex items-center justify-end h-11">
+              <div className="flex items-center gap-1 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
                   <button
@@ -173,7 +178,7 @@ const Navbar = () => {
                     }
                   }}
                   className={cn(
-                    "relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 block shrink-0",
+                    "relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
                     (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
@@ -184,7 +189,7 @@ const Navbar = () => {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute top-1.5 right-1.5 bg-rose-deep text-white text-[0.65rem] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-sm"
+                      className="absolute top-1.5 right-1.5 bg-rose-deep text-white text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center shadow-sm"
                     >
                       {wishlistCount}
                     </motion.div>
@@ -217,7 +222,7 @@ const Navbar = () => {
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute top-1.5 right-1.5 bg-gold text-chocolate text-[0.65rem] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-sm"
+                      className="absolute top-1.5 right-1.5 bg-gold text-chocolate text-[10px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center shadow-sm"
                     >
                       {cartCount}
                     </motion.div>
@@ -228,35 +233,49 @@ const Navbar = () => {
                   <>
                     {user ? (
                       /* Authenticated User Menu */
-                      <div className="relative shrink-0" ref={userMenuRef}>
+                      <div className="relative shrink-0 flex items-center h-11" ref={userMenuRef}>
                         <button
                           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                           className={cn(
-                            "flex items-center gap-2 group p-1.5 rounded-full transition-all h-11 px-2.5",
+                            "flex items-center group rounded-full transition-all h-11 shrink-0",
                             (isScrolled || isAuthPage) ? "hover:text-rose" : "hover:text-gold-light",
                             (isScrolled || isAuthPage || isPolicyPage) ? "hover:bg-rose/5" : "hover:bg-white/10"
                           )}
                           aria-label="Open user menu"
                         >
-                          <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm shrink-0">
-                            {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
+                          {/* Avatar wrapper */}
+                          <div className="w-11 h-11 flex items-center justify-center shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-[0.75rem] font-bold border-2 border-white shadow-sm shrink-0">
+                              {user.displayName ? user.displayName[0].toUpperCase() : user.email ? user.email[0].toUpperCase() : 'U'}
+                            </div>
                           </div>
 
-                          <span
-                            title={user.displayName || user.email || 'Member'}
-                            className={cn(
-                              "hidden md:inline-block text-[0.85rem] font-semibold tracking-wide transition-colors duration-300 max-w-[100px] truncate",
-                              (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
-                            )}
-                          >
-                            {user.displayName ? (user.displayName.length > 12 ? user.displayName.slice(0, 10) + '...' : user.displayName) : 'Member'}
-                          </span>
-
-                          <ChevronDown size={14} className={cn(
-                            "transition-transform duration-300 ml-0.5 shrink-0",
-                            isUserMenuOpen && "rotate-180",
+                          {/* Username section */}
+                          <div className={cn(
+                            "hidden md:flex items-center gap-[6px] leading-[1] whitespace-nowrap pr-3 h-11",
                             (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
-                          )} />
+                          )}>
+                            <span
+                              title={user.displayName || user.email || 'Member'}
+                              className="text-[0.85rem] font-semibold tracking-wide transition-colors duration-300 max-w-[100px] truncate"
+                            >
+                              {user.displayName ? (user.displayName.length > 12 ? user.displayName.slice(0, 10) + '...' : user.displayName) : 'Member'}
+                            </span>
+
+                            <ChevronDown size={14} className={cn(
+                              "transition-transform duration-300 shrink-0",
+                              isUserMenuOpen && "rotate-180"
+                            )} />
+                          </div>
+
+                          {/* Mobile Dropdown Arrow */}
+                          <div className="md:hidden flex items-center justify-center w-6 h-11 pr-2 shrink-0">
+                            <ChevronDown size={14} className={cn(
+                              "transition-transform duration-300 shrink-0",
+                              isUserMenuOpen && "rotate-180",
+                              (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
+                            )} />
+                          </div>
                         </button>
 
                         <AnimatePresence>
@@ -326,7 +345,7 @@ const Navbar = () => {
                     {/* Primary Premium Call-to-Action */}
                     <Link
                       href="/checkout"
-                      className="hidden sm:flex bg-rose-deep text-white px-5 py-2.5 rounded-[50px] text-[0.82rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown hover:translate-y-[-1px] shrink-0 h-11 items-center justify-center"
+                      className="hidden sm:flex bg-rose-deep text-white px-5 rounded-[50px] text-[0.82rem] font-semibold transition-all duration-350 shadow-[0_4px_16px_rgba(201,97,74,0.3)] hover:bg-brown shrink-0 h-11 items-center justify-center"
                     >
                       Order Now
                     </Link>
