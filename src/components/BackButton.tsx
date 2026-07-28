@@ -17,6 +17,7 @@ interface BackButtonProps {
 /**
  * Reusable BackButton component with smart fallback routing and Home navigation
  * Converts to a floating, fixed navigation component when isFloating is true.
+ * Dynamically repositions below any visible sticky/fixed headers on the page.
  */
 const BackButton: React.FC<BackButtonProps> = ({
   fallbackRoute = "/",
@@ -32,13 +33,14 @@ const BackButton: React.FC<BackButtonProps> = ({
   const [isAtTop, setIsAtTop] = useState(true);
   const [isScrolling, setIsScrolling] = useState(false);
 
-  // States to track the dynamic position of the navbar
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isNavbarHidden, setIsNavbarHidden] = useState(false);
-  const lastScrollTopRef = useRef(0);
+  // State to track the dynamically computed floating top position
+  const [floatingTop, setFloatingTop] = useState(20);
 
   // State to track if any overlay/drawer is open
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+
+  // State to track if first layout positioning check is complete
+  const [isCalibrated, setIsCalibrated] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -47,7 +49,50 @@ const BackButton: React.FC<BackButtonProps> = ({
     }
   }, []);
 
-  // Scroll listener for fading and positioning relative to Navbar
+  // Dynamic sticky header offset scanner
+  const updateFloatingTop = () => {
+    if (typeof window === 'undefined') return;
+
+    let maxBottom = 0;
+    const candidates = document.querySelectorAll(
+      'header, nav, [class*="sticky"], [class*="fixed"], [id*="navbar"], [id*="header"]'
+    );
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    candidates.forEach((el) => {
+      // Skip if it is our container
+      if (el.closest('#floating-navigation-container')) return;
+
+      const rect = el.getBoundingClientRect();
+
+      // Check if the element is visible
+      if (rect.width === 0 || rect.height === 0) return;
+
+      // Check height is reasonable for a sticky header/bar (under 40% of viewport)
+      if (rect.height > viewportHeight * 0.4) return;
+
+      // Must overlap with the left half of the screen
+      if (rect.left >= viewportWidth * 0.5) return;
+
+      // Must be in contact with or near the top of the viewport
+      if (rect.top > 200 || rect.bottom <= 10) return;
+
+      // Verify computed style position
+      const style = window.getComputedStyle(el);
+      if (style.position === 'fixed' || style.position === 'sticky') {
+        if (rect.bottom > maxBottom) {
+          maxBottom = rect.bottom;
+        }
+      }
+    });
+
+    const newTop = maxBottom > 0 ? maxBottom + 16 : 20;
+    setFloatingTop(newTop);
+    setIsCalibrated(true);
+  };
+
+  // Scroll listener for fading and dynamic positioning calculation
   useEffect(() => {
     if (!isFloating || !mounted) return;
 
@@ -56,19 +101,8 @@ const BackButton: React.FC<BackButtonProps> = ({
 
     const updateScrollState = () => {
       const currentScrollY = window.scrollY;
-      const lastScrollTop = lastScrollTopRef.current;
       const atTop = currentScrollY <= 10;
       setIsAtTop(atTop);
-
-      // Match Navbar scrolled state
-      const scrolled = currentScrollY > 50;
-      setIsScrolled(scrolled);
-
-      // Match Navbar hidden state
-      const navbarHidden = currentScrollY > lastScrollTop && currentScrollY > 120;
-      setIsNavbarHidden(navbarHidden);
-
-      lastScrollTopRef.current = currentScrollY <= 0 ? 0 : currentScrollY;
 
       if (atTop) {
         setIsScrolling(false);
@@ -81,6 +115,10 @@ const BackButton: React.FC<BackButtonProps> = ({
           setIsScrolling(false);
         }, 200); // 200ms threshold for scrolling stop detection
       }
+
+      // Compute dynamic top offset
+      updateFloatingTop();
+
       ticking = false;
     };
 
@@ -96,14 +134,16 @@ const BackButton: React.FC<BackButtonProps> = ({
     updateScrollState();
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', updateFloatingTop, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', updateFloatingTop);
       if (scrollTimeout) clearTimeout(scrollTimeout);
     };
   }, [isFloating, mounted]);
 
-  // Mutation observer to detect active overlays (modals, drawers, search)
+  // Mutation observer to detect active overlays and recalculate position
   useEffect(() => {
     if (!isFloating || !mounted) return;
 
@@ -121,6 +161,7 @@ const BackButton: React.FC<BackButtonProps> = ({
 
     const observer = new MutationObserver(() => {
       checkOverlays();
+      updateFloatingTop();
     });
 
     observer.observe(document.body, {
@@ -154,18 +195,7 @@ const BackButton: React.FC<BackButtonProps> = ({
     return fallbackRoute;
   };
 
-  // Dynamically compute top position below the navbar
-  const getFloatingTopStyle = () => {
-    if (isNavbarHidden) {
-      return "calc(env(safe-area-inset-top) + 20px)";
-    }
-    if (isScrolled) {
-      return "calc(env(safe-area-inset-top) + 64px + 16px)"; // below scrolled navbar (64px + 16px offset)
-    }
-    return "calc(env(safe-area-inset-top) + 80px + 16px)"; // below non-scrolled navbar (80px + 16px offset)
-  };
-
-  const isVisible = mounted && !isOverlayOpen;
+  const isVisible = mounted && !isOverlayOpen && isCalibrated;
 
   if (isFloating) {
     return (
@@ -185,10 +215,11 @@ const BackButton: React.FC<BackButtonProps> = ({
         {/* Real Fixed / Floating BackButton */}
         {mounted && (
           <div
+            id="floating-navigation-container"
             style={{
-              top: getFloatingTopStyle(),
+              top: floatingTop > 20 ? `${floatingTop}px` : "calc(env(safe-area-inset-top) + 20px)",
             }}
-            className={`fixed left-5 z-[9999] flex items-center gap-3 transition-all duration-350 ease-in-out ${
+            className={`fixed left-5 z-[9999] flex items-center gap-3 transition-[opacity,transform] duration-300 ease-out ${
               !isVisible
                 ? 'opacity-0 pointer-events-none scale-95'
                 : (isAtTop || !isScrolling)
