@@ -556,46 +556,48 @@ const CheckoutPage = () => {
               </div>
 
               {/* Midnight Delivery Notice Card */}
-              <div className={`p-6 rounded-[30px] border-2 transition-all duration-300 ${
-                isMidnightSlot
-                  ? "bg-rose-50/80 border-rose-deep shadow-md scale-[1.02]"
-                  : "bg-amber-50/50 border-amber-200"
-              }`}>
-                <div className="flex gap-4 items-start">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
-                    isMidnightSlot
-                      ? "bg-rose-deep text-white animate-pulse"
-                      : "bg-amber-500 text-white"
-                  }`}>
-                    <AlertCircle size={24} />
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className={`font-bold text-lg ${
+              {isMidnightSlot && (
+                <div className={`p-6 rounded-[30px] border-2 transition-all duration-300 ${
+                  isMidnightSlot
+                    ? "bg-rose-50/80 border-rose-deep shadow-md scale-[1.02]"
+                    : "bg-amber-50/50 border-amber-200"
+                }`}>
+                  <div className="flex gap-4 items-start">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 shadow-sm ${
                       isMidnightSlot
-                        ? "text-rose-900"
-                        : "text-amber-800"
+                        ? "bg-rose-deep text-white animate-pulse"
+                        : "bg-amber-500 text-white"
                     }`}>
-                      ⚠ IMPORTANT — Midnight Delivery
-                    </h4>
-                    <p className={`text-sm font-medium ${
-                      isMidnightSlot
-                        ? "text-rose-700"
-                        : "text-amber-700"
-                    }`}>
-                      10:00 PM – 12:00 AM is considered a Midnight Delivery.
-                    </p>
-                    <p className={`text-xs font-bold ${
-                      isMidnightSlot
-                        ? "text-rose-600"
-                        : "text-amber-600"
-                    }`}>
-                      {isMidnightSlot
-                        ? "🎉 Midnight Slot Selected! Additional ₹150 charge has been added to your order summary."
-                        : "Additional delivery charges (₹150) will apply if this slot is selected."}
-                    </p>
+                      <AlertCircle size={24} />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className={`font-bold text-lg ${
+                        isMidnightSlot
+                          ? "text-rose-900"
+                          : "text-amber-800"
+                      }`}>
+                        ⚠ IMPORTANT — Midnight Delivery
+                      </h4>
+                      <p className={`text-sm font-medium ${
+                        isMidnightSlot
+                          ? "text-rose-700"
+                          : "text-amber-700"
+                      }`}>
+                        10:00 PM – 12:00 AM is considered a Midnight Delivery.
+                      </p>
+                      <p className={`text-xs font-bold ${
+                        isMidnightSlot
+                          ? "text-rose-600"
+                          : "text-amber-600"
+                      }`}>
+                        {isMidnightSlot
+                          ? "🎉 Midnight Slot Selected! Additional ₹150 charge has been added to your order summary."
+                          : "Additional delivery charges (₹150) will apply if this slot is selected."}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <h3 className="text-xl font-bold text-chocolate mb-4">
