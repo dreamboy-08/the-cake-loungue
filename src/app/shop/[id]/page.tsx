@@ -15,6 +15,7 @@ import { useWishlist } from '@/context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
+import GSTBadge from '@/components/GSTBadge';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -241,8 +242,9 @@ const ProductDetail = () => {
             </div>
 
             <div className="mb-8">
-              <div className="flex items-baseline gap-3 mb-2">
+              <div className="flex flex-wrap items-center gap-3 mb-2">
                 <span className="text-3xl font-bold text-rose-deep">₹{currentPrice}</span>
+                <GSTBadge />
                 {product.oldPrice > 0 && selectedWeight === (product.weights?.[0]?.label || '0.5 Kg') && (
                   <span className="text-xl text-text-soft line-through font-medium">₹{product.oldPrice}</span>
                 )}
