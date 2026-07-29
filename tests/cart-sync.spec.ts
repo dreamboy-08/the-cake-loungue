@@ -28,7 +28,7 @@ test.describe('Cart State Synchronization', () => {
     await page.waitForURL(/\/shop\/.+/);
 
     // 6. Verify detail page button says "Added"
-    const detailAddButton = page.locator("button:has-text('Added')");
+    const detailAddButton = page.locator("button:has-text('Added')").first();
     await expect(detailAddButton).toBeVisible();
 
     // 7. Open cart modal and verify item is there
@@ -52,7 +52,7 @@ test.describe('Cart State Synchronization', () => {
 
     // 11. Close modal and verify detail page button reverted to "Add to Cart"
     await page.click('button[aria-label="Close cart"]');
-    await expect(page.locator("button:has-text('Add to Cart')")).toBeVisible();
+    await expect(page.locator("button:has-text('Add to Cart')").first()).toBeVisible();
 
     await page.screenshot({ path: '/home/jules/verification/cart_sync_final.png', fullPage: true });
   });

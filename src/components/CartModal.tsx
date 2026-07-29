@@ -167,9 +167,18 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                   <Trash2 size={16} />
                                 </button>
                               </div>
-                              <p className="text-xs text-text-soft mt-1">
-                                {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
-                              </p>
+                              <div className="text-xs text-text-soft mt-1.5 space-y-0.5">
+                                {item.weight && (
+                                  <div>
+                                    <span className="font-semibold text-chocolate/80">Weight:</span> {item.weight}
+                                  </div>
+                                )}
+                                {item.flavor && (
+                                  <div>
+                                    <span className="font-semibold text-chocolate/80">Flavour:</span> {item.flavor}
+                                  </div>
+                                )}
+                              </div>
                             </div>
 
                             <div

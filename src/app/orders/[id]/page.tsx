@@ -356,9 +356,18 @@ const OrderDetailsPage = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-chocolate line-clamp-1">{item.name}</h4>
-                      <p className="text-xs text-text-soft">
-                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
-                      </p>
+                      <div className="text-xs text-text-soft mt-0.5 space-y-0.5">
+                        {item.weight && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Weight:</span> {item.weight}
+                          </div>
+                        )}
+                        {item.flavor && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Flavour:</span> {item.flavor}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-chocolate">₹{item.price * item.quantity}</p>

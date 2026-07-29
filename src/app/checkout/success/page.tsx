@@ -4,6 +4,7 @@ import React, { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle2, ShoppingBag, ArrowRight, Calendar, MapPin, Package } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
@@ -81,6 +82,45 @@ const SuccessContent = () => {
               </div>
             )}
           </div>
+
+          {orderDetails?.items && orderDetails.items.length > 0 && (
+            <div className="mt-8 text-left border-t border-cream/80 pt-6 mb-8">
+              <h3 className="font-bold text-chocolate mb-4 text-xs uppercase tracking-wider">Ordered Items</h3>
+              <div className="space-y-3">
+                {orderDetails.items.map((item: any, idx: number) => (
+                  <div key={idx} className="flex gap-4 p-3 bg-cream rounded-2xl border border-cream/50">
+                    <div className="relative w-12 h-12 rounded-xl bg-white overflow-hidden flex-shrink-0">
+                      <Image
+                        src={item.img}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-chocolate truncate">{item.name}</h4>
+                      <div className="text-[10px] text-text-soft mt-0.5 space-y-0.5">
+                        {item.weight && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Weight:</span> {item.weight}
+                          </div>
+                        )}
+                        {item.flavor && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Flavour:</span> {item.flavor}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right flex flex-col justify-center">
+                      <span className="text-xs font-bold text-rose-deep">₹{item.price * item.quantity}</span>
+                      <span className="text-[10px] text-text-soft">Qty: {item.quantity}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="space-y-4">
             <Link

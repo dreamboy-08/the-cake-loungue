@@ -501,14 +501,16 @@ const AdminOrders = () => {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 mt-1">
                             <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
-                            <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
-                              {item.weight || '0.5 Kg'}
-                            </span>
+                            {item.weight && (
+                              <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
+                                Weight: {item.weight}
+                              </span>
+                            )}
                             {item.flavor && (
                               <span className="text-[10px] font-bold text-chocolate bg-gray-100 px-1.5 rounded">
-                                {item.flavor}
+                                Flavour: {item.flavor}
                               </span>
                             )}
                           </div>

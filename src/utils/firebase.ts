@@ -30,4 +30,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+export const isFirebaseConfigured = (): boolean => {
+  const key = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+  return !!(key && key !== "your_api_key" && key !== "missing" && key !== "");
+};
+
 export { app, auth, db, storage };

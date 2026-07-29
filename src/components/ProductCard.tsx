@@ -24,7 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
   const isWishlisted = isInWishlist(product.id);
 
   // Derive global added state from cart
-  const isGloballyAdded = cart.some(item => item.id === product.id);
+  const isGloballyAdded = cart.some(item => String(item.id) === String(product.id));
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {

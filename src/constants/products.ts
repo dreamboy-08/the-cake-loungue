@@ -3,6 +3,14 @@ export interface ProductWeight {
   price: number;
 }
 
+export interface ProductFlavour {
+  id: string;
+  name: string;
+  available: boolean;
+  image?: string;
+  priceModifier?: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -10,6 +18,7 @@ export interface Product {
   category: string;
   price: number;
   weights?: ProductWeight[];
+  flavours?: ProductFlavour[];
   oldPrice: number;
   rating: number;
   reviews: number;
@@ -30,6 +39,12 @@ export const products: Product[] = [
       { "label": "1 Kg", "price": 898 },
       { "label": "2 Kg", "price": 1747 }
     ],
+    "flavours": [
+      { "id": "mixed-berry", "name": "Mixed Berry Ganache", "available": true, "priceModifier": 0 },
+      { "id": "blueberry", "name": "Blueberry Dream", "available": true, "priceModifier": 50, "image": "https://images.unsplash.com/photo-1535141192574-5d4897c13636?auto=format&fit=crop&w=800&q=80" },
+      { "id": "strawberry", "name": "Classic Strawberry", "available": true, "priceModifier": 0, "image": "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=80" },
+      { "id": "vanilla", "name": "Vanilla Almond", "available": true, "priceModifier": -30 }
+    ],
     "oldPrice": 619,
     "rating": 4,
     "reviews": 63,
@@ -48,6 +63,11 @@ export const products: Product[] = [
       { "label": "1 Kg", "price": 952 },
       { "label": "2 Kg", "price": 1852 }
     ],
+    "flavours": [
+      { "id": "vanilla-almond", "name": "Premium Vanilla Almond", "available": true, "priceModifier": 0 },
+      { "id": "red-velvet", "name": "Red Velvet", "available": true, "priceModifier": 150, "image": "https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?auto=format&fit=crop&w=800&q=80" },
+      { "id": "chocolate", "name": "Belgian Chocolate", "available": true, "priceModifier": 80, "image": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80" }
+    ],
     "oldPrice": 649,
     "rating": 4,
     "reviews": 66,
@@ -65,6 +85,11 @@ export const products: Product[] = [
       { "label": "0.5 Kg", "price": 559 },
       { "label": "1 Kg", "price": 1006 },
       { "label": "2 Kg", "price": 1957 }
+    ],
+    "flavours": [
+      { "id": "vanilla-almond", "name": "Premium Vanilla Almond", "available": true, "priceModifier": 0 },
+      { "id": "butterscotch", "name": "Classic Butterscotch", "available": true, "priceModifier": 40, "image": "https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=800&q=80" },
+      { "id": "pineapple", "name": "Tangy Pineapple", "available": true, "priceModifier": 20 }
     ],
     "oldPrice": 679,
     "rating": 4,

@@ -641,7 +641,7 @@ const CheckoutPage = () => {
 
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
+                  <div key={item.cartItemId} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
                     <div
                       onClick={() => router.push(`/shop/${item.id}`)}
                       className="relative w-20 h-20 rounded-[22px] bg-cream overflow-hidden flex-shrink-0 border border-cream cursor-pointer hover:opacity-90 transition-opacity"
@@ -659,9 +659,18 @@ const CheckoutPage = () => {
                       className="flex-1 min-w-0 flex flex-col justify-center cursor-pointer group/item"
                     >
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1 group-hover/item:text-rose-deep transition-colors">{item.name}</h4>
-                      <p className="text-[10px] text-text-soft mt-0.5">
-                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
-                      </p>
+                      <div className="text-[10px] text-text-soft mt-0.5 space-y-0.5">
+                        {item.weight && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Weight:</span> {item.weight}
+                          </div>
+                        )}
+                        {item.flavor && (
+                          <div>
+                            <span className="font-semibold text-chocolate/85">Flavour:</span> {item.flavor}
+                          </div>
+                        )}
+                      </div>
                       <p className="text-xs text-text-soft mt-1">Quantity: {item.quantity}</p>
                       <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
                     </div>
