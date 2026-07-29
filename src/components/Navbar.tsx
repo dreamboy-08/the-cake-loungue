@@ -119,12 +119,12 @@ const Navbar = () => {
           isAdminPage && "hidden"
         )}
       >
-        <div className="container mx-auto px-4 sm:px-6">
+        <div className="container mx-auto px-3 sm:px-6">
           <div className="flex items-center justify-between h-11">
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
+            <div className="flex items-center gap-0.5 sm:gap-1.5 md:gap-0 h-11">
               {!isAuthPage && (
                 <button
-                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
+                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-8 sm:w-11 h-11 bg-none border-none cursor-pointer shrink-0"
                   onClick={toggleMobileMenu}
                   aria-label="Open menu"
                 >
@@ -135,7 +135,7 @@ const Navbar = () => {
               )}
 
               <Link href="/" className={cn(
-                "flex items-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
+                "flex items-center h-11 font-playfair text-[0.95rem] min-[360px]:text-[1.12rem] min-[400px]:text-[1.3rem] sm:text-[1.45rem] md:text-[1.45rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
                 The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
@@ -143,13 +143,13 @@ const Navbar = () => {
             </div>
 
             <div className="flex items-center h-11">
-              <div className="flex items-center gap-1.5 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
+              <div className="flex items-center gap-1 min-[360px]:gap-1.5 min-[400px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
                   <button
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                     className={cn(
-                      "w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
+                      "w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
                       (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                       (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                     )}
@@ -173,7 +173,7 @@ const Navbar = () => {
                     }
                   }}
                   className={cn(
-                    "relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 block shrink-0",
+                    "relative w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 block shrink-0",
                     (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
@@ -196,7 +196,7 @@ const Navbar = () => {
                   id="cart-icon-main"
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
-                    "relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
+                    "relative w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
                     (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
@@ -315,7 +315,7 @@ const Navbar = () => {
                       <Link
                         href="/login"
                         className={cn(
-                          "text-[0.85rem] font-semibold transition-colors h-11 flex items-center justify-center px-3.5 rounded-full shrink-0",
+                          "hidden sm:flex text-[0.85rem] font-semibold transition-colors h-11 items-center justify-center px-3.5 rounded-full shrink-0",
                           (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >

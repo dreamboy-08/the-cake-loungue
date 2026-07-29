@@ -6,7 +6,7 @@ test.describe('Cart State Synchronization', () => {
     test.setTimeout(90000);
 
     // 1. Start at menu page
-    await page.goto('http://localhost:3001/menu');
+    await page.goto('http://localhost:3000/menu');
 
     // 2. Find first product and add to cart
     const firstProductTitle = page.locator('h3').first();
