@@ -121,8 +121,8 @@ const Navbar = () => {
       >
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-11 w-full">
-            {/* Left Column (Hamburger Menu on mobile/tablet) */}
-            <div className="flex-1 flex items-center justify-start h-11">
+            {/* Left Column (Hamburger Menu + Left-Aligned Logo) */}
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
               {!isAuthPage && (
                 <button
                   className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
@@ -134,10 +134,7 @@ const Navbar = () => {
                   <span className={cn("w-6 h-[2px] rounded-sm transition-all duration-350", (isScrolled || isAuthPage || isPolicyPage) ? "bg-chocolate" : "bg-white")}></span>
                 </button>
               )}
-            </div>
 
-            {/* Center Column (Centered Logo) */}
-            <div className="flex-none flex items-center justify-center h-11">
               <Link href="/" className={cn(
                 "flex items-center justify-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0 leading-none",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
@@ -147,7 +144,7 @@ const Navbar = () => {
             </div>
 
             {/* Right Column (Icons + Primary Action) */}
-            <div className="flex-1 flex items-center justify-end h-11">
+            <div className="flex items-center h-11">
               <div className="flex items-center gap-1 min-[375px]:gap-2 sm:gap-3.5 md:gap-5 h-11">
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
