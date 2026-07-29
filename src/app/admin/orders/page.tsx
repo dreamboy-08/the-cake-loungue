@@ -501,17 +501,27 @@ const AdminOrders = () => {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-sm font-bold text-chocolate">{item.name}</span>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2 mt-1">
                             <span className="text-[10px] text-gray-400">₹{item.price} × {item.quantity}</span>
                             <span className="text-[10px] font-bold text-rose-deep bg-cream-dark px-1.5 rounded">
-                              {item.weight || '0.5 Kg'}
+                              Weight: {item.weight || '0.5 Kg'}
                             </span>
+                            {(item.serves || item.servings) && (
+                              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 rounded border border-blue-100">
+                                Serves: {item.serves || item.servings}
+                              </span>
+                            )}
                             {item.flavor && (
                               <span className="text-[10px] font-bold text-chocolate bg-gray-100 px-1.5 rounded">
-                                {item.flavor}
+                                Flavor: {item.flavor}
                               </span>
                             )}
                           </div>
+                          {item.message && (
+                            <p className="text-[11px] font-bold text-rose-deep mt-1.5 bg-rose/5 border border-rose/10 px-2.5 py-1 rounded-xl inline-block self-start">
+                              Cake Message: &ldquo;{item.message}&rdquo;
+                            </p>
+                          )}
                         </div>
                       </div>
                       <span className="text-sm font-bold text-chocolate">₹{item.quantity * item.price}</span>

@@ -168,8 +168,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                 </button>
                               </div>
                               <p className="text-xs text-text-soft mt-1">
-                                {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
+                                {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}{item.serves ? ` • Serves ${item.serves}` : ''}
                               </p>
+                              {item.message && (
+                                <p className="text-[11px] font-bold text-rose-deep mt-1 bg-cream-dark/30 px-2 py-0.5 rounded-md inline-block">
+                                  Message: &ldquo;{item.message}&rdquo;
+                                </p>
+                              )}
                             </div>
 
                             <div

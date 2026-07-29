@@ -1,6 +1,8 @@
 export interface ProductWeight {
   label: string;
+  weight?: string;
   price: number;
+  serves?: string;
 }
 
 export interface Product {
@@ -26,9 +28,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 499,
     "weights": [
-      { "label": "0.5 Kg", "price": 499 },
-      { "label": "1 Kg", "price": 898 },
-      { "label": "2 Kg", "price": 1747 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 499, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 898, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 1747, "serves": "16–20 People" }
     ],
     "oldPrice": 619,
     "rating": 4,
@@ -44,7 +46,7 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 750,
     "weights": [
-      { "label": "0.5 Kg", "price": 750 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 750, "serves": "4–6 People" }
     ],
     "oldPrice": 850,
     "rating": 5,
@@ -60,9 +62,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 529,
     "weights": [
-      { "label": "0.5 Kg", "price": 529 },
-      { "label": "1 Kg", "price": 952 },
-      { "label": "2 Kg", "price": 1852 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 529, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 952, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 1852, "serves": "16–20 People" }
     ],
     "oldPrice": 649,
     "rating": 4,
@@ -78,9 +80,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 559,
     "weights": [
-      { "label": "0.5 Kg", "price": 559 },
-      { "label": "1 Kg", "price": 1006 },
-      { "label": "2 Kg", "price": 1957 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 559, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1006, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 1957, "serves": "16–20 People" }
     ],
     "oldPrice": 679,
     "rating": 4,
@@ -96,9 +98,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 589,
     "weights": [
-      { "label": "0.5 Kg", "price": 589 },
-      { "label": "1 Kg", "price": 1060 },
-      { "label": "2 Kg", "price": 2062 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 589, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1060, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2062, "serves": "16–20 People" }
     ],
     "oldPrice": 709,
     "rating": 5,
@@ -114,9 +116,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 619,
     "weights": [
-      { "label": "0.5 Kg", "price": 619 },
-      { "label": "1 Kg", "price": 1114 },
-      { "label": "2 Kg", "price": 2167 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 619, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1114, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2167, "serves": "16–20 People" }
     ],
     "oldPrice": 739,
     "rating": 5,
@@ -132,9 +134,9 @@ export const products: Product[] = [
     "category": "Birthday Cakes",
     "price": 649,
     "weights": [
-      { "label": "0.5 Kg", "price": 649 },
-      { "label": "1 Kg", "price": 1168 },
-      { "label": "2 Kg", "price": 2272 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1168, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2272, "serves": "16–20 People" }
     ],
     "oldPrice": 769,
     "rating": 5,
@@ -150,9 +152,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 549,
     "weights": [
-      { "label": "0.5 Kg", "price": 549 },
-      { "label": "1 Kg", "price": 988 },
-      { "label": "2 Kg", "price": 1922 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 549, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 988, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 1922, "serves": "16–20 People" }
     ],
     "oldPrice": 669,
     "rating": 5,
@@ -168,9 +170,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 579,
     "weights": [
-      { "label": "0.5 Kg", "price": 579 },
-      { "label": "1 Kg", "price": 1042 },
-      { "label": "2 Kg", "price": 2027 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 579, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1042, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2027, "serves": "16–20 People" }
     ],
     "oldPrice": 699,
     "rating": 5,
@@ -186,9 +188,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 609,
     "weights": [
-      { "label": "0.5 Kg", "price": 609 },
-      { "label": "1 Kg", "price": 1096 },
-      { "label": "2 Kg", "price": 2132 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 609, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1096, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2132, "serves": "16–20 People" }
     ],
     "oldPrice": 729,
     "rating": 5,
@@ -204,9 +206,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 639,
     "weights": [
-      { "label": "0.5 Kg", "price": 639 },
-      { "label": "1 Kg", "price": 1150 },
-      { "label": "2 Kg", "price": 2237 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 639, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1150, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2237, "serves": "16–20 People" }
     ],
     "oldPrice": 759,
     "rating": 4,
@@ -222,9 +224,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 669,
     "weights": [
-      { "label": "0.5 Kg", "price": 669 },
-      { "label": "1 Kg", "price": 1204 },
-      { "label": "2 Kg", "price": 2342 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 669, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1204, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2342, "serves": "16–20 People" }
     ],
     "oldPrice": 789,
     "rating": 4,
@@ -240,9 +242,9 @@ export const products: Product[] = [
     "category": "Anniversary Cakes",
     "price": 699,
     "weights": [
-      { "label": "0.5 Kg", "price": 699 },
-      { "label": "1 Kg", "price": 1258 },
-      { "label": "2 Kg", "price": 2447 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 699, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1258, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2447, "serves": "16–20 People" }
     ],
     "oldPrice": 819,
     "rating": 4,
@@ -258,9 +260,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 599,
     "weights": [
-      { "label": "0.5 Kg", "price": 599 },
-      { "label": "1 Kg", "price": 1078 },
-      { "label": "2 Kg", "price": 2097 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 599, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1078, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2097, "serves": "16–20 People" }
     ],
     "oldPrice": 719,
     "rating": 4,
@@ -276,9 +278,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 629,
     "weights": [
-      { "label": "0.5 Kg", "price": 629 },
-      { "label": "1 Kg", "price": 1132 },
-      { "label": "2 Kg", "price": 2202 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 629, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1132, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2202, "serves": "16–20 People" }
     ],
     "oldPrice": 749,
     "rating": 5,
@@ -294,9 +296,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 659,
     "weights": [
-      { "label": "0.5 Kg", "price": 659 },
-      { "label": "1 Kg", "price": 1186 },
-      { "label": "2 Kg", "price": 2307 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 659, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1186, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2307, "serves": "16–20 People" }
     ],
     "oldPrice": 779,
     "rating": 5,
@@ -312,9 +314,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 689,
     "weights": [
-      { "label": "0.5 Kg", "price": 689 },
-      { "label": "1 Kg", "price": 1240 },
-      { "label": "2 Kg", "price": 2412 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 689, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1240, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2412, "serves": "16–20 People" }
     ],
     "oldPrice": 809,
     "rating": 5,
@@ -330,9 +332,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 719,
     "weights": [
-      { "label": "0.5 Kg", "price": 719 },
-      { "label": "1 Kg", "price": 1294 },
-      { "label": "2 Kg", "price": 2517 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 719, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1294, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2517, "serves": "16–20 People" }
     ],
     "oldPrice": 839,
     "rating": 5,
@@ -348,9 +350,9 @@ export const products: Product[] = [
     "category": "Wedding Cakes",
     "price": 749,
     "weights": [
-      { "label": "0.5 Kg", "price": 749 },
-      { "label": "1 Kg", "price": 1348 },
-      { "label": "2 Kg", "price": 2622 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 749, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1348, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2622, "serves": "16–20 People" }
     ],
     "oldPrice": 869,
     "rating": 5,
@@ -366,9 +368,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 649,
     "weights": [
-      { "label": "0.5 Kg", "price": 649 },
-      { "label": "1 Kg", "price": 1168 },
-      { "label": "2 Kg", "price": 2272 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1168, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2272, "serves": "16–20 People" }
     ],
     "oldPrice": 769,
     "rating": 5,
@@ -384,9 +386,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 679,
     "weights": [
-      { "label": "0.5 Kg", "price": 679 },
-      { "label": "1 Kg", "price": 1222 },
-      { "label": "2 Kg", "price": 2377 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 679, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1222, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2377, "serves": "16–20 People" }
     ],
     "oldPrice": 799,
     "rating": 4,
@@ -402,9 +404,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 709,
     "weights": [
-      { "label": "0.5 Kg", "price": 709 },
-      { "label": "1 Kg", "price": 1276 },
-      { "label": "2 Kg", "price": 2482 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 709, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1276, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2482, "serves": "16–20 People" }
     ],
     "oldPrice": 829,
     "rating": 4,
@@ -420,9 +422,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 739,
     "weights": [
-      { "label": "0.5 Kg", "price": 739 },
-      { "label": "1 Kg", "price": 1330 },
-      { "label": "2 Kg", "price": 2587 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 739, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1330, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2587, "serves": "16–20 People" }
     ],
     "oldPrice": 859,
     "rating": 4,
@@ -438,9 +440,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 769,
     "weights": [
-      { "label": "0.5 Kg", "price": 769 },
-      { "label": "1 Kg", "price": 1384 },
-      { "label": "2 Kg", "price": 2692 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 769, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1384, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2692, "serves": "16–20 People" }
     ],
     "oldPrice": 889,
     "rating": 4,
@@ -456,9 +458,9 @@ export const products: Product[] = [
     "category": "Bento Cakes",
     "price": 799,
     "weights": [
-      { "label": "0.5 Kg", "price": 799 },
-      { "label": "1 Kg", "price": 1438 },
-      { "label": "2 Kg", "price": 2797 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1438, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2797, "serves": "16–20 People" }
     ],
     "oldPrice": 919,
     "rating": 5,
@@ -474,9 +476,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 699,
     "weights": [
-      { "label": "0.5 Kg", "price": 699 },
-      { "label": "1 Kg", "price": 1258 },
-      { "label": "2 Kg", "price": 2447 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 699, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1258, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2447, "serves": "16–20 People" }
     ],
     "oldPrice": 819,
     "rating": 5,
@@ -492,9 +494,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 729,
     "weights": [
-      { "label": "0.5 Kg", "price": 729 },
-      { "label": "1 Kg", "price": 1312 },
-      { "label": "2 Kg", "price": 2552 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 729, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1312, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2552, "serves": "16–20 People" }
     ],
     "oldPrice": 849,
     "rating": 5,
@@ -510,9 +512,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 759,
     "weights": [
-      { "label": "0.5 Kg", "price": 759 },
-      { "label": "1 Kg", "price": 1366 },
-      { "label": "2 Kg", "price": 2657 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 759, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1366, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2657, "serves": "16–20 People" }
     ],
     "oldPrice": 879,
     "rating": 5,
@@ -528,9 +530,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 789,
     "weights": [
-      { "label": "0.5 Kg", "price": 789 },
-      { "label": "1 Kg", "price": 1420 },
-      { "label": "2 Kg", "price": 2762 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 789, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1420, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2762, "serves": "16–20 People" }
     ],
     "oldPrice": 909,
     "rating": 5,
@@ -546,9 +548,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 819,
     "weights": [
-      { "label": "0.5 Kg", "price": 819 },
-      { "label": "1 Kg", "price": 1474 },
-      { "label": "2 Kg", "price": 2867 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 819, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1474, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2867, "serves": "16–20 People" }
     ],
     "oldPrice": 939,
     "rating": 5,
@@ -564,9 +566,9 @@ export const products: Product[] = [
     "category": "Theme Cakes",
     "price": 849,
     "weights": [
-      { "label": "0.5 Kg", "price": 849 },
-      { "label": "1 Kg", "price": 1528 },
-      { "label": "2 Kg", "price": 2972 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 849, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1528, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2972, "serves": "16–20 People" }
     ],
     "oldPrice": 969,
     "rating": 4,
@@ -582,9 +584,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 749,
     "weights": [
-      { "label": "0.5 Kg", "price": 749 },
-      { "label": "1 Kg", "price": 1348 },
-      { "label": "2 Kg", "price": 2622 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 749, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1348, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2622, "serves": "16–20 People" }
     ],
     "oldPrice": 869,
     "rating": 4,
@@ -600,9 +602,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 779,
     "weights": [
-      { "label": "0.5 Kg", "price": 779 },
-      { "label": "1 Kg", "price": 1402 },
-      { "label": "2 Kg", "price": 2727 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 779, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1402, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2727, "serves": "16–20 People" }
     ],
     "oldPrice": 899,
     "rating": 4,
@@ -618,9 +620,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 809,
     "weights": [
-      { "label": "0.5 Kg", "price": 809 },
-      { "label": "1 Kg", "price": 1456 },
-      { "label": "2 Kg", "price": 2832 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 809, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1456, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2832, "serves": "16–20 People" }
     ],
     "oldPrice": 929,
     "rating": 4,
@@ -636,9 +638,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 839,
     "weights": [
-      { "label": "0.5 Kg", "price": 839 },
-      { "label": "1 Kg", "price": 1510 },
-      { "label": "2 Kg", "price": 2937 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 839, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1510, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2937, "serves": "16–20 People" }
     ],
     "oldPrice": 959,
     "rating": 5,
@@ -654,9 +656,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 869,
     "weights": [
-      { "label": "0.5 Kg", "price": 869 },
-      { "label": "1 Kg", "price": 1564 },
-      { "label": "2 Kg", "price": 3042 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 869, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1564, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3042, "serves": "16–20 People" }
     ],
     "oldPrice": 989,
     "rating": 5,
@@ -672,9 +674,9 @@ export const products: Product[] = [
     "category": "Photo Cakes",
     "price": 899,
     "weights": [
-      { "label": "0.5 Kg", "price": 899 },
-      { "label": "1 Kg", "price": 1618 },
-      { "label": "2 Kg", "price": 3147 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 899, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1618, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3147, "serves": "16–20 People" }
     ],
     "oldPrice": 1019,
     "rating": 5,
@@ -690,9 +692,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 799,
     "weights": [
-      { "label": "0.5 Kg", "price": 799 },
-      { "label": "1 Kg", "price": 1438 },
-      { "label": "2 Kg", "price": 2797 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1438, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2797, "serves": "16–20 People" }
     ],
     "oldPrice": 919,
     "rating": 5,
@@ -708,9 +710,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 829,
     "weights": [
-      { "label": "0.5 Kg", "price": 829 },
-      { "label": "1 Kg", "price": 1492 },
-      { "label": "2 Kg", "price": 2902 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 829, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1492, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2902, "serves": "16–20 People" }
     ],
     "oldPrice": 949,
     "rating": 5,
@@ -726,9 +728,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 859,
     "weights": [
-      { "label": "0.5 Kg", "price": 859 },
-      { "label": "1 Kg", "price": 1546 },
-      { "label": "2 Kg", "price": 3007 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 859, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1546, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3007, "serves": "16–20 People" }
     ],
     "oldPrice": 979,
     "rating": 5,
@@ -744,9 +746,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 889,
     "weights": [
-      { "label": "0.5 Kg", "price": 889 },
-      { "label": "1 Kg", "price": 1600 },
-      { "label": "2 Kg", "price": 3112 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 889, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1600, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3112, "serves": "16–20 People" }
     ],
     "oldPrice": 1009,
     "rating": 4,
@@ -762,9 +764,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 919,
     "weights": [
-      { "label": "0.5 Kg", "price": 919 },
-      { "label": "1 Kg", "price": 1654 },
-      { "label": "2 Kg", "price": 3217 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 919, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1654, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3217, "serves": "16–20 People" }
     ],
     "oldPrice": 1039,
     "rating": 4,
@@ -780,9 +782,9 @@ export const products: Product[] = [
     "category": "Pinata Cakes",
     "price": 949,
     "weights": [
-      { "label": "0.5 Kg", "price": 949 },
-      { "label": "1 Kg", "price": 1708 },
-      { "label": "2 Kg", "price": 3322 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 949, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1708, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3322, "serves": "16–20 People" }
     ],
     "oldPrice": 1069,
     "rating": 4,
@@ -798,9 +800,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 849,
     "weights": [
-      { "label": "0.5 Kg", "price": 849 },
-      { "label": "1 Kg", "price": 1528 },
-      { "label": "2 Kg", "price": 2972 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 849, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1528, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 2972, "serves": "16–20 People" }
     ],
     "oldPrice": 969,
     "rating": 4,
@@ -816,9 +818,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 879,
     "weights": [
-      { "label": "0.5 Kg", "price": 879 },
-      { "label": "1 Kg", "price": 1582 },
-      { "label": "2 Kg", "price": 3077 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 879, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1582, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3077, "serves": "16–20 People" }
     ],
     "oldPrice": 999,
     "rating": 5,
@@ -834,9 +836,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 909,
     "weights": [
-      { "label": "0.5 Kg", "price": 909 },
-      { "label": "1 Kg", "price": 1636 },
-      { "label": "2 Kg", "price": 3182 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 909, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1636, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3182, "serves": "16–20 People" }
     ],
     "oldPrice": 1029,
     "rating": 5,
@@ -852,9 +854,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 939,
     "weights": [
-      { "label": "0.5 Kg", "price": 939 },
-      { "label": "1 Kg", "price": 1690 },
-      { "label": "2 Kg", "price": 3287 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 939, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1690, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3287, "serves": "16–20 People" }
     ],
     "oldPrice": 1059,
     "rating": 5,
@@ -870,9 +872,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 969,
     "weights": [
-      { "label": "0.5 Kg", "price": 969 },
-      { "label": "1 Kg", "price": 1744 },
-      { "label": "2 Kg", "price": 3392 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 969, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1744, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3392, "serves": "16–20 People" }
     ],
     "oldPrice": 1089,
     "rating": 5,
@@ -888,9 +890,9 @@ export const products: Product[] = [
     "category": "Pull Me Up Cakes",
     "price": 999,
     "weights": [
-      { "label": "0.5 Kg", "price": 999 },
-      { "label": "1 Kg", "price": 1798 },
-      { "label": "2 Kg", "price": 3497 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1798, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3497, "serves": "16–20 People" }
     ],
     "oldPrice": 1119,
     "rating": 5,
@@ -906,9 +908,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 899,
     "weights": [
-      { "label": "0.5 Kg", "price": 899 },
-      { "label": "1 Kg", "price": 1618 },
-      { "label": "2 Kg", "price": 3147 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 899, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1618, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3147, "serves": "16–20 People" }
     ],
     "oldPrice": 1019,
     "rating": 5,
@@ -924,9 +926,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 929,
     "weights": [
-      { "label": "0.5 Kg", "price": 929 },
-      { "label": "1 Kg", "price": 1672 },
-      { "label": "2 Kg", "price": 3252 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 929, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1672, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3252, "serves": "16–20 People" }
     ],
     "oldPrice": 1049,
     "rating": 4,
@@ -942,9 +944,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 959,
     "weights": [
-      { "label": "0.5 Kg", "price": 959 },
-      { "label": "1 Kg", "price": 1726 },
-      { "label": "2 Kg", "price": 3357 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 959, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1726, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3357, "serves": "16–20 People" }
     ],
     "oldPrice": 1079,
     "rating": 4,
@@ -960,9 +962,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 989,
     "weights": [
-      { "label": "0.5 Kg", "price": 989 },
-      { "label": "1 Kg", "price": 1780 },
-      { "label": "2 Kg", "price": 3462 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 989, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1780, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3462, "serves": "16–20 People" }
     ],
     "oldPrice": 1109,
     "rating": 4,
@@ -978,9 +980,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 1019,
     "weights": [
-      { "label": "0.5 Kg", "price": 1019 },
-      { "label": "1 Kg", "price": 1834 },
-      { "label": "2 Kg", "price": 3567 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1019, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1834, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3567, "serves": "16–20 People" }
     ],
     "oldPrice": 1139,
     "rating": 4,
@@ -996,9 +998,9 @@ export const products: Product[] = [
     "category": "Bomb Cakes",
     "price": 1049,
     "weights": [
-      { "label": "0.5 Kg", "price": 1049 },
-      { "label": "1 Kg", "price": 1888 },
-      { "label": "2 Kg", "price": 3672 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1049, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1888, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3672, "serves": "16–20 People" }
     ],
     "oldPrice": 1169,
     "rating": 5,
@@ -1014,9 +1016,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 949,
     "weights": [
-      { "label": "0.5 Kg", "price": 949 },
-      { "label": "1 Kg", "price": 1708 },
-      { "label": "2 Kg", "price": 3322 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 949, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1708, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3322, "serves": "16–20 People" }
     ],
     "oldPrice": 1069,
     "rating": 5,
@@ -1032,9 +1034,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 979,
     "weights": [
-      { "label": "0.5 Kg", "price": 979 },
-      { "label": "1 Kg", "price": 1762 },
-      { "label": "2 Kg", "price": 3427 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 979, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1762, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3427, "serves": "16–20 People" }
     ],
     "oldPrice": 1099,
     "rating": 5,
@@ -1050,9 +1052,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 1009,
     "weights": [
-      { "label": "0.5 Kg", "price": 1009 },
-      { "label": "1 Kg", "price": 1816 },
-      { "label": "2 Kg", "price": 3532 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1009, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1816, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3532, "serves": "16–20 People" }
     ],
     "oldPrice": 1129,
     "rating": 5,
@@ -1068,9 +1070,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 1039,
     "weights": [
-      { "label": "0.5 Kg", "price": 1039 },
-      { "label": "1 Kg", "price": 1870 },
-      { "label": "2 Kg", "price": 3637 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1039, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1870, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3637, "serves": "16–20 People" }
     ],
     "oldPrice": 1159,
     "rating": 5,
@@ -1086,9 +1088,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 1069,
     "weights": [
-      { "label": "0.5 Kg", "price": 1069 },
-      { "label": "1 Kg", "price": 1924 },
-      { "label": "2 Kg", "price": 3742 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1069, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1924, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3742, "serves": "16–20 People" }
     ],
     "oldPrice": 1189,
     "rating": 5,
@@ -1104,9 +1106,9 @@ export const products: Product[] = [
     "category": "Designer Cakes",
     "price": 1099,
     "weights": [
-      { "label": "0.5 Kg", "price": 1099 },
-      { "label": "1 Kg", "price": 1978 },
-      { "label": "2 Kg", "price": 3847 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1099, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1978, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3847, "serves": "16–20 People" }
     ],
     "oldPrice": 1219,
     "rating": 4,
@@ -1122,9 +1124,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 999,
     "weights": [
-      { "label": "0.5 Kg", "price": 999 },
-      { "label": "1 Kg", "price": 1798 },
-      { "label": "2 Kg", "price": 3497 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1798, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3497, "serves": "16–20 People" }
     ],
     "oldPrice": 1119,
     "rating": 4,
@@ -1140,9 +1142,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 1029,
     "weights": [
-      { "label": "0.5 Kg", "price": 1029 },
-      { "label": "1 Kg", "price": 1852 },
-      { "label": "2 Kg", "price": 3602 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1029, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1852, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3602, "serves": "16–20 People" }
     ],
     "oldPrice": 1149,
     "rating": 4,
@@ -1158,9 +1160,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 1059,
     "weights": [
-      { "label": "0.5 Kg", "price": 1059 },
-      { "label": "1 Kg", "price": 1906 },
-      { "label": "2 Kg", "price": 3707 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1059, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1906, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3707, "serves": "16–20 People" }
     ],
     "oldPrice": 1179,
     "rating": 4,
@@ -1176,9 +1178,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 1089,
     "weights": [
-      { "label": "0.5 Kg", "price": 1089 },
-      { "label": "1 Kg", "price": 1960 },
-      { "label": "2 Kg", "price": 3812 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1089, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1960, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3812, "serves": "16–20 People" }
     ],
     "oldPrice": 1209,
     "rating": 5,
@@ -1194,9 +1196,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 1119,
     "weights": [
-      { "label": "0.5 Kg", "price": 1119 },
-      { "label": "1 Kg", "price": 2014 },
-      { "label": "2 Kg", "price": 3917 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1119, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2014, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3917, "serves": "16–20 People" }
     ],
     "oldPrice": 1239,
     "rating": 5,
@@ -1212,9 +1214,9 @@ export const products: Product[] = [
     "category": "Kids Cakes",
     "price": 1149,
     "weights": [
-      { "label": "0.5 Kg", "price": 1149 },
-      { "label": "1 Kg", "price": 2068 },
-      { "label": "2 Kg", "price": 4022 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1149, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2068, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4022, "serves": "16–20 People" }
     ],
     "oldPrice": 1269,
     "rating": 5,
@@ -1230,9 +1232,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1049,
     "weights": [
-      { "label": "0.5 Kg", "price": 1049 },
-      { "label": "1 Kg", "price": 1888 },
-      { "label": "2 Kg", "price": 3672 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1049, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1888, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3672, "serves": "16–20 People" }
     ],
     "oldPrice": 1169,
     "rating": 5,
@@ -1248,9 +1250,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1079,
     "weights": [
-      { "label": "0.5 Kg", "price": 1079 },
-      { "label": "1 Kg", "price": 1942 },
-      { "label": "2 Kg", "price": 3777 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1079, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1942, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3777, "serves": "16–20 People" }
     ],
     "oldPrice": 1199,
     "rating": 5,
@@ -1266,9 +1268,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1109,
     "weights": [
-      { "label": "0.5 Kg", "price": 1109 },
-      { "label": "1 Kg", "price": 1996 },
-      { "label": "2 Kg", "price": 3882 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1109, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1996, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3882, "serves": "16–20 People" }
     ],
     "oldPrice": 1229,
     "rating": 5,
@@ -1284,9 +1286,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1139,
     "weights": [
-      { "label": "0.5 Kg", "price": 1139 },
-      { "label": "1 Kg", "price": 2050 },
-      { "label": "2 Kg", "price": 3987 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1139, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2050, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3987, "serves": "16–20 People" }
     ],
     "oldPrice": 1259,
     "rating": 4,
@@ -1302,9 +1304,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1169,
     "weights": [
-      { "label": "0.5 Kg", "price": 1169 },
-      { "label": "1 Kg", "price": 2104 },
-      { "label": "2 Kg", "price": 4092 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1169, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2104, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4092, "serves": "16–20 People" }
     ],
     "oldPrice": 1289,
     "rating": 4,
@@ -1320,9 +1322,9 @@ export const products: Product[] = [
     "category": "Cartoon Cakes",
     "price": 1199,
     "weights": [
-      { "label": "0.5 Kg", "price": 1199 },
-      { "label": "1 Kg", "price": 2158 },
-      { "label": "2 Kg", "price": 4197 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2158, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4197, "serves": "16–20 People" }
     ],
     "oldPrice": 1319,
     "rating": 4,
@@ -1338,9 +1340,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1099,
     "weights": [
-      { "label": "0.5 Kg", "price": 1099 },
-      { "label": "1 Kg", "price": 1978 },
-      { "label": "2 Kg", "price": 3847 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1099, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 1978, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3847, "serves": "16–20 People" }
     ],
     "oldPrice": 1219,
     "rating": 4,
@@ -1356,9 +1358,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1129,
     "weights": [
-      { "label": "0.5 Kg", "price": 1129 },
-      { "label": "1 Kg", "price": 2032 },
-      { "label": "2 Kg", "price": 3952 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1129, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2032, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 3952, "serves": "16–20 People" }
     ],
     "oldPrice": 1249,
     "rating": 5,
@@ -1374,9 +1376,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1159,
     "weights": [
-      { "label": "0.5 Kg", "price": 1159 },
-      { "label": "1 Kg", "price": 2086 },
-      { "label": "2 Kg", "price": 4057 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1159, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2086, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4057, "serves": "16–20 People" }
     ],
     "oldPrice": 1279,
     "rating": 5,
@@ -1392,9 +1394,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1189,
     "weights": [
-      { "label": "0.5 Kg", "price": 1189 },
-      { "label": "1 Kg", "price": 2140 },
-      { "label": "2 Kg", "price": 4162 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1189, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2140, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4162, "serves": "16–20 People" }
     ],
     "oldPrice": 1309,
     "rating": 5,
@@ -1410,9 +1412,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1219,
     "weights": [
-      { "label": "0.5 Kg", "price": 1219 },
-      { "label": "1 Kg", "price": 2194 },
-      { "label": "2 Kg", "price": 4267 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1219, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2194, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4267, "serves": "16–20 People" }
     ],
     "oldPrice": 1339,
     "rating": 5,
@@ -1428,9 +1430,9 @@ export const products: Product[] = [
     "category": "Anime Cakes",
     "price": 1249,
     "weights": [
-      { "label": "0.5 Kg", "price": 1249 },
-      { "label": "1 Kg", "price": 2248 },
-      { "label": "2 Kg", "price": 4372 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1249, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2248, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4372, "serves": "16–20 People" }
     ],
     "oldPrice": 1369,
     "rating": 5,
@@ -1446,9 +1448,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1149,
     "weights": [
-      { "label": "0.5 Kg", "price": 1149 },
-      { "label": "1 Kg", "price": 2068 },
-      { "label": "2 Kg", "price": 4022 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1149, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2068, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4022, "serves": "16–20 People" }
     ],
     "oldPrice": 1269,
     "rating": 5,
@@ -1464,9 +1466,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1179,
     "weights": [
-      { "label": "0.5 Kg", "price": 1179 },
-      { "label": "1 Kg", "price": 2122 },
-      { "label": "2 Kg", "price": 4127 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1179, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2122, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4127, "serves": "16–20 People" }
     ],
     "oldPrice": 1299,
     "rating": 4,
@@ -1482,9 +1484,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1209,
     "weights": [
-      { "label": "0.5 Kg", "price": 1209 },
-      { "label": "1 Kg", "price": 2176 },
-      { "label": "2 Kg", "price": 4232 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1209, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2176, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4232, "serves": "16–20 People" }
     ],
     "oldPrice": 1329,
     "rating": 4,
@@ -1500,9 +1502,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1239,
     "weights": [
-      { "label": "0.5 Kg", "price": 1239 },
-      { "label": "1 Kg", "price": 2230 },
-      { "label": "2 Kg", "price": 4337 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1239, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2230, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4337, "serves": "16–20 People" }
     ],
     "oldPrice": 1359,
     "rating": 4,
@@ -1518,9 +1520,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1269,
     "weights": [
-      { "label": "0.5 Kg", "price": 1269 },
-      { "label": "1 Kg", "price": 2284 },
-      { "label": "2 Kg", "price": 4442 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1269, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2284, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4442, "serves": "16–20 People" }
     ],
     "oldPrice": 1389,
     "rating": 4,
@@ -1536,9 +1538,9 @@ export const products: Product[] = [
     "category": "Superhero Cakes",
     "price": 1299,
     "weights": [
-      { "label": "0.5 Kg", "price": 1299 },
-      { "label": "1 Kg", "price": 2338 },
-      { "label": "2 Kg", "price": 4547 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1299, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2338, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4547, "serves": "16–20 People" }
     ],
     "oldPrice": 1419,
     "rating": 5,
@@ -1554,9 +1556,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1199,
     "weights": [
-      { "label": "0.5 Kg", "price": 1199 },
-      { "label": "1 Kg", "price": 2158 },
-      { "label": "2 Kg", "price": 4197 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2158, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4197, "serves": "16–20 People" }
     ],
     "oldPrice": 1319,
     "rating": 5,
@@ -1572,9 +1574,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1229,
     "weights": [
-      { "label": "0.5 Kg", "price": 1229 },
-      { "label": "1 Kg", "price": 2212 },
-      { "label": "2 Kg", "price": 4302 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1229, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2212, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4302, "serves": "16–20 People" }
     ],
     "oldPrice": 1349,
     "rating": 5,
@@ -1590,9 +1592,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1259,
     "weights": [
-      { "label": "0.5 Kg", "price": 1259 },
-      { "label": "1 Kg", "price": 2266 },
-      { "label": "2 Kg", "price": 4407 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1259, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2266, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4407, "serves": "16–20 People" }
     ],
     "oldPrice": 1379,
     "rating": 5,
@@ -1608,9 +1610,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1289,
     "weights": [
-      { "label": "0.5 Kg", "price": 1289 },
-      { "label": "1 Kg", "price": 2320 },
-      { "label": "2 Kg", "price": 4512 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1289, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2320, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4512, "serves": "16–20 People" }
     ],
     "oldPrice": 1409,
     "rating": 5,
@@ -1626,9 +1628,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1319,
     "weights": [
-      { "label": "0.5 Kg", "price": 1319 },
-      { "label": "1 Kg", "price": 2374 },
-      { "label": "2 Kg", "price": 4617 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1319, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2374, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4617, "serves": "16–20 People" }
     ],
     "oldPrice": 1439,
     "rating": 5,
@@ -1644,9 +1646,9 @@ export const products: Product[] = [
     "category": "Romantic Cakes",
     "price": 1349,
     "weights": [
-      { "label": "0.5 Kg", "price": 1349 },
-      { "label": "1 Kg", "price": 2428 },
-      { "label": "2 Kg", "price": 4722 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1349, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2428, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4722, "serves": "16–20 People" }
     ],
     "oldPrice": 1469,
     "rating": 4,
@@ -1662,9 +1664,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1249,
     "weights": [
-      { "label": "0.5 Kg", "price": 1249 },
-      { "label": "1 Kg", "price": 2248 },
-      { "label": "2 Kg", "price": 4372 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1249, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2248, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4372, "serves": "16–20 People" }
     ],
     "oldPrice": 1369,
     "rating": 4,
@@ -1680,9 +1682,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1279,
     "weights": [
-      { "label": "0.5 Kg", "price": 1279 },
-      { "label": "1 Kg", "price": 2302 },
-      { "label": "2 Kg", "price": 4477 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1279, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2302, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4477, "serves": "16–20 People" }
     ],
     "oldPrice": 1399,
     "rating": 4,
@@ -1698,9 +1700,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1309,
     "weights": [
-      { "label": "0.5 Kg", "price": 1309 },
-      { "label": "1 Kg", "price": 2356 },
-      { "label": "2 Kg", "price": 4582 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1309, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2356, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4582, "serves": "16–20 People" }
     ],
     "oldPrice": 1429,
     "rating": 4,
@@ -1716,9 +1718,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1339,
     "weights": [
-      { "label": "0.5 Kg", "price": 1339 },
-      { "label": "1 Kg", "price": 2410 },
-      { "label": "2 Kg", "price": 4687 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1339, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2410, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4687, "serves": "16–20 People" }
     ],
     "oldPrice": 1459,
     "rating": 5,
@@ -1734,9 +1736,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1369,
     "weights": [
-      { "label": "0.5 Kg", "price": 1369 },
-      { "label": "1 Kg", "price": 2464 },
-      { "label": "2 Kg", "price": 4792 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1369, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2464, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4792, "serves": "16–20 People" }
     ],
     "oldPrice": 1489,
     "rating": 5,
@@ -1752,9 +1754,9 @@ export const products: Product[] = [
     "category": "Couple Cakes",
     "price": 1399,
     "weights": [
-      { "label": "0.5 Kg", "price": 1399 },
-      { "label": "1 Kg", "price": 2518 },
-      { "label": "2 Kg", "price": 4897 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1399, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2518, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4897, "serves": "16–20 People" }
     ],
     "oldPrice": 1519,
     "rating": 5,
@@ -1770,9 +1772,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1299,
     "weights": [
-      { "label": "0.5 Kg", "price": 1299 },
-      { "label": "1 Kg", "price": 2338 },
-      { "label": "2 Kg", "price": 4547 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1299, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2338, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4547, "serves": "16–20 People" }
     ],
     "oldPrice": 1419,
     "rating": 5,
@@ -1788,9 +1790,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1329,
     "weights": [
-      { "label": "0.5 Kg", "price": 1329 },
-      { "label": "1 Kg", "price": 2392 },
-      { "label": "2 Kg", "price": 4652 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1329, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2392, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4652, "serves": "16–20 People" }
     ],
     "oldPrice": 1449,
     "rating": 5,
@@ -1806,9 +1808,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1359,
     "weights": [
-      { "label": "0.5 Kg", "price": 1359 },
-      { "label": "1 Kg", "price": 2446 },
-      { "label": "2 Kg", "price": 4757 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1359, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2446, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4757, "serves": "16–20 People" }
     ],
     "oldPrice": 1479,
     "rating": 5,
@@ -1824,9 +1826,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1389,
     "weights": [
-      { "label": "0.5 Kg", "price": 1389 },
-      { "label": "1 Kg", "price": 2500 },
-      { "label": "2 Kg", "price": 4862 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1389, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2500, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4862, "serves": "16–20 People" }
     ],
     "oldPrice": 1509,
     "rating": 4,
@@ -1842,9 +1844,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1419,
     "weights": [
-      { "label": "0.5 Kg", "price": 1419 },
-      { "label": "1 Kg", "price": 2554 },
-      { "label": "2 Kg", "price": 4967 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1419, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2554, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4967, "serves": "16–20 People" }
     ],
     "oldPrice": 1539,
     "rating": 4,
@@ -1860,9 +1862,9 @@ export const products: Product[] = [
     "category": "Heart Cakes",
     "price": 1449,
     "weights": [
-      { "label": "0.5 Kg", "price": 1449 },
-      { "label": "1 Kg", "price": 2608 },
-      { "label": "2 Kg", "price": 5072 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1449, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2608, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5072, "serves": "16–20 People" }
     ],
     "oldPrice": 1569,
     "rating": 4,
@@ -1878,9 +1880,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1349,
     "weights": [
-      { "label": "0.5 Kg", "price": 1349 },
-      { "label": "1 Kg", "price": 2428 },
-      { "label": "2 Kg", "price": 4722 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1349, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2428, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4722, "serves": "16–20 People" }
     ],
     "oldPrice": 1469,
     "rating": 4,
@@ -1896,9 +1898,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1379,
     "weights": [
-      { "label": "0.5 Kg", "price": 1379 },
-      { "label": "1 Kg", "price": 2482 },
-      { "label": "2 Kg", "price": 4827 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1379, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2482, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4827, "serves": "16–20 People" }
     ],
     "oldPrice": 1499,
     "rating": 5,
@@ -1914,9 +1916,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1409,
     "weights": [
-      { "label": "0.5 Kg", "price": 1409 },
-      { "label": "1 Kg", "price": 2536 },
-      { "label": "2 Kg", "price": 4932 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1409, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2536, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4932, "serves": "16–20 People" }
     ],
     "oldPrice": 1529,
     "rating": 5,
@@ -1932,9 +1934,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1439,
     "weights": [
-      { "label": "0.5 Kg", "price": 1439 },
-      { "label": "1 Kg", "price": 2590 },
-      { "label": "2 Kg", "price": 5037 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1439, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2590, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5037, "serves": "16–20 People" }
     ],
     "oldPrice": 1559,
     "rating": 5,
@@ -1950,9 +1952,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1469,
     "weights": [
-      { "label": "0.5 Kg", "price": 1469 },
-      { "label": "1 Kg", "price": 2644 },
-      { "label": "2 Kg", "price": 5142 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1469, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2644, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5142, "serves": "16–20 People" }
     ],
     "oldPrice": 1589,
     "rating": 5,
@@ -1968,9 +1970,9 @@ export const products: Product[] = [
     "category": "Premium Cakes",
     "price": 1499,
     "weights": [
-      { "label": "0.5 Kg", "price": 1499 },
-      { "label": "1 Kg", "price": 2698 },
-      { "label": "2 Kg", "price": 5247 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1499, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2698, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5247, "serves": "16–20 People" }
     ],
     "oldPrice": 1619,
     "rating": 5,
@@ -1986,9 +1988,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1399,
     "weights": [
-      { "label": "0.5 Kg", "price": 1399 },
-      { "label": "1 Kg", "price": 2518 },
-      { "label": "2 Kg", "price": 4897 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1399, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2518, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 4897, "serves": "16–20 People" }
     ],
     "oldPrice": 1519,
     "rating": 5,
@@ -2004,9 +2006,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1429,
     "weights": [
-      { "label": "0.5 Kg", "price": 1429 },
-      { "label": "1 Kg", "price": 2572 },
-      { "label": "2 Kg", "price": 5002 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1429, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2572, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5002, "serves": "16–20 People" }
     ],
     "oldPrice": 1549,
     "rating": 4,
@@ -2022,9 +2024,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1459,
     "weights": [
-      { "label": "0.5 Kg", "price": 1459 },
-      { "label": "1 Kg", "price": 2626 },
-      { "label": "2 Kg", "price": 5107 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1459, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2626, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5107, "serves": "16–20 People" }
     ],
     "oldPrice": 1579,
     "rating": 4,
@@ -2040,9 +2042,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1489,
     "weights": [
-      { "label": "0.5 Kg", "price": 1489 },
-      { "label": "1 Kg", "price": 2680 },
-      { "label": "2 Kg", "price": 5212 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1489, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2680, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5212, "serves": "16–20 People" }
     ],
     "oldPrice": 1609,
     "rating": 4,
@@ -2058,9 +2060,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1519,
     "weights": [
-      { "label": "0.5 Kg", "price": 1519 },
-      { "label": "1 Kg", "price": 2734 },
-      { "label": "2 Kg", "price": 5317 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1519, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2734, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5317, "serves": "16–20 People" }
     ],
     "oldPrice": 1639,
     "rating": 4,
@@ -2076,9 +2078,9 @@ export const products: Product[] = [
     "category": "Luxury Cakes",
     "price": 1549,
     "weights": [
-      { "label": "0.5 Kg", "price": 1549 },
-      { "label": "1 Kg", "price": 2788 },
-      { "label": "2 Kg", "price": 5422 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1549, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2788, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5422, "serves": "16–20 People" }
     ],
     "oldPrice": 1669,
     "rating": 5,
@@ -2094,9 +2096,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1449,
     "weights": [
-      { "label": "0.5 Kg", "price": 1449 },
-      { "label": "1 Kg", "price": 2608 },
-      { "label": "2 Kg", "price": 5072 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1449, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2608, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5072, "serves": "16–20 People" }
     ],
     "oldPrice": 1569,
     "rating": 5,
@@ -2112,9 +2114,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1479,
     "weights": [
-      { "label": "0.5 Kg", "price": 1479 },
-      { "label": "1 Kg", "price": 2662 },
-      { "label": "2 Kg", "price": 5177 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1479, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2662, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5177, "serves": "16–20 People" }
     ],
     "oldPrice": 1599,
     "rating": 5,
@@ -2130,9 +2132,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1509,
     "weights": [
-      { "label": "0.5 Kg", "price": 1509 },
-      { "label": "1 Kg", "price": 2716 },
-      { "label": "2 Kg", "price": 5282 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1509, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2716, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5282, "serves": "16–20 People" }
     ],
     "oldPrice": 1629,
     "rating": 5,
@@ -2148,9 +2150,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1539,
     "weights": [
-      { "label": "0.5 Kg", "price": 1539 },
-      { "label": "1 Kg", "price": 2770 },
-      { "label": "2 Kg", "price": 5387 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1539, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2770, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5387, "serves": "16–20 People" }
     ],
     "oldPrice": 1659,
     "rating": 5,
@@ -2166,9 +2168,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1569,
     "weights": [
-      { "label": "0.5 Kg", "price": 1569 },
-      { "label": "1 Kg", "price": 2824 },
-      { "label": "2 Kg", "price": 5492 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1569, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2824, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5492, "serves": "16–20 People" }
     ],
     "oldPrice": 1689,
     "rating": 5,
@@ -2184,9 +2186,9 @@ export const products: Product[] = [
     "category": "Chocolate Cakes",
     "price": 1599,
     "weights": [
-      { "label": "0.5 Kg", "price": 1599 },
-      { "label": "1 Kg", "price": 2878 },
-      { "label": "2 Kg", "price": 5597 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1599, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2878, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5597, "serves": "16–20 People" }
     ],
     "oldPrice": 1719,
     "rating": 4,
@@ -2202,9 +2204,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1499,
     "weights": [
-      { "label": "0.5 Kg", "price": 1499 },
-      { "label": "1 Kg", "price": 2698 },
-      { "label": "2 Kg", "price": 5247 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1499, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2698, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5247, "serves": "16–20 People" }
     ],
     "oldPrice": 1619,
     "rating": 4,
@@ -2220,9 +2222,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1529,
     "weights": [
-      { "label": "0.5 Kg", "price": 1529 },
-      { "label": "1 Kg", "price": 2752 },
-      { "label": "2 Kg", "price": 5352 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1529, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2752, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5352, "serves": "16–20 People" }
     ],
     "oldPrice": 1649,
     "rating": 4,
@@ -2238,9 +2240,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1559,
     "weights": [
-      { "label": "0.5 Kg", "price": 1559 },
-      { "label": "1 Kg", "price": 2806 },
-      { "label": "2 Kg", "price": 5457 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1559, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2806, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5457, "serves": "16–20 People" }
     ],
     "oldPrice": 1679,
     "rating": 4,
@@ -2256,9 +2258,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1589,
     "weights": [
-      { "label": "0.5 Kg", "price": 1589 },
-      { "label": "1 Kg", "price": 2860 },
-      { "label": "2 Kg", "price": 5562 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1589, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2860, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5562, "serves": "16–20 People" }
     ],
     "oldPrice": 1709,
     "rating": 5,
@@ -2274,9 +2276,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1619,
     "weights": [
-      { "label": "0.5 Kg", "price": 1619 },
-      { "label": "1 Kg", "price": 2914 },
-      { "label": "2 Kg", "price": 5667 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1619, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2914, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5667, "serves": "16–20 People" }
     ],
     "oldPrice": 1739,
     "rating": 5,
@@ -2292,9 +2294,9 @@ export const products: Product[] = [
     "category": "Truffle Cakes",
     "price": 1649,
     "weights": [
-      { "label": "0.5 Kg", "price": 1649 },
-      { "label": "1 Kg", "price": 2968 },
-      { "label": "2 Kg", "price": 5772 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2968, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5772, "serves": "16–20 People" }
     ],
     "oldPrice": 1769,
     "rating": 5,
@@ -2310,9 +2312,9 @@ export const products: Product[] = [
     "category": "Fruit Cakes",
     "price": 1549,
     "weights": [
-      { "label": "0.5 Kg", "price": 1549 },
-      { "label": "1 Kg", "price": 2788 },
-      { "label": "2 Kg", "price": 5422 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1549, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2788, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5422, "serves": "16–20 People" }
     ],
     "oldPrice": 1669,
     "rating": 5,
@@ -2328,9 +2330,9 @@ export const products: Product[] = [
     "category": "Fruit Cakes",
     "price": 1609,
     "weights": [
-      { "label": "0.5 Kg", "price": 1609 },
-      { "label": "1 Kg", "price": 2896 },
-      { "label": "2 Kg", "price": 5632 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1609, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2896, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5632, "serves": "16–20 People" }
     ],
     "oldPrice": 1729,
     "rating": 5,
@@ -2346,9 +2348,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1599,
     "weights": [
-      { "label": "0.5 Kg", "price": 1599 },
-      { "label": "1 Kg", "price": 2878 },
-      { "label": "2 Kg", "price": 5597 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1599, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2878, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5597, "serves": "16–20 People" }
     ],
     "oldPrice": 1719,
     "rating": 4,
@@ -2364,9 +2366,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1629,
     "weights": [
-      { "label": "0.5 Kg", "price": 1629 },
-      { "label": "1 Kg", "price": 2932 },
-      { "label": "2 Kg", "price": 5702 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1629, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2932, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5702, "serves": "16–20 People" }
     ],
     "oldPrice": 1749,
     "rating": 5,
@@ -2382,9 +2384,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1659,
     "weights": [
-      { "label": "0.5 Kg", "price": 1659 },
-      { "label": "1 Kg", "price": 2986 },
-      { "label": "2 Kg", "price": 5807 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1659, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2986, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5807, "serves": "16–20 People" }
     ],
     "oldPrice": 1779,
     "rating": 5,
@@ -2400,9 +2402,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1689,
     "weights": [
-      { "label": "0.5 Kg", "price": 1689 },
-      { "label": "1 Kg", "price": 3040 },
-      { "label": "2 Kg", "price": 5912 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1689, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3040, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5912, "serves": "16–20 People" }
     ],
     "oldPrice": 1809,
     "rating": 5,
@@ -2418,9 +2420,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1719,
     "weights": [
-      { "label": "0.5 Kg", "price": 1719 },
-      { "label": "1 Kg", "price": 3094 },
-      { "label": "2 Kg", "price": 6017 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1719, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3094, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6017, "serves": "16–20 People" }
     ],
     "oldPrice": 1839,
     "rating": 5,
@@ -2436,9 +2438,9 @@ export const products: Product[] = [
     "category": "Butterscotch Cakes",
     "price": 1749,
     "weights": [
-      { "label": "0.5 Kg", "price": 1749 },
-      { "label": "1 Kg", "price": 3148 },
-      { "label": "2 Kg", "price": 6122 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1749, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3148, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6122, "serves": "16–20 People" }
     ],
     "oldPrice": 1869,
     "rating": 5,
@@ -2454,9 +2456,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1649,
     "weights": [
-      { "label": "0.5 Kg", "price": 1649 },
-      { "label": "1 Kg", "price": 2968 },
-      { "label": "2 Kg", "price": 5772 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 2968, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5772, "serves": "16–20 People" }
     ],
     "oldPrice": 1769,
     "rating": 5,
@@ -2472,9 +2474,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1679,
     "weights": [
-      { "label": "0.5 Kg", "price": 1679 },
-      { "label": "1 Kg", "price": 3022 },
-      { "label": "2 Kg", "price": 5877 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1679, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3022, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5877, "serves": "16–20 People" }
     ],
     "oldPrice": 1799,
     "rating": 4,
@@ -2490,9 +2492,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1709,
     "weights": [
-      { "label": "0.5 Kg", "price": 1709 },
-      { "label": "1 Kg", "price": 3076 },
-      { "label": "2 Kg", "price": 5982 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1709, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3076, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 5982, "serves": "16–20 People" }
     ],
     "oldPrice": 1829,
     "rating": 4,
@@ -2508,9 +2510,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1739,
     "weights": [
-      { "label": "0.5 Kg", "price": 1739 },
-      { "label": "1 Kg", "price": 3130 },
-      { "label": "2 Kg", "price": 6087 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1739, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3130, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6087, "serves": "16–20 People" }
     ],
     "oldPrice": 1859,
     "rating": 4,
@@ -2526,9 +2528,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1769,
     "weights": [
-      { "label": "0.5 Kg", "price": 1769 },
-      { "label": "1 Kg", "price": 3184 },
-      { "label": "2 Kg", "price": 6192 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1769, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3184, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6192, "serves": "16–20 People" }
     ],
     "oldPrice": 1889,
     "rating": 4,
@@ -2544,9 +2546,9 @@ export const products: Product[] = [
     "category": "Vanilla Cakes",
     "price": 1799,
     "weights": [
-      { "label": "0.5 Kg", "price": 1799 },
-      { "label": "1 Kg", "price": 3238 },
-      { "label": "2 Kg", "price": 6297 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3238, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6297, "serves": "16–20 People" }
     ],
     "oldPrice": 1919,
     "rating": 5,
@@ -2562,9 +2564,9 @@ export const products: Product[] = [
     "category": "Black Forest Cakes",
     "price": 1729,
     "weights": [
-      { "label": "0.5 Kg", "price": 1729 },
-      { "label": "1 Kg", "price": 3112 },
-      { "label": "2 Kg", "price": 6052 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1729, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3112, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6052, "serves": "16–20 People" }
     ],
     "oldPrice": 1849,
     "rating": 5,
@@ -2580,9 +2582,9 @@ export const products: Product[] = [
     "category": "Black Forest Cakes",
     "price": 1789,
     "weights": [
-      { "label": "0.5 Kg", "price": 1789 },
-      { "label": "1 Kg", "price": 3220 },
-      { "label": "2 Kg", "price": 6262 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1789, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3220, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6262, "serves": "16–20 People" }
     ],
     "oldPrice": 1909,
     "rating": 5,
@@ -2598,9 +2600,9 @@ export const products: Product[] = [
     "category": "Black Forest Cakes",
     "price": 1819,
     "weights": [
-      { "label": "0.5 Kg", "price": 1819 },
-      { "label": "1 Kg", "price": 3274 },
-      { "label": "2 Kg", "price": 6367 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1819, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3274, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6367, "serves": "16–20 People" }
     ],
     "oldPrice": 1939,
     "rating": 5,
@@ -2616,9 +2618,9 @@ export const products: Product[] = [
     "category": "Red Velvet Cakes",
     "price": 1779,
     "weights": [
-      { "label": "0.5 Kg", "price": 1779 },
-      { "label": "1 Kg", "price": 3202 },
-      { "label": "2 Kg", "price": 6227 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1779, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3202, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6227, "serves": "16–20 People" }
     ],
     "oldPrice": 1899,
     "rating": 4,
@@ -2634,9 +2636,9 @@ export const products: Product[] = [
     "category": "Red Velvet Cakes",
     "price": 1809,
     "weights": [
-      { "label": "0.5 Kg", "price": 1809 },
-      { "label": "1 Kg", "price": 3256 },
-      { "label": "2 Kg", "price": 6332 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1809, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3256, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6332, "serves": "16–20 People" }
     ],
     "oldPrice": 1929,
     "rating": 4,
@@ -2652,9 +2654,9 @@ export const products: Product[] = [
     "category": "Rasmalai Cakes",
     "price": 1799,
     "weights": [
-      { "label": "0.5 Kg", "price": 1799 },
-      { "label": "1 Kg", "price": 3238 },
-      { "label": "2 Kg", "price": 6297 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3238, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6297, "serves": "16–20 People" }
     ],
     "oldPrice": 1919,
     "rating": 5,
@@ -2670,9 +2672,9 @@ export const products: Product[] = [
     "category": "Rasmalai Cakes",
     "price": 1859,
     "weights": [
-      { "label": "0.5 Kg", "price": 1859 },
-      { "label": "1 Kg", "price": 3346 },
-      { "label": "2 Kg", "price": 6507 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1859, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3346, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6507, "serves": "16–20 People" }
     ],
     "oldPrice": 1979,
     "rating": 5,
@@ -2688,9 +2690,9 @@ export const products: Product[] = [
     "category": "Rasmalai Cakes",
     "price": 1889,
     "weights": [
-      { "label": "0.5 Kg", "price": 1889 },
-      { "label": "1 Kg", "price": 3400 },
-      { "label": "2 Kg", "price": 6612 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1889, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3400, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6612, "serves": "16–20 People" }
     ],
     "oldPrice": 2009,
     "rating": 4,
@@ -2706,9 +2708,9 @@ export const products: Product[] = [
     "category": "Rasmalai Cakes",
     "price": 1919,
     "weights": [
-      { "label": "0.5 Kg", "price": 1919 },
-      { "label": "1 Kg", "price": 3454 },
-      { "label": "2 Kg", "price": 6717 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1919, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3454, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6717, "serves": "16–20 People" }
     ],
     "oldPrice": 2039,
     "rating": 4,
@@ -2724,9 +2726,9 @@ export const products: Product[] = [
     "category": "Rasmalai Cakes",
     "price": 1949,
     "weights": [
-      { "label": "0.5 Kg", "price": 1949 },
-      { "label": "1 Kg", "price": 3508 },
-      { "label": "2 Kg", "price": 6822 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1949, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3508, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6822, "serves": "16–20 People" }
     ],
     "oldPrice": 2069,
     "rating": 4,
@@ -2742,9 +2744,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1849,
     "weights": [
-      { "label": "0.5 Kg", "price": 1849 },
-      { "label": "1 Kg", "price": 3328 },
-      { "label": "2 Kg", "price": 6472 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1849, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3328, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6472, "serves": "16–20 People" }
     ],
     "oldPrice": 1969,
     "rating": 4,
@@ -2760,9 +2762,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1879,
     "weights": [
-      { "label": "0.5 Kg", "price": 1879 },
-      { "label": "1 Kg", "price": 3382 },
-      { "label": "2 Kg", "price": 6577 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1879, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3382, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6577, "serves": "16–20 People" }
     ],
     "oldPrice": 1999,
     "rating": 5,
@@ -2778,9 +2780,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1909,
     "weights": [
-      { "label": "0.5 Kg", "price": 1909 },
-      { "label": "1 Kg", "price": 3436 },
-      { "label": "2 Kg", "price": 6682 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1909, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3436, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6682, "serves": "16–20 People" }
     ],
     "oldPrice": 2029,
     "rating": 5,
@@ -2796,9 +2798,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1939,
     "weights": [
-      { "label": "0.5 Kg", "price": 1939 },
-      { "label": "1 Kg", "price": 3490 },
-      { "label": "2 Kg", "price": 6787 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1939, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3490, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6787, "serves": "16–20 People" }
     ],
     "oldPrice": 2059,
     "rating": 5,
@@ -2814,9 +2816,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1969,
     "weights": [
-      { "label": "0.5 Kg", "price": 1969 },
-      { "label": "1 Kg", "price": 3544 },
-      { "label": "2 Kg", "price": 6892 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1969, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3544, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6892, "serves": "16–20 People" }
     ],
     "oldPrice": 2089,
     "rating": 5,
@@ -2832,9 +2834,9 @@ export const products: Product[] = [
     "category": "Biscoff Cakes",
     "price": 1999,
     "weights": [
-      { "label": "0.5 Kg", "price": 1999 },
-      { "label": "1 Kg", "price": 3598 },
-      { "label": "2 Kg", "price": 6997 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3598, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6997, "serves": "16–20 People" }
     ],
     "oldPrice": 2119,
     "rating": 5,
@@ -2850,9 +2852,9 @@ export const products: Product[] = [
     "category": "Cheesecakes",
     "price": 1899,
     "weights": [
-      { "label": "0.5 Kg", "price": 1899 },
-      { "label": "1 Kg", "price": 3418 },
-      { "label": "2 Kg", "price": 6647 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1899, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3418, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6647, "serves": "16–20 People" }
     ],
     "oldPrice": 2019,
     "rating": 5,
@@ -2868,9 +2870,9 @@ export const products: Product[] = [
     "category": "Cheesecakes",
     "price": 1929,
     "weights": [
-      { "label": "0.5 Kg", "price": 1929 },
-      { "label": "1 Kg", "price": 3472 },
-      { "label": "2 Kg", "price": 6752 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1929, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3472, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6752, "serves": "16–20 People" }
     ],
     "oldPrice": 2049,
     "rating": 4,
@@ -2886,9 +2888,9 @@ export const products: Product[] = [
     "category": "Cheesecakes",
     "price": 1959,
     "weights": [
-      { "label": "0.5 Kg", "price": 1959 },
-      { "label": "1 Kg", "price": 3526 },
-      { "label": "2 Kg", "price": 6857 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1959, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3526, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6857, "serves": "16–20 People" }
     ],
     "oldPrice": 2079,
     "rating": 4,
@@ -2904,9 +2906,9 @@ export const products: Product[] = [
     "category": "Cheesecakes",
     "price": 1989,
     "weights": [
-      { "label": "0.5 Kg", "price": 1989 },
-      { "label": "1 Kg", "price": 3580 },
-      { "label": "2 Kg", "price": 6962 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1989, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3580, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6962, "serves": "16–20 People" }
     ],
     "oldPrice": 2109,
     "rating": 4,
@@ -2922,9 +2924,9 @@ export const products: Product[] = [
     "category": "Cheesecakes",
     "price": 2019,
     "weights": [
-      { "label": "0.5 Kg", "price": 2019 },
-      { "label": "1 Kg", "price": 3634 },
-      { "label": "2 Kg", "price": 7067 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2019, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3634, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7067, "serves": "16–20 People" }
     ],
     "oldPrice": 2139,
     "rating": 4,
@@ -2940,9 +2942,9 @@ export const products: Product[] = [
     "category": "Jar Cakes",
     "price": 1949,
     "weights": [
-      { "label": "0.5 Kg", "price": 1949 },
-      { "label": "1 Kg", "price": 3508 },
-      { "label": "2 Kg", "price": 6822 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1949, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3508, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6822, "serves": "16–20 People" }
     ],
     "oldPrice": 2069,
     "rating": 5,
@@ -2958,9 +2960,9 @@ export const products: Product[] = [
     "category": "Jar Cakes",
     "price": 1979,
     "weights": [
-      { "label": "0.5 Kg", "price": 1979 },
-      { "label": "1 Kg", "price": 3562 },
-      { "label": "2 Kg", "price": 6927 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1979, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3562, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6927, "serves": "16–20 People" }
     ],
     "oldPrice": 2099,
     "rating": 5,
@@ -2976,9 +2978,9 @@ export const products: Product[] = [
     "category": "Jar Cakes",
     "price": 2009,
     "weights": [
-      { "label": "0.5 Kg", "price": 2009 },
-      { "label": "1 Kg", "price": 3616 },
-      { "label": "2 Kg", "price": 7032 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2009, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3616, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7032, "serves": "16–20 People" }
     ],
     "oldPrice": 2129,
     "rating": 5,
@@ -2994,9 +2996,9 @@ export const products: Product[] = [
     "category": "Jar Cakes",
     "price": 2069,
     "weights": [
-      { "label": "0.5 Kg", "price": 2069 },
-      { "label": "1 Kg", "price": 3724 },
-      { "label": "2 Kg", "price": 7242 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2069, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3724, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7242, "serves": "16–20 People" }
     ],
     "oldPrice": 2189,
     "rating": 5,
@@ -3012,9 +3014,9 @@ export const products: Product[] = [
     "category": "Jar Cakes",
     "price": 2099,
     "weights": [
-      { "label": "0.5 Kg", "price": 2099 },
-      { "label": "1 Kg", "price": 3778 },
-      { "label": "2 Kg", "price": 7347 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2099, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3778, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7347, "serves": "16–20 People" }
     ],
     "oldPrice": 2219,
     "rating": 4,
@@ -3030,9 +3032,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 1999,
     "weights": [
-      { "label": "0.5 Kg", "price": 1999 },
-      { "label": "1 Kg", "price": 3598 },
-      { "label": "2 Kg", "price": 6997 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 1999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3598, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 6997, "serves": "16–20 People" }
     ],
     "oldPrice": 2119,
     "rating": 4,
@@ -3048,9 +3050,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 2029,
     "weights": [
-      { "label": "0.5 Kg", "price": 2029 },
-      { "label": "1 Kg", "price": 3652 },
-      { "label": "2 Kg", "price": 7102 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2029, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3652, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7102, "serves": "16–20 People" }
     ],
     "oldPrice": 2149,
     "rating": 4,
@@ -3066,9 +3068,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 2059,
     "weights": [
-      { "label": "0.5 Kg", "price": 2059 },
-      { "label": "1 Kg", "price": 3706 },
-      { "label": "2 Kg", "price": 7207 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2059, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3706, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7207, "serves": "16–20 People" }
     ],
     "oldPrice": 2179,
     "rating": 4,
@@ -3084,9 +3086,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 2089,
     "weights": [
-      { "label": "0.5 Kg", "price": 2089 },
-      { "label": "1 Kg", "price": 3760 },
-      { "label": "2 Kg", "price": 7312 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2089, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3760, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7312, "serves": "16–20 People" }
     ],
     "oldPrice": 2209,
     "rating": 5,
@@ -3102,9 +3104,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 2119,
     "weights": [
-      { "label": "0.5 Kg", "price": 2119 },
-      { "label": "1 Kg", "price": 3814 },
-      { "label": "2 Kg", "price": 7417 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2119, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3814, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7417, "serves": "16–20 People" }
     ],
     "oldPrice": 2239,
     "rating": 5,
@@ -3120,9 +3122,9 @@ export const products: Product[] = [
     "category": "Pastries",
     "price": 2149,
     "weights": [
-      { "label": "0.5 Kg", "price": 2149 },
-      { "label": "1 Kg", "price": 3868 },
-      { "label": "2 Kg", "price": 7522 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2149, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3868, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7522, "serves": "16–20 People" }
     ],
     "oldPrice": 2269,
     "rating": 5,
@@ -3138,9 +3140,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2049,
     "weights": [
-      { "label": "0.5 Kg", "price": 2049 },
-      { "label": "1 Kg", "price": 3688 },
-      { "label": "2 Kg", "price": 7172 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2049, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3688, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7172, "serves": "16–20 People" }
     ],
     "oldPrice": 2169,
     "rating": 5,
@@ -3156,9 +3158,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2079,
     "weights": [
-      { "label": "0.5 Kg", "price": 2079 },
-      { "label": "1 Kg", "price": 3742 },
-      { "label": "2 Kg", "price": 7277 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2079, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3742, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7277, "serves": "16–20 People" }
     ],
     "oldPrice": 2199,
     "rating": 5,
@@ -3174,9 +3176,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2109,
     "weights": [
-      { "label": "0.5 Kg", "price": 2109 },
-      { "label": "1 Kg", "price": 3796 },
-      { "label": "2 Kg", "price": 7382 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2109, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3796, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7382, "serves": "16–20 People" }
     ],
     "oldPrice": 2229,
     "rating": 5,
@@ -3192,9 +3194,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2139,
     "weights": [
-      { "label": "0.5 Kg", "price": 2139 },
-      { "label": "1 Kg", "price": 3850 },
-      { "label": "2 Kg", "price": 7487 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2139, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3850, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7487, "serves": "16–20 People" }
     ],
     "oldPrice": 2259,
     "rating": 4,
@@ -3210,9 +3212,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2169,
     "weights": [
-      { "label": "0.5 Kg", "price": 2169 },
-      { "label": "1 Kg", "price": 3904 },
-      { "label": "2 Kg", "price": 7592 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2169, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3904, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7592, "serves": "16–20 People" }
     ],
     "oldPrice": 2289,
     "rating": 4,
@@ -3228,9 +3230,9 @@ export const products: Product[] = [
     "category": "Cupcakes",
     "price": 2199,
     "weights": [
-      { "label": "0.5 Kg", "price": 2199 },
-      { "label": "1 Kg", "price": 3958 },
-      { "label": "2 Kg", "price": 7697 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3958, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7697, "serves": "16–20 People" }
     ],
     "oldPrice": 2319,
     "rating": 4,
@@ -3246,9 +3248,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2099,
     "weights": [
-      { "label": "0.5 Kg", "price": 2099 },
-      { "label": "1 Kg", "price": 3778 },
-      { "label": "2 Kg", "price": 7347 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2099, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3778, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7347, "serves": "16–20 People" }
     ],
     "oldPrice": 2219,
     "rating": 4,
@@ -3264,9 +3266,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2129,
     "weights": [
-      { "label": "0.5 Kg", "price": 2129 },
-      { "label": "1 Kg", "price": 3832 },
-      { "label": "2 Kg", "price": 7452 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2129, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3832, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7452, "serves": "16–20 People" }
     ],
     "oldPrice": 2249,
     "rating": 5,
@@ -3282,9 +3284,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2159,
     "weights": [
-      { "label": "0.5 Kg", "price": 2159 },
-      { "label": "1 Kg", "price": 3886 },
-      { "label": "2 Kg", "price": 7557 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2159, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3886, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7557, "serves": "16–20 People" }
     ],
     "oldPrice": 2279,
     "rating": 5,
@@ -3300,9 +3302,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2189,
     "weights": [
-      { "label": "0.5 Kg", "price": 2189 },
-      { "label": "1 Kg", "price": 3940 },
-      { "label": "2 Kg", "price": 7662 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2189, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3940, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7662, "serves": "16–20 People" }
     ],
     "oldPrice": 2309,
     "rating": 5,
@@ -3318,9 +3320,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2219,
     "weights": [
-      { "label": "0.5 Kg", "price": 2219 },
-      { "label": "1 Kg", "price": 3994 },
-      { "label": "2 Kg", "price": 7767 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2219, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3994, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7767, "serves": "16–20 People" }
     ],
     "oldPrice": 2339,
     "rating": 5,
@@ -3336,9 +3338,9 @@ export const products: Product[] = [
     "category": "Brownies",
     "price": 2249,
     "weights": [
-      { "label": "0.5 Kg", "price": 2249 },
-      { "label": "1 Kg", "price": 4048 },
-      { "label": "2 Kg", "price": 7872 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2249, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4048, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7872, "serves": "16–20 People" }
     ],
     "oldPrice": 2369,
     "rating": 5,
@@ -3354,9 +3356,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2149,
     "weights": [
-      { "label": "0.5 Kg", "price": 2149 },
-      { "label": "1 Kg", "price": 3868 },
-      { "label": "2 Kg", "price": 7522 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2149, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3868, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7522, "serves": "16–20 People" }
     ],
     "oldPrice": 2269,
     "rating": 5,
@@ -3372,9 +3374,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2179,
     "weights": [
-      { "label": "0.5 Kg", "price": 2179 },
-      { "label": "1 Kg", "price": 3922 },
-      { "label": "2 Kg", "price": 7627 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2179, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3922, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7627, "serves": "16–20 People" }
     ],
     "oldPrice": 2299,
     "rating": 4,
@@ -3390,9 +3392,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2209,
     "weights": [
-      { "label": "0.5 Kg", "price": 2209 },
-      { "label": "1 Kg", "price": 3976 },
-      { "label": "2 Kg", "price": 7732 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2209, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3976, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7732, "serves": "16–20 People" }
     ],
     "oldPrice": 2329,
     "rating": 4,
@@ -3408,9 +3410,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2239,
     "weights": [
-      { "label": "0.5 Kg", "price": 2239 },
-      { "label": "1 Kg", "price": 4030 },
-      { "label": "2 Kg", "price": 7837 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2239, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4030, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7837, "serves": "16–20 People" }
     ],
     "oldPrice": 2359,
     "rating": 4,
@@ -3426,9 +3428,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2269,
     "weights": [
-      { "label": "0.5 Kg", "price": 2269 },
-      { "label": "1 Kg", "price": 4084 },
-      { "label": "2 Kg", "price": 7942 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2269, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4084, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7942, "serves": "16–20 People" }
     ],
     "oldPrice": 2389,
     "rating": 4,
@@ -3444,9 +3446,9 @@ export const products: Product[] = [
     "category": "Cookies",
     "price": 2299,
     "weights": [
-      { "label": "0.5 Kg", "price": 2299 },
-      { "label": "1 Kg", "price": 4138 },
-      { "label": "2 Kg", "price": 8047 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2299, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4138, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8047, "serves": "16–20 People" }
     ],
     "oldPrice": 2419,
     "rating": 5,
@@ -3462,9 +3464,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2199,
     "weights": [
-      { "label": "0.5 Kg", "price": 2199 },
-      { "label": "1 Kg", "price": 3958 },
-      { "label": "2 Kg", "price": 7697 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 3958, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7697, "serves": "16–20 People" }
     ],
     "oldPrice": 2319,
     "rating": 5,
@@ -3480,9 +3482,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2229,
     "weights": [
-      { "label": "0.5 Kg", "price": 2229 },
-      { "label": "1 Kg", "price": 4012 },
-      { "label": "2 Kg", "price": 7802 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2229, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4012, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7802, "serves": "16–20 People" }
     ],
     "oldPrice": 2349,
     "rating": 5,
@@ -3498,9 +3500,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2259,
     "weights": [
-      { "label": "0.5 Kg", "price": 2259 },
-      { "label": "1 Kg", "price": 4066 },
-      { "label": "2 Kg", "price": 7907 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2259, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4066, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7907, "serves": "16–20 People" }
     ],
     "oldPrice": 2379,
     "rating": 5,
@@ -3516,9 +3518,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2289,
     "weights": [
-      { "label": "0.5 Kg", "price": 2289 },
-      { "label": "1 Kg", "price": 4120 },
-      { "label": "2 Kg", "price": 8012 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2289, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4120, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8012, "serves": "16–20 People" }
     ],
     "oldPrice": 2409,
     "rating": 5,
@@ -3534,9 +3536,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2319,
     "weights": [
-      { "label": "0.5 Kg", "price": 2319 },
-      { "label": "1 Kg", "price": 4174 },
-      { "label": "2 Kg", "price": 8117 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2319, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4174, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8117, "serves": "16–20 People" }
     ],
     "oldPrice": 2439,
     "rating": 5,
@@ -3552,9 +3554,9 @@ export const products: Product[] = [
     "category": "Tea Cakes",
     "price": 2349,
     "weights": [
-      { "label": "0.5 Kg", "price": 2349 },
-      { "label": "1 Kg", "price": 4228 },
-      { "label": "2 Kg", "price": 8222 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2349, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4228, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8222, "serves": "16–20 People" }
     ],
     "oldPrice": 2469,
     "rating": 4,
@@ -3570,9 +3572,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2249,
     "weights": [
-      { "label": "0.5 Kg", "price": 2249 },
-      { "label": "1 Kg", "price": 4048 },
-      { "label": "2 Kg", "price": 7872 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2249, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4048, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7872, "serves": "16–20 People" }
     ],
     "oldPrice": 2369,
     "rating": 4,
@@ -3588,9 +3590,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2279,
     "weights": [
-      { "label": "0.5 Kg", "price": 2279 },
-      { "label": "1 Kg", "price": 4102 },
-      { "label": "2 Kg", "price": 7977 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2279, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4102, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 7977, "serves": "16–20 People" }
     ],
     "oldPrice": 2399,
     "rating": 4,
@@ -3606,9 +3608,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2309,
     "weights": [
-      { "label": "0.5 Kg", "price": 2309 },
-      { "label": "1 Kg", "price": 4156 },
-      { "label": "2 Kg", "price": 8082 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2309, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4156, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8082, "serves": "16–20 People" }
     ],
     "oldPrice": 2429,
     "rating": 4,
@@ -3624,9 +3626,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2339,
     "weights": [
-      { "label": "0.5 Kg", "price": 2339 },
-      { "label": "1 Kg", "price": 4210 },
-      { "label": "2 Kg", "price": 8187 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2339, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4210, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8187, "serves": "16–20 People" }
     ],
     "oldPrice": 2459,
     "rating": 5,
@@ -3642,9 +3644,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2369,
     "weights": [
-      { "label": "0.5 Kg", "price": 2369 },
-      { "label": "1 Kg", "price": 4264 },
-      { "label": "2 Kg", "price": 8292 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2369, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4264, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8292, "serves": "16–20 People" }
     ],
     "oldPrice": 2489,
     "rating": 5,
@@ -3660,9 +3662,9 @@ export const products: Product[] = [
     "category": "Mousse Cakes",
     "price": 2399,
     "weights": [
-      { "label": "0.5 Kg", "price": 2399 },
-      { "label": "1 Kg", "price": 4318 },
-      { "label": "2 Kg", "price": 8397 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2399, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4318, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8397, "serves": "16–20 People" }
     ],
     "oldPrice": 2519,
     "rating": 5,
@@ -3678,9 +3680,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2299,
     "weights": [
-      { "label": "0.5 Kg", "price": 2299 },
-      { "label": "1 Kg", "price": 4138 },
-      { "label": "2 Kg", "price": 8047 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2299, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4138, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8047, "serves": "16–20 People" }
     ],
     "oldPrice": 2419,
     "rating": 5,
@@ -3696,9 +3698,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2329,
     "weights": [
-      { "label": "0.5 Kg", "price": 2329 },
-      { "label": "1 Kg", "price": 4192 },
-      { "label": "2 Kg", "price": 8152 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2329, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4192, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8152, "serves": "16–20 People" }
     ],
     "oldPrice": 2449,
     "rating": 5,
@@ -3714,9 +3716,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2359,
     "weights": [
-      { "label": "0.5 Kg", "price": 2359 },
-      { "label": "1 Kg", "price": 4246 },
-      { "label": "2 Kg", "price": 8257 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2359, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4246, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8257, "serves": "16–20 People" }
     ],
     "oldPrice": 2479,
     "rating": 5,
@@ -3732,9 +3734,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2389,
     "weights": [
-      { "label": "0.5 Kg", "price": 2389 },
-      { "label": "1 Kg", "price": 4300 },
-      { "label": "2 Kg", "price": 8362 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2389, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4300, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8362, "serves": "16–20 People" }
     ],
     "oldPrice": 2509,
     "rating": 4,
@@ -3750,9 +3752,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2419,
     "weights": [
-      { "label": "0.5 Kg", "price": 2419 },
-      { "label": "1 Kg", "price": 4354 },
-      { "label": "2 Kg", "price": 8467 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2419, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4354, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8467, "serves": "16–20 People" }
     ],
     "oldPrice": 2539,
     "rating": 4,
@@ -3768,9 +3770,9 @@ export const products: Product[] = [
     "category": "Dry Cakes",
     "price": 2449,
     "weights": [
-      { "label": "0.5 Kg", "price": 2449 },
-      { "label": "1 Kg", "price": 4408 },
-      { "label": "2 Kg", "price": 8572 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2449, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4408, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8572, "serves": "16–20 People" }
     ],
     "oldPrice": 2569,
     "rating": 4,
@@ -3786,9 +3788,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2349,
     "weights": [
-      { "label": "0.5 Kg", "price": 2349 },
-      { "label": "1 Kg", "price": 4228 },
-      { "label": "2 Kg", "price": 8222 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2349, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4228, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8222, "serves": "16–20 People" }
     ],
     "oldPrice": 2469,
     "rating": 4,
@@ -3804,9 +3806,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2379,
     "weights": [
-      { "label": "0.5 Kg", "price": 2379 },
-      { "label": "1 Kg", "price": 4282 },
-      { "label": "2 Kg", "price": 8327 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2379, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4282, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8327, "serves": "16–20 People" }
     ],
     "oldPrice": 2499,
     "rating": 5,
@@ -3822,9 +3824,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2409,
     "weights": [
-      { "label": "0.5 Kg", "price": 2409 },
-      { "label": "1 Kg", "price": 4336 },
-      { "label": "2 Kg", "price": 8432 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2409, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4336, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8432, "serves": "16–20 People" }
     ],
     "oldPrice": 2529,
     "rating": 5,
@@ -3840,9 +3842,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2439,
     "weights": [
-      { "label": "0.5 Kg", "price": 2439 },
-      { "label": "1 Kg", "price": 4390 },
-      { "label": "2 Kg", "price": 8537 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2439, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4390, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8537, "serves": "16–20 People" }
     ],
     "oldPrice": 2559,
     "rating": 5,
@@ -3858,9 +3860,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2469,
     "weights": [
-      { "label": "0.5 Kg", "price": 2469 },
-      { "label": "1 Kg", "price": 4444 },
-      { "label": "2 Kg", "price": 8642 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2469, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4444, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8642, "serves": "16–20 People" }
     ],
     "oldPrice": 2589,
     "rating": 5,
@@ -3876,9 +3878,9 @@ export const products: Product[] = [
     "category": "Eggless Cakes",
     "price": 2499,
     "weights": [
-      { "label": "0.5 Kg", "price": 2499 },
-      { "label": "1 Kg", "price": 4498 },
-      { "label": "2 Kg", "price": 8747 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2499, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4498, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8747, "serves": "16–20 People" }
     ],
     "oldPrice": 2619,
     "rating": 5,
@@ -3894,9 +3896,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2399,
     "weights": [
-      { "label": "0.5 Kg", "price": 2399 },
-      { "label": "1 Kg", "price": 4318 },
-      { "label": "2 Kg", "price": 8397 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2399, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4318, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8397, "serves": "16–20 People" }
     ],
     "oldPrice": 2519,
     "rating": 5,
@@ -3912,9 +3914,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2429,
     "weights": [
-      { "label": "0.5 Kg", "price": 2429 },
-      { "label": "1 Kg", "price": 4372 },
-      { "label": "2 Kg", "price": 8502 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2429, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4372, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8502, "serves": "16–20 People" }
     ],
     "oldPrice": 2549,
     "rating": 4,
@@ -3930,9 +3932,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2459,
     "weights": [
-      { "label": "0.5 Kg", "price": 2459 },
-      { "label": "1 Kg", "price": 4426 },
-      { "label": "2 Kg", "price": 8607 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2459, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4426, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8607, "serves": "16–20 People" }
     ],
     "oldPrice": 2579,
     "rating": 4,
@@ -3948,9 +3950,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2489,
     "weights": [
-      { "label": "0.5 Kg", "price": 2489 },
-      { "label": "1 Kg", "price": 4480 },
-      { "label": "2 Kg", "price": 8712 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2489, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4480, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8712, "serves": "16–20 People" }
     ],
     "oldPrice": 2609,
     "rating": 4,
@@ -3966,9 +3968,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2519,
     "weights": [
-      { "label": "0.5 Kg", "price": 2519 },
-      { "label": "1 Kg", "price": 4534 },
-      { "label": "2 Kg", "price": 8817 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2519, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4534, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8817, "serves": "16–20 People" }
     ],
     "oldPrice": 2639,
     "rating": 4,
@@ -3984,9 +3986,9 @@ export const products: Product[] = [
     "category": "Custom Cakes",
     "price": 2549,
     "weights": [
-      { "label": "0.5 Kg", "price": 2549 },
-      { "label": "1 Kg", "price": 4588 },
-      { "label": "2 Kg", "price": 8922 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2549, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4588, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8922, "serves": "16–20 People" }
     ],
     "oldPrice": 2669,
     "rating": 5,
@@ -4002,9 +4004,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2449,
     "weights": [
-      { "label": "0.5 Kg", "price": 2449 },
-      { "label": "1 Kg", "price": 4408 },
-      { "label": "2 Kg", "price": 8572 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2449, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4408, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8572, "serves": "16–20 People" }
     ],
     "oldPrice": 2569,
     "rating": 5,
@@ -4020,9 +4022,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2479,
     "weights": [
-      { "label": "0.5 Kg", "price": 2479 },
-      { "label": "1 Kg", "price": 4462 },
-      { "label": "2 Kg", "price": 8677 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2479, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4462, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8677, "serves": "16–20 People" }
     ],
     "oldPrice": 2599,
     "rating": 5,
@@ -4038,9 +4040,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2509,
     "weights": [
-      { "label": "0.5 Kg", "price": 2509 },
-      { "label": "1 Kg", "price": 4516 },
-      { "label": "2 Kg", "price": 8782 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2509, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4516, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8782, "serves": "16–20 People" }
     ],
     "oldPrice": 2629,
     "rating": 5,
@@ -4056,9 +4058,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2539,
     "weights": [
-      { "label": "0.5 Kg", "price": 2539 },
-      { "label": "1 Kg", "price": 4570 },
-      { "label": "2 Kg", "price": 8887 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2539, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4570, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8887, "serves": "16–20 People" }
     ],
     "oldPrice": 2659,
     "rating": 5,
@@ -4074,9 +4076,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2569,
     "weights": [
-      { "label": "0.5 Kg", "price": 2569 },
-      { "label": "1 Kg", "price": 4624 },
-      { "label": "2 Kg", "price": 8992 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2569, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4624, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8992, "serves": "16–20 People" }
     ],
     "oldPrice": 2689,
     "rating": 5,
@@ -4092,9 +4094,9 @@ export const products: Product[] = [
     "category": "Festival Cakes",
     "price": 2599,
     "weights": [
-      { "label": "0.5 Kg", "price": 2599 },
-      { "label": "1 Kg", "price": 4678 },
-      { "label": "2 Kg", "price": 9097 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2599, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4678, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9097, "serves": "16–20 People" }
     ],
     "oldPrice": 2719,
     "rating": 4,
@@ -4110,9 +4112,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2499,
     "weights": [
-      { "label": "0.5 Kg", "price": 2499 },
-      { "label": "1 Kg", "price": 4498 },
-      { "label": "2 Kg", "price": 8747 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2499, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4498, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8747, "serves": "16–20 People" }
     ],
     "oldPrice": 2619,
     "rating": 4,
@@ -4128,9 +4130,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2529,
     "weights": [
-      { "label": "0.5 Kg", "price": 2529 },
-      { "label": "1 Kg", "price": 4552 },
-      { "label": "2 Kg", "price": 8852 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2529, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4552, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8852, "serves": "16–20 People" }
     ],
     "oldPrice": 2649,
     "rating": 4,
@@ -4146,9 +4148,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2559,
     "weights": [
-      { "label": "0.5 Kg", "price": 2559 },
-      { "label": "1 Kg", "price": 4606 },
-      { "label": "2 Kg", "price": 8957 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2559, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4606, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8957, "serves": "16–20 People" }
     ],
     "oldPrice": 2679,
     "rating": 4,
@@ -4164,9 +4166,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2589,
     "weights": [
-      { "label": "0.5 Kg", "price": 2589 },
-      { "label": "1 Kg", "price": 4660 },
-      { "label": "2 Kg", "price": 9062 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2589, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4660, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9062, "serves": "16–20 People" }
     ],
     "oldPrice": 2709,
     "rating": 5,
@@ -4182,9 +4184,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2619,
     "weights": [
-      { "label": "0.5 Kg", "price": 2619 },
-      { "label": "1 Kg", "price": 4714 },
-      { "label": "2 Kg", "price": 9167 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2619, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4714, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9167, "serves": "16–20 People" }
     ],
     "oldPrice": 2739,
     "rating": 5,
@@ -4200,9 +4202,9 @@ export const products: Product[] = [
     "category": "Mother's Day Cakes",
     "price": 2649,
     "weights": [
-      { "label": "0.5 Kg", "price": 2649 },
-      { "label": "1 Kg", "price": 4768 },
-      { "label": "2 Kg", "price": 9272 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4768, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9272, "serves": "16–20 People" }
     ],
     "oldPrice": 2769,
     "rating": 5,
@@ -4218,9 +4220,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2549,
     "weights": [
-      { "label": "0.5 Kg", "price": 2549 },
-      { "label": "1 Kg", "price": 4588 },
-      { "label": "2 Kg", "price": 8922 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2549, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4588, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 8922, "serves": "16–20 People" }
     ],
     "oldPrice": 2669,
     "rating": 5,
@@ -4236,9 +4238,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2579,
     "weights": [
-      { "label": "0.5 Kg", "price": 2579 },
-      { "label": "1 Kg", "price": 4642 },
-      { "label": "2 Kg", "price": 9027 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2579, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4642, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9027, "serves": "16–20 People" }
     ],
     "oldPrice": 2699,
     "rating": 5,
@@ -4254,9 +4256,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2609,
     "weights": [
-      { "label": "0.5 Kg", "price": 2609 },
-      { "label": "1 Kg", "price": 4696 },
-      { "label": "2 Kg", "price": 9132 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2609, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4696, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9132, "serves": "16–20 People" }
     ],
     "oldPrice": 2729,
     "rating": 5,
@@ -4272,9 +4274,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2639,
     "weights": [
-      { "label": "0.5 Kg", "price": 2639 },
-      { "label": "1 Kg", "price": 4750 },
-      { "label": "2 Kg", "price": 9237 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2639, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4750, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9237, "serves": "16–20 People" }
     ],
     "oldPrice": 2759,
     "rating": 4,
@@ -4290,9 +4292,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2669,
     "weights": [
-      { "label": "0.5 Kg", "price": 2669 },
-      { "label": "1 Kg", "price": 4804 },
-      { "label": "2 Kg", "price": 9342 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2669, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4804, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9342, "serves": "16–20 People" }
     ],
     "oldPrice": 2789,
     "rating": 4,
@@ -4308,9 +4310,9 @@ export const products: Product[] = [
     "category": "Father's Day Cakes",
     "price": 2699,
     "weights": [
-      { "label": "0.5 Kg", "price": 2699 },
-      { "label": "1 Kg", "price": 4858 },
-      { "label": "2 Kg", "price": 9447 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2699, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4858, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9447, "serves": "16–20 People" }
     ],
     "oldPrice": 2819,
     "rating": 4,
@@ -4326,9 +4328,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2599,
     "weights": [
-      { "label": "0.5 Kg", "price": 2599 },
-      { "label": "1 Kg", "price": 4678 },
-      { "label": "2 Kg", "price": 9097 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2599, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4678, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9097, "serves": "16–20 People" }
     ],
     "oldPrice": 2719,
     "rating": 4,
@@ -4344,9 +4346,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2629,
     "weights": [
-      { "label": "0.5 Kg", "price": 2629 },
-      { "label": "1 Kg", "price": 4732 },
-      { "label": "2 Kg", "price": 9202 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2629, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4732, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9202, "serves": "16–20 People" }
     ],
     "oldPrice": 2749,
     "rating": 5,
@@ -4362,9 +4364,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2659,
     "weights": [
-      { "label": "0.5 Kg", "price": 2659 },
-      { "label": "1 Kg", "price": 4786 },
-      { "label": "2 Kg", "price": 9307 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2659, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4786, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9307, "serves": "16–20 People" }
     ],
     "oldPrice": 2779,
     "rating": 5,
@@ -4380,9 +4382,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2689,
     "weights": [
-      { "label": "0.5 Kg", "price": 2689 },
-      { "label": "1 Kg", "price": 4840 },
-      { "label": "2 Kg", "price": 9412 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2689, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4840, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9412, "serves": "16–20 People" }
     ],
     "oldPrice": 2809,
     "rating": 5,
@@ -4398,9 +4400,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2719,
     "weights": [
-      { "label": "0.5 Kg", "price": 2719 },
-      { "label": "1 Kg", "price": 4894 },
-      { "label": "2 Kg", "price": 9517 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2719, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4894, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9517, "serves": "16–20 People" }
     ],
     "oldPrice": 2839,
     "rating": 5,
@@ -4416,9 +4418,9 @@ export const products: Product[] = [
     "category": "Valentine Cakes",
     "price": 2749,
     "weights": [
-      { "label": "0.5 Kg", "price": 2749 },
-      { "label": "1 Kg", "price": 4948 },
-      { "label": "2 Kg", "price": 9622 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2749, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4948, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9622, "serves": "16–20 People" }
     ],
     "oldPrice": 2869,
     "rating": 5,
@@ -4434,9 +4436,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2649,
     "weights": [
-      { "label": "0.5 Kg", "price": 2649 },
-      { "label": "1 Kg", "price": 4768 },
-      { "label": "2 Kg", "price": 9272 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2649, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4768, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9272, "serves": "16–20 People" }
     ],
     "oldPrice": 2769,
     "rating": 5,
@@ -4452,9 +4454,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2679,
     "weights": [
-      { "label": "0.5 Kg", "price": 2679 },
-      { "label": "1 Kg", "price": 4822 },
-      { "label": "2 Kg", "price": 9377 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2679, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4822, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9377, "serves": "16–20 People" }
     ],
     "oldPrice": 2799,
     "rating": 4,
@@ -4470,9 +4472,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2709,
     "weights": [
-      { "label": "0.5 Kg", "price": 2709 },
-      { "label": "1 Kg", "price": 4876 },
-      { "label": "2 Kg", "price": 9482 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2709, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4876, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9482, "serves": "16–20 People" }
     ],
     "oldPrice": 2829,
     "rating": 4,
@@ -4488,9 +4490,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2739,
     "weights": [
-      { "label": "0.5 Kg", "price": 2739 },
-      { "label": "1 Kg", "price": 4930 },
-      { "label": "2 Kg", "price": 9587 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2739, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4930, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9587, "serves": "16–20 People" }
     ],
     "oldPrice": 2859,
     "rating": 4,
@@ -4506,9 +4508,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2769,
     "weights": [
-      { "label": "0.5 Kg", "price": 2769 },
-      { "label": "1 Kg", "price": 4984 },
-      { "label": "2 Kg", "price": 9692 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2769, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4984, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9692, "serves": "16–20 People" }
     ],
     "oldPrice": 2889,
     "rating": 4,
@@ -4524,9 +4526,9 @@ export const products: Product[] = [
     "category": "Christmas Cakes",
     "price": 2799,
     "weights": [
-      { "label": "0.5 Kg", "price": 2799 },
-      { "label": "1 Kg", "price": 5038 },
-      { "label": "2 Kg", "price": 9797 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5038, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9797, "serves": "16–20 People" }
     ],
     "oldPrice": 2919,
     "rating": 5,
@@ -4542,9 +4544,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2699,
     "weights": [
-      { "label": "0.5 Kg", "price": 2699 },
-      { "label": "1 Kg", "price": 4858 },
-      { "label": "2 Kg", "price": 9447 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2699, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4858, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9447, "serves": "16–20 People" }
     ],
     "oldPrice": 2819,
     "rating": 5,
@@ -4560,9 +4562,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2729,
     "weights": [
-      { "label": "0.5 Kg", "price": 2729 },
-      { "label": "1 Kg", "price": 4912 },
-      { "label": "2 Kg", "price": 9552 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2729, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4912, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9552, "serves": "16–20 People" }
     ],
     "oldPrice": 2849,
     "rating": 5,
@@ -4578,9 +4580,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2759,
     "weights": [
-      { "label": "0.5 Kg", "price": 2759 },
-      { "label": "1 Kg", "price": 4966 },
-      { "label": "2 Kg", "price": 9657 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2759, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4966, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9657, "serves": "16–20 People" }
     ],
     "oldPrice": 2879,
     "rating": 5,
@@ -4596,9 +4598,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2789,
     "weights": [
-      { "label": "0.5 Kg", "price": 2789 },
-      { "label": "1 Kg", "price": 5020 },
-      { "label": "2 Kg", "price": 9762 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2789, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5020, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9762, "serves": "16–20 People" }
     ],
     "oldPrice": 2909,
     "rating": 5,
@@ -4614,9 +4616,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2819,
     "weights": [
-      { "label": "0.5 Kg", "price": 2819 },
-      { "label": "1 Kg", "price": 5074 },
-      { "label": "2 Kg", "price": 9867 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2819, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5074, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9867, "serves": "16–20 People" }
     ],
     "oldPrice": 2939,
     "rating": 5,
@@ -4632,9 +4634,9 @@ export const products: Product[] = [
     "category": "New Year Cakes",
     "price": 2849,
     "weights": [
-      { "label": "0.5 Kg", "price": 2849 },
-      { "label": "1 Kg", "price": 5128 },
-      { "label": "2 Kg", "price": 9972 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2849, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5128, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9972, "serves": "16–20 People" }
     ],
     "oldPrice": 2969,
     "rating": 4,
@@ -4650,9 +4652,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2749,
     "weights": [
-      { "label": "0.5 Kg", "price": 2749 },
-      { "label": "1 Kg", "price": 4948 },
-      { "label": "2 Kg", "price": 9622 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2749, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 4948, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9622, "serves": "16–20 People" }
     ],
     "oldPrice": 2869,
     "rating": 4,
@@ -4668,9 +4670,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2779,
     "weights": [
-      { "label": "0.5 Kg", "price": 2779 },
-      { "label": "1 Kg", "price": 5002 },
-      { "label": "2 Kg", "price": 9727 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2779, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5002, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9727, "serves": "16–20 People" }
     ],
     "oldPrice": 2899,
     "rating": 4,
@@ -4686,9 +4688,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2809,
     "weights": [
-      { "label": "0.5 Kg", "price": 2809 },
-      { "label": "1 Kg", "price": 5056 },
-      { "label": "2 Kg", "price": 9832 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2809, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5056, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9832, "serves": "16–20 People" }
     ],
     "oldPrice": 2929,
     "rating": 4,
@@ -4704,9 +4706,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2839,
     "weights": [
-      { "label": "0.5 Kg", "price": 2839 },
-      { "label": "1 Kg", "price": 5110 },
-      { "label": "2 Kg", "price": 9937 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2839, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5110, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9937, "serves": "16–20 People" }
     ],
     "oldPrice": 2959,
     "rating": 5,
@@ -4722,9 +4724,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2869,
     "weights": [
-      { "label": "0.5 Kg", "price": 2869 },
-      { "label": "1 Kg", "price": 5164 },
-      { "label": "2 Kg", "price": 10042 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2869, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5164, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10042, "serves": "16–20 People" }
     ],
     "oldPrice": 2989,
     "rating": 5,
@@ -4740,9 +4742,9 @@ export const products: Product[] = [
     "category": "Friendship Cakes",
     "price": 2899,
     "weights": [
-      { "label": "0.5 Kg", "price": 2899 },
-      { "label": "1 Kg", "price": 5218 },
-      { "label": "2 Kg", "price": 10147 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2899, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5218, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10147, "serves": "16–20 People" }
     ],
     "oldPrice": 3019,
     "rating": 5,
@@ -4758,9 +4760,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2799,
     "weights": [
-      { "label": "0.5 Kg", "price": 2799 },
-      { "label": "1 Kg", "price": 5038 },
-      { "label": "2 Kg", "price": 9797 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2799, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5038, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9797, "serves": "16–20 People" }
     ],
     "oldPrice": 2919,
     "rating": 5,
@@ -4776,9 +4778,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2829,
     "weights": [
-      { "label": "0.5 Kg", "price": 2829 },
-      { "label": "1 Kg", "price": 5092 },
-      { "label": "2 Kg", "price": 9902 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2829, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5092, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9902, "serves": "16–20 People" }
     ],
     "oldPrice": 2949,
     "rating": 5,
@@ -4794,9 +4796,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2859,
     "weights": [
-      { "label": "0.5 Kg", "price": 2859 },
-      { "label": "1 Kg", "price": 5146 },
-      { "label": "2 Kg", "price": 10007 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2859, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5146, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10007, "serves": "16–20 People" }
     ],
     "oldPrice": 2979,
     "rating": 5,
@@ -4812,9 +4814,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2889,
     "weights": [
-      { "label": "0.5 Kg", "price": 2889 },
-      { "label": "1 Kg", "price": 5200 },
-      { "label": "2 Kg", "price": 10112 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2889, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5200, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10112, "serves": "16–20 People" }
     ],
     "oldPrice": 3009,
     "rating": 4,
@@ -4830,9 +4832,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2919,
     "weights": [
-      { "label": "0.5 Kg", "price": 2919 },
-      { "label": "1 Kg", "price": 5254 },
-      { "label": "2 Kg", "price": 10217 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2919, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5254, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10217, "serves": "16–20 People" }
     ],
     "oldPrice": 3039,
     "rating": 4,
@@ -4848,9 +4850,9 @@ export const products: Product[] = [
     "category": "Baby Shower Cakes",
     "price": 2949,
     "weights": [
-      { "label": "0.5 Kg", "price": 2949 },
-      { "label": "1 Kg", "price": 5308 },
-      { "label": "2 Kg", "price": 10322 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2949, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5308, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10322, "serves": "16–20 People" }
     ],
     "oldPrice": 3069,
     "rating": 4,
@@ -4866,9 +4868,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2849,
     "weights": [
-      { "label": "0.5 Kg", "price": 2849 },
-      { "label": "1 Kg", "price": 5128 },
-      { "label": "2 Kg", "price": 9972 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2849, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5128, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 9972, "serves": "16–20 People" }
     ],
     "oldPrice": 2969,
     "rating": 4,
@@ -4884,9 +4886,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2879,
     "weights": [
-      { "label": "0.5 Kg", "price": 2879 },
-      { "label": "1 Kg", "price": 5182 },
-      { "label": "2 Kg", "price": 10077 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2879, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5182, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10077, "serves": "16–20 People" }
     ],
     "oldPrice": 2999,
     "rating": 5,
@@ -4902,9 +4904,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2909,
     "weights": [
-      { "label": "0.5 Kg", "price": 2909 },
-      { "label": "1 Kg", "price": 5236 },
-      { "label": "2 Kg", "price": 10182 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2909, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5236, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10182, "serves": "16–20 People" }
     ],
     "oldPrice": 3029,
     "rating": 5,
@@ -4920,9 +4922,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2939,
     "weights": [
-      { "label": "0.5 Kg", "price": 2939 },
-      { "label": "1 Kg", "price": 5290 },
-      { "label": "2 Kg", "price": 10287 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2939, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5290, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10287, "serves": "16–20 People" }
     ],
     "oldPrice": 3059,
     "rating": 5,
@@ -4938,9 +4940,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2969,
     "weights": [
-      { "label": "0.5 Kg", "price": 2969 },
-      { "label": "1 Kg", "price": 5344 },
-      { "label": "2 Kg", "price": 10392 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2969, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5344, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10392, "serves": "16–20 People" }
     ],
     "oldPrice": 3089,
     "rating": 5,
@@ -4956,9 +4958,9 @@ export const products: Product[] = [
     "category": "Engagement Cakes",
     "price": 2999,
     "weights": [
-      { "label": "0.5 Kg", "price": 2999 },
-      { "label": "1 Kg", "price": 5398 },
-      { "label": "2 Kg", "price": 10497 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5398, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10497, "serves": "16–20 People" }
     ],
     "oldPrice": 3119,
     "rating": 5,
@@ -4974,9 +4976,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 2899,
     "weights": [
-      { "label": "0.5 Kg", "price": 2899 },
-      { "label": "1 Kg", "price": 5218 },
-      { "label": "2 Kg", "price": 10147 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2899, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5218, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10147, "serves": "16–20 People" }
     ],
     "oldPrice": 3019,
     "rating": 5,
@@ -4992,9 +4994,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 2929,
     "weights": [
-      { "label": "0.5 Kg", "price": 2929 },
-      { "label": "1 Kg", "price": 5272 },
-      { "label": "2 Kg", "price": 10252 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2929, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5272, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10252, "serves": "16–20 People" }
     ],
     "oldPrice": 3049,
     "rating": 4,
@@ -5010,9 +5012,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 2959,
     "weights": [
-      { "label": "0.5 Kg", "price": 2959 },
-      { "label": "1 Kg", "price": 5326 },
-      { "label": "2 Kg", "price": 10357 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2959, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5326, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10357, "serves": "16–20 People" }
     ],
     "oldPrice": 3079,
     "rating": 4,
@@ -5028,9 +5030,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 2989,
     "weights": [
-      { "label": "0.5 Kg", "price": 2989 },
-      { "label": "1 Kg", "price": 5380 },
-      { "label": "2 Kg", "price": 10462 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2989, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5380, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10462, "serves": "16–20 People" }
     ],
     "oldPrice": 3109,
     "rating": 4,
@@ -5046,9 +5048,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 3019,
     "weights": [
-      { "label": "0.5 Kg", "price": 3019 },
-      { "label": "1 Kg", "price": 5434 },
-      { "label": "2 Kg", "price": 10567 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3019, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5434, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10567, "serves": "16–20 People" }
     ],
     "oldPrice": 3139,
     "rating": 4,
@@ -5064,9 +5066,9 @@ export const products: Product[] = [
     "category": "Retirement Cakes",
     "price": 3049,
     "weights": [
-      { "label": "0.5 Kg", "price": 3049 },
-      { "label": "1 Kg", "price": 5488 },
-      { "label": "2 Kg", "price": 10672 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3049, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5488, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10672, "serves": "16–20 People" }
     ],
     "oldPrice": 3169,
     "rating": 5,
@@ -5082,9 +5084,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 2999,
     "weights": [
-      { "label": "0.5 Kg", "price": 2999 },
-      { "label": "1 Kg", "price": 5398 },
-      { "label": "2 Kg", "price": 10497 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 2999, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5398, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10497, "serves": "16–20 People" }
     ],
     "oldPrice": 3119,
     "rating": 4,
@@ -5100,9 +5102,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 3029,
     "weights": [
-      { "label": "0.5 Kg", "price": 3029 },
-      { "label": "1 Kg", "price": 5452 },
-      { "label": "2 Kg", "price": 10602 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3029, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5452, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10602, "serves": "16–20 People" }
     ],
     "oldPrice": 3149,
     "rating": 4,
@@ -5118,9 +5120,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 3059,
     "weights": [
-      { "label": "0.5 Kg", "price": 3059 },
-      { "label": "1 Kg", "price": 5506 },
-      { "label": "2 Kg", "price": 10707 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3059, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5506, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10707, "serves": "16–20 People" }
     ],
     "oldPrice": 3179,
     "rating": 4,
@@ -5136,9 +5138,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 3089,
     "weights": [
-      { "label": "0.5 Kg", "price": 3089 },
-      { "label": "1 Kg", "price": 5560 },
-      { "label": "2 Kg", "price": 10812 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3089, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5560, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10812, "serves": "16–20 People" }
     ],
     "oldPrice": 3209,
     "rating": 5,
@@ -5154,9 +5156,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 3119,
     "weights": [
-      { "label": "0.5 Kg", "price": 3119 },
-      { "label": "1 Kg", "price": 5614 },
-      { "label": "2 Kg", "price": 10917 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3119, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5614, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10917, "serves": "16–20 People" }
     ],
     "oldPrice": 3239,
     "rating": 5,
@@ -5172,9 +5174,9 @@ export const products: Product[] = [
     "category": "Farewell Cakes",
     "price": 3149,
     "weights": [
-      { "label": "0.5 Kg", "price": 3149 },
-      { "label": "1 Kg", "price": 5668 },
-      { "label": "2 Kg", "price": 11022 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3149, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5668, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11022, "serves": "16–20 People" }
     ],
     "oldPrice": 3269,
     "rating": 5,
@@ -5190,9 +5192,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3049,
     "weights": [
-      { "label": "0.5 Kg", "price": 3049 },
-      { "label": "1 Kg", "price": 5488 },
-      { "label": "2 Kg", "price": 10672 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3049, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5488, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10672, "serves": "16–20 People" }
     ],
     "oldPrice": 3169,
     "rating": 5,
@@ -5208,9 +5210,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3079,
     "weights": [
-      { "label": "0.5 Kg", "price": 3079 },
-      { "label": "1 Kg", "price": 5542 },
-      { "label": "2 Kg", "price": 10777 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3079, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5542, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10777, "serves": "16–20 People" }
     ],
     "oldPrice": 3199,
     "rating": 5,
@@ -5226,9 +5228,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3109,
     "weights": [
-      { "label": "0.5 Kg", "price": 3109 },
-      { "label": "1 Kg", "price": 5596 },
-      { "label": "2 Kg", "price": 10882 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3109, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5596, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10882, "serves": "16–20 People" }
     ],
     "oldPrice": 3229,
     "rating": 5,
@@ -5244,9 +5246,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3139,
     "weights": [
-      { "label": "0.5 Kg", "price": 3139 },
-      { "label": "1 Kg", "price": 5650 },
-      { "label": "2 Kg", "price": 10987 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3139, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5650, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10987, "serves": "16–20 People" }
     ],
     "oldPrice": 3259,
     "rating": 4,
@@ -5262,9 +5264,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3169,
     "weights": [
-      { "label": "0.5 Kg", "price": 3169 },
-      { "label": "1 Kg", "price": 5704 },
-      { "label": "2 Kg", "price": 11092 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3169, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5704, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11092, "serves": "16–20 People" }
     ],
     "oldPrice": 3289,
     "rating": 4,
@@ -5280,9 +5282,9 @@ export const products: Product[] = [
     "category": "Graduation Cakes",
     "price": 3199,
     "weights": [
-      { "label": "0.5 Kg", "price": 3199 },
-      { "label": "1 Kg", "price": 5758 },
-      { "label": "2 Kg", "price": 11197 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5758, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11197, "serves": "16–20 People" }
     ],
     "oldPrice": 3319,
     "rating": 4,
@@ -5298,9 +5300,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3099,
     "weights": [
-      { "label": "0.5 Kg", "price": 3099 },
-      { "label": "1 Kg", "price": 5578 },
-      { "label": "2 Kg", "price": 10847 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3099, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5578, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10847, "serves": "16–20 People" }
     ],
     "oldPrice": 3219,
     "rating": 4,
@@ -5316,9 +5318,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3129,
     "weights": [
-      { "label": "0.5 Kg", "price": 3129 },
-      { "label": "1 Kg", "price": 5632 },
-      { "label": "2 Kg", "price": 10952 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3129, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5632, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 10952, "serves": "16–20 People" }
     ],
     "oldPrice": 3249,
     "rating": 5,
@@ -5334,9 +5336,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3159,
     "weights": [
-      { "label": "0.5 Kg", "price": 3159 },
-      { "label": "1 Kg", "price": 5686 },
-      { "label": "2 Kg", "price": 11057 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3159, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5686, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11057, "serves": "16–20 People" }
     ],
     "oldPrice": 3279,
     "rating": 5,
@@ -5352,9 +5354,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3189,
     "weights": [
-      { "label": "0.5 Kg", "price": 3189 },
-      { "label": "1 Kg", "price": 5740 },
-      { "label": "2 Kg", "price": 11162 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3189, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5740, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11162, "serves": "16–20 People" }
     ],
     "oldPrice": 3309,
     "rating": 5,
@@ -5370,9 +5372,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3219,
     "weights": [
-      { "label": "0.5 Kg", "price": 3219 },
-      { "label": "1 Kg", "price": 5794 },
-      { "label": "2 Kg", "price": 11267 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3219, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5794, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11267, "serves": "16–20 People" }
     ],
     "oldPrice": 3339,
     "rating": 5,
@@ -5388,9 +5390,9 @@ export const products: Product[] = [
     "category": "Minimal Cakes",
     "price": 3249,
     "weights": [
-      { "label": "0.5 Kg", "price": 3249 },
-      { "label": "1 Kg", "price": 5848 },
-      { "label": "2 Kg", "price": 11372 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3249, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5848, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11372, "serves": "16–20 People" }
     ],
     "oldPrice": 3369,
     "rating": 5,
@@ -5406,9 +5408,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3199,
     "weights": [
-      { "label": "0.5 Kg", "price": 3199 },
-      { "label": "1 Kg", "price": 5758 },
-      { "label": "2 Kg", "price": 11197 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3199, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5758, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11197, "serves": "16–20 People" }
     ],
     "oldPrice": 3319,
     "rating": 5,
@@ -5424,9 +5426,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3229,
     "weights": [
-      { "label": "0.5 Kg", "price": 3229 },
-      { "label": "1 Kg", "price": 5812 },
-      { "label": "2 Kg", "price": 11302 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3229, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5812, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11302, "serves": "16–20 People" }
     ],
     "oldPrice": 3349,
     "rating": 5,
@@ -5442,9 +5444,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3259,
     "weights": [
-      { "label": "0.5 Kg", "price": 3259 },
-      { "label": "1 Kg", "price": 5866 },
-      { "label": "2 Kg", "price": 11407 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3259, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5866, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11407, "serves": "16–20 People" }
     ],
     "oldPrice": 3379,
     "rating": 5,
@@ -5460,9 +5462,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3289,
     "weights": [
-      { "label": "0.5 Kg", "price": 3289 },
-      { "label": "1 Kg", "price": 5920 },
-      { "label": "2 Kg", "price": 11512 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3289, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5920, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11512, "serves": "16–20 People" }
     ],
     "oldPrice": 3409,
     "rating": 5,
@@ -5478,9 +5480,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3319,
     "weights": [
-      { "label": "0.5 Kg", "price": 3319 },
-      { "label": "1 Kg", "price": 5974 },
-      { "label": "2 Kg", "price": 11617 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3319, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 5974, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11617, "serves": "16–20 People" }
     ],
     "oldPrice": 3439,
     "rating": 5,
@@ -5496,9 +5498,9 @@ export const products: Product[] = [
     "category": "Trending Cakes",
     "price": 3349,
     "weights": [
-      { "label": "0.5 Kg", "price": 3349 },
-      { "label": "1 Kg", "price": 6028 },
-      { "label": "2 Kg", "price": 11722 }
+      { "label": "0.5 Kg", "weight": "0.5 Kg", "price": 3349, "serves": "4–6 People" },
+      { "label": "1 Kg", "weight": "1 Kg", "price": 6028, "serves": "8–10 People" },
+      { "label": "2 Kg", "weight": "2 Kg", "price": 11722, "serves": "16–20 People" }
     ],
     "oldPrice": 3469,
     "rating": 4,

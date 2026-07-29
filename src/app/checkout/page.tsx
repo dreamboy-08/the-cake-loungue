@@ -659,10 +659,31 @@ const CheckoutPage = () => {
                       className="flex-1 min-w-0 flex flex-col justify-center cursor-pointer group/item"
                     >
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1 group-hover/item:text-rose-deep transition-colors">{item.name}</h4>
-                      <p className="text-[10px] text-text-soft mt-0.5">
-                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
-                      </p>
-                      <p className="text-xs text-text-soft mt-1">Quantity: {item.quantity}</p>
+
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="text-[10px] text-text-soft font-bold">
+                          Weight: {item.weight || '0.5 Kg'}
+                        </span>
+                        {item.serves && (
+                          <span className="text-[10px] text-rose-deep font-bold bg-cream-dark/40 px-1.5 py-0.5 rounded">
+                            Serves: {item.serves}
+                          </span>
+                        )}
+                        {item.flavor && (
+                          <span className="text-[10px] text-chocolate/60 font-bold bg-cream px-1.5 py-0.5 rounded border border-cream-dark/40">
+                            {item.flavor}
+                          </span>
+                        )}
+                      </div>
+
+                      {item.message && (
+                        <div className="mt-2 bg-cream-dark/30 border border-cream-dark/50 p-2 rounded-xl text-[11px] self-start">
+                          <span className="block text-[8px] font-black text-text-soft uppercase tracking-wider mb-0.5">Cake Message</span>
+                          <span className="font-bold text-rose-deep italic">&ldquo;{item.message}&rdquo;</span>
+                        </div>
+                      )}
+
+                      <p className="text-xs text-text-soft mt-2 font-medium">Quantity: {item.quantity}</p>
                       <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
                     </div>
                   </div>

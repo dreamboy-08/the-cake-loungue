@@ -357,8 +357,13 @@ const OrderDetailsPage = () => {
                     <div className="flex-1 min-w-0">
                       <h4 className="font-bold text-chocolate line-clamp-1">{item.name}</h4>
                       <p className="text-xs text-text-soft">
-                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}
+                        {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}{item.serves ? ` • Serves ${item.serves}` : ''}
                       </p>
+                      {item.message && (
+                        <p className="text-[11px] font-bold text-rose-deep mt-1 bg-cream-dark/40 px-2 py-0.5 rounded inline-block">
+                          Message: &ldquo;{item.message}&rdquo;
+                        </p>
+                      )}
                     </div>
                     <div className="text-right">
                       <p className="font-bold text-chocolate">₹{item.price * item.quantity}</p>

@@ -14,6 +14,8 @@ import { useWishlist } from '@/context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
+import CakeMessageInput from '@/components/shop/CakeMessageInput';
+import { getServingsForWeight } from '@/utils/servingHelper';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -27,6 +29,8 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
+  const [cakeMessage, setCakeMessage] = useState('');
+  const [isMessageValid, setIsMessageValid] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -121,11 +125,18 @@ const ProductDetail = () => {
 
   const activeWeightOption = product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price };
   const currentPrice = activeWeightOption.price;
+  const activeServes = activeWeightOption.serves || getServingsForWeight(selectedWeight);
 
-  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight);
+  const isGloballyAdded = cart.some(item =>
+    item.id === product.id &&
+    item.weight === selectedWeight &&
+    (item.message || '') === cakeMessage
+  );
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    if (!isMessageValid) return;
+
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
@@ -135,6 +146,8 @@ const ProductDetail = () => {
       price: currentPrice,
       img: product.img,
       weight: selectedWeight,
+      message: cakeMessage,
+      serves: activeServes,
     });
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -223,6 +236,32 @@ const ProductDetail = () => {
               </div>
             )}
 
+            {/* Serving Information */}
+            <div className="mb-8 p-4 rounded-2xl bg-cream border border-cream-dark/60 flex items-center justify-between shadow-sm">
+              <div>
+                <span className="block text-[10px] font-black text-text-soft uppercase tracking-widest mb-1">Serving Information</span>
+                <motion.span
+                  key={selectedWeight}
+                  initial={{ opacity: 0, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-base font-bold text-chocolate"
+                >
+                  Serves {activeServes}
+                </motion.span>
+              </div>
+            </div>
+
+            {/* Custom Cake Message */}
+            <div className="mb-8">
+              <CakeMessageInput
+                value={cakeMessage}
+                onChange={(msg, isValid) => {
+                  setCakeMessage(msg);
+                  setIsMessageValid(isValid);
+                }}
+              />
+            </div>
+
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-text-mid">
                 <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-rose">
@@ -247,9 +286,9 @@ const ProductDetail = () => {
             <div className="mt-auto flex flex-col sm:flex-row gap-4">
               <button
                 onClick={handleAddToCart}
-                disabled={cartLoading}
+                disabled={cartLoading || !isMessageValid}
                 className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                  cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                  cartLoading || !isMessageValid ? 'bg-cream text-text-soft cursor-not-allowed' :
                   isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                 }`}
               >
