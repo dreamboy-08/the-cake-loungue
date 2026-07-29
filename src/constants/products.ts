@@ -16,6 +16,7 @@ export interface Product {
   tag: string;
   img: string;
   description: string;
+  preparationTime?: number; // preparation time in hours, defaults to 16
 }
 
 export const products: Product[] = [
