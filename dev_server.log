@@ -1,0 +1,37 @@
+
+> cake-lounge-frontend@0.1.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 3.1s
+ ○ Compiling /admin/products ...
+ ✓ Compiled /admin/products in 11.6s (1606 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/products?bypass=true 200 in 13019ms
+ GET /admin/products?bypass=true 200 in 13054ms
+ ✓ Compiled in 1441ms (730 modules)
+ ○ Compiling /menu ...
+ ✓ Compiled /menu in 11.5s (1594 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /menu 200 in 12843ms
+ GET /admin/products?bypass=true 200 in 145ms
+ GET /menu 200 in 859ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1677ms (1655 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 2242ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ ○ Compiling /shop/[id] ...
+ ✓ Compiled /shop/[id] in 839ms (1665 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /shop/1 200 in 481ms
+ GET /menu 200 in 693ms
+ ○ Compiling /wishlist ...
+ ✓ Compiled /wishlist in 2.3s (1675 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /menu 200 in 1396ms

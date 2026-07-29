@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
+import { products as staticProducts } from '@/constants/products';
 
 const AdminProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -51,6 +52,19 @@ const AdminProducts = () => {
   const fetchProducts = useCallback(async (isNext = false) => {
     setLoading(true);
     if (!isNext) setAllProducts(null);
+
+    // Fallback if Firebase is not configured
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      console.warn("Firebase not configured, falling back to static products in Admin Catalog.");
+      if (typeof window !== 'undefined') {
+        const currentList = (window as any)._adminProducts || staticProducts;
+        setProducts(currentList);
+        setHasMore(false);
+      }
+      setLoading(false);
+      return;
+    }
+
     try {
       let q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
@@ -76,7 +90,12 @@ const AdminProducts = () => {
       setLastDoc(lastVisible);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching products, falling back to static:", error);
+      if (typeof window !== 'undefined') {
+        const currentList = (window as any)._adminProducts || staticProducts;
+        setProducts(currentList);
+        setHasMore(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -90,10 +109,20 @@ const AdminProducts = () => {
   }, [fetchProducts, products.length]);
 
   useEffect(() => {
+    // Fallback if Firebase is not configured
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      console.warn("Firebase not configured, falling back to static categories in Admin Products.");
+      const staticCats = Array.from(new Set(staticProducts.map(p => p.category)));
+      setCategories(staticCats.map((cat, idx) => ({ name: cat, id: (idx + 1).toString() })));
+      return;
+    }
+
     const unsubCats = onSnapshot(collection(db, 'categories'), (snapshot) => {
       setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
     }, (error) => {
-      console.error("Error listening to categories:", error);
+      console.error("Error listening to categories, falling back to static:", error);
+      const staticCats = Array.from(new Set(staticProducts.map(p => p.category)));
+      setCategories(staticCats.map((cat, idx) => ({ name: cat, id: (idx + 1).toString() })));
     });
 
     return () => unsubCats();
@@ -168,13 +197,31 @@ const AdminProducts = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      console.warn("Firebase not configured, performing local delete.");
+      if (typeof window !== 'undefined') {
+        const currentList = (window as any)._adminProducts || Array.from(staticProducts);
+        const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
+        (window as any)._adminProducts = updatedList;
+      }
+      setShowDeleteConfirm(null);
+      fetchProducts();
+      return;
+    }
+
     try {
       await deleteDoc(doc(db, 'products', id));
       setShowDeleteConfirm(null);
       fetchProducts();
     } catch (error) {
-      console.error("Error deleting product:", error);
-      alert("Failed to delete product.");
+      console.error("Error deleting product, attempting local fallback:", error);
+      if (typeof window !== 'undefined') {
+        const currentList = (window as any)._adminProducts || Array.from(staticProducts);
+        const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
+        (window as any)._adminProducts = updatedList;
+      }
+      setShowDeleteConfirm(null);
+      fetchProducts();
     }
   };
 

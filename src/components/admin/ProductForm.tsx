@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { products } from '@/constants/products';
 
 interface ProductFormProps {
   product?: any;
@@ -111,6 +112,15 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   }, []);
 
   useEffect(() => {
+    // If Firebase is not configured, fallback immediately to static categories
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+      console.warn("Firebase not configured, falling back to static categories in ProductForm.");
+      const staticCats = Array.from(new Set(products.map(p => p.category)));
+      setCategories(staticCats.map((cat, idx) => ({ name: cat, id: (idx + 1).toString() })));
+      setCatLoading(false);
+      return;
+    }
+
     setCatLoading(true);
     console.log("Firestore Path: categories");
     const q = query(collection(db, 'categories'));
@@ -119,7 +129,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       setCategories(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
       setCatLoading(false);
     }, (error) => {
-      console.error("Error listening to categories:", error);
+      console.error("Error listening to categories, falling back to static:", error);
+      const staticCats = Array.from(new Set(products.map(p => p.category)));
+      setCategories(staticCats.map((cat, idx) => ({ name: cat, id: (idx + 1).toString() })));
       setCatLoading(false);
     });
     return () => unsubscribe();
@@ -184,8 +196,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
           finalImages.push(item.preview);
         } else if (item.file) {
           try {
-            const url = await uploadToCloudinary(item.file);
-            finalImages.push(url);
+            if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME === "your_cloud_name") {
+              console.warn("Cloudinary not configured, using local preview url as fallback.");
+              finalImages.push(item.preview || "/images/products/placeholder.jpg");
+            } else {
+              const url = await uploadToCloudinary(item.file);
+              finalImages.push(url);
+            }
           } catch (uploadError: any) {
             console.error("Cloudinary upload failed:", uploadError);
             showToast("Failed to upload image to Cloudinary. Please check your connection.", "error");
@@ -222,6 +239,32 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         images: finalImages.slice(1),
         updatedAt: new Date().toISOString(),
       };
+
+      // Fallback if Firebase is not configured
+      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+        console.warn("Firebase not configured, performing local state CRUD.");
+        if (typeof window !== 'undefined') {
+          const currentList = (window as any)._adminProducts || Array.from(products);
+          if (product?.id) {
+            // Edit
+            const updatedList = currentList.map((p: any) => (p.id === product.id || p.id.toString() === product.id.toString()) ? { ...p, ...productData } : p);
+            (window as any)._adminProducts = updatedList;
+          } else {
+            // Create
+            const newProduct = {
+              ...productData,
+              id: 'new-id-123',
+              createdAt: new Date().toISOString(),
+            };
+            (window as any)._adminProducts = [newProduct, ...currentList];
+          }
+        }
+        showToast(product ? "Product updated successfully!" : "Product created successfully!", "success");
+        setLoading(false);
+        onSuccess();
+        onClose();
+        return;
+      }
 
       if (product?.id) {
         // Save only modified fields

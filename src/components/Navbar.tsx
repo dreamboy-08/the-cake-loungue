@@ -125,7 +125,7 @@ const Navbar = () => {
             <div className="flex items-center gap-1 sm:gap-2 md:gap-0 h-11">
               {!isAuthPage && (
                 <button
-                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-11 h-11 bg-none border-none cursor-pointer shrink-0"
+                  className="md:hidden flex flex-col justify-center items-center gap-[5px] w-8 sm:w-11 h-11 bg-none border-none cursor-pointer shrink-0"
                   onClick={toggleMobileMenu}
                   aria-label="Open menu"
                 >
@@ -151,7 +151,7 @@ const Navbar = () => {
                   <button
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                     className={cn(
-                      "w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
+                      "w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
                       (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                       (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                     )}
@@ -198,7 +198,7 @@ const Navbar = () => {
                   id="cart-icon-main"
                   onClick={() => setIsCartModalOpen(true)}
                   className={cn(
-                    "relative w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
+                    "relative w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
                     (isScrolled || isAuthPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-gold-light",
                     (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:bg-rose/10" : "text-white hover:bg-white/10"
                   )}
@@ -331,7 +331,7 @@ const Navbar = () => {
                       <Link
                         href="/login"
                         className={cn(
-                          "text-[0.85rem] font-semibold transition-colors h-11 flex items-center justify-center px-3.5 rounded-full shrink-0",
+                          "hidden sm:flex text-[0.85rem] font-semibold transition-colors h-11 items-center justify-center px-3.5 rounded-full shrink-0",
                           (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate hover:text-rose" : "text-white hover:text-blush"
                         )}
                       >
