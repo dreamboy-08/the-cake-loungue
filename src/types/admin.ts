@@ -30,7 +30,9 @@ export interface Address {
 // ============= PRODUCTS =============
 export interface ProductWeight {
   label: string;
+  weight?: string;
   price: number;
+  serves?: string;
 }
 
 export interface Product {

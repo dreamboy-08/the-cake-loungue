@@ -179,7 +179,18 @@ const OrdersPage = () => {
                   <div className="md:col-span-2">
                     <p className="text-[10px] font-bold text-text-soft uppercase tracking-widest mb-2">Items Ordered</p>
                     <p className="text-sm text-chocolate font-medium leading-relaxed">
-                      {order.items.map((i: any) => `${i.name}${i.weight ? ` (${i.weight})` : ''} (x${i.quantity})`).join(', ')}
+                      {order.items.map((i: any) => {
+                        let text = `${i.name}`;
+                        if (i.weight) {
+                          const servesText = i.serves ? `, Serves: ${i.serves}` : '';
+                          text += ` (${i.weight}${servesText})`;
+                        }
+                        if (i.message) {
+                          text += ` [Msg: "${i.message}"]`;
+                        }
+                        text += ` (x${i.quantity})`;
+                        return text;
+                      }).join(', ')}
                     </p>
                   </div>
 
