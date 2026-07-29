@@ -11,7 +11,7 @@ test.describe('Buy Now & 16-Hour Preparation Validation E2E Flow', () => {
 
     // Check that Premium Info Box is visible on Product details page
     await expect(page.locator('text=Dynamic Preparation Time Rule')).toBeVisible();
-    await expect(page.locator('text=Earliest Delivery:')).toBeVisible();
+    await expect(page.locator('text=Earliest Delivery:').first()).toBeVisible();
 
     // 2. Adjust Quantity to 2
     await page.click('[aria-label="Increase quantity"]');
