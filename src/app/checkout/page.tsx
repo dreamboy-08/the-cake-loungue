@@ -14,6 +14,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } from '@/constants/delivery';
 import { getContactInfo } from '@/utils/adminService';
+import { isSlotValid, getMinSelectableDate } from '@/utils/deliveryValidation';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -39,6 +40,25 @@ const CheckoutPage = () => {
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
   const [contactWhatsapp, setContactWhatsapp] = useState<string>('917703870170');
 
+  const [isBuyNow, setIsBuyNow] = useState(false);
+  const [checkoutItems, setCheckoutItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    const buyNowItemStr = sessionStorage.getItem('cakeLounge_buyNowItem');
+    if (buyNowItemStr) {
+      try {
+        const parsed = JSON.parse(buyNowItemStr);
+        setIsBuyNow(true);
+        setCheckoutItems([parsed]);
+      } catch (e) {
+        console.error("Failed to parse buyNowItem", e);
+        setCheckoutItems(cart);
+      }
+    } else {
+      setCheckoutItems(cart);
+    }
+  }, [cart]);
+
   const desktopCalendarRef = React.useRef<HTMLDivElement>(null);
 
   // Fetch WhatsApp number dynamically from CMS on mount
@@ -56,40 +76,29 @@ const CheckoutPage = () => {
 
   // Delivery Date Logic
   const hasCustomCake = useMemo(() => {
-    return cart.some(item => {
-      // Check if 'Custom' is in category info if available in cart item
-      // ProductDetail addToCart doesn't include category currently, so we check name for 'Custom'
-      // or rely on a more robust check if we decide to include category in CartItem.
-      // For now, let's look at common indicators in our catalog.
+    return checkoutItems.some(item => {
       const category = (item as any).category;
       return category === 'Custom Cakes' || item.name.toLowerCase().includes('custom');
     });
-  }, [cart]);
+  }, [checkoutItems]);
 
   const deliveryType = hasCustomCake ? 'Custom' : 'Standard';
 
-  const earliestDate = useMemo(() => {
-    const today = new Date();
-    const date = new Date(today);
-    if (hasCustomCake) {
-      date.setDate(today.getDate() + 2);
-    } else {
-      date.setDate(today.getDate() + 1);
-    }
-    return date.toISOString().split('T')[0];
-  }, [hasCustomCake]);
+  const prepHours = useMemo(() => {
+    if (checkoutItems.length === 0) return 16;
+    return checkoutItems.reduce((max, item) => {
+      const itemPrep = item.preparationTime || 16;
+      return Math.max(max, itemPrep);
+    }, 16);
+  }, [checkoutItems]);
 
   const minSelectableDate = useMemo(() => {
-    const today = new Date();
-    const minDate = new Date(today);
-    if (hasCustomCake) {
-      minDate.setDate(today.getDate() + 2);
-    } else {
-      minDate.setDate(today.getDate() + 1);
-    }
-    minDate.setHours(0, 0, 0, 0);
-    return minDate;
-  }, [hasCustomCake]);
+    return getMinSelectableDate(new Date(), prepHours, hasCustomCake);
+  }, [prepHours, hasCustomCake]);
+
+  const earliestDate = useMemo(() => {
+    return minSelectableDate.toISOString().split('T')[0];
+  }, [minSelectableDate]);
 
   // Get API URL from environment variables with fallback
   const API_URL = (process.env.NEXT_PUBLIC_API_URL || 'https://the-cake-loungue.onrender.com').replace(/\/$/, '');
@@ -125,6 +134,17 @@ const CheckoutPage = () => {
     if (savedSlot) setDeliveryTimeSlot(savedSlot);
     if (savedInstructions) setDeliveryInstructions(savedInstructions);
   }, []);
+
+  // Validate selected time slot whenever date, slot, or prep hours change
+  useEffect(() => {
+    if (selectedDate && deliveryTimeSlot) {
+      const isValid = isSlotValid(selectedDate, deliveryTimeSlot, new Date(), prepHours, hasCustomCake);
+      if (!isValid) {
+        setDeliveryTimeSlot('');
+        setErrorMessage('The selected delivery slot is no longer available due to preparation time limits. Please choose another slot.');
+      }
+    }
+  }, [selectedDate, deliveryTimeSlot, prepHours, hasCustomCake]);
 
   // Persist checkout data
   useEffect(() => {
@@ -171,6 +191,10 @@ const CheckoutPage = () => {
     fetch(API_URL).catch(() => {});
   }, [API_URL]);
 
+  const checkoutTotal = useMemo(() => {
+    return checkoutItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  }, [checkoutItems]);
+
   const isMidnightSlot = useMemo(() => {
     return deliveryTimeSlot === "10:00 PM – 12:00 AM (Midnight Delivery)";
   }, [deliveryTimeSlot]);
@@ -179,12 +203,12 @@ const CheckoutPage = () => {
     return isMidnightSlot ? 150 : 0;
   }, [isMidnightSlot]);
 
-  const shippingFee = useMemo(() => cartTotal >= 499 ? 0 : 50, [cartTotal]);
-  const finalTotal = useMemo(() => cartTotal + shippingFee + midnightCharge, [cartTotal, shippingFee, midnightCharge]);
+  const shippingFee = useMemo(() => checkoutTotal >= 499 ? 0 : 50, [checkoutTotal]);
+  const finalTotal = useMemo(() => checkoutTotal + shippingFee + midnightCharge, [checkoutTotal, shippingFee, midnightCharge]);
 
   const handleCheckout = async () => {
-    if (cart.length === 0) {
-      setErrorMessage('Your cart is empty!');
+    if (checkoutItems.length === 0) {
+      setErrorMessage('Your checkout has no items!');
       return;
     }
     if (!selectedAddress) {
@@ -212,7 +236,7 @@ const CheckoutPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           totalAmount: finalTotal,
-          items: cart,
+          items: checkoutItems,
           customerName: selectedAddress.name,
           customerEmail: user?.email || 'guest@example.com',
           customerPhone: selectedAddress.phone,
@@ -236,7 +260,7 @@ const CheckoutPage = () => {
         amount: order.amount,
         currency: order.currency,
         name: 'The Cake Lounge',
-        description: `Order for ${cart.length} item${cart.length > 1 ? 's' : ''}`,
+        description: `Order for ${checkoutItems.length} item${checkoutItems.length > 1 ? 's' : ''}`,
         order_id: order.id,
         handler: async (response: any) => {
           if (verificationStarted.current) {
@@ -269,7 +293,7 @@ const CheckoutPage = () => {
               },
               // For legacy support and easy display
               shippingAddress: `${selectedAddress.houseNumber}, ${selectedAddress.street}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state} - ${selectedAddress.zipCode}`,
-              items: cart.map(item => ({
+              items: checkoutItems.map(item => ({
                 ...item,
                 unitPrice: item.price,
                 totalPrice: item.price * item.quantity
@@ -277,7 +301,7 @@ const CheckoutPage = () => {
               totalAmount: finalTotal,
               shippingFee,
               midnightCharge,
-              subtotal: cartTotal,
+              subtotal: checkoutTotal,
               discount: 0,
               taxes: 0,
               coupon: null,
@@ -308,7 +332,12 @@ const CheckoutPage = () => {
               const orderId = response.razorpay_order_id;
 
               setPaymentStatus('success');
-              clearCart();
+
+              if (isBuyNow) {
+                sessionStorage.removeItem('cakeLounge_buyNowItem');
+              } else {
+                clearCart();
+              }
               // Clear persisted checkout data
               sessionStorage.removeItem('checkout_address');
               sessionStorage.removeItem('checkout_delivery_date');
@@ -505,11 +534,14 @@ const CheckoutPage = () => {
                       <option value="">
                         {selectedDate ? "Select Time Slot" : "Select delivery date first"}
                       </option>
-                      {selectedDate && DELIVERY_SLOTS.map((slot) => (
-                        <option key={slot} value={slot}>
-                          {slot}
-                        </option>
-                      ))}
+                      {selectedDate && DELIVERY_SLOTS.map((slot) => {
+                        const isValid = isSlotValid(selectedDate, slot, new Date(), prepHours, hasCustomCake);
+                        return (
+                          <option key={slot} value={slot} disabled={!isValid}>
+                            {slot} {!isValid ? " (Unavailable)" : ""}
+                          </option>
+                        );
+                      })}
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-deep pointer-events-none">
                       <Clock size={18} />
@@ -522,6 +554,19 @@ const CheckoutPage = () => {
                     ? "Custom Cakes require at least 2 days preparation."
                     : "Standard Cakes can be delivered as early as tomorrow."}
                 </p>
+
+                {/* Premium Info Box stating preparation time rules */}
+                <div className="mt-4 p-5 bg-rose-50/40 rounded-[22px] border-2 border-rose-100/60 text-chocolate">
+                  <div className="flex items-start gap-3">
+                    <Clock className="text-rose-deep mt-0.5 shrink-0" size={18} />
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-rose-deep">Dynamic Preparation Time Rule</h4>
+                      <p className="text-xs text-text-soft font-medium leading-relaxed">
+                        Preparation Time: This product requires a minimum of {prepHours} hours to prepare. The earliest available delivery slot will be automatically calculated based on your order time.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Premium Same-Day Delivery & WhatsApp Layout Card */}
@@ -642,7 +687,7 @@ const CheckoutPage = () => {
               </h3>
 
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
-                {cart.map((item) => (
+                {checkoutItems.map((item) => (
                   <div key={item.id} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
                     <div
                       onClick={() => router.push(`/shop/${item.id}`)}
@@ -685,7 +730,7 @@ const CheckoutPage = () => {
                 )}
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Subtotal</span>
-                  <span className="font-bold text-chocolate">₹{cartTotal}</span>
+                  <span className="font-bold text-chocolate">₹{checkoutTotal}</span>
                 </div>
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Delivery Fee</span>
@@ -697,7 +742,7 @@ const CheckoutPage = () => {
                   </div>
                 ) : (
                   <div className="bg-cream-dark p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - cartTotal} more to unlock FREE Delivery.</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - checkoutTotal} more to unlock FREE Delivery.</p>
                   </div>
                 )}
                 {isMidnightSlot && (
@@ -734,7 +779,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || cart.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot}
+                disabled={loading || checkoutItems.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -750,7 +795,7 @@ const CheckoutPage = () => {
                 )}
               </button>
 
-              {(!selectedAddress || (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode)) || !deliveryDate || !deliveryTimeSlot) && cart.length > 0 && (
+              {(!selectedAddress || (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode)) || !deliveryDate || !deliveryTimeSlot) && checkoutItems.length > 0 && (
                 <p className="mt-4 text-rose-deep text-xs font-bold text-center">
                   * Please select {
                     (!selectedAddress && !deliveryDate && !deliveryTimeSlot)

@@ -269,6 +269,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
               <button
                 onClick={() => {
+                  sessionStorage.removeItem('cakeLounge_buyNowItem');
                   onClose();
                   router.push('/checkout');
                 }}

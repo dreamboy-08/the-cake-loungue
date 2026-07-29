@@ -19,7 +19,7 @@ export interface CartItem {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity' | 'cartItemId'>) => void;
+  addToCart: (item: Omit<CartItem, 'quantity' | 'cartItemId'>, quantity?: number) => void;
   removeFromCart: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -131,17 +131,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [cart, isLoading]);
 
-  const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>) => {
+  const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>, quantityToAdd = 1) => {
     const cartItemId = `${item.id}-${item.flavor || ''}-${item.weight || ''}-${item.message || ''}`;
 
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.cartItemId === cartItemId);
       if (existingItem) {
         return prevCart.map((i) =>
-          i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + 1 } : i
+          i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + quantityToAdd } : i
         );
       }
-      return [...prevCart, { ...item, cartItemId, quantity: 1 }];
+      return [...prevCart, { ...item, cartItemId, quantity: quantityToAdd }];
     });
   };
 
