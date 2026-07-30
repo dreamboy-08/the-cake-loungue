@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
-import { useProducts } from '@/context/ProductsContext';
+import { products } from '@/constants/products';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -16,7 +16,6 @@ interface CartModalProps {
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, isLoading, addToCart } = useCart();
-  const { products } = useProducts();
   const router = useRouter();
 
   const recommendations = React.useMemo(() => {
@@ -59,7 +58,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
     // Take top 4 recommended products
     return scored.slice(0, 4).map((s) => s.product);
-  }, [cart, products]);
+  }, [cart]);
 
   return (
     <AnimatePresence>

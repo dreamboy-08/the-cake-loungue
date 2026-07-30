@@ -1,12 +1,9 @@
-"use client";
-
 import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useProducts } from '@/context/ProductsContext';
+import { products } from '@/constants/products';
 
 const Gallery = () => {
-  const { products } = useProducts();
   const galleryImgs = useMemo(() => {
     const prioritizedCategories = [
       'Birthday Cakes',
@@ -35,8 +32,8 @@ const Gallery = () => {
         src: bestProduct.img,
         label: bestProduct.name
       };
-    }).filter((img): img is { id: any; src: string; label: string } => img !== null);
-  }, [products]);
+    }).filter((img): img is { id: number; src: string; label: string } => img !== null);
+  }, []);
 
   return (
     <section id="gallery" className="py-20 bg-chocolate overflow-hidden">
