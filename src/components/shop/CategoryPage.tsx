@@ -1,8 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Product } from '@/constants/products';
-import { useProducts } from '@/context/ProductsContext';
+import { Product, products } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
 import BackButton from '@/components/BackButton';
 
@@ -14,7 +13,6 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = ({ category, title, description, subtitle }: CategoryPageProps) => {
-  const { products } = useProducts();
   const filteredProducts = products.filter((p) => p.category === category);
 
   return (
