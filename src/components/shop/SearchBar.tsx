@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import { products, Product } from '@/constants/products';
+import { Product } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { filterProducts } from '@/utils/filterProducts';
@@ -13,6 +14,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search for cakes, categories, or flavors..." }) => {
+  const { products } = useProducts();
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -29,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
       setShowSuggestions(false);
     }
     onSearch(query);
-  }, [query, onSearch]);
+  }, [query, onSearch, products]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

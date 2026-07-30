@@ -1,15 +1,19 @@
+"use client";
+
 import React from 'react';
-import { products } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '../ProductCard';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 const FeaturedProducts = () => {
+  const { products } = useProducts();
   const featuredIds = [1, 2, 3, 5, 6, 7, 9, 11, 13, 17, 55, 59, 103, 114, 325, 327];
 
-  const featured = featuredIds
-    .map(id => products.find(p => p.id === id))
-    .filter((p): p is typeof products[0] => p !== undefined);
+  // Map featured IDs and append any dynamic products explicitly marked as isFeatured
+  const featured = products.filter(p =>
+    featuredIds.includes(Number(p.id)) || p.isFeatured === true
+  );
 
   return (
     <section id="products" className="py-20 bg-cream-dark">
