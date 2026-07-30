@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import GSTBadge from '@/components/GSTBadge';
+import ProductRecommendations from '@/components/ProductRecommendations';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -412,6 +413,9 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Recommendations Section */}
+        <ProductRecommendations currentProduct={product} />
       </div>
     </PageWrapper>
   );
