@@ -198,7 +198,7 @@ test.describe('Admin Product Management & Sync', () => {
 
     // 3. Check Product Detail Page
     await page.click('text=Sync Test Cake');
-    await page.waitForURL(/\/shop\/999/);
+    await page.waitForURL(/\/shop\/999/, { waitUntil: 'commit' });
     await expect(page.url()).toContain('/shop/999');
     await expect(page.locator('h1')).toContainText('Sync Test Cake');
     await expect(page.locator('text=This is a sync test cake.')).toBeVisible();
