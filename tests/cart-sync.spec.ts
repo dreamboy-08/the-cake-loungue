@@ -25,7 +25,7 @@ test.describe('Cart State Synchronization', () => {
 
     // 5. Navigate to product detail page
     await firstProductTitle.click();
-    await page.waitForURL(/\/shop\/.+/);
+    await page.waitForURL(/\/shop\/.+/, { waitUntil: 'commit' });
 
     // 6. Verify detail page button says "Added"
     const detailAddButton = page.locator("button:has-text('Added')");
