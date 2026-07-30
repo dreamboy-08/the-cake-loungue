@@ -17,6 +17,8 @@ import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import GSTBadge from '@/components/GSTBadge';
 import ProductRecommendations from '@/components/ProductRecommendations';
+import CakeMessageInput from '@/components/shop/CakeMessageInput';
+import { getServingsForWeight } from '@/utils/servingHelper';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -33,6 +35,8 @@ const ProductDetail = () => {
   const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
   const [quantity, setQuantity] = useState(1);
   const [buyNowLoading, setBuyNowLoading] = useState(false);
+  const [cakeMessage, setCakeMessage] = useState('');
+  const [isMessageValid, setIsMessageValid] = useState(true);
 
   const prepHours = product?.preparationTime || 16;
   const hasCustomCake = product ? (product.category === 'Custom Cakes' || product.name.toLowerCase().includes('custom')) : false;
@@ -136,13 +140,15 @@ const ProductDetail = () => {
     );
   }
 
-  const activeWeightOption = product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price };
+  const activeWeightOption = (product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price, serves: getServingsForWeight(selectedWeight) }) as any;
   const currentPrice = activeWeightOption.price;
+  const activeServes = activeWeightOption.serves || getServingsForWeight(selectedWeight);
 
-  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight);
+  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight && (item.message || '') === (cakeMessage || ''));
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
+    if (!isMessageValid) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
@@ -152,6 +158,8 @@ const ProductDetail = () => {
       price: currentPrice,
       img: product.img,
       weight: selectedWeight,
+      serves: activeServes,
+      message: cakeMessage,
     }, quantity);
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -159,6 +167,7 @@ const ProductDetail = () => {
 
   const handleBuyNow = async () => {
     if (!product) return;
+    if (!isMessageValid) return;
 
     // Validation of required selections
     if (product.weights && product.weights.length > 0 && !selectedWeight) {
@@ -175,6 +184,8 @@ const ProductDetail = () => {
         price: currentPrice,
         img: product.img,
         weight: selectedWeight,
+        serves: activeServes,
+        message: cakeMessage,
         quantity: quantity,
         flavor: product.flavor || 'Standard',
         preparationTime: product.preparationTime || 16,
@@ -296,6 +307,32 @@ const ProductDetail = () => {
               </div>
             )}
 
+            {/* Serving Information */}
+            <div className="mb-8 p-4 rounded-2xl bg-cream border border-cream-dark/60 flex items-center justify-between shadow-sm">
+              <div>
+                <span className="block text-[10px] font-black text-text-soft uppercase tracking-widest mb-1">Serving Information</span>
+                <motion.span
+                  key={selectedWeight}
+                  initial={{ opacity: 0, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-base font-bold text-chocolate animate-fade-in"
+                >
+                  Serves {activeServes}
+                </motion.span>
+              </div>
+            </div>
+
+            {/* Custom Cake Message */}
+            <div className="mb-8">
+              <CakeMessageInput
+                value={cakeMessage}
+                onChange={(msg, isValid) => {
+                  setCakeMessage(msg);
+                  setIsMessageValid(isValid);
+                }}
+              />
+            </div>
+
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-text-mid">
                 <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center text-rose">
@@ -347,9 +384,9 @@ const ProductDetail = () => {
                 {/* Add to Cart Button */}
                 <button
                   onClick={handleAddToCart}
-                  disabled={cartLoading}
+                  disabled={cartLoading || !isMessageValid}
                   className={`flex-1 btn py-4 justify-center transition-all duration-300 ${
-                    cartLoading ? 'bg-cream text-text-soft cursor-not-allowed' :
+                    (cartLoading || !isMessageValid) ? 'bg-cream text-text-soft cursor-not-allowed' :
                     isAdded ? 'bg-green-600 text-white hover:bg-green-700' : 'btn-primary'
                   }`}
                 >
@@ -391,7 +428,7 @@ const ProductDetail = () => {
                 {/* Buy Now Button */}
                 <button
                   onClick={handleBuyNow}
-                  disabled={buyNowLoading}
+                  disabled={buyNowLoading || !isMessageValid}
                   className="flex-1 btn border-2 border-chocolate text-chocolate hover:bg-cream/40 hover:text-rose-deep py-4 justify-center font-bold rounded-xl transition-all duration-300 active:scale-[0.98] disabled:bg-cream disabled:text-text-soft disabled:cursor-not-allowed flex items-center"
                   aria-label={`Buy ${product.name} Now`}
                 >
