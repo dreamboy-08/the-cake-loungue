@@ -15,6 +15,7 @@ export interface CartItem {
   flavor?: string;
   weight?: string;
   message?: string;
+  serves?: string;
 }
 
 interface CartContextType {
