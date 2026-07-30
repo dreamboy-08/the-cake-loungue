@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, Suspense } from 'react';
-import { products, Product } from '@/constants/products';
+import { Product } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '@/components/ProductCard';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import SearchBar from '@/components/shop/SearchBar';
@@ -18,6 +19,7 @@ const MenuContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const { products, loading: productsLoading } = useProducts();
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,7 +62,7 @@ const MenuContent = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [products]);
 
   // Update active category based on URL parameter
   useEffect(() => {
@@ -106,7 +108,7 @@ const MenuContent = () => {
       activeCategory === 'All' || product.category === activeCategory
     );
     return filterProducts(categoryFiltered, searchQuery);
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, products]);
 
   return (
     <PageWrapper>

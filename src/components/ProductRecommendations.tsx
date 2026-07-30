@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { Product, products as fallbackProducts } from '@/constants/products';
+import { Product } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import { getRecommendations } from '@/utils/recommendationEngine';
 import RecommendationCard from './RecommendationCard';
 import { RecommendationsDrawer } from './RecommendationsDrawer';
@@ -14,14 +15,16 @@ interface ProductRecommendationsProps {
 
 export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
   currentProduct,
-  allProducts = fallbackProducts,
+  allProducts,
 }) => {
+  const { products: contextProducts } = useProducts();
+  const productsToUse = allProducts || contextProducts;
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Memoize recommendation calculations
   const recommendedList = useMemo(() => {
-    return getRecommendations(currentProduct, allProducts, { limit: 12 });
-  }, [currentProduct, allProducts]);
+    return getRecommendations(currentProduct, productsToUse, { limit: 12 });
+  }, [currentProduct, productsToUse]);
 
   // First 4 products to display in the main PDP section
   const pdpRecommendations = useMemo(() => {

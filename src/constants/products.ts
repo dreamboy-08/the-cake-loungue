@@ -4,7 +4,7 @@ export interface ProductWeight {
 }
 
 export interface Product {
-  id: number;
+  id: any;
   name: string;
   flavor: string;
   category: string;
@@ -17,6 +17,13 @@ export interface Product {
   img: string;
   description: string;
   preparationTime?: number; // preparation time in hours, defaults to 16
+  isFeatured?: boolean;
+  isBestSeller?: boolean;
+  isNewArrival?: boolean;
+  inStock?: boolean;
+  active?: boolean;
+  status?: string;
+  images?: string[];
 }
 
 export const products: Product[] = [
