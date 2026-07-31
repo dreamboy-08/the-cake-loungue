@@ -47,6 +47,18 @@ const AdminUsers = () => {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
+  // Mobile check
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
@@ -119,7 +131,7 @@ const AdminUsers = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-up pb-12">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -136,14 +148,14 @@ const AdminUsers = () => {
         )}
       </AnimatePresence>
 
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-chocolate">User Role Management</h1>
-          <p className="text-gray-500 mt-1">Control access levels and manage team permissions.</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">User Role Management</h1>
+          <p className="text-gray-500 text-sm mt-1">Control access levels and manage team permissions.</p>
         </div>
       </header>
 
-      <div className="bg-white p-6 rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6">
+      <div className="bg-white p-4 sm:p-6 rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 sm:gap-6">
         <div className="relative flex-1">
           <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
@@ -151,17 +163,17 @@ const AdminUsers = () => {
             placeholder="Search users by name or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm h-11 min-h-[44px]"
           />
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-gray-50 px-4 py-3 rounded-xl border border-gray-50 h-11 min-h-[44px] w-full md:w-auto">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">Filter Role:</span>
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-gray-50 border-none text-xs font-bold text-chocolate outline-none cursor-pointer"
+              className="bg-transparent text-xs font-bold text-chocolate outline-none cursor-pointer w-full"
             >
               <option value="All">All Roles</option>
               {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
@@ -170,92 +182,156 @@ const AdminUsers = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">User Information</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Current Role</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Joined Date</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Assign New Role</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {loading && users.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={32} />
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Fetching users...</p>
-                  </td>
+      {!isMobile ? (
+        <div className="bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">User Information</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Current Role</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Joined Date</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Assign New Role</th>
                 </tr>
-              ) : filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <Users className="mx-auto text-gray-100 mb-4" size={64} />
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No users found</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
-                    <td className="px-8 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 ${
-                          u.role === 'admin' ? 'bg-rose-50 text-rose-deep border-rose-100' :
-                          'bg-cream-dark text-chocolate border-rose/10'
-                        }`}>
-                          {u.displayName?.[0] || u.email?.[0] || 'U'}
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-chocolate text-sm leading-tight flex items-center gap-2">
-                            {u.displayName || 'Guest User'}
-                            {u.id === currentUser?.uid && (
-                              <span className="text-[8px] bg-chocolate text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">You</span>
-                            )}
-                          </span>
-                          <span className="text-[10px] text-gray-400 mt-0.5">{u.email}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-4 text-center">
-                      <div className="flex justify-center">
-                        {getRoleBadge(u.role || 'user')}
-                      </div>
-                    </td>
-                    <td className="px-8 py-4 text-center">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                        {u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-4 text-right">
-                      <div className="flex items-center justify-end gap-3">
-                        {updatingId === u.id ? (
-                          <Loader2 className="animate-spin text-rose-deep" size={20} />
-                        ) : (
-                          <select
-                            disabled={!isAdmin || u.id === currentUser?.uid}
-                            value={u.role || 'user'}
-                            onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                            className="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {ROLES.map(r => (
-                              <option key={r.value} value={r.value}>{r.label}</option>
-                            ))}
-                          </select>
-                        )}
-                      </div>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading && users.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-8 py-20 text-center">
+                      <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={32} />
+                      <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Fetching users...</p>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : filteredUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-8 py-20 text-center">
+                      <Users className="mx-auto text-gray-100 mb-4" size={64} />
+                      <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No users found</p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredUsers.map((u) => (
+                    <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                      <td className="px-8 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 ${
+                            u.role === 'admin' ? 'bg-rose-50 text-rose-deep border-rose-100' :
+                            'bg-cream-dark text-chocolate border-rose/10'
+                          }`}>
+                            {u.displayName?.[0] || u.email?.[0] || 'U'}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-chocolate text-sm leading-tight flex items-center gap-2">
+                              {u.displayName || 'Guest User'}
+                              {u.id === currentUser?.uid && (
+                                <span className="text-[8px] bg-chocolate text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">You</span>
+                              )}
+                            </span>
+                            <span className="text-[10px] text-gray-400 mt-0.5">{u.email}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-4 text-center">
+                        <div className="flex justify-center">
+                          {getRoleBadge(u.role || 'user')}
+                        </div>
+                      </td>
+                      <td className="px-8 py-4 text-center">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                          {u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Unknown'}
+                        </span>
+                      </td>
+                      <td className="px-8 py-4 text-right">
+                        <div className="flex items-center justify-end gap-3">
+                          {updatingId === u.id ? (
+                            <Loader2 className="animate-spin text-rose-deep" size={20} />
+                          ) : (
+                            <select
+                              disabled={!isAdmin || u.id === currentUser?.uid}
+                              value={u.role || 'user'}
+                              onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                              className="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed h-11 min-h-[44px]"
+                            >
+                              {ROLES.map(r => (
+                                <option key={r.value} value={r.value}>{r.label}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {loading && users.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center flex flex-col items-center justify-center">
+              <Loader2 className="animate-spin text-rose-deep mb-4" size={40} />
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Fetching users...</p>
+            </div>
+          ) : filteredUsers.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center flex flex-col items-center justify-center">
+              <Users className="mx-auto text-gray-100 mb-4" size={64} />
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No users found</p>
+            </div>
+          ) : (
+            filteredUsers.map((u) => (
+              <div key={u.id} className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm space-y-4">
+                <div className="flex gap-4">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 shrink-0 ${
+                    u.role === 'admin' ? 'bg-rose-50 text-rose-deep border-rose-100' :
+                    'bg-cream-dark text-chocolate border-rose/10'
+                  }`}>
+                    {u.displayName?.[0] || u.email?.[0] || 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-chocolate text-base truncate flex items-center gap-2">
+                      {u.displayName || 'Guest User'}
+                      {u.id === currentUser?.uid && (
+                        <span className="text-[8px] bg-chocolate text-white px-1.5 py-0.5 rounded-full uppercase tracking-tighter">You</span>
+                      )}
+                    </h3>
+                    <p className="text-[11px] text-gray-400 truncate mt-0.5">{u.email}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      {getRoleBadge(u.role || 'user')}
+                      <span className="text-[10px] font-bold text-gray-400">
+                        Joined: {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
-      <div className="bg-cream-dark/30 p-8 rounded-[40px] border border-rose/10 flex flex-col md:flex-row items-center gap-6 mt-8">
-        <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-rose-deep shadow-sm">
+                <div className="pt-2 border-t border-gray-50 flex flex-col gap-1">
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Assign New Role</span>
+                  {updatingId === u.id ? (
+                    <div className="h-11 flex items-center justify-center">
+                      <Loader2 className="animate-spin text-rose-deep" size={20} />
+                    </div>
+                  ) : (
+                    <select
+                      disabled={!isAdmin || u.id === currentUser?.uid}
+                      value={u.role || 'user'}
+                      onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                      className="w-full h-11 px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {ROLES.map(r => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      <div className="bg-cream-dark/30 p-6 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-rose/10 flex flex-col md:flex-row items-center gap-6 mt-8">
+        <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-rose-deep shadow-sm shrink-0">
            <ShieldAlert size={32} />
         </div>
         <div className="flex-1 text-center md:text-left">

@@ -25,6 +25,39 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const searchParams = useSearchParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Scroll behaviors
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollTop > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      if (scrollTop > lastScrollTop && scrollTop > 120) {
+        setIsHidden(true);
+      } else {
+        setIsHidden(false);
+      }
+
+      setLastScrollTop(scrollTop <= 0 ? 0 : scrollTop);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollTop]);
+
   const isBypass = searchParams?.get('bypass') === 'true';
 
   useEffect(() => {
@@ -67,13 +100,32 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 overflow-x-hidden">
 
       {/* Mobile Sticky Header */}
-      <header className="lg:hidden sticky top-0 z-[150] w-full flex items-center justify-between px-4 py-3 bg-chocolate text-white shadow-md h-16 shrink-0">
+      <header
+        style={{
+          transition: 'transform 450ms cubic-bezier(0.16, 1, 0.3, 1), opacity 450ms cubic-bezier(0.16, 1, 0.3, 1), backdrop-filter 450ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
+        className={`
+          lg:hidden sticky top-0 z-[150] w-full flex items-center justify-between px-4 py-3 shrink-0 h-16
+          ${isScrolled
+            ? 'bg-chocolate/90 backdrop-blur-md shadow-lg border-b border-white/5'
+            : 'bg-chocolate shadow-md'
+          }
+          ${isHidden
+            ? '-translate-y-full opacity-0 pointer-events-none'
+            : isMounted
+              ? 'translate-y-0 opacity-100'
+              : '-translate-y-4 opacity-0'
+          }
+        `}
+      >
         <button
-          className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white focus:outline-none"
+          className="w-11 h-11 flex flex-col justify-center items-center gap-[5px] rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white focus:outline-none"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label="Toggle Sidebar Menu"
         >
-          {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
+          <span className={`w-5 h-[2px] bg-white rounded-sm transition-all duration-300 ${isSidebarOpen ? 'rotate-45 translate-y-[7px]' : ''}`}></span>
+          <span className={`w-5 h-[2px] bg-white rounded-sm transition-all duration-300 ${isSidebarOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+          <span className={`w-5 h-[2px] bg-white rounded-sm transition-all duration-300 ${isSidebarOpen ? '-rotate-45 -translate-y-[7px]' : ''}`}></span>
         </button>
 
         <Link href="/" className="font-playfair text-lg font-bold text-center">

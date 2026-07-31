@@ -212,6 +212,17 @@ const AdminDashboard = () => {
     { label: 'This Month', value: `₹${stats.revenueMonth.toLocaleString()}`, icon: <TrendingUp size={20} />, color: 'text-purple-600' },
   ];
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (loading && stats.totalProducts === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -222,24 +233,24 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="space-y-8 pb-12 animate-fade-up">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-chocolate">Dashboard Overview</h1>
-          <p className="text-gray-500 mt-1">Real-time performance and store activity.</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Dashboard Overview</h1>
+          <p className="text-gray-500 text-sm mt-1">Real-time performance and store activity.</p>
         </div>
-        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100 text-xs font-bold text-chocolate uppercase tracking-widest">
+        <div className="flex items-center justify-center gap-2 bg-white px-4 py-3 rounded-2xl shadow-sm border border-gray-100 text-[10px] font-bold text-chocolate uppercase tracking-widest min-h-[44px]">
           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           Live Analytics
         </div>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {statCards.map((stat, i) => (
           <div
             key={i}
             onClick={() => router.push(stat.link)}
-            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-all group cursor-pointer"
+            className="bg-white p-5 sm:p-6 rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 hover:shadow-md transition-all group cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`${stat.bg} ${stat.color} p-3 rounded-2xl transition-transform group-hover:scale-110`}>
@@ -248,111 +259,146 @@ const AdminDashboard = () => {
               <ArrowRight size={18} className="text-gray-300 group-hover:text-chocolate group-hover:translate-x-1 transition-all" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-gray-400 uppercase tracking-widest">{stat.label}</span>
-              <span className="text-3xl font-black text-chocolate mt-1">{stat.value}</span>
+              <span className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-widest">{stat.label}</span>
+              <span className="text-2xl sm:text-3xl font-black text-chocolate mt-1">{stat.value}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-chocolate mb-8 flex items-center gap-2">
-              <IndianRupee size={24} className="text-rose-deep" />
+          <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] shadow-sm border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-chocolate mb-6 sm:mb-8 flex items-center gap-2">
+              <IndianRupee size={22} className="text-rose-deep" />
               Revenue Breakdown
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {revenueStats.map((rev, i) => (
-                <div key={i} className="bg-gray-50 p-6 rounded-3xl border border-gray-100 flex flex-col gap-4">
+                <div key={i} className="bg-gray-50 p-5 sm:p-6 rounded-[22px] sm:rounded-3xl border border-gray-100 flex flex-col gap-4">
                    <div className={`${rev.color} bg-white p-3 rounded-2xl shadow-sm w-fit`}>
                     {rev.icon}
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{rev.label}</p>
-                    <p className={`text-2xl font-black ${rev.color}`}>{rev.value}</p>
+                    <p className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">{rev.label}</p>
+                    <p className={`text-xl sm:text-2xl font-black ${rev.color}`}>{rev.value}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-8 border-b border-gray-50 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
-                <ShoppingBag size={24} className="text-rose-deep" />
+          <div className="bg-white rounded-[28px] sm:rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-5 sm:p-8 border-b border-gray-50 flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold text-chocolate flex items-center gap-2">
+                <ShoppingBag size={22} className="text-rose-deep" />
                 Recent Orders
               </h2>
-              <Link href="/admin/orders" className="text-sm font-bold text-rose-deep hover:underline">View All</Link>
+              <Link href="/admin/orders" className="text-xs sm:text-sm font-bold text-rose-deep hover:underline">View All</Link>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-gray-50/50">
-                    <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Order ID</th>
-                    <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Customer</th>
-                    <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Status</th>
-                    <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Amount</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {recentOrders.length === 0 ? (
-                    <tr><td colSpan={4} className="px-8 py-12 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No orders yet.</td></tr>
-                  ) : (
-                    recentOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => router.push('/admin/orders')}>
-                        <td className="px-8 py-4">
-                          <span className="font-mono text-[10px] font-bold text-rose-deep bg-cream-dark px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
-                        </td>
-                        <td className="px-8 py-4">
-                          <div className="flex flex-col">
-                            <span className="font-bold text-chocolate text-sm leading-tight">{order.customerName || order.customer?.name || 'Guest'}</span>
-                            <span className="text-[10px] text-gray-400 mt-1">{new Date(order.createdAt).toLocaleDateString()}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-4 text-center">
-                          <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
-                            order.status?.toLowerCase() === 'delivered' ? 'bg-green-100 text-green-600' :
-                            order.status?.toLowerCase() === 'pending' ? 'bg-orange-100 text-orange-600' :
-                            'bg-blue-100 text-blue-600'
-                          }`}>
-                            {order.status || 'Pending'}
-                          </span>
-                        </td>
-                        <td className="px-8 py-4 text-right font-black text-chocolate">₹{order.totalAmount}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+
+            {!isMobile ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-gray-50/50">
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Order ID</th>
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Customer</th>
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center">Status</th>
+                      <th className="px-8 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-50">
+                    {recentOrders.length === 0 ? (
+                      <tr><td colSpan={4} className="px-8 py-12 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No orders yet.</td></tr>
+                    ) : (
+                      recentOrders.map((order) => (
+                        <tr key={order.id} className="hover:bg-gray-50/50 transition-colors cursor-pointer" onClick={() => router.push('/admin/orders')}>
+                          <td className="px-8 py-4">
+                            <span className="font-mono text-[10px] font-bold text-rose-deep bg-cream-dark px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
+                          </td>
+                          <td className="px-8 py-4">
+                            <div className="flex flex-col">
+                              <span className="font-bold text-chocolate text-sm leading-tight">{order.customerName || order.customer?.name || 'Guest'}</span>
+                              <span className="text-[10px] text-gray-400 mt-1">{new Date(order.createdAt).toLocaleDateString()}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-4 text-center">
+                            <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider ${
+                              order.status?.toLowerCase() === 'delivered' ? 'bg-green-100 text-green-600' :
+                              order.status?.toLowerCase() === 'pending' ? 'bg-orange-100 text-orange-600' :
+                              'bg-blue-100 text-blue-600'
+                            }`}>
+                              {order.status || 'Pending'}
+                            </span>
+                          </td>
+                          <td className="px-8 py-4 text-right font-black text-chocolate">₹{order.totalAmount}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="p-4 space-y-4">
+                {recentOrders.length === 0 ? (
+                  <p className="text-center text-gray-400 py-12 font-bold uppercase tracking-widest text-xs">No orders yet.</p>
+                ) : (
+                  recentOrders.map((order) => (
+                    <div
+                      key={order.id}
+                      onClick={() => router.push('/admin/orders')}
+                      className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="font-mono text-[10px] font-bold text-rose-deep bg-cream-dark px-2 py-1 rounded">#{order.id.slice(-8).toUpperCase()}</span>
+                        <span className={`text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                          order.status?.toLowerCase() === 'delivered' ? 'bg-green-100 text-green-600' :
+                          order.status?.toLowerCase() === 'pending' ? 'bg-orange-100 text-orange-600' :
+                          'bg-blue-100 text-blue-600'
+                        }`}>
+                          {order.status || 'Pending'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <p className="font-bold text-chocolate text-sm leading-tight">{order.customerName || order.customer?.name || 'Guest'}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{new Date(order.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <span className="font-black text-chocolate text-base">₹{order.totalAmount}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="space-y-8">
-          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
-              <Clock size={24} className="text-rose-deep" />
+        <div className="space-y-6 sm:space-y-8">
+          <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] shadow-sm border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
+              <Clock size={22} className="text-rose-deep" />
               Order Activity
             </h2>
             <div className="space-y-4">
               {orderStats.map((stat, i) => (
-                <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 border border-gray-100 group hover:border-rose-deep/30 transition-all">
+                <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 border border-gray-100 group hover:border-rose-deep/30 transition-all min-h-[44px]">
                   <div className="flex items-center gap-3">
                     <div className={`${stat.color} bg-white p-2.5 rounded-xl shadow-sm transition-transform group-hover:scale-110`}>
                       {stat.icon}
                     </div>
-                    <span className="text-sm font-bold text-gray-500">{stat.label}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-500">{stat.label}</span>
                   </div>
-                  <span className="text-lg font-black text-chocolate">{stat.value}</span>
+                  <span className="text-base sm:text-lg font-black text-chocolate">{stat.value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-[40px] shadow-sm border border-gray-100">
-            <h2 className="text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
-              <Users size={24} className="text-rose-deep" />
+          <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] shadow-sm border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
+              <Users size={22} className="text-rose-deep" />
               New Customers
             </h2>
             <div className="space-y-4">
@@ -360,13 +406,13 @@ const AdminDashboard = () => {
                 <p className="text-center text-gray-400 py-8 font-bold uppercase tracking-widest text-[10px]">No customers yet.</p>
               ) : (
                 recentCustomers.map((customer) => (
-                  <div key={customer.id} className="flex items-center justify-between group cursor-pointer" onClick={() => router.push('/admin/customers')}>
+                  <div key={customer.id} className="flex items-center justify-between group cursor-pointer min-h-[44px]" onClick={() => router.push('/admin/customers')}>
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-cream-dark border border-rose/10 flex items-center justify-center text-rose-deep font-bold">
                         {customer.displayName?.[0] || customer.email?.[0] || 'U'}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-chocolate group-hover:text-rose-deep transition-colors leading-tight">{customer.displayName || 'Guest'}</span>
+                        <span className="text-xs sm:text-sm font-bold text-chocolate group-hover:text-rose-deep transition-colors leading-tight">{customer.displayName || 'Guest'}</span>
                         <span className="text-[10px] text-gray-400 mt-0.5">{new Date(customer.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
@@ -377,7 +423,7 @@ const AdminDashboard = () => {
             </div>
             <button
               onClick={() => router.push('/admin/customers')}
-              className="w-full mt-8 py-3.5 rounded-2xl bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-widest hover:bg-chocolate hover:text-white transition-all shadow-sm border border-gray-100"
+              className="w-full mt-6 sm:mt-8 py-3 rounded-2xl bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-widest hover:bg-chocolate hover:text-white transition-all shadow-sm border border-gray-100 min-h-[44px]"
             >
               View All Customers
             </button>

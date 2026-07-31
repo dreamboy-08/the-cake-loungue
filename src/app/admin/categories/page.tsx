@@ -122,7 +122,7 @@ const AdminCategories = () => {
   };
 
   return (
-    <div className="space-y-8 animate-fade-up pb-12">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -139,16 +139,16 @@ const AdminCategories = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-chocolate">Category Management</h1>
-          <p className="text-gray-500 mt-1">Organize your products into logical collections.</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Category Management</h1>
+          <p className="text-gray-500 text-sm mt-1">Organize your products into logical collections.</p>
         </div>
-        <div className="flex flex-col md:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={handleRepairOrders}
             disabled={loading || categories.length === 0}
-            className="flex items-center justify-center gap-2 bg-cream-dark text-chocolate px-6 py-3 rounded-2xl font-bold hover:bg-rose/10 transition-all w-full md:w-auto border border-rose/10 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 bg-cream-dark text-chocolate px-6 py-3 rounded-2xl font-bold hover:bg-rose/10 transition-all w-full sm:w-auto border border-rose/10 disabled:opacity-50 h-11 min-h-[44px]"
             title="Automatically assign sequential order numbers (1, 2, 3...) to all categories"
           >
             <Tags size={20} className="text-rose-deep" />
@@ -159,7 +159,7 @@ const AdminCategories = () => {
               setSelectedCategory(null);
               setIsFormOpen(true);
             }}
-            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full md:w-auto"
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full sm:w-auto h-11 min-h-[44px]"
           >
             <Plus size={20} />
             <span>Add New Category</span>
@@ -167,20 +167,20 @@ const AdminCategories = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading && categories.length === 0 ? (
           <div className="col-span-full py-24 flex flex-col items-center gap-4">
             <Loader2 className="animate-spin text-rose-deep" size={40} />
             <p className="text-sm text-gray-400 font-black uppercase tracking-widest">Loading categories...</p>
           </div>
         ) : categories.length === 0 ? (
-          <div className="col-span-full py-24 flex flex-col items-center gap-4 bg-white rounded-[40px] border border-dashed border-gray-200">
+          <div className="col-span-full py-24 flex flex-col items-center gap-4 bg-white rounded-[28px] sm:rounded-[32px] border border-dashed border-gray-200">
             <Tags className="text-gray-100" size={64} />
             <p className="text-sm text-gray-400 font-black uppercase tracking-widest">No categories created yet.</p>
           </div>
         ) : (
           categories.map((category) => (
-            <div key={category.id} className={`bg-white rounded-[40px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${category.active === false ? 'opacity-60' : ''}`}>
+            <div key={category.id} className={`bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${category.active === false ? 'opacity-60' : ''}`}>
               <div className="relative h-48 bg-gray-50 overflow-hidden">
                 {category.image ? (
                   <Image src={category.image} alt={category.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -210,7 +210,7 @@ const AdminCategories = () => {
                 </div>
               </div>
 
-              <div className="p-8 flex-1 flex flex-col">
+              <div className="p-6 sm:p-8 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
@@ -272,7 +272,7 @@ const AdminCategories = () => {
 
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
+          <div className="bg-white rounded-[28px] sm:rounded-[32px] p-8 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
             <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
               <AlertCircle size={40} />
             </div>
@@ -283,13 +283,13 @@ const AdminCategories = () => {
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setShowDeleteConfirm(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all text-sm"
+                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all text-sm h-11 min-h-[44px] bg-white border border-gray-200"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(showDeleteConfirm)}
-                className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all text-sm"
+                className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all text-sm h-11 min-h-[44px]"
               >
                 Confirm Delete
               </button>
