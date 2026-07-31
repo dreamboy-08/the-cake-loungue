@@ -297,17 +297,28 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
                 />
                 <span className="text-sm font-medium text-text-mid">Set as default address</span>
               </label>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-rose-deep text-white font-bold py-3 rounded-xl shadow-lg hover:bg-brown transition-all flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <Loader2 className="animate-spin" size={20} />
-                ) : (
-                  user ? (editingId ? 'Update Address' : 'Save Address') : 'Apply Address'
+              <div className="flex gap-4">
+                {user && (
+                  <button
+                    type="button"
+                    onClick={() => { setIsAdding(false); setEditingId(null); setError(null); }}
+                    className="flex-1 bg-cream hover:bg-cream-dark text-chocolate font-bold py-3 rounded-xl transition-all"
+                  >
+                    Cancel
+                  </button>
                 )}
-              </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-rose-deep text-white font-bold py-3 rounded-xl shadow-lg hover:bg-brown transition-all flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin" size={20} />
+                  ) : (
+                    user ? (editingId ? 'Update Address' : 'Save Address') : 'Apply Address'
+                  )}
+                </button>
+              </div>
             </form>
           </motion.div>
         ) : (
@@ -338,7 +349,7 @@ const AddressManager = ({ onSelect, selectedAddress }: { onSelect?: (address: Ad
                     {address.state} - {address.zipCode}
                   </p>
                 </div>
-                <div className="mt-4 flex gap-4 border-t border-cream pt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="mt-4 flex gap-4 border-t border-cream pt-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={(e) => { e.stopPropagation(); startEditing(address); }}
                     className="flex items-center gap-1 text-xs font-bold text-chocolate hover:text-rose-deep"
