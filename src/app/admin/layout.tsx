@@ -107,8 +107,8 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
         className={`
           lg:hidden sticky top-0 z-[150] w-full flex items-center justify-between px-4 py-3 shrink-0 h-16
           ${isScrolled
-            ? 'bg-chocolate/90 backdrop-blur-md shadow-lg border-b border-white/5'
-            : 'bg-chocolate shadow-md'
+            ? 'bg-gradient-to-r from-chocolate/90 via-brown/90 to-chocolate/90 backdrop-blur-md shadow-xl border-b border-white/10 rounded-b-2xl'
+            : 'bg-gradient-to-r from-chocolate via-brown to-chocolate shadow-lg border-b border-white/5 rounded-b-2xl'
           }
           ${isHidden
             ? '-translate-y-full opacity-0 pointer-events-none'
@@ -119,7 +119,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
         `}
       >
         <button
-          className="w-11 h-11 flex flex-col justify-center items-center gap-[5px] rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white focus:outline-none"
+          className="w-11 h-11 flex flex-col justify-center items-center gap-[5px] rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 transition-all text-white focus:outline-none shrink-0"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label="Toggle Sidebar Menu"
         >
@@ -128,19 +128,26 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
           <span className={`w-5 h-[2px] bg-white rounded-sm transition-all duration-300 ${isSidebarOpen ? '-rotate-45 -translate-y-[7px]' : ''}`}></span>
         </button>
 
-        <Link href="/" className="font-playfair text-lg font-bold text-center">
-          The Cake <span className="text-blush">Lounge</span>
-          <span className="block text-[8px] uppercase tracking-[0.2em] text-blush/60 font-poppins font-semibold">Admin Panel</span>
+        <Link
+          href="/"
+          className="font-playfair font-bold text-center whitespace-nowrap flex flex-col items-center justify-center leading-none text-white hover:opacity-90 transition-all shrink-0 px-2"
+        >
+          <span style={{ fontSize: 'clamp(0.85rem, 4.5vw, 1.25rem)' }} className="whitespace-nowrap select-none font-bold text-white">
+            The Cake <span className="text-blush">Lounge</span>
+          </span>
+          <span className="block text-[8px] uppercase tracking-[0.2em] text-blush/60 font-poppins font-semibold mt-1 select-none">
+            Admin Panel
+          </span>
         </Link>
 
         {/* Dynamic User Avatar / Logo placeholder to balance header */}
-        <div className="w-11 h-11 flex items-center justify-center">
+        <div className="w-11 h-11 flex items-center justify-center shrink-0">
           {user ? (
-            <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-xs font-bold border border-white/20">
+            <div className="w-8 h-8 rounded-full bg-rose-deep flex items-center justify-center text-white text-xs font-bold border border-white/20 shrink-0">
               {user.displayName ? user.displayName[0].toUpperCase() : user.email?.[0].toUpperCase() || 'A'}
             </div>
           ) : (
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-blush text-xs font-bold">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-blush text-xs font-bold shrink-0">
               CL
             </div>
           )}
