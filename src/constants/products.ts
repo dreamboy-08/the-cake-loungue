@@ -39,22 +39,6 @@ export const products: Product[] = [
     "description": "Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration."
   },
   {
-    "id": 999,
-    "name": "Sync Test Cake",
-    "flavor": "Chocolate",
-    "category": "Birthday Cakes",
-    "price": 750,
-    "weights": [
-      { "label": "0.5 Kg", "price": 750 }
-    ],
-    "oldPrice": 850,
-    "rating": 5,
-    "reviews": 10,
-    "tag": "New",
-    "img": "https://images.unsplash.com/photo-1578985545062-69928b1d9587",
-    "description": "This is a sync test cake."
-  },
-  {
     "id": 2,
     "name": "Champagne Velvet Birthday Cake",
     "flavor": "Premium Vanilla Almond",
