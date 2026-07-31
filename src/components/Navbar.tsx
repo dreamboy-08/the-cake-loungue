@@ -41,6 +41,8 @@ const Navbar = () => {
   const isPolicyPage = pathname?.startsWith('/policies');
 
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchTriggerRef = useRef<HTMLButtonElement>(null);
 
   // Close user menu on click outside
   useEffect(() => {
@@ -101,6 +103,30 @@ const Navbar = () => {
     setIsSearchOpen(false);
   }, [pathname]);
 
+  // Close search on click outside of search container or trigger
+  useEffect(() => {
+    if (!isSearchOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node) &&
+        searchTriggerRef.current &&
+        !searchTriggerRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside, { passive: true });
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isSearchOpen]);
+
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
@@ -149,6 +175,7 @@ const Navbar = () => {
                 {!isAuthPage && (
                   /* Search Toggle with 44px touch target */
                   <button
+                    ref={searchTriggerRef}
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
                     className={cn(
                       "w-8 sm:w-11 h-11 flex items-center justify-center rounded-full transition-all duration-300 shrink-0",
@@ -157,7 +184,7 @@ const Navbar = () => {
                     )}
                     aria-label="Toggle search"
                   >
-                    {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+                    <Search size={20} />
                   </button>
                 )}
 
@@ -358,6 +385,7 @@ const Navbar = () => {
       <AnimatePresence>
         {isSearchOpen && (
           <motion.div
+            ref={searchRef}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
