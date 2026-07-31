@@ -46,6 +46,18 @@ const AdminCustomers = () => {
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
+  // Mobile check
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchUsers = useCallback(async (isNext = false) => {
     setLoading(true);
     try {
@@ -148,13 +160,13 @@ const AdminCustomers = () => {
   }, [users, searchTerm]);
 
   return (
-    <div className="space-y-8 animate-fade-up pb-12">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-chocolate">Customer Management</h1>
-          <p className="text-gray-500 mt-1">View and manage your customer relationships.</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Customer Management</h1>
+          <p className="text-gray-500 text-sm mt-1">View and manage your customer relationships.</p>
         </div>
-        <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1 max-w-md">
+        <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1 max-w-md w-full">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
@@ -162,85 +174,128 @@ const AdminCustomers = () => {
               placeholder="Search by name, email or phone..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-2 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
+              className="w-full pl-12 pr-4 py-3 rounded-2xl bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm h-11 min-h-[44px]"
             />
           </div>
         </div>
       </header>
 
-      <div className="bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Customer</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Status</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Joined</th>
-                <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {loading && users.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={32} />
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading Customers...</p>
-                  </td>
+      {!isMobile ? (
+        <div className="bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Customer</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Status</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Joined</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Action</th>
                 </tr>
-              ) : filteredCustomers.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <Users className="mx-auto text-gray-100 mb-4" size={64} />
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No customers found</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-gray-50/50 transition-colors group cursor-pointer" onClick={() => fetchCustomerHistory(customer)}>
-                    <td className="px-8 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center text-rose-deep font-bold border border-rose/10">
-                          {customer.displayName?.[0] || customer.email?.[0] || 'U'}
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="font-bold text-chocolate text-sm leading-tight">{customer.displayName || 'Guest User'}</span>
-                          <span className="text-[10px] text-gray-400 mt-0.5">{customer.email}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-4 text-center">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${customer.role === 'admin' ? 'bg-rose-deep text-white' : 'bg-blue-50 text-blue-600'}`}>
-                        {customer.role || 'user'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-4 text-center">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                        {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'Unknown'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-4 text-right">
-                      <button className="p-2.5 text-gray-300 group-hover:text-rose-deep transition-colors">
-                        <ChevronRight size={20} />
-                      </button>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {loading && users.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-8 py-20 text-center">
+                      <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={32} />
+                      <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading Customers...</p>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : filteredCustomers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-8 py-20 text-center">
+                      <Users className="mx-auto text-gray-100 mb-4" size={64} />
+                      <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No customers found</p>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredCustomers.map((customer) => (
+                    <tr key={customer.id} className="hover:bg-gray-50/50 transition-colors group cursor-pointer" onClick={() => fetchCustomerHistory(customer)}>
+                      <td className="px-8 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center text-rose-deep font-bold border border-rose/10">
+                            {customer.displayName?.[0] || customer.email?.[0] || 'U'}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-bold text-chocolate text-sm leading-tight">{customer.displayName || 'Guest User'}</span>
+                            <span className="text-[10px] text-gray-400 mt-0.5">{customer.email}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-4 text-center">
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${customer.role === 'admin' ? 'bg-rose-deep text-white' : 'bg-blue-50 text-blue-600'}`}>
+                          {customer.role || 'user'}
+                        </span>
+                      </td>
+                      <td className="px-8 py-4 text-center">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+                          {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'Unknown'}
+                        </span>
+                      </td>
+                      <td className="px-8 py-4 text-right">
+                        <button className="p-2.5 text-gray-300 group-hover:text-rose-deep transition-colors h-11 w-11 flex items-center justify-center rounded-xl hover:bg-gray-50">
+                          <ChevronRight size={20} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {loading && users.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center flex flex-col items-center justify-center">
+              <Loader2 className="animate-spin text-rose-deep mb-4" size={40} />
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading Customers...</p>
+            </div>
+          ) : filteredCustomers.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center flex flex-col items-center justify-center">
+              <Users className="mx-auto text-gray-100 mb-4" size={64} />
+              <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No customers found</p>
+            </div>
+          ) : (
+            filteredCustomers.map((customer) => (
+              <div
+                key={customer.id}
+                onClick={() => fetchCustomerHistory(customer)}
+                className="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm space-y-4 cursor-pointer active:scale-[0.99] transition-all"
+              >
+                <div className="flex gap-4">
+                  <div className="w-12 h-12 rounded-full bg-cream-dark flex items-center justify-center text-rose-deep font-bold border border-rose/10 shrink-0">
+                    {customer.displayName?.[0] || customer.email?.[0] || 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-chocolate text-base truncate">{customer.displayName || 'Guest User'}</h3>
+                    <p className="text-[11px] text-gray-400 truncate mt-0.5">{customer.email}</p>
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${customer.role === 'admin' ? 'bg-rose-deep text-white' : 'bg-blue-50 text-blue-600'}`}>
+                        {customer.role || 'user'}
+                      </span>
+                      <span className="text-[10px] font-bold text-gray-400">
+                        Joined: {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString() : 'Unknown'}
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight size={20} className="text-gray-300 self-center" />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
 
       {selectedCustomer && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-end p-4 bg-chocolate/60 backdrop-blur-sm transition-all duration-300">
-          <div className="bg-white h-full w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-l-[40px]">
-            <div className="p-8 border-b flex items-center justify-between sticky top-0 bg-white z-10">
+        <div className="fixed inset-0 z-[400] flex items-center justify-end p-0 sm:p-4 bg-chocolate/60 backdrop-blur-sm transition-all duration-300">
+          <div className="bg-white h-full sm:h-[calc(100vh-2rem)] w-full max-w-2xl shadow-2xl overflow-y-auto animate-in slide-in-from-right duration-300 rounded-t-3xl sm:rounded-l-[40px] sm:rounded-tr-none">
+            <div className="p-6 sm:p-8 border-b flex items-center justify-between sticky top-0 bg-white z-10">
               <div className="flex items-center gap-4">
-                 <div className="w-16 h-16 rounded-full bg-rose-deep flex items-center justify-center text-white text-2xl font-black shadow-lg">
+                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-rose-deep flex items-center justify-center text-white text-xl sm:text-2xl font-black shadow-lg">
                     {selectedCustomer.displayName?.[0] || selectedCustomer.email?.[0]}
                  </div>
                  <div>
-                    <h2 className="text-2xl font-bold font-playfair text-chocolate">{selectedCustomer.displayName || 'Guest'}</h2>
+                    <h2 className="text-lg sm:text-2xl font-bold font-playfair text-chocolate">{selectedCustomer.displayName || 'Guest'}</h2>
                     <p className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest font-bold">Customer Since {new Date(selectedCustomer.createdAt).toLocaleDateString()}</p>
                  </div>
               </div>
@@ -557,7 +612,7 @@ const AdminCustomers = () => {
         <div className="flex justify-center mt-8">
           <button
             onClick={() => fetchUsers(true)}
-            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm"
+            className="px-8 py-3 bg-white border border-gray-100 rounded-2xl font-bold text-chocolate hover:bg-gray-50 transition-all shadow-sm h-11 min-h-[44px]"
           >
             Load More Customers
           </button>
