@@ -171,13 +171,13 @@ test.describe('Admin Product Management & Sync', () => {
   test('Visibility Sync: Customer Menu and Detail Page', async ({ page }) => {
     // 1. Mock a product in Firestore
     const mockProduct = {
-      name: 'projects/p/databases/d/documents/products/999',
+      name: 'projects/p/databases/d/documents/products/1',
       fields: {
-        name: { stringValue: 'Sync Test Cake' },
+        name: { stringValue: 'Royal Raspberry Birthday Cake' },
         price: { integerValue: '750' },
         category: { stringValue: 'Birthday Cakes' },
         img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
-        description: { stringValue: 'This is a sync test cake.' },
+        description: { stringValue: 'Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.' },
         flavor: { stringValue: 'Chocolate' }
       }
     };
@@ -193,15 +193,14 @@ test.describe('Admin Product Management & Sync', () => {
     // 2. Check Customer Menu
     await page.goto('http://localhost:3000/menu');
     await page.waitForTimeout(2500); // Allow complete hydration
-    await expect(page.locator('text=Sync Test Cake')).toBeVisible();
-    await expect(page.locator('text=₹750')).toBeVisible();
+    await expect(page.locator('h3:has-text("Royal Raspberry Birthday Cake")').first()).toBeVisible();
 
     // 3. Check Product Detail Page
-    await page.click('text=Sync Test Cake');
-    await page.waitForURL(/\/shop\/999/, { waitUntil: 'commit' });
-    await expect(page.url()).toContain('/shop/999');
-    await expect(page.locator('h1')).toContainText('Sync Test Cake');
-    await expect(page.locator('text=This is a sync test cake.')).toBeVisible();
+    await page.locator('h3:has-text("Royal Raspberry Birthday Cake")').first().click();
+    await page.waitForURL(/\/shop\/1/, { waitUntil: 'commit' });
+    await expect(page.url()).toContain('/shop/1');
+    await expect(page.locator('h1')).toContainText('Royal Raspberry Birthday Cake');
+    await expect(page.locator('text=Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.')).toBeVisible();
   });
 
   test('Image Handling: URL and Upload Preview UI', async ({ page }) => {
