@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import { Calendar, Clock, MessageSquare } from 'lucide-react';
+import { DecorationSuggestions } from '@/components/DecorationSuggestions';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } from '@/constants/delivery';
@@ -655,6 +656,14 @@ const CheckoutPage = () => {
                   className="w-full p-6 bg-cream rounded-[22px] border-2 border-transparent focus:border-rose-deep outline-none transition-all font-medium text-chocolate min-h-[100px]"
                 />
               </div>
+            </div>
+
+            {/* Decorative Products & Party Essentials Suggestions */}
+            <div className="bg-white rounded-[40px] p-8 md:p-10 shadow-sm border border-cream">
+              <DecorationSuggestions
+                placement="checkout"
+                title="Add Party Essentials & Decorations to Your Order"
+              />
             </div>
 
             {/* Payment Method */}

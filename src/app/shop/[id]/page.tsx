@@ -17,6 +17,7 @@ import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import GSTBadge from '@/components/GSTBadge';
 import ProductRecommendations from '@/components/ProductRecommendations';
+import { DecorationSuggestions } from '@/components/DecorationSuggestions';
 import CakeMessageInput from '@/components/shop/CakeMessageInput';
 import { getServingsForWeight } from '@/utils/servingHelper';
 
@@ -450,6 +451,14 @@ const ProductDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Decorative Products & Party Essentials Suggestions */}
+        <DecorationSuggestions
+          placement="pdp"
+          currentProductCategory={product.category}
+          currentProductId={product.id.toString()}
+          title="Enhance Your Celebration with Decorative Add-ons"
+        />
 
         {/* Recommendations Section */}
         <ProductRecommendations currentProduct={product} />

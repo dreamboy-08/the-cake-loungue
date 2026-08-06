@@ -14,7 +14,9 @@ import {
   LogOut,
   ChevronRight,
   Menu,
-  X
+  X,
+  Sparkles,
+  Gift
 } from 'lucide-react';
 import { Suspense } from 'react';
 
@@ -91,6 +93,8 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
+    { label: 'Decorations', href: '/admin/decorations', icon: <Sparkles size={20} /> },
+    { label: 'Deco Categories', href: '/admin/decorations-categories', icon: <Gift size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
     { label: 'Customers', href: '/admin/customers', icon: <Users size={20} /> },
     { label: 'Team Roles', href: '/admin/users', icon: <ShieldCheck size={20} /> },

@@ -1,0 +1,77 @@
+
+> cake-lounge-frontend@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+
+./src/components/shop/AddressManager.tsx
+145:6  Warning: React Hook useEffect has a missing dependency: 'userData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/context/CartContext.tsx
+117:6  Warning: React Hook useEffect has a missing dependency: 'persistCart'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+134:6  Warning: React Hook useEffect has a missing dependency: 'persistCart'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/context/WishlistContext.tsx
+120:6  Warning: React Hook useEffect has a missing dependency: 'persistWishlist'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+182:6  Warning: React Hook useEffect has a missing dependency: 'persistWishlist'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/34) ...
+Firebase configuration is missing or invalid. Please check your environment variables.
+Firebase configuration is missing or invalid. Please check your environment variables.
+Firebase configuration is missing or invalid. Please check your environment variables.
+   Generating static pages (8/34)
+   Generating static pages (16/34)
+   Generating static pages (25/34)
+ ✓ Generating static pages (34/34)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    5.01 kB         346 kB
+├ ○ /_not-found                          880 B          88.7 kB
+├ ○ /admin                               5.54 kB         282 kB
+├ ○ /admin/categories                    5.69 kB         318 kB
+├ ○ /admin/customers                     6.94 kB         280 kB
+├ ○ /admin/decorations                   14 kB           323 kB
+├ ○ /admin/decorations-categories        5.39 kB         317 kB
+├ ○ /admin/orders                        7.26 kB         280 kB
+├ ○ /admin/products                      7.54 kB         336 kB
+├ ○ /admin/users                         6.6 kB          311 kB
+├ ○ /admin/website-content               8.56 kB         313 kB
+├ ○ /checkout                            61.8 kB         388 kB
+├ ○ /checkout/failure                    3.63 kB         137 kB
+├ ○ /checkout/success                    3.98 kB         137 kB
+├ ○ /custom-cake                         3.47 kB         142 kB
+├ ○ /forgot-password                     4.79 kB         318 kB
+├ ○ /login                               3.93 kB         280 kB
+├ ○ /menu                                6.19 kB         347 kB
+├ ○ /orders                              6.21 kB         324 kB
+├ ƒ /orders/[id]                         9.81 kB         328 kB
+├ ○ /policies                            3.98 kB         137 kB
+├ ○ /policies/cancellation-refund        148 B           136 kB
+├ ○ /policies/privacy-policy             148 B           136 kB
+├ ○ /policies/shipping-delivery          148 B           136 kB
+├ ○ /policies/terms-and-conditions       148 B           136 kB
+├ ○ /preview-images                      9.52 kB         103 kB
+├ ○ /profile                             6.64 kB         325 kB
+├ ƒ /shop/[id]                           8.57 kB         355 kB
+├ ○ /shop/birthday-cakes                 448 B           345 kB
+├ ○ /shop/chocolate-cakes                411 B           345 kB
+├ ○ /shop/wedding-cakes                  418 B           345 kB
+├ ○ /signup                              3.95 kB         280 kB
+├ ○ /test-form                           2.46 kB         331 kB
+└ ○ /wishlist                            7.13 kB         331 kB
++ First Load JS shared by all            87.8 kB
+  ├ chunks/2117-9ced00b48fdec066.js      31.9 kB
+  ├ chunks/fd9d1056-270721ac51469ce4.js  53.6 kB
+  └ other shared chunks (total)          2.23 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
 import { products } from '@/constants/products';
+import { DecorationSuggestions } from '@/components/DecorationSuggestions';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -204,6 +205,12 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                       ))}
                     </AnimatePresence>
                   </div>
+
+                  {/* Decorative Add-ons / Party Essentials Suggestions */}
+                  <DecorationSuggestions
+                    placement="cart"
+                    title="Party Essentials Add-ons"
+                  />
 
                   {/* Recommendations Section */}
                   {recommendations.length > 0 && (
