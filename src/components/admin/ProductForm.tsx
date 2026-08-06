@@ -32,6 +32,7 @@ import {
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { products } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 
 interface ProductFormProps {
   product?: any;
@@ -40,6 +41,7 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
+  const { refreshProducts } = useProducts();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageItems, setImageItems] = useState<Array<{ file: File | null; preview: string; isExisting: boolean }>>(() => {
@@ -64,7 +66,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     isBestSeller: product?.isBestSeller || false,
     isNewArrival: product?.isNewArrival || false,
     inStock: product?.inStock !== undefined ? product?.inStock : true,
-    active: product?.active !== undefined ? product?.active : true,
+    active: product?.active !== undefined ? product?.active : (product?.status !== 'inactive'),
     imageUrl: product?.img || '',
   });
 
@@ -231,6 +233,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         isNewArrival: formData.isNewArrival,
         inStock: formData.inStock,
         active: formData.active,
+        status: formData.active ? 'active' : 'inactive',
         weights: formData.weights.map((w: any) => ({
           label: w.label,
           price: Number(w.price)
@@ -260,6 +263,10 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
           }
         }
         showToast(product ? "Product updated successfully!" : "Product created successfully!", "success");
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('admin_products_updated'));
+        }
+        await refreshProducts();
         setLoading(false);
         onSuccess();
         onClose();
@@ -301,6 +308,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         });
       }
 
+      await refreshProducts();
       onSuccess();
       onClose();
     } catch (error) {

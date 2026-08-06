@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
-import { products } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -17,6 +17,7 @@ interface CartModalProps {
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, isLoading, addToCart } = useCart();
   const router = useRouter();
+  const { products } = useProducts();
 
   const recommendations = React.useMemo(() => {
     if (cart.length === 0) {
@@ -29,12 +30,12 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     const cartItemIds = cart.map((item) => item.id);
     const cartCategories = Array.from(new Set(cart.map((item) => {
       // Retrieve category of product from constants using id fallback
-      const matchingProduct = products.find(p => p.id === item.id);
+      const matchingProduct = products.find(p => p.id.toString() === item.id.toString());
       return matchingProduct ? matchingProduct.category : null;
     }).filter(Boolean)));
 
     // Exclude items already in the cart
-    const eligibleProducts = products.filter((p) => !cartItemIds.includes(p.id));
+    const eligibleProducts = products.filter((p) => !cartItemIds.map(String).includes(p.id.toString()));
 
     // Score and rank products
     const scored = eligibleProducts.map((product) => {
@@ -58,7 +59,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
     // Take top 4 recommended products
     return scored.slice(0, 4).map((s) => s.product);
-  }, [cart]);
+  }, [cart, products]);
 
   return (
     <AnimatePresence>

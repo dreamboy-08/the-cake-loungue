@@ -1,9 +1,11 @@
 "use client";
 
 import React from 'react';
-import { Product, products } from '@/constants/products';
+import { Product } from '@/constants/products';
 import ProductCard from '@/components/ProductCard';
 import BackButton from '@/components/BackButton';
+import { useProducts } from '@/context/ProductsContext';
+import { Loader2 } from 'lucide-react';
 
 interface CategoryPageProps {
   category: string;
@@ -13,6 +15,7 @@ interface CategoryPageProps {
 }
 
 const CategoryPage = ({ category, title, description, subtitle }: CategoryPageProps) => {
+  const { products, loading } = useProducts();
   const filteredProducts = products.filter((p) => p.category === category);
 
   return (
@@ -32,11 +35,22 @@ const CategoryPage = ({ category, title, description, subtitle }: CategoryPagePr
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="py-24 flex flex-col items-center gap-4">
+            <Loader2 className="animate-spin text-rose-deep" size={40} />
+            <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">Loading products...</p>
+          </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="py-24 text-center">
+            <p className="text-text-mid font-semibold">No products found in this category.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

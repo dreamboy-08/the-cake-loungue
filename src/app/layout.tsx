@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { FlyToCartProvider } from "@/context/FlyToCartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { ProductsProvider } from "@/context/ProductsContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartBubble from "@/components/CartBubble";
@@ -36,16 +37,18 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${poppins.variable} font-poppins`}>
         <AuthProvider>
-          <CartProvider>
-            <FlyToCartProvider>
-              <WishlistProvider>
-                <Navbar />
-                <main>{children}</main>
-                <Footer />
-                <CartBubble />
-              </WishlistProvider>
-            </FlyToCartProvider>
-          </CartProvider>
+          <ProductsProvider>
+            <CartProvider>
+              <FlyToCartProvider>
+                <WishlistProvider>
+                  <Navbar />
+                  <main>{children}</main>
+                  <Footer />
+                  <CartBubble />
+                </WishlistProvider>
+              </FlyToCartProvider>
+            </CartProvider>
+          </ProductsProvider>
         </AuthProvider>
       </body>
     </html>

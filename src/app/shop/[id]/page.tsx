@@ -5,9 +5,8 @@ import { useParams, notFound, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle, Clock, Plus, Minus } from 'lucide-react';
-import { db } from '@/utils/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { Product, products } from '@/constants/products';
+import { Product } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import { useCart } from '@/context/CartContext';
 import { getEarliestAvailableDateAndSlot } from '@/utils/deliveryValidation';
 import { useFlyToCart } from '@/context/FlyToCartContext';
@@ -27,6 +26,8 @@ const ProductDetail = () => {
   const { flyToCart } = useFlyToCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
   const [localAdded, setLocalAdded] = useState(false);
+
+  const { products, loading: productsLoading } = useProducts();
 
   const [product, setProduct] = useState<Product | null>(null);
   const isWishlisted = product ? isInWishlist(product.id) : false;
@@ -50,74 +51,25 @@ const ProductDetail = () => {
   }, [product, prepHours, hasCustomCake]);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) return;
-      setLoading(true);
-      setError(null);
+    if (productsLoading) return;
+    if (!id) return;
+    setLoading(true);
+    setError(null);
 
-      // If Firebase is not configured, fallback immediately to static constants
-      if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
-        console.warn("Firebase not configured, falling back to static constants in ProductDetail.");
-        const fallbackProduct = products.find(p => p.id.toString() === id);
-        if (fallbackProduct) {
-          setProduct(fallbackProduct);
-          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
-            setSelectedWeight(fallbackProduct.weights[0].label);
-          }
-        } else {
-          setError('Product not found in our catalog');
+    const foundProduct = products.find(p => p.id.toString() === id.toString());
+    if (foundProduct) {
+      setProduct(foundProduct);
+      if (foundProduct.weights && foundProduct.weights.length > 0) {
+        const currentOptionExists = foundProduct.weights.some(w => w.label === selectedWeight);
+        if (!currentOptionExists) {
+          setSelectedWeight(foundProduct.weights[0].label);
         }
-        setLoading(false);
-        return;
       }
-
-      try {
-        // Step 1: Try Firestore
-        const docRef = doc(db, 'products', id as string);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data() as any;
-          const productData = { ...data, id: docSnap.id } as Product;
-          setProduct(productData);
-          if (productData.weights && productData.weights.length > 0) {
-            setSelectedWeight(productData.weights[0].label);
-          }
-          setLoading(false);
-          return;
-        }
-
-        // Step 2: Fallback to static constants if not found in Firestore
-        console.warn(`Product ${id} not found in Firestore, falling back to static constants.`);
-        const fallbackProduct = products.find(p => p.id.toString() === id);
-
-        if (fallbackProduct) {
-          setProduct(fallbackProduct);
-          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
-            setSelectedWeight(fallbackProduct.weights[0].label);
-          }
-        } else {
-          setError('Product not found in our catalog');
-        }
-      } catch (err) {
-        console.error('Error fetching product from Firestore, trying fallback:', err);
-        // Step 3: Try fallback on actual fetch error too
-        const fallbackProduct = products.find(p => p.id.toString() === id);
-        if (fallbackProduct) {
-          setProduct(fallbackProduct);
-          if (fallbackProduct.weights && fallbackProduct.weights.length > 0) {
-            setSelectedWeight(fallbackProduct.weights[0].label);
-          }
-        } else {
-          setError('Failed to load product details');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProduct();
-  }, [id]);
+    } else {
+      setError('Product not found in our catalog');
+    }
+    setLoading(false);
+  }, [id, products, productsLoading]);
 
   if (loading) {
     return (
@@ -452,7 +404,7 @@ const ProductDetail = () => {
         </div>
 
         {/* Recommendations Section */}
-        <ProductRecommendations currentProduct={product} />
+        <ProductRecommendations currentProduct={product} allProducts={products} />
       </div>
     </PageWrapper>
   );
