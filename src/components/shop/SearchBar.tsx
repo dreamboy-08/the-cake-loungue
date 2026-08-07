@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X } from 'lucide-react';
-import { products, Product } from '@/constants/products';
+import { Product } from '@/constants/products';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { filterProducts } from '@/utils/filterProducts';
+import { useProducts } from '@/context/ProductsContext';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -18,6 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
   const [showSuggestions, setShowSuggestions] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { products } = useProducts();
 
   useEffect(() => {
     if (query.trim().length > 1) {
@@ -29,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
       setShowSuggestions(false);
     }
     onSearch(query);
-  }, [query, onSearch]);
+  }, [query, onSearch, products]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

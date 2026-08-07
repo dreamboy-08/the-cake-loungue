@@ -30,8 +30,10 @@ import {
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
 import { products as staticProducts } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 
 const AdminProducts = () => {
+  const { refreshProducts } = useProducts();
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,7 +171,11 @@ const AdminProducts = () => {
     try {
       const { recoverCatalog } = await import("@/utils/recoverCatalog");
       const success = await recoverCatalog();
-      if (success) alert("Catalog restored successfully!");
+      if (success) {
+        alert("Catalog restored successfully!");
+        await refreshProducts();
+        fetchProducts();
+      }
     } catch (error) {
       console.error("Sync error:", error);
     } finally {
@@ -200,7 +206,11 @@ const AdminProducts = () => {
     try {
       const { migrateWeights } = await import("@/utils/migrateWeights");
       const success = await migrateWeights();
-      if (success) alert("Weights migrated successfully!");
+      if (success) {
+        alert("Weights migrated successfully!");
+        await refreshProducts();
+        fetchProducts();
+      }
     } catch (error) {
       console.error("Migration error:", error);
     } finally {
@@ -215,8 +225,10 @@ const AdminProducts = () => {
         const currentList = (window as any)._adminProducts || Array.from(staticProducts);
         const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
         (window as any)._adminProducts = updatedList;
+        window.dispatchEvent(new Event('admin_products_updated'));
       }
       setShowDeleteConfirm(null);
+      await refreshProducts();
       fetchProducts();
       return;
     }
@@ -224,6 +236,7 @@ const AdminProducts = () => {
     try {
       await deleteDoc(doc(db, 'products', id));
       setShowDeleteConfirm(null);
+      await refreshProducts();
       fetchProducts();
     } catch (error) {
       console.error("Error deleting product, attempting local fallback:", error);
@@ -231,8 +244,10 @@ const AdminProducts = () => {
         const currentList = (window as any)._adminProducts || Array.from(staticProducts);
         const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
         (window as any)._adminProducts = updatedList;
+        window.dispatchEvent(new Event('admin_products_updated'));
       }
       setShowDeleteConfirm(null);
+      await refreshProducts();
       fetchProducts();
     }
   };

@@ -1,14 +1,18 @@
+"use client";
+
 import React from 'react';
-import { products } from '@/constants/products';
+import { useProducts } from '@/context/ProductsContext';
 import ProductCard from '../ProductCard';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 
 const FeaturedProducts = () => {
+  const { products, loading } = useProducts();
   const featuredIds = [1, 2, 3, 5, 6, 7, 9, 11, 13, 17, 55, 59, 103, 114, 325, 327];
 
+  // Try finding by numerical/string ID match, or falls back to filtering active items if custom cakes are created
   const featured = featuredIds
-    .map(id => products.find(p => p.id === id))
+    .map(id => products.find(p => p.id.toString() === id.toString()))
     .filter((p): p is typeof products[0] => p !== undefined);
 
   return (

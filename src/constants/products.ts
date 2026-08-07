@@ -1,3 +1,17 @@
+/**
+ * CRITICAL ARCHITECTURAL WARNING:
+ * --------------------------------
+ * This file contains the static/offline fallback dataset for 'The Cake Lounge' products.
+ * Do NOT use this static array directly in storefront pages or user-facing components.
+ *
+ * To ensure a single source of truth (SSOT) and real-time CRUD alignment, you must
+ * always consume products dynamically using the `useProducts()` context hook from `@/context/ProductsContext`.
+ *
+ * The `products` array exported below is strictly designated for:
+ *   1. Initial seeding / local offline backup in ProductsProvider if Firestore is unconfigured/empty.
+ *   2. E2E Playwright test execution fallbacks in isolated sandbox pipelines.
+ */
+
 export interface ProductWeight {
   label: string;
   price: number;
