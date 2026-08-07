@@ -105,10 +105,14 @@ export const DecorationSuggestions: React.FC<DecorationSuggestionsProps> = ({
             >
               <div className="relative w-16 h-14 rounded-xl overflow-hidden bg-gray-50 border shrink-0">
                 <Image
-                  src={item.thumbnailImage}
+                  src={item.thumbnailImage || "/images/products/placeholder.jpg"}
                   alt={item.name}
                   fill
                   className="object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/products/placeholder.jpg";
+                  }}
                 />
               </div>
               <div className="flex-1 min-w-0">

@@ -157,18 +157,59 @@ const DecorationProductForm = ({ product, onClose, onSuccess }: DecorationProduc
     fetchCategories();
   }, []);
 
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
   const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      const newItems = files.map((file, idx) => ({
+      const validFiles: Array<{ url: string; altText: string; displayOrder: number; file: File | null; isExisting: boolean }> = [];
+
+      for (const file of files) {
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          showToast(`Unsupported format: ${file.name}. Only JPG, PNG, WEBP are supported.`, "error");
+          continue;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          showToast(`File too large: ${file.name}. Max size is 5MB.`, "error");
+          continue;
+        }
+        validFiles.push({
+          url: URL.createObjectURL(file),
+          altText: '',
+          displayOrder: imageItems.length + validFiles.length + 1,
+          file,
+          isExisting: false
+        });
+      }
+
+      if (validFiles.length > 0) {
+        setImageItems(prev => [...prev, ...validFiles]);
+      }
+    }
+  };
+
+  const handleImageReplace = (index: number, file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast(`Unsupported format: ${file.name}. Only JPG, PNG, WEBP are supported.`, "error");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast(`File too large: ${file.name}. Max size is 5MB.`, "error");
+      return;
+    }
+
+    setImageItems(prev => {
+      const copy = [...prev];
+      copy[index] = {
+        ...copy[index],
         url: URL.createObjectURL(file),
-        altText: '',
-        displayOrder: imageItems.length + idx + 1,
         file,
         isExisting: false
-      }));
-      setImageItems(prev => [...prev, ...newItems]);
-    }
+      };
+      return copy;
+    });
   };
 
   const removeImageItem = (index: number) => {
@@ -181,6 +222,30 @@ const DecorationProductForm = ({ product, onClose, onSuccess }: DecorationProduc
       copy[index] = { ...copy[index], [field]: value };
       return copy;
     });
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (index: number) => {
+    if (draggedIndex === null || draggedIndex === index) return;
+
+    setImageItems(prev => {
+      const copy = [...prev];
+      const draggedItem = copy[draggedIndex];
+      copy.splice(draggedIndex, 1);
+      copy.splice(index, 0, draggedItem);
+      return copy.map((item, idx) => ({
+        ...item,
+        displayOrder: idx + 1
+      }));
+    });
+    setDraggedIndex(null);
   };
 
   const validateForm = () => {
@@ -371,16 +436,45 @@ const DecorationProductForm = ({ product, onClose, onSuccess }: DecorationProduc
                 <label className="block text-sm font-black text-chocolate uppercase tracking-widest">Image Gallery</label>
                 <div className="grid grid-cols-2 gap-4">
                   {imageItems.map((item, idx) => (
-                    <div key={idx} className="relative p-3 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2 group">
+                    <div
+                      key={idx}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDrop={() => handleDrop(idx)}
+                      className="relative p-3 rounded-2xl border border-gray-100 bg-gray-50/50 flex flex-col gap-2 group cursor-grab active:cursor-grabbing transition-transform duration-150"
+                    >
                       <div className="relative aspect-video rounded-xl overflow-hidden shadow-inner bg-white">
                         <Image src={item.url} alt="Preview" fill className="object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => removeImageItem(idx)}
-                          className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <X size={12} />
-                        </button>
+                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            onClick={() => document.getElementById(`deco-replace-${idx}`)?.click()}
+                            className="p-1.5 bg-chocolate text-white rounded-full hover:bg-rose-deep transition-all"
+                            title="Replace Image"
+                          >
+                            <Upload size={10} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeImageItem(idx)}
+                            className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all"
+                            title="Delete Image"
+                          >
+                            <Trash2 size={10} />
+                          </button>
+                        </div>
+                        <input
+                          id={`deco-replace-${idx}`}
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={(e) => {
+                            if (e.target.files && e.target.files[0]) {
+                              handleImageReplace(idx, e.target.files[0]);
+                            }
+                          }}
+                          className="hidden"
+                        />
                         {idx === 0 && (
                           <div className="absolute bottom-0 inset-x-0 bg-rose-deep/80 text-white text-[8px] font-bold text-center py-1 uppercase tracking-widest">
                             Thumbnail / Main Image
@@ -416,7 +510,7 @@ const DecorationProductForm = ({ product, onClose, onSuccess }: DecorationProduc
                     <span className="text-[10px] font-black uppercase mt-1">Add Image</span>
                   </button>
                 </div>
-                <input id="deco-image-upload" type="file" multiple accept="image/*" onChange={handleImageAdd} className="hidden" />
+                <input id="deco-image-upload" type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={handleImageAdd} className="hidden" />
               </div>
 
               {/* Status & Basic Controls */}
