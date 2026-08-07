@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 import { products as staticProducts } from '@/constants/products';
 import { useProducts } from '@/context/ProductsContext';
 
@@ -274,7 +275,7 @@ const AdminProducts = () => {
   }, [products, allProducts, searchTerm, categoryFilter, statusFilter]);
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-[1600px] mx-auto">
       {/* Header Actions Block */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -397,22 +398,22 @@ const AdminProducts = () => {
       {!isMobile && (
         <div className="hidden md:block bg-white rounded-[40px] shadow-sm border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full table-fixed text-left align-middle">
               <thead>
-                <tr className="bg-gray-50/50">
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Product</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Category</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Price</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Badges</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Stock</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Status</th>
-                  <th className="px-8 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Actions</th>
+                <tr className="bg-gray-50/50 border-b border-gray-100">
+                  <th className="w-[32%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Product</th>
+                  <th className="w-[15%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Category</th>
+                  <th className="w-[12%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Price</th>
+                  <th className="w-[12%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Badges</th>
+                  <th className="w-[12%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Stock</th>
+                  <th className="w-[10%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-center">Status</th>
+                  <th className="w-[7%] px-4 xl:px-6 py-5 text-[10px] font-black text-chocolate/40 uppercase tracking-widest text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {(loading && products.length === 0) || ((searchTerm || categoryFilter !== 'All' || statusFilter !== 'All') && isSearchingAll && filteredProducts.length === 0) ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-24 text-center">
+                    <td colSpan={7} className="px-4 xl:px-6 py-24 text-center">
                       <Loader2 className="animate-spin mx-auto text-rose-deep mb-4" size={40} />
                       <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">
                         {(searchTerm || categoryFilter !== 'All' || statusFilter !== 'All') ? 'Fetching filtered results...' : 'Loading Catalog...'}
@@ -421,7 +422,7 @@ const AdminProducts = () => {
                   </tr>
                 ) : filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-6 py-24 text-center">
+                    <td colSpan={7} className="px-4 xl:px-6 py-24 text-center">
                       <Package className="mx-auto text-gray-100 mb-4" size={64} />
                       <p className="text-sm text-gray-400 font-bold uppercase tracking-widest">No products found</p>
                     </td>
@@ -429,47 +430,47 @@ const AdminProducts = () => {
                 ) : (
                   filteredProducts.map((p) => (
                     <tr key={p.id} className={`hover:bg-gray-50/50 transition-colors group ${p.status === 'inactive' ? 'opacity-60' : ''}`}>
-                      <td className="px-8 py-4">
-                        <div className="flex items-center gap-5">
-                          <div className="relative w-14 h-14 rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white">
+                      <td className="px-4 xl:px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="relative w-14 h-14 rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white shrink-0">
                             <Image src={p.img} alt={p.name} fill className="object-cover" />
                           </div>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-chocolate text-sm leading-tight">{p.name}</span>
-                            <span className="text-[10px] text-gray-400 mt-1 font-medium">{p.flavor || 'Standard Flavor'}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-bold text-chocolate text-sm leading-snug break-words whitespace-normal">{p.name}</span>
+                            <span className="text-[10px] text-gray-400 mt-1 font-medium truncate">{p.flavor || 'Standard Flavor'}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-4 text-center">
-                        <span className="px-3 py-1 rounded-full bg-cream-dark text-rose-deep text-[10px] font-black uppercase tracking-widest border border-rose/5">
+                      <td className="px-4 xl:px-6 py-4 text-center">
+                        <span className="px-3 py-1 rounded-full bg-cream-dark text-rose-deep text-[10px] font-black uppercase tracking-widest border border-rose/5 whitespace-nowrap inline-block">
                           {p.category}
                         </span>
                       </td>
-                      <td className="px-8 py-4 text-center">
-                        <div className="flex flex-col">
+                      <td className="px-4 xl:px-6 py-4 text-center whitespace-nowrap">
+                        <div className="flex flex-col items-center justify-center">
                           <span className="font-black text-chocolate text-sm">₹{p.price}</span>
                           {p.oldPrice && <span className="text-[10px] text-gray-400 line-through">₹{p.oldPrice}</span>}
                         </div>
                       </td>
-                      <td className="px-8 py-4">
+                      <td className="px-4 xl:px-6 py-4">
                         <div className="flex items-center justify-center gap-1.5">
-                          {p.isFeatured && <Star size={16} className="text-amber-400 fill-amber-400" />}
-                          {p.isBestSeller && <TrendingUp size={16} className="text-rose-deep" />}
-                          {p.isNewArrival && <Sparkles size={16} className="text-blue-400" />}
+                          {p.isFeatured && <Star size={16} className="text-amber-400 fill-amber-400 shrink-0" />}
+                          {p.isBestSeller && <TrendingUp size={16} className="text-rose-deep shrink-0" />}
+                          {p.isNewArrival && <Sparkles size={16} className="text-blue-400 shrink-0" />}
                         </div>
                       </td>
-                      <td className="px-8 py-4 text-center">
-                        <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${p.inStock !== false ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                      <td className="px-4 xl:px-6 py-4 text-center whitespace-nowrap">
+                        <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest inline-block ${p.inStock !== false ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
                           {p.inStock !== false ? 'In Stock' : 'Out of Stock'}
                         </span>
                       </td>
-                      <td className="px-8 py-4 text-center">
+                      <td className="px-4 xl:px-6 py-4 text-center whitespace-nowrap">
                         <div className="flex items-center justify-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${p.status === 'inactive' ? 'bg-gray-300' : 'bg-green-500'}`}></div>
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${p.status === 'inactive' ? 'bg-gray-300' : 'bg-green-500'}`}></div>
                           <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">{p.status === 'inactive' ? 'Hidden' : 'Live'}</span>
                         </div>
                       </td>
-                      <td className="px-8 py-4 text-right">
+                      <td className="px-4 xl:px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => {
@@ -589,33 +590,16 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[40px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
-            <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
-              <AlertCircle size={40} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-chocolate">Delete Product?</h3>
-              <p className="text-gray-500 text-sm font-medium">This action cannot be undone. All data for this product will be permanently removed.</p>
-            </div>
-            <div className="flex gap-4 pt-4">
-              <button
-                onClick={() => setShowDeleteConfirm(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 bg-white border border-gray-200 transition-all text-sm h-11 min-h-[44px]"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(showDeleteConfirm)}
-                className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all text-sm h-11 min-h-[44px]"
-              >
-                Confirm Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AdminConfirmationModal
+        isOpen={showDeleteConfirm !== null}
+        onClose={() => setShowDeleteConfirm(null)}
+        onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
+        title="Delete Product?"
+        message="This action cannot be undone. All data for this product will be permanently removed."
+        confirmText="Confirm Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
 
       {hasMore && !searchTerm && categoryFilter === 'All' && statusFilter === 'All' && (
         <div className="flex justify-center mt-8">

@@ -29,6 +29,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import CategoryForm from '@/components/admin/CategoryForm';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sortCategories } from '@/utils/categorySorting';
@@ -122,7 +123,7 @@ const AdminCategories = () => {
   };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-7xl mx-auto">
+    <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-[1600px] mx-auto">
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -270,33 +271,16 @@ const AdminCategories = () => {
         />
       )}
 
-      {showDeleteConfirm && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-chocolate/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-[28px] sm:rounded-[32px] p-8 max-w-sm w-full shadow-2xl text-center space-y-6 animate-fade-up">
-            <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto">
-              <AlertCircle size={40} />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-chocolate">Delete Category?</h3>
-              <p className="text-gray-500 text-sm font-medium">Deleting this category will not delete its products, but they will no longer be associated with it.</p>
-            </div>
-            <div className="flex gap-4 pt-4">
-              <button
-                onClick={() => setShowDeleteConfirm(null)}
-                className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition-all text-sm h-11 min-h-[44px] bg-white border border-gray-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(showDeleteConfirm)}
-                className="flex-1 px-6 py-4 bg-red-500 text-white rounded-2xl font-bold shadow-xl shadow-red-500/20 hover:bg-red-600 transition-all text-sm h-11 min-h-[44px]"
-              >
-                Confirm Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AdminConfirmationModal
+        isOpen={showDeleteConfirm !== null}
+        onClose={() => setShowDeleteConfirm(null)}
+        onConfirm={() => showDeleteConfirm && handleDelete(showDeleteConfirm)}
+        title="Delete Category?"
+        message="Deleting this category will not delete its products, but they will no longer be associated with it."
+        confirmText="Confirm Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
 
     </div>
   );
