@@ -28,8 +28,9 @@ test.describe('Checkout Midnight Delivery Caution', () => {
 
     // Click a selectable day that is not disabled or out of range
     // React-datepicker days have class 'react-datepicker__day'
-    // Let's click the first day cell that is selectable and not disabled or outside month
-    const dayElement = page.locator('.react-datepicker__day:not(.react-datepicker__day--disabled):not(.react-datepicker__day--outside-month)').first();
+    // Let's click the second day cell (or future) that is selectable and not disabled or outside month
+    // selecting the second day guarantees that the 16-hour preparation lead time rule doesn't disable our target slot.
+    const dayElement = page.locator('.react-datepicker__day:not(.react-datepicker__day--disabled):not(.react-datepicker__day--outside-month)').nth(1);
     await dayElement.click();
 
     // 5. Select a non-midnight delivery slot (e.g. "10:00 AM – 12:00 PM")
