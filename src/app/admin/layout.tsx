@@ -14,7 +14,8 @@ import {
   LogOut,
   ChevronRight,
   Menu,
-  X
+  X,
+  BookOpen
 } from 'lucide-react';
 import { Suspense } from 'react';
 import { CMSProvider } from '@/context/CMSContext';
@@ -90,6 +91,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
+    { label: 'Our Story', href: '/admin/our-story', icon: <BookOpen size={20} /> },
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },

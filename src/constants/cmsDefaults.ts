@@ -7,7 +7,9 @@ import {
   CMSWebsiteSettings,
   CMSMediaItem,
   CMSSEOMetadata,
-  CMSGeneralSettings
+  CMSGeneralSettings,
+  AboutFeatureCard,
+  AboutSectionSettings
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -724,4 +726,57 @@ export const DEFAULT_GENERAL_SETTINGS: CMSGeneralSettings = {
   couponBannerEnabled: true,
   couponBannerText: '🎉 Use code LOUNGEVALENTINE for Flat 15% off Anniversary & Couple Cakes!',
   maintenanceMode: false
+};
+
+export const DEFAULT_ABOUT_SETTINGS: AboutSectionSettings = {
+  id: 'about_settings',
+  enabled: true,
+  sectionBadge: 'Our Story',
+  heading: 'Baked with Passion,\nServed with Love',
+  storyContent: '<p>The Cake Lounge was born from a grandmother\'s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.</p>',
+  leftImageUrl: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80',
+  experienceNumber: '10+',
+  experienceTitle: 'Years',
+  experienceDesc: 'Years of crafting joyful memories with every cake',
+  features: [
+    {
+      id: 'f_nat',
+      icon: 'Sprout',
+      title: 'All-Natural Ingredients',
+      desc: 'We source only the finest local produce — no artificial preservatives, ever.',
+      displayOrder: 0,
+      enabled: true
+    },
+    {
+      id: 'f_hand',
+      icon: 'Hand',
+      title: 'Handcrafted Daily',
+      desc: 'Each cake is made fresh the morning of delivery by our master pastry chefs.',
+      displayOrder: 1,
+      enabled: true
+    },
+    {
+      id: 'f_truk',
+      icon: 'Truck',
+      title: 'Guaranteed Freshness',
+      desc: 'Freshly Baked for Your Selected Date.',
+      displayOrder: 2,
+      enabled: true
+    }
+  ],
+  backgroundColor: '#ffffff',
+  gradient: 'none',
+  accentColor: '#c9614a',
+  headingColor: '#3d1f10',
+  textColor: '#a07860',
+  sectionPadding: 'py-[100px]',
+  borderRadius: 'rounded-xl',
+  shadow: 'shadow-lg',
+  animationType: 'slide-up',
+  animationDuration: 0.8,
+  animationDelay: 0.1,
+  imageLayout: 'left',
+  imageWidth: 'w-full',
+  imageBorderRadius: 'rounded-xl',
+  imageShadow: 'shadow-lg'
 };
