@@ -42,6 +42,8 @@ export default function RootLayout({
           <CMSProvider>
             <CMSStyleRoot />
             <ProductsProvider>
+          <ProductsProvider>
+            <CMSProvider>
               <CartProvider>
                 <FlyToCartProvider>
                   <WishlistProvider>
@@ -54,6 +56,8 @@ export default function RootLayout({
               </CartProvider>
             </ProductsProvider>
           </CMSProvider>
+            </CMSProvider>
+          </ProductsProvider>
         </AuthProvider>
       </body>
     </html>
