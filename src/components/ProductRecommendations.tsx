@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Product, products as fallbackProducts } from '@/constants/products';
 import { getRecommendations } from '@/utils/recommendationEngine';
-import RecommendationCard from './RecommendationCard';
+import ProductCard from './ProductCard';
 import { RecommendationsDrawer } from './RecommendationsDrawer';
 
 interface ProductRecommendationsProps {
@@ -33,7 +33,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
   }
 
   return (
-    <section className="mt-16 pt-8 border-t border-cream-dark">
+    <section className="mt-16 pt-8 border-t border-cream-dark/30">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-xl md:text-2xl font-bold font-playfair text-chocolate">
@@ -50,23 +50,17 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
       </div>
 
       {/* Recommendations Cards Grid */}
-      {/*
-        Responsive layout requirements:
-        - Desktop: 4 recommended products
-        - Tablet: 2 products per row
-        - Mobile: 1.2 - 1.5 cards with smooth horizontal scrolling
-      */}
       <div className="relative overflow-hidden sm:overflow-visible">
-        {/* Mobile: horizontal scrollable flex container | Tablet/Desktop: Grid layout */}
+        {/* Tablet/Desktop: Grid layout utilizing identical ProductCard */}
         <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
           {pdpRecommendations.map((product) => (
             <div key={product.id} className="animate-fade-up">
-              <RecommendationCard product={product} />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
 
-        {/* Mobile Horizontal Scroll with seamless edge bleeding */}
+        {/* Mobile Horizontal Scroll utilizing identical ProductCard */}
         <div
           className="flex sm:hidden overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-6 px-6"
           style={{ WebkitOverflowScrolling: 'touch' }}
@@ -76,7 +70,7 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
               key={product.id}
               className="w-[75vw] min-w-[260px] max-w-[320px] shrink-0 snap-start snap-always"
             >
-              <RecommendationCard product={product} />
+              <ProductCard product={product} />
             </div>
           ))}
         </div>

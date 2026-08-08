@@ -217,3 +217,61 @@ body {
   border: 1px solid var(--rose) !important;
   border-radius: 50% !important;
 }
+
+/* Luxury Design System Additions */
+.shadow-luxury-sm {
+  box-shadow: 0 4px 20px -2px rgba(61, 31, 16, 0.04);
+}
+.shadow-luxury-md {
+  box-shadow: 0 12px 30px -4px rgba(61, 31, 16, 0.08);
+}
+.shadow-luxury-lg {
+  box-shadow: 0 20px 40px -4px rgba(61, 31, 16, 0.12);
+}
+
+.card-luxury {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border: 1px solid rgba(61, 31, 16, 0.03);
+}
+
+.card-luxury:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(61, 31, 16, 0.06);
+}
+
+.input-luxury {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--white);
+  border: 1px solid var(--cream-dark);
+  border-radius: 12px;
+  font-family: var(--font-poppins);
+  font-size: 0.9rem;
+  color: var(--text);
+  transition: var(--transition);
+}
+
+.input-luxury:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 164, 90, 0.15);
+}
+
+.badge-luxury {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-family: var(--font-poppins);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--cream-dark);
+  color: var(--chocolate);
+  border: 1px solid rgba(61, 31, 16, 0.05);
+}

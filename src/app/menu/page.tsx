@@ -29,7 +29,12 @@ const MenuContent = () => {
 
   useEffect(() => {
     // If Firebase is not configured (common in dev/test), fallback immediately to static
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
+    const isFirebaseConfigured =
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key" &&
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "missing";
+
+    if (!isFirebaseConfigured) {
       console.warn("Firebase not configured, falling back to static categories.");
       setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
       setLoading(false);
@@ -170,7 +175,7 @@ const MenuContent = () => {
         </div>
 
         {/* Dynamic Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 xl:gap-12">
           {filteredProducts.map((product, index) => (
             <ProductCard
               key={product.id}

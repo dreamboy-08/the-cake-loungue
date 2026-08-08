@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
 import { Product } from '@/constants/products';
 import { motion, AnimatePresence } from 'framer-motion';
-import RecommendationCard from './RecommendationCard';
+import ProductCard from './ProductCard';
 
 interface RecommendationsDrawerProps {
   isOpen: boolean;
@@ -177,7 +177,7 @@ export const RecommendationsDrawer: React.FC<RecommendationsDrawerProps> = ({
                       }
                     }}
                   >
-                    <RecommendationCard product={product} />
+                    <ProductCard product={product} />
                   </motion.div>
                 ))}
               </motion.div>
