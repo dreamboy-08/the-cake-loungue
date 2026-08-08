@@ -12,7 +12,8 @@ import {
   CMSWebsiteSettings,
   CMSMediaItem,
   CMSSEOMetadata,
-  CMSGeneralSettings
+  CMSGeneralSettings,
+  AboutSectionSettings
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -23,7 +24,8 @@ import {
   DEFAULT_WEBSITE_SETTINGS,
   DEFAULT_MEDIA_LIBRARY,
   DEFAULT_SEO_METADATA,
-  DEFAULT_GENERAL_SETTINGS
+  DEFAULT_GENERAL_SETTINGS,
+  DEFAULT_ABOUT_SETTINGS
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -36,6 +38,7 @@ interface CMSContextType {
   mediaItems: CMSMediaItem[];
   seoMetadata: CMSSEOMetadata[];
   generalSettings: CMSGeneralSettings;
+  aboutSettings: AboutSectionSettings;
   loading: boolean;
 
   // Setters
@@ -48,6 +51,7 @@ interface CMSContextType {
   updateMediaItems: (items: CMSMediaItem[]) => Promise<void>;
   updateSEOMetadata: (metadata: CMSSEOMetadata[]) => Promise<void>;
   updateGeneralSettings: (settings: CMSGeneralSettings) => Promise<void>;
+  updateAboutSettings: (settings: AboutSectionSettings) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -62,6 +66,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [mediaItems, setMediaItems] = useState<CMSMediaItem[]>([]);
   const [seoMetadata, setSeoMetadata] = useState<CMSSEOMetadata[]>([]);
   const [generalSettings, setGeneralSettings] = useState<CMSGeneralSettings>(DEFAULT_GENERAL_SETTINGS);
+  const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   const isFirebaseConfigured =
@@ -81,6 +86,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setMediaItems(DEFAULT_MEDIA_LIBRARY);
       setSeoMetadata(DEFAULT_SEO_METADATA);
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+      setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setLoading(false);
       return;
     }
@@ -100,6 +106,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setMediaItems(getStored('mediaItems', DEFAULT_MEDIA_LIBRARY));
       setSeoMetadata(getStored('seoMetadata', DEFAULT_SEO_METADATA));
       setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
+      setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -111,6 +118,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setMediaItems(DEFAULT_MEDIA_LIBRARY);
       setSeoMetadata(DEFAULT_SEO_METADATA);
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+      setAboutSettings(DEFAULT_ABOUT_SETTINGS);
     } finally {
       setLoading(false);
     }
@@ -269,6 +277,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const updateAboutSettings = async (settings: AboutSectionSettings) => {
+    setAboutSettings(settings);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('aboutSettings', settings);
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'settings', 'about_settings'), settings);
+    } catch (err) {
+      console.error("Failed to update aboutSettings in Firestore:", err);
+      saveOfflineCMS('aboutSettings', settings);
+    }
+  };
+
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -353,6 +375,18 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     unsubs.push(unsubGeneral);
 
+    const unsubAbout = onSnapshot(doc(db, 'settings', 'about_settings'), (snap) => {
+      if (snap.exists()) {
+        setAboutSettings(snap.data() as AboutSectionSettings);
+      } else {
+        setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+      }
+    }, (error) => {
+      console.error("Failed to read about settings, using default:", error);
+      setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+    });
+    unsubs.push(unsubAbout);
+
     setLoading(false);
 
     return () => {
@@ -371,6 +405,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       mediaItems,
       seoMetadata,
       generalSettings,
+      aboutSettings,
       loading,
 
       updateNavigation,
@@ -381,7 +416,8 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateWebsiteSettings,
       updateMediaItems,
       updateSEOMetadata,
-      updateGeneralSettings
+      updateGeneralSettings,
+      updateAboutSettings
     }}>
       {children}
     </CMSContext.Provider>
