@@ -6,6 +6,7 @@ import { AboutSectionSettings, AboutFeatureCard } from '@/types/cms';
 import { uploadToCloudinary } from '@/utils/cloudinary';
 import getCroppedImg from '@/utils/cropImage';
 import Cropper from 'react-easy-crop';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 import {
   Save,
   Loader2,
@@ -1044,51 +1045,47 @@ const OurStoryAdmin = () => {
       </div>
 
       {/* REACT EASY CROP IMAGE CROP MODAL */}
-      <AnimatePresence>
-        {cropModalOpen && originalImageSrc && (
-          <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-chocolate/70 backdrop-blur-md">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[90vh]"
-            >
-              {/* Modal Header */}
-              <div className="p-5 bg-chocolate text-white flex items-center justify-between shrink-0">
-                <div>
-                  <h3 className="font-bold font-playfair text-lg">Crop Illustration Image</h3>
-                  <span className="text-[10px] uppercase tracking-wider text-white/60">Target: Exact 4:5 Portrait Ratio (Luxury Fit)</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setCropModalOpen(false)}
-                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
+      <AdminConfirmationModal
+        isOpen={cropModalOpen && !!originalImageSrc}
+        onClose={() => setCropModalOpen(false)}
+        className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[90vh] text-left relative z-10 animate-none"
+      >
+        {/* Modal Header */}
+        <div className="p-5 bg-chocolate text-white flex items-center justify-between shrink-0">
+          <div>
+            <h3 className="font-bold font-playfair text-lg">Crop Illustration Image</h3>
+            <span className="text-[10px] uppercase tracking-wider text-white/60">Target: Exact 4:5 Portrait Ratio (Luxury Fit)</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setCropModalOpen(false)}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
 
-              {/* Modal Body with 2 columns on desktop (Cropper left, Live Preview right) */}
-              <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* Modal Body with 2 columns on desktop (Cropper left, Live Preview right) */}
+        <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-                {/* Left Side: Professional Cropper Workspace (7 Cols) */}
-                <div className="lg:col-span-7 flex flex-col space-y-4">
-                  <span className="text-xs font-bold text-chocolate uppercase tracking-wider">Cropping Workspace</span>
+          {/* Left Side: Professional Cropper Workspace (7 Cols) */}
+          <div className="lg:col-span-7 flex flex-col space-y-4">
+            <span className="text-xs font-bold text-chocolate uppercase tracking-wider">Cropping Workspace</span>
 
-                  {/* Cropper Container */}
-                  <div className="relative w-full h-[320px] sm:h-[400px] bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 shadow-inner">
-                    <Cropper
-                      image={originalImageSrc}
-                      crop={crop}
-                      zoom={zoom}
-                      rotation={rotation}
-                      aspect={4 / 5}
-                      onCropChange={setCrop}
-                      onZoomChange={setZoom}
-                      onRotationChange={setRotation}
-                      onCropComplete={onCropComplete}
-                    />
-                  </div>
+            {/* Cropper Container */}
+            <div className="relative w-full h-[320px] sm:h-[400px] max-h-[40vh] min-h-[200px] bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 shadow-inner">
+              <Cropper
+                image={originalImageSrc || ''}
+                crop={crop}
+                zoom={zoom}
+                rotation={rotation}
+                aspect={4 / 5}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onRotationChange={setRotation}
+                onCropComplete={onCropComplete}
+              />
+            </div>
 
                   {/* Manual Adjustment controls */}
                   <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-4">
@@ -1272,10 +1269,7 @@ const OurStoryAdmin = () => {
                   <span>Apply Crop & Save</span>
                 </button>
               </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      </AdminConfirmationModal>
     </div>
   );
 };
