@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useCMS } from '@/context/CMSContext';
 import { AboutSectionSettings, AboutFeatureCard } from '@/types/cms';
 import { uploadToCloudinary } from '@/utils/cloudinary';
+import getCroppedImg from '@/utils/cropImage';
+import Cropper from 'react-easy-crop';
 import {
   Save,
   Loader2,
@@ -35,8 +37,12 @@ import {
   Clock,
   Flame,
   Shield,
-  HelpCircle,
-  Undo
+  RotateCw,
+  RefreshCw,
+  ArrowLeft,
+  ArrowRight,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -90,12 +96,16 @@ const OurStoryAdmin = () => {
   // Crop Tool Modal States
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(null);
-  const [cropScale, setCropScale] = useState<number>(1);
-  const [cropX, setCropX] = useState<number>(0);
-  const [cropY, setCropY] = useState<number>(0);
-  const [cropRotation, setCropRotation] = useState<number>(0);
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // react-easy-crop states
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Drag and Drop State
+  const [isDragging, setIsDragging] = useState(false);
 
   // Rich Text Textarea Helper Ref
   const storyTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -140,77 +150,90 @@ const OurStoryAdmin = () => {
     }, 50);
   };
 
-  // Image Upload handler (supports instant base64 or Cloudinary upload)
-  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  // Process uploaded/selected image source
+  const processImageFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       setOriginalImageSrc(reader.result as string);
       // Reset cropping variables
-      setCropScale(1);
-      setCropX(0);
-      setCropY(0);
-      setCropRotation(0);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
+      setPreviewUrl(null);
       setCropModalOpen(true);
     };
     reader.readAsDataURL(file);
-    // Clear input
+  };
+
+  // Image Upload handler
+  const handleImageFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processImageFile(file);
     e.target.value = '';
   };
 
-  // Canvas-based image cropping logic
-  const handleApplyCrop = async () => {
-    if (!originalImageSrc || !canvasRef.current || !imageRef.current || !localSettings) return;
+  // Drag & Drop callbacks
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const img = imageRef.current;
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
 
-    if (!ctx) return;
-
-    // Set canvas dimensions to crop resolution (e.g., 800 x 1000 for 4:5 ratio)
-    const targetWidth = 800;
-    const targetHeight = 1000;
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-
-    ctx.clearRect(0, 0, targetWidth, targetHeight);
-    ctx.save();
-
-    // Center canvas context for scale/rotation/translation
-    ctx.translate(targetWidth / 2, targetHeight / 2);
-    ctx.rotate((cropRotation * Math.PI) / 180);
-    ctx.scale(cropScale, cropScale);
-    ctx.translate(cropX, cropY);
-
-    // Draw image centered in the cropped target dimensions
-    const imgWidth = img.naturalWidth;
-    const imgHeight = img.naturalHeight;
-    const imgRatio = imgWidth / imgHeight;
-    const targetRatio = targetWidth / targetHeight;
-
-    let drawWidth = targetWidth;
-    let drawHeight = targetHeight;
-
-    if (imgRatio > targetRatio) {
-      drawHeight = targetWidth / imgRatio;
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processImageFile(file);
     } else {
-      drawWidth = targetHeight * imgRatio;
+      showToast("Please drop a valid image file.", "error");
     }
+  };
 
-    ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
-    ctx.restore();
+  // Trigger Re-crop for existing image
+  const handleReCropExisting = () => {
+    if (!localSettings?.leftImageUrl) return;
+    setOriginalImageSrc(localSettings.leftImageUrl);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+    setPreviewUrl(null);
+    setCropModalOpen(true);
+  };
 
-    // Export cropped image as base64
-    const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+  // EasyCrop callback
+  const onCropComplete = useCallback(async (_croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+    if (!originalImageSrc) return;
+    try {
+      const croppedImg = await getCroppedImg(
+        originalImageSrc,
+        croppedAreaPixels,
+        rotation
+      );
+      setPreviewUrl(croppedImg);
+    } catch (e) {
+      console.error("Live preview crop generation failed:", e);
+    }
+  }, [originalImageSrc, rotation]);
+
+  // Apply Crop and Save/Upload
+  const handleApplyCrop = async () => {
+    if (!originalImageSrc || !croppedAreaPixels || !localSettings) return;
 
     setCropModalOpen(false);
-
-    // Save/Upload
     setSaving(true);
     try {
+      const croppedDataUrl = await getCroppedImg(
+        originalImageSrc,
+        croppedAreaPixels,
+        rotation
+      );
+
       const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
       const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
@@ -220,7 +243,6 @@ const OurStoryAdmin = () => {
         showToast("Cropped image updated locally!");
       } else {
         // Standard high-resolution Cloudinary Upload
-        // Convert base64 to File object
         const res = await fetch(croppedDataUrl);
         const blob = await res.blob();
         const file = new File([blob], "our-story-cropped.jpg", { type: "image/jpeg" });
@@ -230,12 +252,30 @@ const OurStoryAdmin = () => {
       }
     } catch (err) {
       console.error("Failed image upload:", err);
-      // fallback
-      handleFieldChange('leftImageUrl', croppedDataUrl);
-      showToast("Uploaded as offline local fallback.", "success");
+      showToast("Failed to save cropped image.", "error");
     } finally {
       setSaving(false);
     }
+  };
+
+  // Reset Cropping adjustments
+  const handleResetCrop = () => {
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+  };
+
+  // Nudge Position controls
+  const handleNudge = (direction: 'up' | 'down' | 'left' | 'right') => {
+    const step = 10;
+    setCrop(prev => {
+      switch (direction) {
+        case 'up': return { ...prev, y: prev.y - step };
+        case 'down': return { ...prev, y: prev.y + step };
+        case 'left': return { ...prev, x: prev.x - step };
+        case 'right': return { ...prev, x: prev.x + step };
+      }
+    });
   };
 
   // Delete image
@@ -631,38 +671,90 @@ const OurStoryAdmin = () => {
               Left Side Visual Image
             </h2>
 
-            {/* Thumbnail Preview with responsive actions */}
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/5] border border-gray-100 group">
-              <img
-                src={localSettings.leftImageUrl}
-                alt="Story Illustration"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-chocolate/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                <label className="p-2 bg-white rounded-full text-chocolate hover:bg-rose hover:text-white transition-all cursor-pointer shadow-md">
-                  <Upload size={16} />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageFileChange}
-                    className="hidden"
+            {/* Drag & Drop Upload Zone */}
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              className={`relative rounded-2xl overflow-hidden aspect-[4/5] border-2 transition-all group flex flex-col items-center justify-center cursor-pointer p-4 ${
+                isDragging
+                  ? 'border-rose-deep bg-rose-50/50 scale-[0.98]'
+                  : 'border-dashed border-gray-200 hover:border-rose-deep/40 bg-gray-50/50'
+              }`}
+            >
+              {localSettings.leftImageUrl ? (
+                <>
+                  <img
+                    src={localSettings.leftImageUrl}
+                    alt="Story Illustration"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
-                </label>
-                <button
-                  type="button"
-                  onClick={handleDeleteImage}
-                  className="p-2 bg-white rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-md"
-                  title="Reset Image"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
+                  {/* Luxury hovering actions overlay */}
+                  <div className="absolute inset-0 bg-chocolate/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4 text-center">
+                    <span className="text-white text-[11px] font-semibold mb-2">Drag and drop or choose actions:</span>
+                    <div className="flex gap-2.5">
+                      <label className="p-2.5 bg-white rounded-full text-chocolate hover:bg-rose-deep hover:text-white transition-all cursor-pointer shadow-md" title="Replace Image">
+                        <Upload size={16} />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageFileChange}
+                          className="hidden"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={handleReCropExisting}
+                        className="p-2.5 bg-white rounded-full text-chocolate hover:bg-rose-deep hover:text-white transition-all shadow-md"
+                        title="Re-crop Existing Image"
+                      >
+                        <Scissors size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDeleteImage}
+                        className="p-2.5 bg-white rounded-full text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-md"
+                        title="Reset Image"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="p-4 bg-white rounded-full shadow-sm text-rose-deep">
+                    <Upload size={24} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-bold text-chocolate block">Drag & Drop Image here</span>
+                    <span className="text-[10px] text-gray-400 block mt-1">Supports PNG, JPG, WEBP formats</span>
+                  </div>
+                  <label className="bg-chocolate hover:bg-brown text-white text-[11px] font-bold px-3 py-1.5 rounded-lg cursor-pointer shadow-sm transition-all">
+                    Browse File
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              )}
+
+              {/* Drag overlay text hint */}
+              {isDragging && (
+                <div className="absolute inset-0 bg-rose-deep/90 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4 z-20 animate-fade-in">
+                  <Upload size={32} className="animate-bounce mb-2" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Drop to Crop Image</span>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">
-              <label className="flex-1 flex items-center justify-center gap-1 bg-gray-100 hover:bg-gray-200 text-chocolate px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer">
+              <label className="flex-1 flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-chocolate px-3 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
                 <Upload size={14} />
-                <span>Upload & Crop...</span>
+                <span>Replace Image</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -670,6 +762,16 @@ const OurStoryAdmin = () => {
                   className="hidden"
                 />
               </label>
+              {localSettings.leftImageUrl && (
+                <button
+                  type="button"
+                  onClick={handleReCropExisting}
+                  className="flex items-center justify-center gap-1.5 bg-cream hover:bg-rose/10 text-chocolate px-3 py-2.5 rounded-xl text-xs font-bold transition-all border border-gray-100"
+                >
+                  <Scissors size={14} />
+                  <span>Re-crop</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -941,148 +1043,233 @@ const OurStoryAdmin = () => {
 
       </div>
 
-      {/* CANVAS IMAGE CROP MODAL */}
+      {/* REACT EASY CROP IMAGE CROP MODAL */}
       <AnimatePresence>
         {cropModalOpen && originalImageSrc && (
-          <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-chocolate/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-[600] flex items-center justify-center p-4 bg-chocolate/70 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col h-[90vh]"
             >
-              <div className="p-5 bg-chocolate text-white flex items-center justify-between">
+              {/* Modal Header */}
+              <div className="p-5 bg-chocolate text-white flex items-center justify-between shrink-0">
                 <div>
-                  <h3 className="font-bold font-playfair">Crop Illustration Image</h3>
-                  <span className="text-[9px] uppercase tracking-wider text-white/60">Target: 4:5 Portrait Ratio</span>
+                  <h3 className="font-bold font-playfair text-lg">Crop Illustration Image</h3>
+                  <span className="text-[10px] uppercase tracking-wider text-white/60">Target: Exact 4:5 Portrait Ratio (Luxury Fit)</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setCropModalOpen(false)}
-                  className="p-1.5 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                  className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              <div className="p-6 flex-1 overflow-y-auto space-y-6 flex flex-col items-center">
+              {/* Modal Body with 2 columns on desktop (Cropper left, Live Preview right) */}
+              <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
-                {/* Visual Cropper Display Viewport */}
-                <div className="relative w-64 h-80 bg-gray-100 rounded-xl overflow-hidden border border-gray-200 shadow-inner flex items-center justify-center">
-                  <div className="absolute inset-0 border-2 border-dashed border-rose-deep/50 pointer-events-none z-10 m-2 rounded-lg" />
+                {/* Left Side: Professional Cropper Workspace (7 Cols) */}
+                <div className="lg:col-span-7 flex flex-col space-y-4">
+                  <span className="text-xs font-bold text-chocolate uppercase tracking-wider">Cropping Workspace</span>
 
-                  {/* The Image inside crop viewport */}
-                  <div
-                    className="relative transition-transform duration-75 select-none pointer-events-none"
-                    style={{
-                      transform: `translate(${cropX}px, ${cropY}px) scale(${cropScale}) rotate(${cropRotation}deg)`
-                    }}
-                  >
-                    <img
-                      ref={imageRef}
-                      src={originalImageSrc}
-                      alt="Crop Source"
-                      className="max-w-none w-48 h-auto"
-                      onLoad={() => {
-                        // Init
-                        setCropScale(1.2);
-                      }}
+                  {/* Cropper Container */}
+                  <div className="relative w-full h-[320px] sm:h-[400px] bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 shadow-inner">
+                    <Cropper
+                      image={originalImageSrc}
+                      crop={crop}
+                      zoom={zoom}
+                      rotation={rotation}
+                      aspect={4 / 5}
+                      onCropChange={setCrop}
+                      onZoomChange={setZoom}
+                      onRotationChange={setRotation}
+                      onCropComplete={onCropComplete}
                     />
                   </div>
-                </div>
 
-                {/* Adjustments Controls */}
-                <div className="w-full space-y-4 text-xs font-semibold text-gray-600">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span>Image Zoom Scale ({cropScale.toFixed(2)}x)</span>
+                  {/* Manual Adjustment controls */}
+                  <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 space-y-4">
+                    <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
+                      <span>Position Controls (Nudge Pixel Shift)</span>
                       <button
                         type="button"
-                        onClick={() => setCropScale(1)}
-                        className="text-rose-deep font-bold hover:underline"
+                        onClick={handleResetCrop}
+                        className="text-rose-deep font-bold hover:underline flex items-center gap-1"
                       >
-                        Reset
+                        <RefreshCw size={12} />
+                        Reset Crop Adjustments
                       </button>
                     </div>
-                    <input
-                      type="range"
-                      min="0.5"
-                      max="3"
-                      step="0.05"
-                      value={cropScale}
-                      onChange={(e) => setCropScale(parseFloat(e.target.value))}
-                      className="w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
-                    />
-                  </div>
 
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span>Rotate Image ({cropRotation}°)</span>
-                      <button
-                        type="button"
-                        onClick={() => setCropRotation(0)}
-                        className="text-rose-deep font-bold hover:underline"
-                      >
-                        Reset
-                      </button>
-                    </div>
-                    <input
-                      type="range"
-                      min="-180"
-                      max="180"
-                      step="1"
-                      value={cropRotation}
-                      onChange={(e) => setCropRotation(parseInt(e.target.value))}
-                      className="w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <span className="text-[11px]">Horizontal Shift (X: {cropX}px)</span>
-                      <input
-                        type="range"
-                        min="-150"
-                        max="150"
-                        value={cropX}
-                        onChange={(e) => setCropX(parseInt(e.target.value))}
-                        className="w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <span className="text-[11px]">Vertical Shift (Y: {cropY}px)</span>
-                      <input
-                        type="range"
-                        min="-150"
-                        max="150"
-                        value={cropY}
-                        onChange={(e) => setCropY(parseInt(e.target.value))}
-                        className="w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
-                      />
+                    {/* D-Pad Nudge Buttons & Reset */}
+                    <div className="flex items-center justify-center gap-2 py-1">
+                      <div className="grid grid-cols-3 gap-1.5 w-32 shrink-0">
+                        <div />
+                        <button
+                          type="button"
+                          onClick={() => handleNudge('up')}
+                          className="p-1.5 bg-white border border-gray-200 rounded-lg text-chocolate hover:bg-rose-deep hover:text-white hover:border-rose-deep transition-all flex items-center justify-center"
+                          title="Nudge Up"
+                        >
+                          <ChevronUp size={16} />
+                        </button>
+                        <div />
+                        <button
+                          type="button"
+                          onClick={() => handleNudge('left')}
+                          className="p-1.5 bg-white border border-gray-200 rounded-lg text-chocolate hover:bg-rose-deep hover:text-white hover:border-rose-deep transition-all flex items-center justify-center"
+                          title="Nudge Left"
+                        >
+                          <ArrowLeft size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleResetCrop}
+                          className="p-1.5 bg-gray-100 border border-gray-200 rounded-lg text-chocolate hover:bg-chocolate hover:text-white transition-all flex items-center justify-center text-[10px] font-bold"
+                          title="Reset"
+                        >
+                          R
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleNudge('right')}
+                          className="p-1.5 bg-white border border-gray-200 rounded-lg text-chocolate hover:bg-rose-deep hover:text-white hover:border-rose-deep transition-all flex items-center justify-center"
+                          title="Nudge Right"
+                        >
+                          <ArrowRight size={16} />
+                        </button>
+                        <div />
+                        <button
+                          type="button"
+                          onClick={() => handleNudge('down')}
+                          className="p-1.5 bg-white border border-gray-200 rounded-lg text-chocolate hover:bg-rose-deep hover:text-white hover:border-rose-deep transition-all flex items-center justify-center"
+                          title="Nudge Down"
+                        >
+                          <ChevronDown size={16} />
+                        </button>
+                        <div />
+                      </div>
+                      <p className="text-[11px] text-gray-400 italic font-medium leading-relaxed max-w-xs pl-2">
+                        You can drag and scroll to position, or use the nudge controls for fine alignment adjustments.
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Hidden canvas to draw the cropped image */}
-                <canvas ref={canvasRef} className="hidden" />
+                {/* Right Side: Live Premium Preview & Adjustments Sliders (5 Cols) */}
+                <div className="lg:col-span-5 flex flex-col space-y-6">
+
+                  {/* Adjustment sliders */}
+                  <div className="space-y-4">
+                    <span className="text-xs font-bold text-chocolate uppercase tracking-wider block">Cropper Adjustments</span>
+
+                    {/* Zoom Slider */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-bold text-gray-600">
+                        <span>Image Zoom Scale ({zoom.toFixed(2)}x)</span>
+                        <button
+                          type="button"
+                          onClick={() => setZoom(1)}
+                          className="text-rose-deep font-bold hover:underline"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="3"
+                        step="0.05"
+                        value={zoom}
+                        onChange={(e) => setZoom(parseFloat(e.target.value))}
+                        className="w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Rotation Slider */}
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-bold text-gray-600">
+                        <span>Rotate Image ({rotation}°)</span>
+                        <button
+                          type="button"
+                          onClick={() => setRotation(0)}
+                          className="text-rose-deep font-bold hover:underline"
+                        >
+                          Reset
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="range"
+                          min="-180"
+                          max="180"
+                          step="1"
+                          value={rotation}
+                          onChange={(e) => setRotation(parseInt(e.target.value))}
+                          className="flex-1 w-full accent-rose-deep h-1.5 bg-gray-100 rounded-lg cursor-pointer"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setRotation(prev => (prev + 90) % 360)}
+                          className="p-1 text-rose-deep hover:bg-rose/10 rounded"
+                          title="Rotate 90 degrees"
+                        >
+                          <RotateCw size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Real-time Crop Preview (Exactly fits aspect ratios, blends with page background) */}
+                  <div className="flex-1 flex flex-col space-y-3">
+                    <span className="text-xs font-bold text-chocolate uppercase tracking-wider block">Live Storefront Preview</span>
+
+                    <div className="flex-1 bg-cream rounded-2xl p-4 border border-rose/10 flex items-center justify-center relative shadow-sm min-h-[220px]">
+                      {previewUrl ? (
+                        <div className="w-[160px] h-[200px] relative rounded-xl overflow-hidden shadow-lg border border-white flex flex-col items-stretch">
+                          <img
+                            src={previewUrl}
+                            alt="Live cropped preview"
+                            className="w-full h-full object-cover"
+                          />
+                          <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-chocolate/80 text-[8px] text-white rounded font-mono uppercase tracking-wider backdrop-blur-sm z-10">
+                            Fits 4:5 Cover
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-center p-4 space-y-2 text-gray-400">
+                          <Loader2 className="animate-spin text-rose-deep mx-auto" size={24} />
+                          <p className="text-[11px] font-semibold">Generating Live Preview...</p>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-medium leading-relaxed text-center">
+                      The live preview is perfectly aligned to the luxury 4:5 aspect ratio and uses standard storefront &ldquo;cover&rdquo; rendering rules.
+                    </p>
+                  </div>
+                </div>
 
               </div>
 
-              <div className="p-5 border-t border-gray-100 bg-gray-50 flex gap-3">
+              {/* Modal Footer Controls */}
+              <div className="p-5 border-t border-gray-100 bg-gray-50 flex gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setCropModalOpen(false)}
-                  className="flex-1 py-2.5 bg-white border border-gray-200 text-gray-400 font-bold text-xs rounded-xl hover:bg-gray-100 transition-all uppercase tracking-wider"
+                  className="flex-1 py-3 bg-white border border-gray-200 text-gray-500 font-bold text-xs rounded-xl hover:bg-gray-100 transition-all uppercase tracking-wider"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   onClick={handleApplyCrop}
-                  className="flex-1 py-2.5 bg-rose-deep text-white font-bold text-xs rounded-xl hover:bg-brown transition-all uppercase tracking-wider flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 bg-rose-deep text-white font-bold text-xs rounded-xl hover:bg-brown transition-all uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md"
                 >
                   <Scissors size={14} />
-                  <span>Apply Crop</span>
+                  <span>Apply Crop & Save</span>
                 </button>
               </div>
             </motion.div>
