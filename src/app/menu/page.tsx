@@ -14,6 +14,8 @@ import { toSlug } from '@/utils/slug';
 import PageWrapper from '@/components/PageWrapper';
 import { sortCategories } from '@/utils/categorySorting';
 import { useProducts } from '@/context/ProductsContext';
+import { useCMS } from '@/context/CMSContext';
+import { useSEO } from '@/hooks/useSEO';
 
 const MenuContent = () => {
   const router = useRouter();
@@ -21,8 +23,36 @@ const MenuContent = () => {
   const categoryParam = searchParams.get('category');
 
   const { products, loading: productsLoading } = useProducts();
+  const { collections } = useCMS();
+
+  // Load standard shop SEO meta properties from CMS
+  useSEO('shop');
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
+
+  const currentCollection = useMemo(() => {
+    if (!collections || activeCategory === 'All') return null;
+    return collections.find(c => c.slug === toSlug(activeCategory) && c.enabled);
+  }, [collections, activeCategory]);
+
+  const labelText = currentCollection?.title || "Full Bakery Menu";
+  const titleText = currentCollection?.title ? `Explore our ${currentCollection.title}` : "Explore Our Complete Collection";
+  const subText = currentCollection?.description || "Browse every cake, dessert and premium creation from our bakery catalogue — 300+ handcrafted items delivered fresh.";
+
+  // Dynamically update collection-specific SEO when selection changes
+  useEffect(() => {
+    if (currentCollection) {
+      if (currentCollection.seoTitle) {
+        document.title = currentCollection.seoTitle;
+      }
+      if (currentCollection.seoDescription) {
+        const descMeta = document.querySelector('meta[name="description"]');
+        if (descMeta) {
+          descMeta.setAttribute('content', currentCollection.seoDescription);
+        }
+      }
+    }
+  }, [currentCollection]);
   const [searchQuery, setSearchQuery] = useState('');
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -116,9 +146,9 @@ const MenuContent = () => {
       <div className="container mx-auto px-6">
         <BackButton fallbackRoute="/" />
         <section className="text-center mb-12">
-          <p className="section-label">Full Bakery Menu</p>
-          <h1 className="section-title text-4xl md:text-5xl mb-5">Explore Our Complete Collection</h1>
-          <p className="section-sub mx-auto">Browse every cake, dessert and premium creation from our bakery catalogue — 300+ handcrafted items delivered fresh.</p>
+          <p className="section-label">{labelText}</p>
+          <h1 className="section-title text-4xl md:text-5xl mb-5">{titleText}</h1>
+          <p className="section-sub mx-auto">{subText}</p>
         </section>
 
         {/* Search Bar */}

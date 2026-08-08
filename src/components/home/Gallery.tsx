@@ -5,10 +5,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useProducts } from '@/context/ProductsContext';
 
+import { useCMS } from '@/context/CMSContext';
+
 const Gallery = () => {
   const { products } = useProducts();
+  const { mediaItems, homepageSections } = useCMS();
+
+  const gallerySection = homepageSections?.find(s => s.id === 'gallery');
+  const label = gallerySection?.title || "Our Creations";
+  const title = gallerySection?.description || "A Feast for the Eyes";
 
   const galleryImgs = useMemo(() => {
+    // If the administrator has custom images in the Media Library, we feature those!
+    if (mediaItems && mediaItems.length > 0) {
+      return mediaItems.map(item => ({
+        id: 'menu',
+        src: item.url,
+        label: item.altText || item.name.split('.')[0]
+      }));
+    }
+
     const prioritizedCategories = [
       'Birthday Cakes',
       'Wedding Cakes',
@@ -32,18 +48,18 @@ const Gallery = () => {
       )[0];
 
       return {
-        id: bestProduct.id,
+        id: `shop/${bestProduct.id}`,
         src: bestProduct.img,
         label: bestProduct.name
       };
     }).filter((img): img is { id: any; src: string; label: string } => img !== null);
-  }, [products]);
+  }, [products, mediaItems]);
 
   return (
     <section id="gallery" className="py-20 bg-chocolate overflow-hidden">
       <div className="container mx-auto px-6">
-        <p className="section-label text-center text-gold-light">Our Creations</p>
-        <h2 className="section-title text-center text-white">A Feast for the Eyes</h2>
+        <p className="section-label text-center text-gold-light">{label}</p>
+        <h2 className="section-title text-center text-white">{title}</h2>
       </div>
 
       <div className="mt-11 relative">
@@ -51,7 +67,7 @@ const Gallery = () => {
           {[...galleryImgs, ...galleryImgs].map((img, i) => (
             <Link
               key={i}
-              href={`/shop/${img.id}`}
+              href={img.id === 'menu' ? '/menu' : `/${img.id}`}
               className="w-[280px] h-[340px] min-w-[280px] rounded-[18px] overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group block"
             >
               <Image

@@ -2,17 +2,29 @@
 
 import React from 'react';
 import { MapPin, Phone, Mail } from 'lucide-react';
+import { useCMS } from '@/context/CMSContext';
 
 const Contact = () => {
+  const { websiteSettings, homepageSections } = useCMS();
+
+  const contactSection = homepageSections?.find(s => s.id === 'contact');
+  const label = contactSection?.title || "Get In Touch";
+  const title = contactSection?.description?.substring(0, 50) || "Let's Create Something Sweet Together";
+  const subtitle = contactSection?.description || "Have a special order in mind? Want to know more about our bespoke cakes? Reach out to us through any of these channels.";
+
+  const address = websiteSettings?.address || "The Cake Lounge, Galleria Market, DLF Phase 4, Gurugram, Haryana, 122009";
+  const phone = websiteSettings?.phone || "+91 98765 43210";
+  const email = websiteSettings?.email || "hello@thecakelounge.com";
+  const monFriHours = websiteSettings?.businessHoursMonFri || "10:00 AM - 10:00 PM";
+
   return (
     <section id="contact" className="py-[120px] bg-white">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="section-label mb-4">Get In Touch</p>
-          <h2 className="section-title mb-6">Let&apos;s Create Something Sweet Together</h2>
+          <p className="section-label mb-4">{label}</p>
+          <h2 className="section-title mb-6">{title === subtitle ? "Let's Create Something Sweet Together" : title}</h2>
           <p className="section-sub mb-16 max-w-2xl mx-auto text-lg">
-            Have a special order in mind? Want to know more about our bespoke cakes?
-            Reach out to us through any of these channels.
+            {subtitle}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
@@ -23,7 +35,7 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Find Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed">
-                The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana
+                {address}
               </p>
             </div>
 
@@ -34,8 +46,8 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Call Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed">
-                +91 77038 70170<br />
-                <span className="text-[0.85rem] font-semibold text-rose-deep">Mon–Sun 8am–10pm</span>
+                {phone}<br />
+                <span className="text-[0.85rem] font-semibold text-rose-deep">{monFriHours}</span>
               </p>
             </div>
 
@@ -46,7 +58,7 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Email Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed break-words">
-                thecakeloungegurgaon@gmail.com
+                {email}
               </p>
             </div>
           </div>

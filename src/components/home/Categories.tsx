@@ -9,10 +9,17 @@ import { toSlug } from '@/utils/slug';
 import { sortCategories } from '@/utils/categorySorting';
 import { useProductAvailability } from '@/hooks/useProductAvailability';
 import Toast from '@/components/Toast';
+import { useCMS } from '@/context/CMSContext';
 
 const Categories = () => {
   const router = useRouter();
   const availableSlugs = useProductAvailability();
+  const { homepageSections } = useCMS();
+
+  const categoriesSection = homepageSections?.find(s => s.id === 'categories');
+  const label = categoriesSection?.title || "Browse By Category";
+  const title = categoriesSection?.description?.substring(0, 50) || "What Are You Celebrating?";
+  const subtitle = categoriesSection?.description || "From birthdays to weddings, we have the perfect cake for every special moment in your life.";
   const [cats, setCats] = useState<any[]>([]);
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({
     message: '',
@@ -99,9 +106,9 @@ const Categories = () => {
     <section id="categories" className="py-[90px] bg-cream">
       <div className="container mx-auto px-6">
         <div className="text-center mb-[50px]">
-          <p className="section-label">Browse By Category</p>
-          <h2 className="section-title">What Are You Celebrating?</h2>
-          <p className="section-sub mx-auto">From birthdays to weddings, we have the perfect cake for every special moment in your life.</p>
+          <p className="section-label">{label}</p>
+          <h2 className="section-title">{title === subtitle ? "What Are You Celebrating?" : title}</h2>
+          <p className="section-sub mx-auto">{subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

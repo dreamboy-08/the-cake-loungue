@@ -1,8 +1,17 @@
+"use client";
+
 import React from 'react';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
+import { useCMS } from '@/context/CMSContext';
 
 const Testimonials = () => {
+  const { homepageSections } = useCMS();
+  const section = homepageSections?.find(s => s.id === 'testimonials');
+
+  const label = section?.title || "Happy Customers";
+  const description = section?.description || "What People Are Saying";
+
   const reviews = [
     {
       name: "Priya Sharma",
@@ -31,8 +40,8 @@ const Testimonials = () => {
     <section id="testimonials" className="py-[100px] bg-cream-dark">
       <div className="container mx-auto px-6">
         <div className="text-center">
-          <p className="section-label">Happy Customers</p>
-          <h2 className="section-title">What People Are Saying</h2>
+          <p className="section-label">{label}</p>
+          <h2 className="section-title">{description}</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-[50px]">
