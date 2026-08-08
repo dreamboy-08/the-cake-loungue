@@ -1,26 +1,41 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
 import { Instagram, Facebook, MessageCircle, Pin as Pinterest } from 'lucide-react';
+import { useCMS } from '@/context/CMSContext';
 
 const Footer = () => {
+  const { websiteSettings } = useCMS();
+  const logoText = websiteSettings?.logoText || "The Cake Lounge";
+  const footerText = websiteSettings?.footerText || "Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.";
+
+  const socials = [
+    { icon: <Instagram size={18} />, href: websiteSettings?.instagramUrl || "#" },
+    { icon: <Facebook size={18} />, href: websiteSettings?.facebookUrl || "#" },
+    { icon: <MessageCircle size={18} />, href: websiteSettings?.whatsapp ? `https://wa.me/${websiteSettings.whatsapp}` : "#" },
+    { icon: <Pinterest size={18} />, href: websiteSettings?.pinterestUrl || "#" },
+  ];
+
   return (
     <footer className="bg-chocolate text-[rgba(255,255,255,0.7)] pt-[70px] pb-[30px]">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-[50px]">
           <div className="footer-brand sm:col-span-2 lg:col-span-1">
             <div className="font-playfair text-[1.6rem] font-bold text-white mb-[14px]">
-              The Cake <span className="text-blush">Lounge</span>
+              {logoText.endsWith("Lounge") ? (
+                <>
+                  {logoText.substring(0, logoText.length - 6)} <span className="text-blush">Lounge</span>
+                </>
+              ) : (
+                logoText
+              )}
             </div>
             <p className="text-[0.85rem] leading-[1.7] text-[rgba(255,255,255,0.55)] mb-6">
-              Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.
+              {footerText}
             </p>
             <div className="flex gap-3">
-              {[
-                { icon: <Instagram size={18} />, href: "#" },
-                { icon: <Facebook size={18} />, href: "#" },
-                { icon: <MessageCircle size={18} />, href: "#" },
-                { icon: <Pinterest size={18} />, href: "#" },
-              ].map((social, i) => (
+              {socials.map((social, i) => (
                 <Link
                   key={i}
                   href={social.href}
@@ -75,7 +90,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-[rgba(255,255,255,0.08)] pt-6 flex flex-col md:flex-row items-center justify-between text-[0.8rem] text-[rgba(255,255,255,0.35)] gap-[10px]">
-          <span>© 2025 The Cake Lounge Patisserie. All rights reserved.</span>
+          <span>© 2025 {websiteSettings?.businessName || "The Cake Lounge Patisserie"}. All rights reserved.</span>
           <div className="flex items-center gap-1">
             Made with <span className="text-rose">❤️</span> in India
           </div>

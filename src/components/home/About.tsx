@@ -167,19 +167,13 @@ const About = () => {
             </motion.div>
           </div>
 
-          {/* Content Column */}
-          <div
-            className={`about-content ${
-              settings.imageLayout === 'right' ? 'lg:order-1' : 'lg:order-2'
-            }`}
-          >
-            <motion.div {...animProps}>
-              <p
-                style={{ color: settings.accentColor || '#c9614a' }}
-                className="section-label"
-              >
-                {settings.sectionBadge || 'Our Story'}
-              </p>
+          {/* Content */}
+          <div className="about-content">
+            <p className="section-label">Our Story</p>
+            <h2 className="section-title">{label}</h2>
+            <p className="mt-4 text-[0.95rem] text-text-soft leading-[1.7] max-w-full">
+              {description}
+            </p>
 
               <h2
                 style={{ color: settings.headingColor || '#3d1f10' }}

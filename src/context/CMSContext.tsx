@@ -57,17 +57,16 @@ interface CMSContextType {
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [navigation, setNavigation] = useState<NavigationItem[]>([]);
-  const [megaMenus, setMegaMenus] = useState<MegaMenuSection[]>([]);
-  const [homepageSections, setHomepageSections] = useState<HomepageSection[]>([]);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [collections, setCollections] = useState<CollectionCMSItem[]>([]);
+  const [navigation, setNavigation] = useState<NavigationItem[]>(DEFAULT_NAVIGATION);
+  const [megaMenus, setMegaMenus] = useState<MegaMenuSection[]>(DEFAULT_MEGA_MENUS);
+  const [homepageSections, setHomepageSections] = useState<HomepageSection[]>(DEFAULT_HOMEPAGE_SECTIONS);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(DEFAULT_ANNOUNCEMENTS);
+  const [collections, setCollections] = useState<CollectionCMSItem[]>(DEFAULT_COLLECTIONS);
   const [websiteSettings, setWebsiteSettings] = useState<CMSWebsiteSettings>(DEFAULT_WEBSITE_SETTINGS);
-  const [mediaItems, setMediaItems] = useState<CMSMediaItem[]>([]);
-  const [seoMetadata, setSeoMetadata] = useState<CMSSEOMetadata[]>([]);
+  const [mediaItems, setMediaItems] = useState<CMSMediaItem[]>(DEFAULT_MEDIA_LIBRARY);
+  const [seoMetadata, setSeoMetadata] = useState<CMSSEOMetadata[]>(DEFAULT_SEO_METADATA);
   const [generalSettings, setGeneralSettings] = useState<CMSGeneralSettings>(DEFAULT_GENERAL_SETTINGS);
-  const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const isFirebaseConfigured =
     typeof process !== 'undefined' &&
@@ -76,6 +75,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // --- LOCAL OFFLINE FALLBACK LOADER ---
   const loadOfflineCMS = useCallback(() => {
+    console.log("loadOfflineCMS CALLED, window is defined:", typeof window !== 'undefined');
     if (typeof window === 'undefined') {
       setNavigation(DEFAULT_NAVIGATION);
       setMegaMenus(DEFAULT_MEGA_MENUS);
@@ -106,7 +106,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setMediaItems(getStored('mediaItems', DEFAULT_MEDIA_LIBRARY));
       setSeoMetadata(getStored('seoMetadata', DEFAULT_SEO_METADATA));
       setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
-      setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
+      console.log("loadOfflineCMS parsed storage successfully");
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -120,6 +120,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
     } finally {
+      console.log("loadOfflineCMS setting loading to false");
       setLoading(false);
     }
   }, []);
@@ -293,10 +294,12 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
+    console.log("CMSContext useEffect, isFirebaseConfigured:", isFirebaseConfigured);
     if (!isFirebaseConfigured) {
       loadOfflineCMS();
 
       const handleCmsUpdate = () => {
+        console.log("cms_updated EVENT RECEIVED");
         loadOfflineCMS();
       };
       window.addEventListener('cms_updated', handleCmsUpdate);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Menu, X, ShoppingCart, ChevronDown, ChevronUp, User, ShoppingBag, LogOut, Settings, Search, Heart } from 'lucide-react';
@@ -12,7 +12,7 @@ import { useFlyToCart } from '@/context/FlyToCartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
-import { MEGA_MENU } from '@/constants/navigation';
+import { useCMS } from '@/context/CMSContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function cn(...inputs: ClassValue[]) {
@@ -29,6 +29,45 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const { cartCount } = useCart();
+  const { navigation, megaMenus, websiteSettings } = useCMS();
+
+  const dynamicMenu = useMemo(() => {
+    if (!navigation || navigation.length === 0) return [];
+    const activeNavs = navigation
+      .filter(item => item.enabled)
+      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+    return activeNavs.map(item => {
+      let columns: any[] | undefined = undefined;
+
+      if (item.hasDropdown && item.dropdownSectionIds) {
+        columns = item.dropdownSectionIds.map(secId => {
+          const section = megaMenus.find(m => m.id === secId && m.enabled);
+          if (!section) return null;
+          return {
+            title: section.title,
+            items: section.items
+              .filter(sub => sub.enabled)
+              .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+              .map(sub => ({
+                label: sub.name,
+                href: sub.url
+              }))
+          };
+        }).filter(Boolean);
+      }
+
+      return {
+        label: item.label,
+        href: item.url,
+        showOnDesktop: item.showOnDesktop !== false,
+        showOnMobile: item.showOnMobile !== false,
+        columns
+      };
+    });
+  }, [navigation, megaMenus]);
+
+  const logoText = websiteSettings?.logoText || "The Cake Lounge";
   const { user, logout, isAdmin } = useAuth();
   const { bounceCount } = useFlyToCart();
   const { wishlist, triggerAuthModal } = useWishlist();
@@ -165,7 +204,13 @@ const Navbar = () => {
                 "flex items-center justify-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0 leading-none",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
-                The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+                {logoText.endsWith("Lounge") ? (
+                  <>
+                    {logoText.substring(0, logoText.length - 6)} <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+                  </>
+                ) : (
+                  logoText
+                )}
               </Link>
             </div>
 
@@ -411,7 +456,7 @@ const Navbar = () => {
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
           <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
-            {MEGA_MENU.map((item) => (
+            {dynamicMenu.filter(item => item.showOnDesktop).map((item) => (
               <li key={item.label} className="group static">
                 <Link href={item.href} className={cn(
                   "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px] block",
@@ -419,14 +464,14 @@ const Navbar = () => {
                 )}>
                   {item.label}
                 </Link>
-                {item.columns && (
+                {item.columns && item.columns.length > 0 && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
                     <div className="bg-white rounded-[22px] shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
-                      {item.columns.map((col, idx) => (
+                      {item.columns.map((col: any, idx: number) => (
                         <div key={idx} className="flex flex-col gap-4 text-center">
                           <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
                           <div className="flex flex-col gap-2">
-                            {col.items.map((sub, sIdx) => (
+                            {col.items.map((sub: any, sIdx: number) => (
                               <Link
                                 key={sIdx}
                                 href={sub.href}
@@ -505,24 +550,24 @@ const Navbar = () => {
 
           <div className="flex flex-col gap-2">
             <p className="text-rose-deep font-bold uppercase tracking-widest text-xs mb-2">Categories</p>
-            {MEGA_MENU.map((item) => (
+            {dynamicMenu.filter(item => item.showOnMobile).map((item) => (
               <div key={item.label} className="border-b border-rose/5">
                 <div
                   className="flex items-center justify-between py-3 cursor-pointer"
-                  onClick={() => item.columns ? setExpandedCategory(expandedCategory === item.label ? null : item.label) : (setIsMobileMenuOpen(false), router.push(item.href))}
+                  onClick={() => (item.columns && item.columns.length > 0) ? setExpandedCategory(expandedCategory === item.label ? null : item.label) : (setIsMobileMenuOpen(false), router.push(item.href))}
                 >
                   <span className="font-playfair text-[1.4rem] font-bold text-chocolate">{item.label}</span>
-                  {item.columns && (
+                  {(item.columns && item.columns.length > 0) && (
                     expandedCategory === item.label ? <ChevronUp size={20} className="text-rose" /> : <ChevronDown size={20} className="text-rose" />
                   )}
                 </div>
 
-                {item.columns && expandedCategory === item.label && (
+                {(item.columns && item.columns.length > 0) && expandedCategory === item.label && (
                   <div className="pl-4 pb-4 grid grid-cols-2 gap-y-6 gap-x-4 animate-fade-up">
-                    {item.columns.map((col, idx) => (
+                    {item.columns.map((col: any, idx: number) => (
                       <div key={idx} className="flex flex-col gap-2">
                         <p className="text-rose font-bold text-[11px] uppercase tracking-wider">{col.title}</p>
-                        {col.items.map((sub, sIdx) => (
+                        {col.items.map((sub: any, sIdx: number) => (
                           <Link
                             key={sIdx}
                             href={sub.href}

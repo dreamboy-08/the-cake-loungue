@@ -10,6 +10,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartBubble from "@/components/CartBubble";
 import { CMSProvider } from "@/context/CMSContext";
+import CMSStyleRoot from "@/components/CMSStyleRoot";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -38,6 +39,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${poppins.variable} font-poppins`}>
         <AuthProvider>
+          <CMSProvider>
+            <CMSStyleRoot />
+            <ProductsProvider>
           <ProductsProvider>
             <CMSProvider>
               <CartProvider>
@@ -50,6 +54,8 @@ export default function RootLayout({
                   </WishlistProvider>
                 </FlyToCartProvider>
               </CartProvider>
+            </ProductsProvider>
+          </CMSProvider>
             </CMSProvider>
           </ProductsProvider>
         </AuthProvider>

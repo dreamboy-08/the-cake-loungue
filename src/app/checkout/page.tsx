@@ -12,9 +12,10 @@ import PageWrapper from '@/components/PageWrapper';
 import { Calendar, Clock, MessageSquare } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } from '@/constants/delivery';
+import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE } from '@/constants/delivery';
 import { getContactInfo } from '@/utils/adminService';
 import { isSlotValid, getMinSelectableDate } from '@/utils/deliveryValidation';
+import { useCMS } from '@/context/CMSContext';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -29,8 +30,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 const CheckoutPage = () => {
   const { cart, cartTotal, clearCart } = useCart();
   const { user, userData } = useAuth();
+  const { generalSettings, websiteSettings } = useCMS();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  // Dynamic Serviceable zipcodes from CMS General Settings
+  const serviceableZipCodes = useMemo(() => {
+    return generalSettings?.serviceableZipCodes || [
+      '122001', '122002', '122003', '122004', '122005', '122006', '122007', '122008', '122009', '122010'
+    ];
+  }, [generalSettings]);
+
+  const isZipServiceable = (zip: string) => {
+    return serviceableZipCodes.includes(zip.trim());
+  };
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -63,14 +76,18 @@ const CheckoutPage = () => {
 
   // Fetch WhatsApp number dynamically from CMS on mount
   useEffect(() => {
-    getContactInfo().then((info) => {
-      if (info && info.whatsapp) {
-        setContactWhatsapp(info.whatsapp);
-      }
-    }).catch((err) => {
-      console.error("Failed to load contact info:", err);
-    });
-  }, []);
+    if (websiteSettings?.whatsapp) {
+      setContactWhatsapp(websiteSettings.whatsapp);
+    } else {
+      getContactInfo().then((info) => {
+        if (info && info.whatsapp) {
+          setContactWhatsapp(info.whatsapp);
+        }
+      }).catch((err) => {
+        console.error("Failed to load contact info:", err);
+      });
+    }
+  }, [websiteSettings]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const verificationStarted = React.useRef(false);
 
@@ -203,8 +220,14 @@ const CheckoutPage = () => {
     return isMidnightSlot ? 150 : 0;
   }, [isMidnightSlot]);
 
-  const shippingFee = useMemo(() => checkoutTotal >= 499 ? 0 : 50, [checkoutTotal]);
+  const deliveryCharge = generalSettings?.deliveryCharges !== undefined ? generalSettings.deliveryCharges : 100;
+  const freeShippingThreshold = generalSettings?.freeDeliveryThreshold !== undefined ? generalSettings.freeDeliveryThreshold : 499;
+  const minOrderVal = generalSettings?.minimumOrder !== undefined ? generalSettings.minimumOrder : 299;
+
+  const shippingFee = useMemo(() => checkoutTotal >= freeShippingThreshold ? 0 : deliveryCharge, [checkoutTotal, freeShippingThreshold, deliveryCharge]);
   const finalTotal = useMemo(() => checkoutTotal + shippingFee + midnightCharge, [checkoutTotal, shippingFee, midnightCharge]);
+
+  const isBelowMinOrder = checkoutTotal < minOrderVal;
 
   const handleCheckout = async () => {
     if (checkoutItems.length === 0) {
@@ -215,8 +238,12 @@ const CheckoutPage = () => {
       setErrorMessage('Please select or add a delivery address.');
       return;
     }
-    if (!isServiceableZipCode(selectedAddress.zipCode)) {
+    if (!isZipServiceable(selectedAddress.zipCode)) {
       setErrorMessage('Sorry, we currently deliver only within Gurugram. Please select or add an address with a serviceable Gurugram Zip Code.');
+      return;
+    }
+    if (isBelowMinOrder) {
+      setErrorMessage(`Minimum order value is ₹${minOrderVal}. Please add more items to your cart.`);
       return;
     }
     if (!deliveryDate) {
@@ -763,7 +790,7 @@ const CheckoutPage = () => {
                   </div>
                 ) : (
                   <div className="bg-cream-dark p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - checkoutTotal} more to unlock FREE Delivery.</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{freeShippingThreshold - checkoutTotal} more to unlock FREE Delivery.</p>
                   </div>
                 )}
                 {isMidnightSlot && (
@@ -800,7 +827,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || checkoutItems.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot}
+                disabled={loading || checkoutItems.length === 0 || !selectedAddress || !isZipServiceable(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot || isBelowMinOrder}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -816,19 +843,19 @@ const CheckoutPage = () => {
                 )}
               </button>
 
-              {(!selectedAddress || (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode)) || !deliveryDate || !deliveryTimeSlot) && checkoutItems.length > 0 && (
+              {(!selectedAddress || (selectedAddress && !isZipServiceable(selectedAddress.zipCode)) || !deliveryDate || !deliveryTimeSlot || isBelowMinOrder) && checkoutItems.length > 0 && (
                 <p className="mt-4 text-rose-deep text-xs font-bold text-center">
-                  * Please select {
+                  * {isBelowMinOrder ? `Minimum order amount of ₹${minOrderVal} not met` : `Please select ${
                     (!selectedAddress && !deliveryDate && !deliveryTimeSlot)
                     ? 'address, date and time slot'
                     : !selectedAddress
                     ? 'a delivery address'
-                    : (selectedAddress && !isServiceableZipCode(selectedAddress.zipCode))
+                    : (selectedAddress && !isZipServiceable(selectedAddress.zipCode))
                     ? 'a serviceable Gurugram address'
                     : !deliveryDate
                     ? 'a delivery date'
                     : 'a delivery time slot'
-                  } to proceed
+                  } to proceed`}
                 </p>
               )}
 
