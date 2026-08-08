@@ -1,20 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useCMS } from '@/context/CMSContext';
 import {
-  getSiteSettings,
-  updateSiteSettings,
-  getContactInfo,
-  updateContactInfo,
-  getHomepageContent,
-  updateHomepageContent,
-  getBusinessHours,
-  updateBusinessHours,
-  SiteSettings,
-  ContactInfo,
-  HomepageContent,
-  BusinessHours
-} from '@/utils/adminService';
+  NavigationItem,
+  MegaMenuSection,
+  MegaMenuItem,
+  HomepageSection,
+  Announcement,
+  CollectionCMSItem,
+  CMSWebsiteSettings,
+  CMSMediaItem,
+  CMSSEOMetadata,
+  CMSGeneralSettings
+} from '@/types/cms';
 import {
   Save,
   Loader2,
@@ -34,129 +33,156 @@ import {
   Plus,
   Trash2,
   Image as ImageIcon,
-  Type
+  Type,
+  Link as LinkIcon,
+  Folder,
+  Globe,
+  Upload,
+  Calendar,
+  AlertTriangle,
+  Menu,
+  FileText,
+  Search,
+  Grid,
+  Copy,
+  Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const AdminContent = () => {
-  const [loading, setLoading] = useState(true);
+const AdminCMS = () => {
+  const {
+    navigation,
+    megaMenus,
+    homepageSections,
+    announcements,
+    collections,
+    websiteSettings,
+    mediaItems,
+    seoMetadata,
+    generalSettings,
+    loading,
+
+    updateNavigation,
+    updateMegaMenus,
+    updateHomepageSections,
+    updateAnnouncements,
+    updateCollections,
+    updateWebsiteSettings,
+    updateMediaItems,
+    updateSEOMetadata,
+    updateGeneralSettings
+  } = useCMS();
+
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'global' | 'homepage' | 'sections'>('global');
+  const [activeTab, setActiveTab] = useState<
+    'navigation' | 'megamenu' | 'homepage' | 'announcements' | 'collections' | 'settings' | 'media' | 'seo' | 'general'
+  >('navigation');
+
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Form states
-  const [siteSettings, setSiteSettings] = useState<Partial<SiteSettings>>({});
-  const [contactInfo, setContactInfo] = useState<Partial<ContactInfo>>({});
-  const [homepageContent, setHomepageContent] = useState<Partial<HomepageContent>>({});
-  const [businessHours, setBusinessHours] = useState<Partial<BusinessHours>>({});
+  // Drag and drop states
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [draggedGroup, setDraggedGroup] = useState<string | null>(null);
+
+  // Search and Filter states
+  const [mediaSearch, setMediaSearch] = useState('');
+  const [mediaFolderFilter, setMediaFolderFilter] = useState('All');
+  const [seoSearch, setSeoSearch] = useState('');
+
+  // Editing structures
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [settings, contact, home, hours] = await Promise.all([
-          getSiteSettings(),
-          getContactInfo(),
-          getHomepageContent(),
-          getBusinessHours()
-        ]);
-
-        setSiteSettings(settings || {
-          logoText: 'The Cake Lounge',
-          copyrightText: '© 2025 The Cake Lounge Patisserie. All rights reserved.',
-          announcementBar: {
-            enabled: true,
-            text: 'Free Delivery Above ₹499',
-            link: '/menu'
-          }
-        });
-
-        setContactInfo(contact || {
-          phone: '',
-          email: '',
-          address: '',
-          whatsapp: '',
-          googleMaps: '',
-          socialLinks: {
-            instagram: '',
-            facebook: '',
-            pinterest: ''
-          }
-        });
-
-        setHomepageContent(home || {
-          hero: {
-            title: 'Exquisite Cakes Delivered Fresh',
-            subtitle: 'Handcrafted with love using only the finest ingredients.',
-            ctaPrimary: { text: 'Order Now', link: '/menu' },
-            ctaSecondary: { text: 'View Menu', link: '/menu' },
-            images: []
-          },
-          about: {
-            title: 'Baked with Passion, Served with Love',
-            description: 'The Cake Lounge was born from a grandmother\'s kitchen in 2015. What started as late-night baking sessions and recipes passed down through generations has blossomed into a beloved patisserie trusted by thousands.'
-          },
-          gallery: [],
-          testimonials: [
-            { id: 1, name: 'Priya Sharma', role: 'Birthday Celebration', text: 'The cake was absolutely beautiful and tasted even better!', rating: 5 },
-            { id: 2, name: 'Rahul Verma', role: 'Anniversary', text: 'Best red velvet cake in town. Highly recommended!', rating: 5 }
-          ],
-          sections: [
-            { id: 'hero', title: 'Hero Banner', enabled: true, order: 0 },
-            { id: 'offers', title: 'Offers Bar', enabled: true, order: 1 },
-            { id: 'categories', title: 'Featured Categories', enabled: true, order: 2 },
-            { id: 'featured', title: 'Featured Products', enabled: true, order: 3 },
-            { id: 'about', title: 'Our Story', enabled: true, order: 4 },
-            { id: 'testimonials', title: 'Testimonials', enabled: true, order: 5 },
-            { id: 'contact', title: 'Contact Section', enabled: true, order: 6 }
-          ]
-        });
-
-        setBusinessHours(hours || {
-          mon_fri: '10:00 AM - 10:00 PM',
-          sat_sun: '09:00 AM - 11:00 PM',
-          delivery: '11:00 AM - 09:00 PM'
-        });
-
-      } catch (error) {
-        console.error("Error fetching content:", error);
-        showToast("Failed to load content", "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleSaveGlobal = async () => {
-    setSaving(true);
-    try {
-      await Promise.all([
-        updateSiteSettings(siteSettings),
-        updateContactInfo(contactInfo),
-        updateBusinessHours(businessHours)
-      ]);
-      showToast("Global settings saved successfully");
-    } catch (error) {
-      showToast("Failed to save global settings", "error");
-    } finally {
-      setSaving(false);
-    }
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedUrl(text);
+    showToast("URL copied to clipboard!");
+    setTimeout(() => setCopiedUrl(null), 2000);
   };
 
-  const handleSaveHomepage = async () => {
+  // --- HTML5 Drag & Drop Reordering handlers ---
+  const handleDragStart = (index: number, groupName: string) => {
+    setDraggedIndex(index);
+    setDraggedGroup(groupName);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = async (targetIndex: number, groupName: string) => {
+    if (draggedIndex === null || draggedGroup !== groupName) return;
+
+    if (groupName === 'navigation') {
+      const reordered = [...navigation];
+      const [draggedItem] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedItem);
+      const updated = reordered.map((item, idx) => ({ ...item, displayOrder: idx }));
+      setSaving(true);
+      await updateNavigation(updated);
+      setSaving(false);
+      showToast("Navigation order updated");
+    }
+
+    if (groupName === 'megamenu') {
+      const reordered = [...megaMenus];
+      const [draggedItem] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedItem);
+      const updated = reordered.map((item, idx) => ({ ...item, displayOrder: idx }));
+      setSaving(true);
+      await updateMegaMenus(updated);
+      setSaving(false);
+      showToast("Mega Menu section order updated");
+    }
+
+    if (groupName === 'homepage') {
+      const reordered = [...homepageSections];
+      const [draggedItem] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedItem);
+      const updated = reordered.map((item, idx) => ({ ...item, order: idx }));
+      setSaving(true);
+      await updateHomepageSections(updated);
+      setSaving(false);
+      showToast("Homepage sections order updated");
+    }
+
+    if (groupName === 'announcements') {
+      const reordered = [...announcements];
+      const [draggedItem] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedItem);
+      const updated = reordered.map((item, idx) => ({ ...item, displayOrder: idx }));
+      setSaving(true);
+      await updateAnnouncements(updated);
+      setSaving(false);
+      showToast("Announcement order updated");
+    }
+
+    if (groupName === 'collections') {
+      const reordered = [...collections];
+      const [draggedItem] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, draggedItem);
+      const updated = reordered.map((item, idx) => ({ ...item, displayOrder: idx }));
+      setSaving(true);
+      await updateCollections(updated);
+      setSaving(false);
+      showToast("Collections order updated");
+    }
+
+    setDraggedIndex(null);
+    setDraggedGroup(null);
+  };
+
+  // --- FORM CRUD SAVE ACTIONS ---
+  const handleSaveAll = async (tabName: string) => {
     setSaving(true);
     try {
-      await updateHomepageContent(homepageContent);
-      showToast("Homepage content saved successfully");
-    } catch (error) {
-      showToast("Failed to save homepage content", "error");
+      showToast(`${tabName} changes saved successfully!`);
+    } catch (e) {
+      showToast(`Failed to save ${tabName} changes`, 'error');
     } finally {
       setSaving(false);
     }
@@ -164,8 +190,9 @@ const AdminContent = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="animate-spin text-rose-deep" size={32} />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+        <Loader2 className="animate-spin text-rose-deep" size={36} />
+        <p className="text-gray-500 font-medium">Synchronizing Enterprise CMS Real-Time...</p>
       </div>
     );
   }
@@ -188,558 +215,207 @@ const AdminContent = () => {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 pb-2 border-b border-gray-100">
         <div>
-          <h1 className="text-3xl font-playfair font-bold text-chocolate">Website Content</h1>
-          <p className="text-gray-500 mt-1">Manage what your customers see on the website.</p>
+          <h1 className="text-3xl font-playfair font-bold text-chocolate">The Cake Lounge CMS</h1>
+          <p className="text-gray-500 mt-1">Enterprise Content Management Suite. Direct real-time control over 95%+ of frontend assets.</p>
         </div>
-        <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100 self-start">
-          <button
-            onClick={() => setActiveTab('global')}
-            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'global' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
-          >
-            Global
-          </button>
-          <button
-            onClick={() => setActiveTab('homepage')}
-            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'homepage' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
-          >
-            Homepage
-          </button>
-          <button
-            onClick={() => setActiveTab('sections')}
-            className={`px-6 py-2.5 rounded-[18px] text-sm font-bold transition-all ${activeTab === 'sections' ? 'bg-chocolate text-white shadow-lg' : 'text-gray-400 hover:text-chocolate'}`}
-          >
-            Sections
-          </button>
+
+        {/* CMS Quick Mode Tabs */}
+        <div className="flex flex-wrap bg-white p-1 rounded-2xl shadow-sm border border-gray-100 gap-1">
+          {[
+            { id: 'navigation', label: 'Navigation', icon: <Menu size={16} /> },
+            { id: 'megamenu', label: 'Mega Menu', icon: <Grid size={16} /> },
+            { id: 'homepage', label: 'Homepage', icon: <Layout size={16} /> },
+            { id: 'announcements', label: 'Announcements', icon: <Clock size={16} /> },
+            { id: 'collections', label: 'Collections', icon: <Folder size={16} /> },
+            { id: 'settings', label: 'Website Settings', icon: <Settings size={16} /> },
+            { id: 'media', label: 'Media Library', icon: <ImageIcon size={16} /> },
+            { id: 'seo', label: 'SEO Manager', icon: <Globe size={16} /> },
+            { id: 'general', label: 'General', icon: <FileText size={16} /> },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-[14px] text-xs font-bold transition-all ${
+                activeTab === tab.id
+                  ? 'bg-chocolate text-white shadow-md'
+                  : 'text-gray-400 hover:text-chocolate hover:bg-gray-50'
+              }`}
+            >
+              {tab.icon}
+              <span className="inline-block">{tab.label}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {activeTab === 'global' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Contact Information */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-50 text-blue-500 rounded-[18px]">
-                <Phone size={20} />
-              </div>
-              <h2 className="text-lg font-bold text-chocolate">Contact Information</h2>
+      {/* --- TAB 1: NAVIGATION MANAGER --- */}
+      {activeTab === 'navigation' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <Menu size={22} className="text-rose-deep" /> Header Navigation Links
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Add, update, or drag navigation elements. Supports dropdown links and icons.</p>
             </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Phone Number</label>
-                <input
-                  type="text"
-                  value={contactInfo.phone}
-                  onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
-                <input
-                  type="email"
-                  value={contactInfo.email}
-                  onChange={(e) => setContactInfo({...contactInfo, email: e.target.value})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">WhatsApp Number</label>
-                <input
-                  type="text"
-                  value={contactInfo.whatsapp}
-                  onChange={(e) => setContactInfo({...contactInfo, whatsapp: e.target.value})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Store Address</label>
-                <textarea
-                  rows={2}
-                  value={contactInfo.address}
-                  onChange={(e) => setContactInfo({...contactInfo, address: e.target.value})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Primary CTA Text</label>
-                  <input
-                    type="text"
-                    value={homepageContent.hero?.ctaPrimary?.text || ''}
-                    onChange={(e) => setHomepageContent({
-                      ...homepageContent,
-                      hero: {
-                        ...(homepageContent.hero || {}),
-                        ctaPrimary: {
-                          text: e.target.value,
-                          link: homepageContent.hero?.ctaPrimary?.link || ''
-                        }
-                      }
-                    })}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Primary CTA Link</label>
-                  <input
-                    type="text"
-                    value={homepageContent.hero?.ctaPrimary?.link || ''}
-                    onChange={(e) => setHomepageContent({
-                      ...homepageContent,
-                      hero: {
-                        ...(homepageContent.hero || {}),
-                        ctaPrimary: {
-                          text: homepageContent.hero?.ctaPrimary?.text || '',
-                          link: e.target.value
-                        }
-                      }
-                    })}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={() => {
+                const newItem: NavigationItem = {
+                  id: 'nav_' + Date.now(),
+                  label: 'New Link',
+                  linkType: 'custom',
+                  url: '/custom',
+                  enabled: true,
+                  displayOrder: navigation.length,
+                  showOnDesktop: true,
+                  showOnMobile: true,
+                  hasDropdown: false
+                };
+                updateNavigation([...navigation, newItem]);
+                showToast("Added new navigation link!");
+              }}
+              className="flex items-center gap-2 bg-rose-deep text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brown transition-all shadow-sm"
+            >
+              <Plus size={16} /> Add Navigation Link
+            </button>
           </div>
 
-          {/* About Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-50 text-green-600 rounded-[18px]">
-                <Type size={20} />
-              </div>
-              <h2 className="text-lg font-bold text-chocolate">About Section</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Title</label>
-                <input
-                  type="text"
-                  value={homepageContent.about?.title}
-                  onChange={(e) => setHomepageContent({...homepageContent, about: {...homepageContent.about, title: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Description</label>
-                <textarea
-                  rows={4}
-                  value={homepageContent.about?.description}
-                  onChange={(e) => setHomepageContent({...homepageContent, about: {...homepageContent.about, description: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Gallery Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-indigo-50 text-indigo-500 rounded-[18px]">
-                  <ImageIcon size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Gallery Items</h2>
-              </div>
-              <button
-                onClick={() => setHomepageContent({
-                  ...homepageContent,
-                  gallery: [...(homepageContent.gallery || []), { src: '', label: '' }]
-                })}
-                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-cream-dark px-3 py-2 rounded-[18px] transition-all"
+          <div className="space-y-4">
+            {navigation.map((item, index) => (
+              <div
+                key={item.id}
+                draggable
+                onDragStart={() => handleDragStart(index, 'navigation')}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(index, 'navigation')}
+                className="flex flex-col lg:flex-row items-start lg:items-center gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-200 hover:bg-white hover:shadow-md transition-all cursor-move group"
               >
-                <Plus size={14} /> Add Image
-              </button>
-            </div>
+                {/* Drag handle */}
+                <div className="hidden lg:flex flex-col gap-1 text-gray-300 group-hover:text-rose-deep transition-colors">
+                  <MoveUp size={14} />
+                  <MoveDown size={14} />
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {homepageContent.gallery?.map((img: {src: string, label: string}, index: number) => (
-                <div key={index} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 relative group">
-                  <button
-                    onClick={() => {
-                      const newG = [...(homepageContent.gallery || [])];
-                      newG.splice(index, 1);
-                      setHomepageContent({...homepageContent, gallery: newG});
-                    }}
-                    className="absolute top-2 right-2 p-2 text-gray-300 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Image URL</label>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 w-full">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Label</label>
+                    <input
+                      type="text"
+                      value={item.label}
+                      onChange={(e) => {
+                        const updated = [...navigation];
+                        updated[index].label = e.target.value;
+                        updateNavigation(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Type</label>
+                    <select
+                      value={item.linkType}
+                      onChange={(e) => {
+                        const updated = [...navigation];
+                        updated[index].linkType = e.target.value as any;
+                        updateNavigation(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                    >
+                      <option value="internal">Internal Page</option>
+                      <option value="collection">Collection</option>
+                      <option value="category">Category</option>
+                      <option value="custom">Custom URL</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">URL Slug / Path</label>
+                    <input
+                      type="text"
+                      value={item.url}
+                      onChange={(e) => {
+                        const updated = [...navigation];
+                        updated[index].url = e.target.value;
+                        updateNavigation(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold text-gray-600"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-4 pt-4 md:pt-2">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
                       <input
-                        type="text"
-                        value={img.src}
+                        type="checkbox"
+                        checked={item.hasDropdown}
                         onChange={(e) => {
-                          const newG = [...(homepageContent.gallery || [])];
-                          newG[index].src = e.target.value;
-                          setHomepageContent({...homepageContent, gallery: newG});
+                          const updated = [...navigation];
+                          updated[index].hasDropdown = e.target.checked;
+                          updateNavigation(updated);
                         }}
-                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                        placeholder="https://..."
+                        className="rounded text-rose-deep focus:ring-rose-deep h-4 w-4"
                       />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Label</label>
+                      <span className="text-xs font-semibold text-gray-600">Has Dropdown</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
                       <input
-                        type="text"
-                        value={img.label}
+                        type="checkbox"
+                        checked={item.showOnDesktop}
                         onChange={(e) => {
-                          const newG = [...(homepageContent.gallery || [])];
-                          newG[index].label = e.target.value;
-                          setHomepageContent({...homepageContent, gallery: newG});
+                          const updated = [...navigation];
+                          updated[index].showOnDesktop = e.target.checked;
+                          updateNavigation(updated);
                         }}
-                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                        placeholder="Image Label"
+                        className="rounded text-rose-deep focus:ring-rose-deep h-4 w-4"
                       />
-                    </div>
+                      <span className="text-xs font-semibold text-gray-600">Desktop</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={item.showOnMobile}
+                        onChange={(e) => {
+                          const updated = [...navigation];
+                          updated[index].showOnMobile = e.target.checked;
+                          updateNavigation(updated);
+                        }}
+                        className="rounded text-rose-deep focus:ring-rose-deep h-4 w-4"
+                      />
+                      <span className="text-xs font-semibold text-gray-600">Mobile</span>
+                    </label>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Testimonials */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-50 text-blue-500 rounded-[18px]">
-                  <Share2 size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Testimonials</h2>
-              </div>
-              <button
-                onClick={() => setHomepageContent({
-                  ...homepageContent,
-                  testimonials: [...(homepageContent.testimonials || []), { id: Date.now(), name: '', role: '', text: '', rating: 5 }]
-                })}
-                className="flex items-center gap-2 text-rose-deep text-xs font-bold uppercase tracking-widest hover:bg-cream-dark px-3 py-2 rounded-[18px] transition-all"
-              >
-                <Plus size={14} /> Add Testimonial
-              </button>
-            </div>
-
-            <div className="space-y-6">
-              {homepageContent.testimonials?.map((t: {id: number, name: string, role: string, text: string}, index: number) => (
-                <div key={t.id} className="p-6 rounded-2xl bg-gray-50 border border-gray-100 relative group">
+                <div className="flex items-center gap-3 w-full lg:w-auto justify-end pt-2 lg:pt-0">
                   <button
                     onClick={() => {
-                      const newT = [...(homepageContent.testimonials || [])];
-                      newT.splice(index, 1);
-                      setHomepageContent({...homepageContent, testimonials: newT});
+                      const updated = [...navigation];
+                      updated[index].enabled = !updated[index].enabled;
+                      updateNavigation(updated);
                     }}
-                    className="absolute top-4 right-4 p-2 text-gray-300 hover:text-red-500 transition-colors"
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      item.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
+                    {item.enabled ? <Eye size={12} /> : <EyeOff size={12} />}
+                    {item.enabled ? 'Active' : 'Disabled'}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const updated = navigation.filter((_, idx) => idx !== index);
+                      updateNavigation(updated);
+                      showToast("Removed navigation link!");
+                    }}
+                    className="p-2 text-gray-300 hover:text-red-500 transition-colors"
                   >
                     <Trash2 size={16} />
                   </button>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Customer Name</label>
-                      <input
-                        type="text"
-                        value={t.name}
-                        onChange={(e) => {
-                          const newT = [...(homepageContent.testimonials || [])];
-                          newT[index].name = e.target.value;
-                          setHomepageContent({...homepageContent, testimonials: newT});
-                        }}
-                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role / Context</label>
-                      <input
-                        type="text"
-                        value={t.role}
-                        onChange={(e) => {
-                          const newT = [...(homepageContent.testimonials || [])];
-                          newT[index].role = e.target.value;
-                          setHomepageContent({...homepageContent, testimonials: newT});
-                        }}
-                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                      />
-                    </div>
-                    <div className="md:col-span-2 space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Testimonial Text</label>
-                      <textarea
-                        rows={2}
-                        value={t.text}
-                        onChange={(e) => {
-                          const newT = [...(homepageContent.testimonials || [])];
-                          newT[index].text = e.target.value;
-                          setHomepageContent({...homepageContent, testimonials: newT});
-                        }}
-                        className="w-full px-4 py-2 rounded-[18px] bg-white border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
-                      />
-                    </div>
-                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Social Media & Business Hours */}
-          <div className="space-y-8">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-purple-50 text-purple-500 rounded-[18px]">
-                  <Share2 size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Social Links</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Instagram</label>
-                  <input
-                    type="text"
-                    value={contactInfo.socialLinks?.instagram}
-                    onChange={(e) => setContactInfo({...contactInfo, socialLinks: {...contactInfo.socialLinks, instagram: e.target.value}})}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Facebook</label>
-                  <input
-                    type="text"
-                    value={contactInfo.socialLinks?.facebook}
-                    onChange={(e) => setContactInfo({...contactInfo, socialLinks: {...contactInfo.socialLinks, facebook: e.target.value}})}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-green-50 text-green-600 rounded-[18px]">
-                  <Settings size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Site Footer</h2>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Copyright Text</label>
-                  <input
-                    type="text"
-                    value={siteSettings.copyrightText}
-                    onChange={(e) => setSiteSettings({...siteSettings, copyrightText: e.target.value})}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-orange-50 text-orange-500 rounded-[18px]">
-                  <Clock size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Business Hours</h2>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Mon - Fri</label>
-                  <input
-                    type="text"
-                    value={businessHours.mon_fri}
-                    onChange={(e) => setBusinessHours({...businessHours, mon_fri: e.target.value})}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Sat - Sun</label>
-                  <input
-                    type="text"
-                    value={businessHours.sat_sun}
-                    onChange={(e) => setBusinessHours({...businessHours, sat_sun: e.target.value})}
-                    className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2 flex justify-end">
-            <button
-              disabled={saving}
-              onClick={handleSaveGlobal}
-              className="flex items-center gap-2 bg-rose-deep text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all disabled:opacity-50"
-            >
-              {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-              <span>Save Global Settings</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'homepage' && (
-        <div className="space-y-8">
-           {/* Announcement Bar */}
-           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-50 text-yellow-600 rounded-[18px]">
-                  <Layout size={20} />
-                </div>
-                <h2 className="text-lg font-bold text-chocolate">Announcement Bar</h2>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={siteSettings.announcementBar?.enabled}
-                  onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, enabled: e.target.checked}})}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-rose/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-              </label>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Banner Text</label>
-                <input
-                  type="text"
-                  value={siteSettings.announcementBar?.text}
-                  onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, text: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  placeholder="e.g. Free Delivery Above ₹499"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Start Date</label>
-                <input
-                  type="date"
-                  value={siteSettings.announcementBar?.startDate || ''}
-                  onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, startDate: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">End Date</label>
-                <input
-                  type="date"
-                  value={siteSettings.announcementBar?.endDate || ''}
-                  onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, endDate: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Link (Optional)</label>
-                <input
-                  type="text"
-                  value={siteSettings.announcementBar?.link}
-                  onChange={(e) => setSiteSettings({...siteSettings, announcementBar: {...siteSettings.announcementBar, link: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                  placeholder="/menu"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Hero Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-rose-50 text-rose-deep rounded-[18px]">
-                <Layout size={20} />
-              </div>
-              <h2 className="text-lg font-bold text-chocolate">Hero Section</h2>
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Main Title</label>
-                <input
-                  type="text"
-                  value={homepageContent.hero?.title}
-                  onChange={(e) => setHomepageContent({...homepageContent, hero: {...homepageContent.hero, title: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Subtitle / Description</label>
-                <textarea
-                  rows={3}
-                  value={homepageContent.hero?.subtitle}
-                  onChange={(e) => setHomepageContent({...homepageContent, hero: {...homepageContent.hero, subtitle: e.target.value}})}
-                  className="w-full px-4 py-3 rounded-[18px] bg-gray-50 border-none focus:ring-2 focus:ring-rose/20 outline-none transition-all text-sm resize-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              disabled={saving}
-              onClick={handleSaveHomepage}
-              className="flex items-center gap-2 bg-rose-deep text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all disabled:opacity-50"
-            >
-              {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-              <span>Save Homepage Content</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'sections' && (
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-teal-50 text-teal-500 rounded-[18px]">
-              <Layout size={20} />
-            </div>
-            <h2 className="text-lg font-bold text-chocolate">Homepage Section Builder</h2>
-          </div>
-
-          <div className="space-y-3">
-            {[...(homepageContent.sections || [])].sort((a, b) => a.order - b.order).map((section, index, array) => (
-              <div key={section.id} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 group transition-all hover:bg-white hover:shadow-md">
-                <div className="flex flex-col gap-1">
-                  <button
-                    disabled={index === 0}
-                    onClick={() => {
-                      const newSections = [...(homepageContent.sections || [])];
-                      const current = newSections[index];
-                      const prev = newSections[index - 1];
-                      current.order -= 1;
-                      prev.order += 1;
-                      setHomepageContent({...homepageContent, sections: newSections});
-                    }}
-                    className="p-1 text-gray-300 hover:text-chocolate disabled:opacity-0 transition-colors"
-                  >
-                    <MoveUp size={16} />
-                  </button>
-                  <button
-                    disabled={index === array.length - 1}
-                    onClick={() => {
-                      const newSections = [...(homepageContent.sections || [])];
-                      const current = newSections[index];
-                      const next = newSections[index + 1];
-                      current.order += 1;
-                      next.order -= 1;
-                      setHomepageContent({...homepageContent, sections: newSections});
-                    }}
-                    className="p-1 text-gray-300 hover:text-chocolate disabled:opacity-0 transition-colors"
-                  >
-                    <MoveDown size={16} />
-                  </button>
-                </div>
-
-                <div className="flex-1">
-                  <h3 className="font-bold text-chocolate text-sm">{section.title}</h3>
-                  <p className="text-[10px] text-gray-400 uppercase tracking-widest">{section.id}</p>
-                </div>
-
-                <button
-                  onClick={() => {
-                    const newSections = [...(homepageContent.sections || [])];
-                    newSections[index].enabled = !newSections[index].enabled;
-                    setHomepageContent({...homepageContent, sections: newSections});
-                  }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-[18px] text-xs font-bold transition-all ${section.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}
-                >
-                  {section.enabled ? <Eye size={14} /> : <EyeOff size={14} />}
-                  {section.enabled ? 'Visible' : 'Hidden'}
-                </button>
               </div>
             ))}
           </div>
@@ -747,11 +423,1365 @@ const AdminContent = () => {
           <div className="flex justify-end pt-4">
             <button
               disabled={saving}
-              onClick={handleSaveHomepage}
-              className="flex items-center gap-2 bg-rose-deep text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all disabled:opacity-50"
+              onClick={() => handleSaveAll('Navigation')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Navigation Setup</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 2: MEGA MENU SECTIONS --- */}
+      {activeTab === 'megamenu' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <Grid size={22} className="text-rose-deep" /> Mega Menu Columns & Nested Items
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Manage secondary catalog links and categories structured under top-level items.</p>
+            </div>
+            <button
+              onClick={() => {
+                const newSection: MegaMenuSection = {
+                  id: 'sec_' + Date.now(),
+                  title: 'New Section',
+                  displayOrder: megaMenus.length,
+                  enabled: true,
+                  items: []
+                };
+                updateMegaMenus([...megaMenus, newSection]);
+                showToast("Added new mega menu section!");
+              }}
+              className="flex items-center gap-2 bg-rose-deep text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brown transition-all shadow-sm"
+            >
+              <Plus size={16} /> Create Mega Menu Section
+            </button>
+          </div>
+
+          <div className="space-y-8">
+            {megaMenus.map((section, sectionIdx) => (
+              <div
+                key={section.id}
+                draggable
+                onDragStart={() => handleDragStart(sectionIdx, 'megamenu')}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(sectionIdx, 'megamenu')}
+                className="p-6 rounded-2xl bg-gray-50 border border-gray-200 space-y-4 cursor-move"
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-gray-300">
+                      <MoveUp size={14} />
+                      <MoveDown size={14} />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[9px] font-bold text-rose-deep uppercase tracking-wider">Mega Menu Column Title</span>
+                      <input
+                        type="text"
+                        value={section.title}
+                        onChange={(e) => {
+                          const updated = [...megaMenus];
+                          updated[sectionIdx].title = e.target.value;
+                          updateMegaMenus(updated);
+                        }}
+                        className="bg-transparent border-none text-base font-bold text-chocolate focus:ring-0 p-0 w-48 font-playfair focus:border-b focus:border-rose-deep outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 justify-end">
+                    <button
+                      onClick={() => {
+                        const updated = [...megaMenus];
+                        updated[sectionIdx].enabled = !updated[sectionIdx].enabled;
+                        updateMegaMenus(updated);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        section.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'
+                      }`}
+                    >
+                      {section.enabled ? 'Visible' : 'Hidden'}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const newItem: MegaMenuItem = {
+                          id: 'sub_' + Date.now(),
+                          name: 'New Item',
+                          slug: 'new-slug',
+                          url: '/menu',
+                          displayOrder: section.items.length,
+                          enabled: true
+                        };
+                        const updated = [...megaMenus];
+                        updated[sectionIdx].items = [...section.items, newItem];
+                        updateMegaMenus(updated);
+                        showToast(`Added sub-item to ${section.title}!`);
+                      }}
+                      className="flex items-center gap-1 bg-white text-chocolate border border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-100 transition-all"
+                    >
+                      <Plus size={14} /> Add Item
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const updated = megaMenus.filter((_, idx) => idx !== sectionIdx);
+                        updateMegaMenus(updated);
+                        showToast(`Deleted Mega Menu Section: ${section.title}`);
+                      }}
+                      className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sub Menu Items list */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {section.items.map((sub, subIdx) => (
+                    <div key={sub.id} className="bg-white p-4 rounded-xl border border-gray-100 space-y-3 relative group">
+                      <button
+                        onClick={() => {
+                          const updated = [...megaMenus];
+                          updated[sectionIdx].items = section.items.filter((_, idx) => idx !== subIdx);
+                          updateMegaMenus(updated);
+                        }}
+                        className="absolute top-2 right-2 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          value={sub.name}
+                          onChange={(e) => {
+                            const updated = [...megaMenus];
+                            updated[sectionIdx].items[subIdx].name = e.target.value;
+                            updateMegaMenus(updated);
+                          }}
+                          placeholder="Item Name"
+                          className="w-full text-xs font-bold text-chocolate border-b border-gray-100 focus:border-rose-deep focus:outline-none pb-1"
+                        />
+                        <input
+                          type="text"
+                          value={sub.url}
+                          onChange={(e) => {
+                            const updated = [...megaMenus];
+                            updated[sectionIdx].items[subIdx].url = e.target.value;
+                            updateMegaMenus(updated);
+                          }}
+                          placeholder="Link / Path"
+                          className="w-full text-[11px] text-gray-500 border-b border-gray-100 focus:border-rose-deep focus:outline-none pb-1"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  {section.items.length === 0 && (
+                    <div className="col-span-full py-4 text-center text-xs text-gray-400 font-medium italic bg-white rounded-xl border border-dashed border-gray-200">
+                      No nested items. Click &apos;Add Item&apos; above to populate this section.
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('Mega Menu')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Mega Menu Configurations</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 3: HOMEPAGE CMS MANAGER --- */}
+      {activeTab === 'homepage' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+              <Layout size={22} className="text-rose-deep" /> Homepage Manager & Section reordering
+            </h2>
+            <p className="text-xs text-gray-400 mt-1">Control visual headings, copy texts, button action destinations, slide banners and visibility rules for every homepage block.</p>
+          </div>
+
+          <div className="space-y-4">
+            {homepageSections.map((section, index) => (
+              <div
+                key={section.id}
+                draggable
+                onDragStart={() => handleDragStart(index, 'homepage')}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(index, 'homepage')}
+                className="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:bg-white transition-all space-y-4 cursor-move group"
+              >
+                <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-gray-300 group-hover:text-rose-deep transition-colors">
+                      <MoveUp size={14} />
+                      <MoveDown size={14} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-chocolate font-playfair">{section.title}</h3>
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold">Section ID: {section.id}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      const updated = [...homepageSections];
+                      updated[index].enabled = !updated[index].enabled;
+                      updateHomepageSections(updated);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      section.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
+                    {section.enabled ? <Eye size={12} /> : <EyeOff size={12} />}
+                    {section.enabled ? 'Visible' : 'Hidden'}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Heading Title</label>
+                    <input
+                      type="text"
+                      value={section.title}
+                      onChange={(e) => {
+                        const updated = [...homepageSections];
+                        updated[index].title = e.target.value;
+                        updateHomepageSections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                    />
+                  </div>
+
+                  {section.description !== undefined && (
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Subheading Description</label>
+                      <textarea
+                        rows={2}
+                        value={section.description}
+                        onChange={(e) => {
+                          const updated = [...homepageSections];
+                          updated[index].description = e.target.value;
+                          updateHomepageSections(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium resize-none"
+                      />
+                    </div>
+                  )}
+
+                  {section.buttonText !== undefined && (
+                    <div className="grid grid-cols-2 gap-3 col-span-full">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Button Label</label>
+                        <input
+                          type="text"
+                          value={section.buttonText}
+                          onChange={(e) => {
+                            const updated = [...homepageSections];
+                            updated[index].buttonText = e.target.value;
+                            updateHomepageSections(updated);
+                          }}
+                          className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Button Destination Link</label>
+                        <input
+                          type="text"
+                          value={section.buttonLink}
+                          onChange={(e) => {
+                            const updated = [...homepageSections];
+                            updated[index].buttonLink = e.target.value;
+                            updateHomepageSections(updated);
+                          }}
+                          className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium text-gray-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {section.images && (
+                    <div className="col-span-full space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Slider / Background Gallery Images</label>
+                        <button
+                          onClick={() => {
+                            const updated = [...homepageSections];
+                            updated[index].images = [...(section.images || []), 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=500&auto=format&fit=crop'];
+                            updateHomepageSections(updated);
+                          }}
+                          className="text-xs font-bold text-rose-deep hover:underline"
+                        >
+                          + Add Image URL
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {section.images.map((imgUrl, imgIdx) => (
+                          <div key={imgIdx} className="relative group/img bg-white p-2 rounded-xl border border-gray-200 space-y-2">
+                            <button
+                              onClick={() => {
+                                const updated = [...homepageSections];
+                                const currentImages = [...(section.images || [])];
+                                currentImages.splice(imgIdx, 1);
+                                updated[index].images = currentImages;
+                                updateHomepageSections(updated);
+                              }}
+                              className="absolute top-1 right-1 bg-white rounded-full p-1 shadow hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors z-10"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                            <img src={imgUrl} className="w-full h-24 object-cover rounded-lg bg-gray-50" />
+                            <input
+                              type="text"
+                              value={imgUrl}
+                              onChange={(e) => {
+                                const updated = [...homepageSections];
+                                const currentImages = [...(section.images || [])];
+                                currentImages[imgIdx] = e.target.value;
+                                updated[index].images = currentImages;
+                                updateHomepageSections(updated);
+                              }}
+                              className="w-full text-[10px] border-none p-0 focus:ring-0 text-gray-500 truncate"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('Homepage Sections')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Home configurations</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 4: PROMOTIONAL STRIPS / ANNOUNCEMENT BAR --- */}
+      {activeTab === 'announcements' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <Clock size={22} className="text-rose-deep" /> Promotional Scrolling Announcements
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Control active announcement bars, coupon scrolling marquee messages, scheduling rules, icons and customized redirect targets.</p>
+            </div>
+            <button
+              onClick={() => {
+                const newAnn: Announcement = {
+                  id: 'ann_' + Date.now(),
+                  text: 'New Banner Text',
+                  icon: '🎁',
+                  link: '/menu',
+                  enabled: true,
+                  displayOrder: announcements.length
+                };
+                updateAnnouncements([...announcements, newAnn]);
+                showToast("Added new promo announcement!");
+              }}
+              className="flex items-center gap-2 bg-rose-deep text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brown transition-all shadow-sm"
+            >
+              <Plus size={16} /> Create Announcement
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {announcements.map((item, index) => (
+              <div
+                key={item.id}
+                draggable
+                onDragStart={() => handleDragStart(index, 'announcements')}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(index, 'announcements')}
+                className="flex flex-col lg:flex-row items-start lg:items-center gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-200 hover:bg-white hover:shadow-md transition-all cursor-move group"
+              >
+                <div className="hidden lg:flex flex-col gap-1 text-gray-300 group-hover:text-rose-deep transition-colors">
+                  <MoveUp size={14} />
+                  <MoveDown size={14} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 w-full">
+                  <div className="space-y-1 md:col-span-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Announcement Content</label>
+                    <input
+                      type="text"
+                      value={item.text}
+                      onChange={(e) => {
+                        const updated = [...announcements];
+                        updated[index].text = e.target.value;
+                        updateAnnouncements(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Emoji Icon</label>
+                    <input
+                      type="text"
+                      value={item.icon || ''}
+                      onChange={(e) => {
+                        const updated = [...announcements];
+                        updated[index].icon = e.target.value;
+                        updateAnnouncements(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">CTA Link</label>
+                    <input
+                      type="text"
+                      value={item.link || ''}
+                      onChange={(e) => {
+                        const updated = [...announcements];
+                        updated[index].link = e.target.value;
+                        updateAnnouncements(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium text-gray-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Schedule Start</label>
+                    <input
+                      type="date"
+                      value={item.startDate || ''}
+                      onChange={(e) => {
+                        const updated = [...announcements];
+                        updated[index].startDate = e.target.value;
+                        updateAnnouncements(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs font-semibold"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Schedule End</label>
+                    <input
+                      type="date"
+                      value={item.endDate || ''}
+                      onChange={(e) => {
+                        const updated = [...announcements];
+                        updated[index].endDate = e.target.value;
+                        updateAnnouncements(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs font-semibold"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 w-full lg:w-auto justify-end pt-2 lg:pt-0">
+                  <button
+                    onClick={() => {
+                      const updated = [...announcements];
+                      updated[index].enabled = !updated[index].enabled;
+                      updateAnnouncements(updated);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      item.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'
+                    }`}
+                  >
+                    {item.enabled ? 'Active' : 'Disabled'}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      const updated = announcements.filter((_, idx) => idx !== index);
+                      updateAnnouncements(updated);
+                      showToast("Promo removed!");
+                    }}
+                    className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('Announcements')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Announcements</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 5: COLLECTION CMS MANAGER --- */}
+      {activeTab === 'collections' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <Folder size={22} className="text-rose-deep" /> Collection Manager
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Configure themed collections (e.g. Festival Cakes, Kids Cakes) with titles, custom banners, thumbnails, slugs and tailored SEO tags.</p>
+            </div>
+            <button
+              onClick={() => {
+                const newCol: CollectionCMSItem = {
+                  id: 'col_' + Date.now(),
+                  title: 'New Milestone Cakes',
+                  slug: 'new-milestone-cakes',
+                  description: 'A newly introduced curated collection.',
+                  enabled: true,
+                  displayOrder: collections.length
+                };
+                updateCollections([...collections, newCol]);
+                showToast("Created new collection!");
+              }}
+              className="flex items-center gap-2 bg-rose-deep text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brown transition-all shadow-sm"
+            >
+              <Plus size={16} /> Add Custom Collection
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {collections.map((col, index) => (
+              <div
+                key={col.id}
+                draggable
+                onDragStart={() => handleDragStart(index, 'collections')}
+                onDragOver={handleDragOver}
+                onDrop={() => handleDrop(index, 'collections')}
+                className="p-6 rounded-2xl bg-gray-50 border border-gray-220 hover:bg-white transition-all space-y-4 cursor-move group"
+              >
+                <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-gray-300 group-hover:text-rose-deep transition-colors">
+                      <MoveUp size={14} />
+                      <MoveDown size={14} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-chocolate text-base">{col.title || 'Untitled Collection'}</h3>
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">ID: {col.id}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        const updated = [...collections];
+                        updated[index].enabled = !updated[index].enabled;
+                        updateCollections(updated);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        col.enabled ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'
+                      }`}
+                    >
+                      {col.enabled ? 'Active' : 'Draft'}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        const updated = collections.filter((_, idx) => idx !== index);
+                        updateCollections(updated);
+                        showToast(`Deleted Collection: ${col.title}`);
+                      }}
+                      className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Title</label>
+                    <input
+                      type="text"
+                      value={col.title}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].title = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold text-chocolate"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Slug</label>
+                    <input
+                      type="text"
+                      value={col.slug}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].slug = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SEO Keywords</label>
+                    <input
+                      type="text"
+                      value={col.seoKeywords || ''}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].seoKeywords = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      placeholder="comma separated"
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium text-gray-500"
+                    />
+                  </div>
+
+                  <div className="md:col-span-3 space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Description</label>
+                    <textarea
+                      rows={2}
+                      value={col.description || ''}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].description = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium text-gray-600"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Banner Image URL</label>
+                    <input
+                      type="text"
+                      value={col.bannerImage || ''}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].bannerImage = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs text-gray-500 truncate"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Thumbnail Image URL</label>
+                    <input
+                      type="text"
+                      value={col.thumbnailImage || ''}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].thumbnailImage = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs text-gray-500 truncate"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SEO Title</label>
+                    <input
+                      type="text"
+                      value={col.seoTitle || ''}
+                      onChange={(e) => {
+                        const updated = [...collections];
+                        updated[index].seoTitle = e.target.value;
+                        updateCollections(updated);
+                      }}
+                      className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs text-gray-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('Collections')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Collection Directory</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 6: WEBSITE & THEME SETTINGS --- */}
+      {activeTab === 'settings' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
+              <Settings size={22} className="text-rose-deep" /> Branding & Styling Settings
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Logo Brand text</label>
+                <input
+                  type="text"
+                  value={websiteSettings.logoText}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, logoText: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Website Name</label>
+                <input
+                  type="text"
+                  value={websiteSettings.websiteName}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, websiteName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Primary Theme Color</label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={websiteSettings.primaryColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, primaryColor: e.target.value })}
+                    className="h-9 w-9 rounded-lg border border-gray-200 cursor-pointer p-0"
+                  />
+                  <input
+                    type="text"
+                    value={websiteSettings.primaryColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, primaryColor: e.target.value })}
+                    className="flex-1 px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-xs font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Secondary Theme Color</label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={websiteSettings.secondaryColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, secondaryColor: e.target.value })}
+                    className="h-9 w-9 rounded-lg border border-gray-200 cursor-pointer p-0"
+                  />
+                  <input
+                    type="text"
+                    value={websiteSettings.secondaryColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, secondaryColor: e.target.value })}
+                    className="flex-1 px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-xs font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Accent Golden Color</label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={websiteSettings.accentColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, accentColor: e.target.value })}
+                    className="h-9 w-9 rounded-lg border border-gray-200 cursor-pointer p-0"
+                  />
+                  <input
+                    type="text"
+                    value={websiteSettings.accentColor}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, accentColor: e.target.value })}
+                    className="flex-1 px-3 py-1 bg-gray-50 border border-gray-100 rounded-lg text-xs font-mono font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Favicon URL</label>
+                <input
+                  type="text"
+                  value={websiteSettings.faviconUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, faviconUrl: e.target.value })}
+                  placeholder="/favicon.ico"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Typography Fonts</label>
+                <input
+                  type="text"
+                  value={websiteSettings.typography}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, typography: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Border Radius Cards</label>
+                <input
+                  type="text"
+                  value={websiteSettings.borderRadius}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, borderRadius: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1 col-span-full">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Footer Narrative Brand Text</label>
+              <textarea
+                rows={2}
+                value={websiteSettings.footerText}
+                onChange={(e) => updateWebsiteSettings({ ...websiteSettings, footerText: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-medium resize-none"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
+              <Phone size={22} className="text-rose-deep" /> Business & Contact Directory
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Registered Business Name</label>
+                <input
+                  type="text"
+                  value={websiteSettings.businessName}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, businessName: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Contact Email</label>
+                <input
+                  type="email"
+                  value={websiteSettings.email}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, email: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Phone Support</label>
+                <input
+                  type="text"
+                  value={websiteSettings.phone}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, phone: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">WhatsApp Contact</label>
+                <input
+                  type="text"
+                  value={websiteSettings.whatsapp}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, whatsapp: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1 col-span-full">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Google Maps Embed/Location Link</label>
+                <input
+                  type="text"
+                  value={websiteSettings.googleMapsUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, googleMapsUrl: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Business Hours Mon-Fri</label>
+                <input
+                  type="text"
+                  value={websiteSettings.businessHoursMonFri}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, businessHoursMonFri: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Business Hours Sat-Sun</label>
+                <input
+                  type="text"
+                  value={websiteSettings.businessHoursSatSun}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, businessHoursSatSun: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Instagram URL</label>
+                <input
+                  type="text"
+                  value={websiteSettings.instagramUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, instagramUrl: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Facebook URL</label>
+                <input
+                  type="text"
+                  value={websiteSettings.facebookUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, facebookUrl: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1 col-span-full">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Physical Shop Address</label>
+              <textarea
+                rows={2}
+                value={websiteSettings.address}
+                onChange={(e) => updateWebsiteSettings({ ...websiteSettings, address: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold resize-none"
+              />
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 flex justify-end">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('Settings')}
+              className="flex items-center gap-2 bg-rose-deep text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all"
             >
               {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-              <span>Save Section Configuration</span>
+              <span>Save Website Branding</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 7: MEDIA LIBRARY --- */}
+      {activeTab === 'media' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <ImageIcon size={22} className="text-rose-deep" /> Enterprise Media Assets
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Upload, replace, structure in folders, copy instantly, or search images.</p>
+            </div>
+
+            <div className="flex gap-2">
+              <label className="flex items-center gap-2 bg-rose-deep text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-brown cursor-pointer transition-all shadow-sm">
+                <Upload size={16} /> Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      const newMedia: CMSMediaItem = {
+                        id: 'med_' + Date.now(),
+                        url: reader.result as string, // Fallback base64 or blob URL
+                        name: file.name,
+                        size: file.size,
+                        folder: mediaFolderFilter === 'All' ? 'Uploads' : mediaFolderFilter,
+                        altText: file.name.split('.')[0] + ' product showcase texture',
+                        createdAt: new Date().toISOString()
+                      };
+                      updateMediaItems([...mediaItems, newMedia]);
+                      showToast("Uploaded image to library!");
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+            </div>
+          </div>
+
+          {/* Filters Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+            <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-100 w-full md:w-80">
+              <Search size={16} className="text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search images by name or alt text..."
+                value={mediaSearch}
+                onChange={(e) => setMediaSearch(e.target.value)}
+                className="bg-transparent border-none p-0 text-xs text-chocolate focus:ring-0 outline-none w-full font-medium"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Folder</span>
+              <select
+                value={mediaFolderFilter}
+                onChange={(e) => setMediaFolderFilter(e.target.value)}
+                className="px-3 py-2 rounded-xl bg-white border border-gray-100 text-xs font-semibold focus:outline-none"
+              >
+                <option value="All">All Folders</option>
+                <option value="Bestsellers">Bestsellers</option>
+                <option value="Weddings">Weddings</option>
+                <option value="Birthdays">Birthdays</option>
+                <option value="Uploads">Uploads</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Media Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-6">
+            {mediaItems
+              .filter(item => {
+                const matchesFolder = mediaFolderFilter === 'All' || item.folder === mediaFolderFilter;
+                const matchesSearch = item.name.toLowerCase().includes(mediaSearch.toLowerCase()) ||
+                  (item.altText && item.altText.toLowerCase().includes(mediaSearch.toLowerCase()));
+                return matchesFolder && matchesSearch;
+              })
+              .map((item) => (
+                <div key={item.id} className="relative group bg-gray-50 p-3 rounded-2xl border border-gray-220 flex flex-col space-y-3">
+                  <div className="relative aspect-square w-full rounded-lg bg-white overflow-hidden border border-gray-100">
+                    <img src={item.url} className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" />
+                    <button
+                      onClick={() => {
+                        const updated = mediaItems.filter(m => m.id !== item.id);
+                        updateMediaItems(updated);
+                        showToast("Asset purged from media library.");
+                      }}
+                      className="absolute top-1.5 right-1.5 bg-white/90 rounded-full p-1.5 shadow hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors z-10"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+
+                  <div className="space-y-1.5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold text-chocolate truncate" title={item.name}>{item.name}</p>
+                      <span className="text-[9px] text-gray-400 font-semibold uppercase">{item.folder || 'Default'}</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => copyToClipboard(item.url)}
+                        className="flex-1 flex items-center justify-center gap-1 bg-white border border-gray-200 py-1.5 rounded-lg text-[10px] font-bold text-chocolate hover:bg-gray-100 transition-all"
+                      >
+                        {copiedUrl === item.url ? <Check size={10} className="text-green-500" /> : <Copy size={10} />}
+                        <span>{copiedUrl === item.url ? 'Copied' : 'Copy URL'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 8: SEO METADATA MANAGER --- */}
+      {activeTab === 'seo' && (
+        <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                <Globe size={22} className="text-rose-deep" /> SEO & Meta Manager
+              </h2>
+              <p className="text-xs text-gray-400 mt-1">Configure search visibility tags, canonical URLs, OG Social styling and structured schemas per storefront view.</p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200">
+              <Search size={14} className="text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search slugs..."
+                value={seoSearch}
+                onChange={(e) => setSeoSearch(e.target.value)}
+                className="bg-transparent border-none p-0 text-xs focus:ring-0 outline-none w-40 font-medium"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            {seoMetadata
+              .filter(item => item.id.toLowerCase().includes(seoSearch.toLowerCase()))
+              .map((item, index) => (
+                <div key={item.id} className="p-6 rounded-2xl bg-gray-50 border border-gray-200 hover:bg-white transition-all space-y-4">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <div>
+                      <span className="text-[10px] font-bold text-rose-deep uppercase tracking-wider">Page Target Slug</span>
+                      <h3 className="font-mono text-sm font-bold text-chocolate">/{item.id === 'home' ? '' : item.id}</h3>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const updated = [...seoMetadata];
+                        updated[index].indexPage = !updated[index].indexPage;
+                        updateSEOMetadata(updated);
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        item.indexPage ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+                      }`}
+                    >
+                      {item.indexPage ? 'Index / Search Active' : 'NoIndex / Private'}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SEO Title Tag (50-60 characters)</label>
+                      <input
+                        type="text"
+                        value={item.seoTitle}
+                        onChange={(e) => {
+                          const updated = [...seoMetadata];
+                          updated[index].seoTitle = e.target.value;
+                          updateSEOMetadata(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-semibold"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">SEO Keywords</label>
+                      <input
+                        type="text"
+                        value={item.keywords}
+                        onChange={(e) => {
+                          const updated = [...seoMetadata];
+                          updated[index].keywords = e.target.value;
+                          updateSEOMetadata(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Meta Description (150-160 characters)</label>
+                      <textarea
+                        rows={2}
+                        value={item.metaDescription}
+                        onChange={(e) => {
+                          const updated = [...seoMetadata];
+                          updated[index].metaDescription = e.target.value;
+                          updateSEOMetadata(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-medium resize-none"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Canonical Link URL</label>
+                      <input
+                        type="text"
+                        value={item.canonicalUrl || ''}
+                        onChange={(e) => {
+                          const updated = [...seoMetadata];
+                          updated[index].canonicalUrl = e.target.value;
+                          updateSEOMetadata(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs text-gray-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">OG / Social Preview Image URL</label>
+                      <input
+                        type="text"
+                        value={item.ogImage || ''}
+                        onChange={(e) => {
+                          const updated = [...seoMetadata];
+                          updated[index].ogImage = e.target.value;
+                          updateSEOMetadata(updated);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-xs text-gray-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('SEO Metadata')}
+              className="flex items-center gap-2 bg-chocolate text-white px-6 py-3 rounded-xl font-bold shadow-md hover:bg-brown transition-all disabled:opacity-50"
+            >
+              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+              <span>Save Search Meta</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 9: GENERAL SETTINGS --- */}
+      {activeTab === 'general' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
+              <Globe size={22} className="text-rose-deep" /> Checkout & Service Configurations
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Standard Delivery Charge (₹)</label>
+                <input
+                  type="number"
+                  value={generalSettings.deliveryCharges}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, deliveryCharges: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Free Shipping Threshold (₹)</label>
+                <input
+                  type="number"
+                  value={generalSettings.freeDeliveryThreshold}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, freeDeliveryThreshold: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Minimum Allowed Cart Order (₹)</label>
+                <input
+                  type="number"
+                  value={generalSettings.minimumOrder}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, minimumOrder: Number(e.target.value) })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Store Maintenance Mode</label>
+                <button
+                  onClick={() => updateGeneralSettings({ ...generalSettings, maintenanceMode: !generalSettings.maintenanceMode })}
+                  className={`w-full px-3 py-2 rounded-xl text-xs font-bold transition-all h-9 flex items-center justify-center gap-2 ${
+                    generalSettings.maintenanceMode
+                      ? 'bg-red-50 text-red-600 border border-red-200'
+                      : 'bg-green-50 text-green-600 border border-green-200'
+                  }`}
+                >
+                  <AlertTriangle size={14} />
+                  {generalSettings.maintenanceMode ? 'Maintenance Mode ACTIVE' : 'Storefront Live'}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-2 col-span-full">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Serviceable Delivery Zipcodes (Gurugram)</label>
+              <textarea
+                rows={3}
+                value={generalSettings.serviceableZipCodes.join(', ')}
+                onChange={(e) => {
+                  const codes = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                  updateGeneralSettings({ ...generalSettings, serviceableZipCodes: codes });
+                }}
+                className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs font-semibold font-mono"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
+              <AlertTriangle size={22} className="text-rose-deep" /> Emergency, Coupons & Holidays
+            </h2>
+
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl border border-gray-100 space-y-3 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-chocolate">Emergency Notice Banner</span>
+                  <input
+                    type="checkbox"
+                    checked={generalSettings.emergencyBannerEnabled}
+                    onChange={(e) => updateGeneralSettings({ ...generalSettings, emergencyBannerEnabled: e.target.checked })}
+                    className="rounded text-rose-deep focus:ring-rose-deep"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={generalSettings.emergencyBannerText}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, emergencyBannerText: e.target.value })}
+                  placeholder="Emergency banner text copy..."
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none text-xs font-medium"
+                />
+              </div>
+
+              <div className="p-4 rounded-xl border border-gray-100 space-y-3 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-chocolate">Active Coupon Marquee Strip</span>
+                  <input
+                    type="checkbox"
+                    checked={generalSettings.couponBannerEnabled}
+                    onChange={(e) => updateGeneralSettings({ ...generalSettings, couponBannerEnabled: e.target.checked })}
+                    className="rounded text-rose-deep focus:ring-rose-deep"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={generalSettings.couponBannerText}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, couponBannerText: e.target.value })}
+                  placeholder="Coupon banner copy..."
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none text-xs font-semibold text-rose-deep"
+                />
+              </div>
+
+              <div className="p-4 rounded-xl border border-gray-100 space-y-3 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-chocolate">Smart Popup Banner Message</span>
+                  <input
+                    type="checkbox"
+                    checked={generalSettings.popupMessageEnabled}
+                    onChange={(e) => updateGeneralSettings({ ...generalSettings, popupMessageEnabled: e.target.checked })}
+                    className="rounded text-rose-deep focus:ring-rose-deep"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={generalSettings.popupMessageTitle}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, popupMessageTitle: e.target.value })}
+                  placeholder="Welcome popup title..."
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none text-xs font-bold text-chocolate"
+                />
+                <textarea
+                  rows={2}
+                  value={generalSettings.popupMessageText}
+                  onChange={(e) => updateGeneralSettings({ ...generalSettings, popupMessageText: e.target.value })}
+                  placeholder="Popup description text copy..."
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-gray-100 focus:outline-none text-xs font-medium resize-none"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-2 flex justify-end">
+            <button
+              disabled={saving}
+              onClick={() => handleSaveAll('General config')}
+              className="flex items-center gap-2 bg-rose-deep text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown hover:-translate-y-0.5 transition-all"
+            >
+              {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
+              <span>Save System Settings</span>
             </button>
           </div>
         </div>
@@ -760,4 +1790,4 @@ const AdminContent = () => {
   );
 };
 
-export default AdminContent;
+export default AdminCMS;

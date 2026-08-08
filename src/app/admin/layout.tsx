@@ -17,6 +17,7 @@ import {
   X
 } from 'lucide-react';
 import { Suspense } from 'react';
+import { CMSProvider } from '@/context/CMSContext';
 
 const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { user, isAdmin, loading, logout } = useAuth();
@@ -247,7 +248,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-rose-deep"></div>
       </div>
     }>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
+      <CMSProvider>
+        <AdminLayoutContent>{children}</AdminLayoutContent>
+      </CMSProvider>
     </Suspense>
   );
 };
