@@ -10,7 +10,8 @@ import {
   CMSGeneralSettings,
   AboutFeatureCard,
   AboutSectionSettings,
-  CMSCategory
+  CMSCategory,
+  FeaturedProductsSettings
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -445,7 +446,7 @@ export const DEFAULT_HOMEPAGE_SECTIONS: HomepageSection[] = [
     buttonLink: '/menu',
     images: [
       'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1535141192574-5d4897c13636?q=80&w=1200&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1535254973040-607b474cb50d?q=80&w=1200&auto=format&fit=crop',
       'https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?q=80&w=1200&auto=format&fit=crop'
     ]
   },
@@ -670,7 +671,7 @@ export const DEFAULT_MEDIA_LIBRARY: CMSMediaItem[] = [
   },
   {
     id: 'med_m2',
-    url: 'https://images.unsplash.com/photo-1535141192574-5d4897c13636?q=80&w=500&auto=format&fit=crop',
+    url: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?q=80&w=500&auto=format&fit=crop',
     name: 'floral_strawberry_tiered.jpg',
     size: 198000,
     folder: 'Weddings',
@@ -703,7 +704,7 @@ export const DEFAULT_SEO_METADATA: CMSSEOMetadata[] = [
     seoTitle: 'Milestone Celebration Cake Menu | The Cake Lounge Patisserie',
     metaDescription: 'Browse our complete catalog of freshly baked designer cakes, bento boxes, cup cakes, and luxury celebration hampers. Filter by flavors, occasions, and weights.',
     keywords: 'cake menu online, custom bento, eggless red velvet, purchase premium cake',
-    ogImage: 'https://images.unsplash.com/photo-1535141192574-5d4897c13636?q=80&w=1200&auto=format&fit=crop',
+    ogImage: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?q=80&w=1200&auto=format&fit=crop',
     canonicalUrl: 'https://thecakelounge.com/menu',
     indexPage: true
   }
@@ -832,3 +833,11 @@ export const DEFAULT_CATEGORIES: CMSCategory[] = [
     link: '/custom-cake'
   }
 ];
+
+export const DEFAULT_FEATURED_PRODUCTS_SETTINGS: FeaturedProductsSettings = {
+  id: 'featured_products',
+  enabled: true,
+  title: 'Featured Cakes',
+  subtitle: 'Our Bestsellers',
+  productIds: ['1', '2', '3', '5', '6', '7', '9', '11', '13', '17', '55', '59', '103', '114', '325', '327']
+};
