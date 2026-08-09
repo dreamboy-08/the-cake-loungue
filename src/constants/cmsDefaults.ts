@@ -9,7 +9,8 @@ import {
   CMSSEOMetadata,
   CMSGeneralSettings,
   AboutFeatureCard,
-  AboutSectionSettings
+  AboutSectionSettings,
+  CMSCategory
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -780,3 +781,54 @@ export const DEFAULT_ABOUT_SETTINGS: AboutSectionSettings = {
   imageBorderRadius: 'rounded-xl',
   imageShadow: 'shadow-lg'
 };
+
+export const DEFAULT_CATEGORIES: CMSCategory[] = [
+  {
+    id: 'cat_bday',
+    name: 'Birthday Cakes',
+    description: 'Indulgent, premium custom designs crafted perfectly for milestone birthday celebrations.',
+    active: true,
+    image: '/images/categories/Birthday Cakes.jpg',
+    slug: 'birthday-cakes',
+    displayOrder: 1,
+    designs: '80+',
+    tag: 'Popular',
+    link: '/menu?category=birthday-cakes'
+  },
+  {
+    id: 'cat_wedding',
+    name: 'Wedding Cakes',
+    description: 'Elegant multi-tiered floral fondant creations curated beautifully for your lifetime moments.',
+    active: true,
+    image: '/images/categories/Wedding Cakes.jpg',
+    slug: 'wedding-cakes',
+    displayOrder: 2,
+    designs: '45+',
+    tag: null,
+    link: '/menu?category=wedding-cakes'
+  },
+  {
+    id: 'cat_chocolate',
+    name: 'Chocolate Cakes',
+    description: 'Decadent, rich Belgian dark chocolate layers crafted for sweet chocolate purists.',
+    active: true,
+    image: '/images/categories/Chocolate Cakes.jpg',
+    slug: 'chocolate-cakes',
+    displayOrder: 3,
+    designs: '60+',
+    tag: 'Bestseller',
+    link: '/menu?category=chocolate-cakes'
+  },
+  {
+    id: 'cat_custom',
+    name: 'Custom Cakes',
+    description: 'Collaborate with our expert cake designers to craft the perfect centerpiece.',
+    active: true,
+    image: '/images/categories/Custom Cakes.png',
+    slug: 'custom-cakes',
+    displayOrder: 4,
+    designs: 'Design Your Own',
+    tag: 'Open',
+    link: '/custom-cake'
+  }
+];

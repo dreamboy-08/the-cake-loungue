@@ -3,16 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { db } from '@/utils/firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { toSlug } from '@/utils/slug';
 import { sortCategories } from '@/utils/categorySorting';
 import { useProductAvailability } from '@/hooks/useProductAvailability';
 import Toast from '@/components/Toast';
+import { useCMS } from '@/context/CMSContext';
 
 const Categories = () => {
   const router = useRouter();
   const availableSlugs = useProductAvailability();
+  const { categories, loading } = useCMS();
   const [cats, setCats] = useState<any[]>([]);
   const [toast, setToast] = useState<{ message: string; visible: boolean }>({
     message: '',
@@ -20,64 +20,34 @@ const Categories = () => {
   });
 
   useEffect(() => {
-    // If Firebase is not configured, skip onSnapshot setup and use fallback
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
-      setCats([
-        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
-        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
-        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
-        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
-      ]);
+    if (loading) return;
+
+    // Filter active categories
+    const activeCats = categories.filter(c => c.active !== false);
+
+    // Map categories to match storefront structure
+    const mapped = activeCats.map(cat => ({
+      name: cat.name,
+      designs: cat.designs || (cat.productCount ? `${cat.productCount}+` : 'Explore'),
+      tag: cat.tag || null,
+      img: cat.image || `/images/categories/${cat.name}.jpg`,
+      slug: cat.slug || toSlug(cat.name),
+      displayOrder: cat.displayOrder,
+      link: cat.link || (cat.slug === 'custom-cakes' ? '/custom-cake' : `/menu?category=${cat.slug || toSlug(cat.name)}`)
+    }));
+
+    // Sort by displayOrder
+    const sorted = sortCategories(mapped);
+    setCats(sorted);
+  }, [categories, loading]);
+
+  const handleCategoryClick = (cat: any) => {
+    if (cat.link) {
+      router.push(cat.link);
       return;
     }
 
-    // We prioritize featured or specifically chosen categories for the home page
-    const q = query(
-      collection(db, 'categories'),
-      where('active', '==', true)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedCats = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          name: data.name,
-          designs: data.productCount ? `${data.productCount}+` : 'Explore',
-          tag: data.isFeatured ? 'Featured' : data.isBestSeller ? 'Bestseller' : null,
-          img: data.image || `/images/categories/${data.name}.jpg`,
-          slug: data.slug || toSlug(data.name),
-          displayOrder: data.displayOrder
-        };
-      });
-
-      // Fallback if Firestore is empty (initial state)
-      if (fetchedCats.length === 0) {
-        setCats([
-          { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
-          { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
-          { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
-          { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
-        ]);
-      } else {
-        // Sort by displayOrder and take top 4
-        setCats(sortCategories(fetchedCats).slice(0, 4));
-      }
-    }, (error) => {
-      console.error("Error listening to home categories:", error);
-      // Fallback on error
-      setCats([
-        { name: 'Birthday Cakes', designs: '80+', tag: 'Popular', img: '/images/categories/Birthday Cakes.jpg' },
-        { name: 'Wedding Cakes', designs: '45+', tag: null, img: '/images/categories/Wedding Cakes.jpg' },
-        { name: 'Chocolate Cakes', designs: '60+', tag: 'Bestseller', img: '/images/categories/Chocolate Cakes.jpg' },
-        { name: 'Custom Cakes', designs: 'Design Your Own', tag: 'Open', img: '/images/categories/Custom Cakes.png' },
-      ]);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  const handleCategoryClick = (catName: string) => {
-    const slug = toSlug(catName);
+    const slug = cat.slug || toSlug(cat.name);
 
     // Special case: Custom Cakes card always goes to the builder
     if (slug === 'custom-cakes') {
@@ -88,10 +58,7 @@ const Categories = () => {
     if (availableSlugs.has(slug)) {
       router.push(`/menu?category=${slug}`);
     } else {
-      setToast({
-        message: `${catName} collection is coming soon!`,
-        visible: true
-      });
+      router.push(`/menu?category=${slug}`);
     }
   };
 
@@ -108,14 +75,14 @@ const Categories = () => {
           {cats.map((cat, i) => (
             <div
               key={i}
-              onClick={() => handleCategoryClick(cat.name)}
+              onClick={() => handleCategoryClick(cat)}
               className="group bg-white rounded-[22px] overflow-hidden border border-cream-dark shadow-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-md animate-fade-up flex flex-col cursor-pointer"
               style={{ animationDelay: `${i * 0.1}s` }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  handleCategoryClick(cat.name);
+                  handleCategoryClick(cat);
                 }
               }}
             >

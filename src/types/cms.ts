@@ -186,3 +186,19 @@ export interface AboutSectionSettings {
   imageBorderRadius: string; // border radius class
   imageShadow: string; // shadow class
 }
+
+export interface CMSCategory {
+  id: string;
+  name: string;
+  description?: string;
+  active: boolean;
+  image?: string;
+  slug: string;
+  displayOrder: number;
+  designs?: string;
+  tag?: string | null;
+  link?: string;
+  productCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
