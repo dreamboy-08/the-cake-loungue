@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { db } from '@/utils/firebase';
 import {
   collection,
-  getDocs,
   doc,
   query,
-  orderBy,
-  limit,
   getCountFromServer,
   where,
-  onSnapshot,
   updateDoc
 } from 'firebase/firestore';
 import { getDeleteBatch, getRepairBatch } from '@/utils/categoryOrdering';
@@ -33,11 +29,11 @@ import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sortCategories } from '@/utils/categorySorting';
+import { useCMS } from '@/context/CMSContext';
 
 const AdminCategories = () => {
-  const [categories, setCategories] = useState<any[]>([]);
+  const { categories, updateCategories, loading: cmsLoading } = useCMS();
   const [productCounts, setProductCounts] = useState<Record<string, number>>({});
-  const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -46,23 +42,25 @@ const AdminCategories = () => {
   const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
+  const isFirebaseConfigured =
+    typeof process !== 'undefined' &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key";
+
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
   useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, 'categories'));
+    if (!isFirebaseConfigured || categories.length === 0) {
+      return;
+    }
 
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const fetchedCategories = snapshot.docs.map(doc => ({ ...(doc.data() as any), id: doc.id }));
-      setCategories(sortCategories(fetchedCategories));
-
-      // Fetch product counts for each category
+    const fetchCounts = async () => {
       const counts: Record<string, number> = {};
       try {
-        await Promise.all(fetchedCategories.map(async (cat) => {
+        await Promise.all(categories.map(async (cat) => {
           const qCount = query(collection(db, 'products'), where('category', '==', cat.name));
           const countSnapshot = await getCountFromServer(qCount);
           counts[cat.name] = countSnapshot.data().count;
@@ -71,17 +69,26 @@ const AdminCategories = () => {
       } catch (err) {
         console.error("Error fetching product counts:", err);
       }
-      setLoading(false);
-    }, (error) => {
-      console.error("Error listening to categories:", error);
-      setLoading(false);
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
+    fetchCounts();
+  }, [categories, isFirebaseConfigured]);
 
   const handleDelete = async (id: string) => {
     try {
+      if (!isFirebaseConfigured) {
+        const remaining = categories
+          .filter(c => c.id !== id)
+          .sort((a, b) => (a.displayOrder || Infinity) - (b.displayOrder || Infinity));
+        const reindexed = remaining.map((cat, idx) => ({
+          ...cat,
+          displayOrder: idx + 1
+        }));
+        await updateCategories(reindexed);
+        setShowDeleteConfirm(null);
+        showToast("Category deleted successfully.");
+        return;
+      }
       const batch = getDeleteBatch(db, categories, id);
       await batch.commit();
       setShowDeleteConfirm(null);
@@ -93,22 +100,45 @@ const AdminCategories = () => {
   };
 
   const handleRepairOrders = async () => {
-    setLoading(true);
     try {
+      if (!isFirebaseConfigured) {
+        const sorted = [...categories].sort((a, b) => {
+          const orderA = a.displayOrder && a.displayOrder > 0 ? a.displayOrder : Infinity;
+          const orderB = b.displayOrder && b.displayOrder > 0 ? b.displayOrder : Infinity;
+          if (orderA !== orderB) return orderA - orderB;
+          return a.name.localeCompare(b.name);
+        });
+        const reindexed = sorted.map((cat, idx) => ({
+          ...cat,
+          displayOrder: idx + 1
+        }));
+        await updateCategories(reindexed);
+        showToast("Category orders repaired successfully.");
+        return;
+      }
       const batch = getRepairBatch(db, categories);
       await batch.commit();
       showToast("Category orders repaired successfully.");
     } catch (error) {
       console.error("Error repairing orders:", error);
       showToast("Failed to repair category orders.", "error");
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleToggleActive = async (id: string, currentStatus: boolean) => {
     setStatusUpdating(id);
     try {
+      if (!isFirebaseConfigured) {
+        const updated = categories.map(cat => {
+          if (cat.id === id) {
+            return { ...cat, active: !currentStatus, updatedAt: new Date().toISOString() };
+          }
+          return cat;
+        });
+        await updateCategories(updated);
+        showToast(`Category is now ${!currentStatus ? 'Live' : 'Hidden'}`);
+        return;
+      }
       await updateDoc(doc(db, 'categories', id), {
         active: !currentStatus,
         updatedAt: new Date().toISOString()
@@ -148,7 +178,7 @@ const AdminCategories = () => {
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={handleRepairOrders}
-            disabled={loading || categories.length === 0}
+            disabled={cmsLoading || categories.length === 0}
             className="flex items-center justify-center gap-2 bg-cream-dark text-chocolate px-6 py-3 rounded-2xl font-bold hover:bg-rose/10 transition-all w-full sm:w-auto border border-rose/10 disabled:opacity-50 h-11 min-h-[44px]"
             title="Automatically assign sequential order numbers (1, 2, 3...) to all categories"
           >
@@ -169,7 +199,7 @@ const AdminCategories = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading && categories.length === 0 ? (
+        {cmsLoading && categories.length === 0 ? (
           <div className="col-span-full py-24 flex flex-col items-center gap-4">
             <Loader2 className="animate-spin text-rose-deep" size={40} />
             <p className="text-sm text-gray-400 font-black uppercase tracking-widest">Loading categories...</p>
@@ -180,7 +210,7 @@ const AdminCategories = () => {
             <p className="text-sm text-gray-400 font-black uppercase tracking-widest">No categories created yet.</p>
           </div>
         ) : (
-          categories.map((category) => (
+          sortCategories(categories).map((category) => (
             <div key={category.id} className={`bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${category.active === false ? 'opacity-60' : ''}`}>
               <div className="relative h-48 bg-gray-50 overflow-hidden">
                 {category.image ? (

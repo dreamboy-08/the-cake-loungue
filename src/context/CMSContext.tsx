@@ -13,7 +13,8 @@ import {
   CMSMediaItem,
   CMSSEOMetadata,
   CMSGeneralSettings,
-  AboutSectionSettings
+  AboutSectionSettings,
+  CMSCategory
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -25,7 +26,8 @@ import {
   DEFAULT_MEDIA_LIBRARY,
   DEFAULT_SEO_METADATA,
   DEFAULT_GENERAL_SETTINGS,
-  DEFAULT_ABOUT_SETTINGS
+  DEFAULT_ABOUT_SETTINGS,
+  DEFAULT_CATEGORIES
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -34,6 +36,7 @@ interface CMSContextType {
   homepageSections: HomepageSection[];
   announcements: Announcement[];
   collections: CollectionCMSItem[];
+  categories: CMSCategory[];
   websiteSettings: CMSWebsiteSettings;
   mediaItems: CMSMediaItem[];
   seoMetadata: CMSSEOMetadata[];
@@ -47,6 +50,7 @@ interface CMSContextType {
   updateHomepageSections: (sections: HomepageSection[]) => Promise<void>;
   updateAnnouncements: (items: Announcement[]) => Promise<void>;
   updateCollections: (items: CollectionCMSItem[]) => Promise<void>;
+  updateCategories: (items: CMSCategory[]) => Promise<void>;
   updateWebsiteSettings: (settings: CMSWebsiteSettings) => Promise<void>;
   updateMediaItems: (items: CMSMediaItem[]) => Promise<void>;
   updateSEOMetadata: (metadata: CMSSEOMetadata[]) => Promise<void>;
@@ -62,6 +66,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [homepageSections, setHomepageSections] = useState<HomepageSection[]>([]);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [collections, setCollections] = useState<CollectionCMSItem[]>([]);
+  const [categories, setCategories] = useState<CMSCategory[]>([]);
   const [websiteSettings, setWebsiteSettings] = useState<CMSWebsiteSettings>(DEFAULT_WEBSITE_SETTINGS);
   const [mediaItems, setMediaItems] = useState<CMSMediaItem[]>([]);
   const [seoMetadata, setSeoMetadata] = useState<CMSSEOMetadata[]>([]);
@@ -82,6 +87,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
       setAnnouncements(DEFAULT_ANNOUNCEMENTS);
       setCollections(DEFAULT_COLLECTIONS);
+      setCategories(DEFAULT_CATEGORIES);
       setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
       setMediaItems(DEFAULT_MEDIA_LIBRARY);
       setSeoMetadata(DEFAULT_SEO_METADATA);
@@ -102,6 +108,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setHomepageSections(getStored('homepageSections', DEFAULT_HOMEPAGE_SECTIONS));
       setAnnouncements(getStored('announcements', DEFAULT_ANNOUNCEMENTS));
       setCollections(getStored('collections', DEFAULT_COLLECTIONS));
+      setCategories(getStored('categories', DEFAULT_CATEGORIES));
       setWebsiteSettings(getStored('websiteSettings', DEFAULT_WEBSITE_SETTINGS));
       setMediaItems(getStored('mediaItems', DEFAULT_MEDIA_LIBRARY));
       setSeoMetadata(getStored('seoMetadata', DEFAULT_SEO_METADATA));
@@ -114,6 +121,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
       setAnnouncements(DEFAULT_ANNOUNCEMENTS);
       setCollections(DEFAULT_COLLECTIONS);
+      setCategories(DEFAULT_CATEGORIES);
       setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
       setMediaItems(DEFAULT_MEDIA_LIBRARY);
       setSeoMetadata(DEFAULT_SEO_METADATA);
@@ -214,6 +222,22 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err) {
       console.error("Failed to update collections in Firestore:", err);
       saveOfflineCMS('collections', items);
+    }
+  };
+
+  const updateCategories = async (items: CMSCategory[]) => {
+    setCategories(items);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('categories', items);
+      return;
+    }
+    try {
+      await Promise.all(items.map(item =>
+        setDoc(doc(db, 'categories', item.id), item)
+      ));
+    } catch (err) {
+      console.error("Failed to update categories in Firestore:", err);
+      saveOfflineCMS('categories', items);
     }
   };
 
@@ -347,6 +371,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     registerListener('homepageSections', 'order', setHomepageSections, DEFAULT_HOMEPAGE_SECTIONS);
     registerListener('announcements', 'displayOrder', setAnnouncements, DEFAULT_ANNOUNCEMENTS);
     registerListener('collections', 'displayOrder', setCollections, DEFAULT_COLLECTIONS);
+    registerListener('categories', 'displayOrder', setCategories, DEFAULT_CATEGORIES);
     registerListener('media', 'createdAt', setMediaItems, DEFAULT_MEDIA_LIBRARY);
     registerListener('seo', null, setSeoMetadata, DEFAULT_SEO_METADATA);
 
@@ -401,6 +426,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       homepageSections,
       announcements,
       collections,
+      categories,
       websiteSettings,
       mediaItems,
       seoMetadata,
@@ -413,6 +439,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateHomepageSections,
       updateAnnouncements,
       updateCollections,
+      updateCategories,
       updateWebsiteSettings,
       updateMediaItems,
       updateSEOMetadata,

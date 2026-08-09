@@ -7,6 +7,7 @@ import { uploadToCloudinary } from '@/utils/cloudinary';
 import { getReorderBatch } from '@/utils/categoryOrdering';
 import { X, Loader2, Upload, Trash2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useCMS } from '@/context/CMSContext';
 
 interface CategoryFormProps {
   category?: any;
@@ -16,6 +17,7 @@ interface CategoryFormProps {
 }
 
 const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryFormProps) => {
+  const { updateCategories } = useCMS();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -39,7 +41,15 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
     active: category?.active !== undefined ? category?.active : true,
     slug: category?.slug || '',
     displayOrder: category?.displayOrder || (allCategories.length + 1),
+    link: category?.link || '',
+    tag: category?.tag || '',
+    designs: category?.designs || '',
   });
+
+  const isFirebaseConfigured =
+    typeof process !== 'undefined' &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key";
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -57,17 +67,67 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
       let finalImageUrl = category?.image || '';
 
       if (imageFile) {
-        finalImageUrl = await uploadToCloudinary(imageFile);
+        try {
+          finalImageUrl = await uploadToCloudinary(imageFile);
+        } catch (err) {
+          console.warn("Cloudinary upload failed, using local/preview fallback image:", err);
+          finalImageUrl = imagePreview || '/images/categories/placeholder.jpg';
+        }
       }
 
-      const categoryData = {
+      const categoryData: any = {
         name: formData.name,
         description: formData.description,
         active: formData.active,
         image: finalImageUrl,
         slug: formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        displayOrder: formData.displayOrder,
+        link: formData.link || `/menu?category=${formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
+        tag: formData.tag || null,
+        designs: formData.designs || null,
       };
 
+      if (!isFirebaseConfigured) {
+        let updatedList = [...allCategories];
+        const recordId = category?.id || `cat_${Date.now()}`;
+        categoryData.id = recordId;
+
+        if (category?.id) {
+          // Update case
+          const oldOrder = category.displayOrder;
+          const occupantIdx = updatedList.findIndex(c => c.displayOrder === formData.displayOrder && c.id !== category.id);
+          if (occupantIdx > -1 && formData.displayOrder !== oldOrder) {
+            updatedList[occupantIdx] = {
+              ...updatedList[occupantIdx],
+              displayOrder: oldOrder || updatedList.length
+            };
+          }
+          const targetIdx = updatedList.findIndex(c => c.id === category.id);
+          if (targetIdx > -1) {
+            updatedList[targetIdx] = {
+              ...updatedList[targetIdx],
+              ...categoryData
+            };
+          }
+        } else {
+          // Create case
+          const occupantIdx = updatedList.findIndex(c => c.displayOrder === formData.displayOrder);
+          if (occupantIdx > -1) {
+            updatedList[occupantIdx] = {
+              ...updatedList[occupantIdx],
+              displayOrder: updatedList.length + 1
+            };
+          }
+          updatedList.push(categoryData);
+        }
+
+        await updateCategories(updatedList);
+        onSuccess(category ? 'Category updated successfully' : 'Category created successfully');
+        onClose();
+        return;
+      }
+
+      // Online Firestore flow
       const batch = getReorderBatch(
         db,
         allCategories,
@@ -160,6 +220,40 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
                 placeholder="e.g. 1, 2, 3..."
               />
               <p className="text-[9px] text-gray-400 font-medium">Enter a position from 1 to {allCategories.length + (category ? 0 : 1)}. The category currently at that position will swap with this one.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Link / Destination</label>
+              <input
+                type="text"
+                value={formData.link}
+                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                placeholder="e.g. /menu?category=birthday-cakes"
+              />
+              <p className="text-[9px] text-gray-400 font-medium">Specify a custom internal route or URL, or leave blank to auto-generate based on category name.</p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Category Tag (Badge)</label>
+              <input
+                type="text"
+                value={formData.tag}
+                onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
+                className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                placeholder="e.g. Popular, Bestseller (Optional)"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Designs / Subtitle</label>
+              <input
+                type="text"
+                value={formData.designs}
+                onChange={(e) => setFormData({ ...formData, designs: e.target.value })}
+                className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                placeholder="e.g. 80+, Design Your Own"
+              />
             </div>
 
             <label className="flex items-center gap-3 p-4 rounded-2xl bg-gray-50 border border-gray-100 cursor-pointer group">
