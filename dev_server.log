@@ -1,72 +1,20 @@
 
 > cake-lounge-frontend@0.1.0 dev
-> next dev
+> next dev -p 3000
 
   ▲ Next.js 14.2.35
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1755ms
- ○ Compiling /admin/website-content ...
- ✓ Compiled /admin/website-content in 17.2s (1628 modules)
+ ✓ Ready in 2.3s
+ ○ Compiling /admin/our-story ...
+ ✓ Compiled /admin/our-story in 12.2s (1650 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/website-content?bypass=true 200 in 19356ms
- GET /admin/website-content?bypass=true 200 in 19306ms
- ✓ Compiled in 2.2s (740 modules)
- GET /admin/website-content?bypass=true 200 in 186ms
- GET /admin/website-content?bypass=true 200 in 70ms
- GET /admin/website-content?bypass=true 200 in 58ms
- GET /admin/website-content?bypass=true 200 in 78ms
- GET /admin/website-content?bypass=true 200 in 43ms
- GET /admin/website-content?bypass=true 200 in 53ms
- GET /admin/website-content?bypass=true 200 in 48ms
- GET /admin/website-content?bypass=true 200 in 46ms
- ✓ Compiled in 3.3s (1610 modules)
- ✓ Compiled in 678ms (740 modules)
- ✓ Compiled in 4.3s (1610 modules)
- ○ Compiling /admin/megamenu ...
- ✓ Compiled /admin/megamenu in 2.3s (1622 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/megamenu?bypass=true 200 in 2772ms
- GET /admin/megamenu?bypass=true 200 in 2782ms
- GET /admin/megamenu?bypass=true 200 in 68ms
- GET /admin/megamenu?bypass=true 200 in 64ms
- GET /admin/website-content?bypass=true 200 in 159ms
- GET /admin/website-content?bypass=true 200 in 172ms
- GET /admin/website-content?bypass=true 200 in 72ms
- GET /admin/website-content?bypass=true 200 in 133ms
- GET /admin/website-content?bypass=true 200 in 58ms
- GET /admin/website-content?bypass=true 200 in 109ms
- GET /admin/website-content?bypass=true 200 in 45ms
- GET /admin/website-content?bypass=true 200 in 89ms
- GET /admin/website-content?bypass=true 200 in 47ms
- GET /admin/megamenu?bypass=true 200 in 55ms
- GET /admin/megamenu?bypass=true 200 in 54ms
- ○ Compiling /admin/navigation ...
- ✓ Compiled /admin/navigation in 996ms (1640 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/navigation?bypass=true 200 in 1496ms
+ GET /admin/our-story?bypass=true 200 in 13626ms
+ ✓ Compiled in 1419ms (760 modules)
  ○ Compiling / ...
- ✓ Compiled / in 2.3s (1734 modules)
+ ✓ Compiled / in 4.5s (1715 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 2803ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 84ms
- GET / 200 in 112ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 70ms
- GET / 200 in 104ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 59ms
- GET /admin/navigation?bypass=true 200 in 87ms
- GET /admin/website-content?bypass=true 200 in 199ms
- GET /admin/website-content?bypass=true 200 in 212ms
- GET /admin/website-content?bypass=true 200 in 54ms
- GET /admin/website-content?bypass=true 200 in 163ms
- GET /admin/website-content?bypass=true 200 in 52ms
- GET /admin/website-content?bypass=true 200 in 44ms
- GET /admin/website-content?bypass=true 200 in 55ms
- GET /admin/website-content?bypass=true 200 in 114ms
- GET /admin/website-content?bypass=true 200 in 48ms
- GET /admin/megamenu?bypass=true 200 in 76ms
- GET /admin/megamenu?bypass=true 200 in 159ms
+ GET / 200 in 4985ms
+ ✓ Compiled in 972ms (785 modules)
+ ✓ Compiled in 951ms (785 modules)
