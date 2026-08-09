@@ -2,8 +2,17 @@
 
 import React from 'react';
 import { MapPin, Phone, Mail } from 'lucide-react';
+import { useCMS } from '@/context/CMSContext';
 
 const Contact = () => {
+  const { websiteSettings } = useCMS();
+
+  const addressText = websiteSettings?.address || "The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana";
+  const phoneText = websiteSettings?.phone || "+91 77038 70170";
+  const emailText = websiteSettings?.email || "thecakeloungegurgaon@gmail.com";
+  const hoursMonFri = websiteSettings?.businessHoursMonFri || "10:00 AM - 10:00 PM";
+  const hoursSatSun = websiteSettings?.businessHoursSatSun || "09:00 AM - 11:00 PM";
+
   return (
     <section id="contact" className="py-[120px] bg-white">
       <div className="container mx-auto px-6">
@@ -23,7 +32,7 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Find Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed">
-                The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana
+                {addressText}
               </p>
             </div>
 
@@ -34,8 +43,11 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Call Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed">
-                +91 77038 70170<br />
-                <span className="text-[0.85rem] font-semibold text-rose-deep">Mon–Sun 8am–10pm</span>
+                <a href={`tel:${phoneText.replace(/[^0-9+]/g, '')}`} className="hover:underline">{phoneText}</a><br />
+                <span className="text-[0.85rem] font-semibold text-rose-deep block mt-2">
+                  Mon-Fri: {hoursMonFri}<br />
+                  Sat-Sun: {hoursSatSun}
+                </span>
               </p>
             </div>
 
@@ -46,7 +58,7 @@ const Contact = () => {
               </div>
               <h4 className="text-xl font-playfair font-bold text-chocolate mb-3">Email Us</h4>
               <p className="text-[0.95rem] text-text-soft leading-relaxed break-words">
-                thecakeloungegurgaon@gmail.com
+                <a href={`mailto:${emailText}`} className="hover:underline">{emailText}</a>
               </p>
             </div>
           </div>

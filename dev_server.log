@@ -6,67 +6,30 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1755ms
+ ✓ Ready in 2.6s
  ○ Compiling /admin/website-content ...
- ✓ Compiled /admin/website-content in 17.2s (1628 modules)
+request to https://fonts.gstatic.com/s/playfairdisplay/v40/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgEM86xQ.woff2 failed, reason:
+
+Retrying 1/3...
+ ✓ Compiled /admin/website-content in 11.4s (1641 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/website-content?bypass=true 200 in 19356ms
- GET /admin/website-content?bypass=true 200 in 19306ms
- ✓ Compiled in 2.2s (740 modules)
- GET /admin/website-content?bypass=true 200 in 186ms
- GET /admin/website-content?bypass=true 200 in 70ms
- GET /admin/website-content?bypass=true 200 in 58ms
- GET /admin/website-content?bypass=true 200 in 78ms
- GET /admin/website-content?bypass=true 200 in 43ms
- GET /admin/website-content?bypass=true 200 in 53ms
- GET /admin/website-content?bypass=true 200 in 48ms
- GET /admin/website-content?bypass=true 200 in 46ms
- ✓ Compiled in 3.3s (1610 modules)
- ✓ Compiled in 678ms (740 modules)
- ✓ Compiled in 4.3s (1610 modules)
- ○ Compiling /admin/megamenu ...
- ✓ Compiled /admin/megamenu in 2.3s (1622 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/megamenu?bypass=true 200 in 2772ms
- GET /admin/megamenu?bypass=true 200 in 2782ms
- GET /admin/megamenu?bypass=true 200 in 68ms
- GET /admin/megamenu?bypass=true 200 in 64ms
- GET /admin/website-content?bypass=true 200 in 159ms
- GET /admin/website-content?bypass=true 200 in 172ms
- GET /admin/website-content?bypass=true 200 in 72ms
- GET /admin/website-content?bypass=true 200 in 133ms
- GET /admin/website-content?bypass=true 200 in 58ms
- GET /admin/website-content?bypass=true 200 in 109ms
- GET /admin/website-content?bypass=true 200 in 45ms
- GET /admin/website-content?bypass=true 200 in 89ms
- GET /admin/website-content?bypass=true 200 in 47ms
- GET /admin/megamenu?bypass=true 200 in 55ms
- GET /admin/megamenu?bypass=true 200 in 54ms
- ○ Compiling /admin/navigation ...
- ✓ Compiled /admin/navigation in 996ms (1640 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/navigation?bypass=true 200 in 1496ms
+ GET /admin/website-content?tab=settings&bypass=true 200 in 12709ms
+ ✓ Compiled in 1329ms (751 modules)
  ○ Compiling / ...
- ✓ Compiled / in 2.3s (1734 modules)
+ ✓ Compiled / in 6.9s (1710 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 2803ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 84ms
- GET / 200 in 112ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 70ms
- GET / 200 in 104ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/megamenu?bypass=true 200 in 59ms
- GET /admin/navigation?bypass=true 200 in 87ms
- GET /admin/website-content?bypass=true 200 in 199ms
- GET /admin/website-content?bypass=true 200 in 212ms
- GET /admin/website-content?bypass=true 200 in 54ms
- GET /admin/website-content?bypass=true 200 in 163ms
- GET /admin/website-content?bypass=true 200 in 52ms
- GET /admin/website-content?bypass=true 200 in 44ms
- GET /admin/website-content?bypass=true 200 in 55ms
+ GET / 200 in 7438ms
+ ○ Compiling /custom-cake ...
+ ✓ Compiled /custom-cake in 862ms (1718 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /custom-cake 200 in 1187ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /admin/website-content?bypass=true 200 in 175ms
+ GET /admin/website-content?bypass=true 200 in 202ms
+ GET /admin/website-content?bypass=true 200 in 63ms
+ GET /admin/website-content?bypass=true 200 in 117ms
+ GET /admin/website-content?bypass=true 200 in 49ms
  GET /admin/website-content?bypass=true 200 in 114ms
- GET /admin/website-content?bypass=true 200 in 48ms
- GET /admin/megamenu?bypass=true 200 in 76ms
- GET /admin/megamenu?bypass=true 200 in 159ms
+ GET /admin/website-content?bypass=true 200 in 45ms
+ GET /admin/website-content?bypass=true 200 in 100ms
+ GET /admin/website-content?bypass=true 200 in 51ms

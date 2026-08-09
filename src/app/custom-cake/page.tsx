@@ -5,11 +5,18 @@ import Image from 'next/image';
 import { MessageCircle } from 'lucide-react';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
+import { useCMS } from '@/context/CMSContext';
 
 const CustomCakePage = () => {
+  const { websiteSettings } = useCMS();
+
+  const businessName = websiteSettings?.businessName || "The Cake Lounge";
+  const rawWhatsapp = websiteSettings?.whatsapp || "+91 77038 70170";
+  const whatsappNumber = rawWhatsapp.replace(/[^0-9]/g, '');
+
   const sendWhatsApp = () => {
-    const text = "Hello The Cake Lounge! I would like to order a custom cake. I have attached my reference design and would like to discuss the details.";
-    window.open(`https://wa.me/917703870170?text=${encodeURIComponent(text)}`, "_blank");
+    const text = `Hello ${businessName}! I would like to order a custom cake. I have attached my reference design and would like to discuss the details.`;
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   return (

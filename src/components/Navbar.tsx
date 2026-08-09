@@ -37,7 +37,7 @@ const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { navigation, megaMenus, loading } = useCMS();
+  const { navigation, megaMenus, websiteSettings, loading } = useCMS();
 
   // Map CMS data to Navbar structure
   const dynamicNavMenu = React.useMemo(() => {
@@ -210,7 +210,19 @@ const Navbar = () => {
                 "flex items-center justify-center h-11 font-playfair text-[1.1rem] min-[360px]:text-[1.25rem] min-[400px]:text-[1.45rem] sm:text-[1.6rem] md:text-[1.6rem] font-bold transition-colors duration-300 whitespace-nowrap shrink-0 leading-none",
                 (isScrolled || isAuthPage || isPolicyPage) ? "text-chocolate" : "text-white"
               )}>
-                The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+                {websiteSettings?.logoUrl ? (
+                  <img src={websiteSettings.logoUrl} alt={websiteSettings.logoText || "The Cake Lounge"} className="h-9 object-contain" />
+                ) : (
+                  <>
+                    {(websiteSettings?.logoText || "The Cake Lounge").toLowerCase() === "the cake lounge" ? (
+                      <>
+                        The Cake <span className={(isScrolled || isAuthPage || isPolicyPage) ? "text-rose" : "text-blush"}>Lounge</span>
+                      </>
+                    ) : (
+                      websiteSettings?.logoText || "The Cake Lounge"
+                    )}
+                  </>
+                )}
               </Link>
             </div>
 
