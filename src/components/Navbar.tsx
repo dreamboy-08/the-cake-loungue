@@ -14,6 +14,7 @@ import CartModal from './CartModal';
 import SearchBar from './shop/SearchBar';
 import { MEGA_MENU } from '@/constants/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCMS } from '@/context/CMSContext';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,6 +36,50 @@ const Navbar = () => {
   const wishlistCount = wishlist.length;
   const router = useRouter();
   const pathname = usePathname();
+
+  const { navigation, megaMenus, loading } = useCMS();
+
+  // Map CMS data to Navbar structure
+  const dynamicNavMenu = React.useMemo(() => {
+    // If loading or empty, fall back to standard MEGA_MENU from constants
+    if (loading || !navigation || navigation.length === 0) {
+      return MEGA_MENU.map(item => ({
+        ...item,
+        showOnDesktop: true,
+        showOnMobile: true
+      }));
+    }
+
+    return navigation
+      .filter((item) => item.enabled)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .map((item) => {
+        const columns = item.hasDropdown && item.dropdownSectionIds
+          ? megaMenus
+              .filter((sec) => item.dropdownSectionIds?.includes(sec.id) && sec.enabled)
+              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .map((sec) => ({
+                title: sec.title,
+                items: sec.items
+                  .filter((sub) => sub.enabled)
+                  .sort((a, b) => a.displayOrder - b.displayOrder)
+                  .map((sub) => ({
+                    label: sub.name,
+                    href: sub.url,
+                  })),
+              }))
+          : undefined;
+
+        return {
+          id: item.id,
+          label: item.label,
+          href: item.url,
+          columns,
+          showOnDesktop: item.showOnDesktop !== false,
+          showOnMobile: item.showOnMobile !== false,
+        };
+      });
+  }, [navigation, megaMenus, loading]);
 
   const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/forgot-password';
   const isAdminPage = pathname.startsWith('/admin');
@@ -411,38 +456,40 @@ const Navbar = () => {
         )}>
         <div className="container mx-auto px-6 flex items-center justify-center">
           <ul className="flex flex-wrap gap-[18px] justify-center w-full items-center list-none">
-            {MEGA_MENU.map((item) => (
-              <li key={item.label} className="group static">
-                <Link href={item.href} className={cn(
-                  "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px] block",
-                  (isScrolled || isAuthPage) ? "text-text-mid hover:text-blush" : "text-[rgba(255,255,255,0.88)] hover:text-blush"
-                )}>
-                  {item.label}
-                </Link>
-                {item.columns && (
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
-                    <div className="bg-white rounded-[22px] shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
-                      {item.columns.map((col, idx) => (
-                        <div key={idx} className="flex flex-col gap-4 text-center">
-                          <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
-                          <div className="flex flex-col gap-2">
-                            {col.items.map((sub, sIdx) => (
-                              <Link
-                                key={sIdx}
-                                href={sub.href}
-                                className="text-chocolate/80 hover:text-rose-deep hover:translate-x-1 transition-all duration-300 text-[13px] font-medium"
-                              >
-                                {sub.label}
-                              </Link>
-                            ))}
+            {dynamicNavMenu
+              .filter((item) => item.showOnDesktop)
+              .map((item) => (
+                <li key={item.label} className="group static">
+                  <Link href={item.href} className={cn(
+                    "text-[14px] font-medium transition-all duration-300 whitespace-nowrap px-2 py-[10px] block",
+                    (isScrolled || isAuthPage) ? "text-text-mid hover:text-blush" : "text-[rgba(255,255,255,0.88)] hover:text-blush"
+                  )}>
+                    {item.label}
+                  </Link>
+                  {item.columns && item.columns.length > 0 && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-350 z-[1000] w-full max-w-[860px]">
+                      <div className="bg-white rounded-[22px] shadow-xl p-8 grid grid-cols-4 gap-8 max-h-[420px] overflow-y-auto border border-cream">
+                        {item.columns.map((col, idx) => (
+                          <div key={idx} className="flex flex-col gap-4 text-center">
+                            <h4 className="text-rose-deep font-bold text-[15px] border-b border-rose/10 pb-2">{col.title}</h4>
+                            <div className="flex flex-col gap-2">
+                              {col.items.map((sub, sIdx) => (
+                                <Link
+                                  key={sIdx}
+                                  href={sub.href}
+                                  className="text-chocolate/80 hover:text-rose-deep hover:translate-x-1 transition-all duration-300 text-[13px] font-medium"
+                                >
+                                  {sub.label}
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </li>
-            ))}
+                  )}
+                </li>
+              ))}
           </ul>
         </div>
       </div>
@@ -505,39 +552,41 @@ const Navbar = () => {
 
           <div className="flex flex-col gap-2">
             <p className="text-rose-deep font-bold uppercase tracking-widest text-xs mb-2">Categories</p>
-            {MEGA_MENU.map((item) => (
-              <div key={item.label} className="border-b border-rose/5">
-                <div
-                  className="flex items-center justify-between py-3 cursor-pointer"
-                  onClick={() => item.columns ? setExpandedCategory(expandedCategory === item.label ? null : item.label) : (setIsMobileMenuOpen(false), router.push(item.href))}
-                >
-                  <span className="font-playfair text-[1.4rem] font-bold text-chocolate">{item.label}</span>
-                  {item.columns && (
-                    expandedCategory === item.label ? <ChevronUp size={20} className="text-rose" /> : <ChevronDown size={20} className="text-rose" />
+            {dynamicNavMenu
+              .filter((item) => item.showOnMobile)
+              .map((item) => (
+                <div key={item.label} className="border-b border-rose/5">
+                  <div
+                    className="flex items-center justify-between py-3 cursor-pointer"
+                    onClick={() => item.columns && item.columns.length > 0 ? setExpandedCategory(expandedCategory === item.label ? null : item.label) : (setIsMobileMenuOpen(false), router.push(item.href))}
+                  >
+                    <span className="font-playfair text-[1.4rem] font-bold text-chocolate">{item.label}</span>
+                    {item.columns && item.columns.length > 0 && (
+                      expandedCategory === item.label ? <ChevronUp size={20} className="text-rose" /> : <ChevronDown size={20} className="text-rose" />
+                    )}
+                  </div>
+
+                  {item.columns && item.columns.length > 0 && expandedCategory === item.label && (
+                    <div className="pl-4 pb-4 grid grid-cols-2 gap-y-6 gap-x-4 animate-fade-up">
+                      {item.columns.map((col, idx) => (
+                        <div key={idx} className="flex flex-col gap-2">
+                          <p className="text-rose font-bold text-[11px] uppercase tracking-wider">{col.title}</p>
+                          {col.items.map((sub, sIdx) => (
+                            <Link
+                              key={sIdx}
+                              href={sub.href}
+                              className="text-chocolate/80 text-sm font-medium"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                            >
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
-
-                {item.columns && expandedCategory === item.label && (
-                  <div className="pl-4 pb-4 grid grid-cols-2 gap-y-6 gap-x-4 animate-fade-up">
-                    {item.columns.map((col, idx) => (
-                      <div key={idx} className="flex flex-col gap-2">
-                        <p className="text-rose font-bold text-[11px] uppercase tracking-wider">{col.title}</p>
-                        {col.items.map((sub, sIdx) => (
-                          <Link
-                            key={sIdx}
-                            href={sub.href}
-                            className="text-chocolate/80 text-sm font-medium"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
           </div>
 
           <div className="flex flex-col gap-4 pt-4 border-t border-rose/10">
