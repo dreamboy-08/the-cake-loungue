@@ -6,122 +6,67 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
- ✓ Ready in 2.4s
- ○ Compiling / ...
- ✓ Compiled / in 13.6s (1665 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- HEAD / 200 in 14663ms
- ✓ Compiled in 1655ms (744 modules)
+ ✓ Ready in 1755ms
  ○ Compiling /admin/website-content ...
- ✓ Compiled /admin/website-content in 1196ms (1690 modules)
+ ✓ Compiled /admin/website-content in 17.2s (1628 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/website-content?bypass=true 200 in 1596ms
- GET /admin/website-content?bypass=true 200 in 1640ms
- GET /admin/website-content?bypass=true 200 in 44ms
- GET /admin/website-content?bypass=true 200 in 129ms
- GET /admin/website-content?bypass=true 200 in 51ms
- GET /admin/website-content?bypass=true 200 in 54ms
- GET /admin/website-content?bypass=true 200 in 40ms
- GET /admin/website-content?bypass=true 200 in 85ms
- GET /admin/website-content?bypass=true 200 in 48ms
- ○ Compiling /admin/navigation ...
- ✓ Compiled /admin/navigation in 554ms (1716 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/navigation?bypass=true 200 in 814ms
- GET / 200 in 115ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 62ms
- GET / 200 in 85ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 176ms
- GET / 200 in 143ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 71ms
- GET / 200 in 83ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 79ms
- ✓ Compiled in 1232ms (1713 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/navigation?bypass=true 200 in 465ms
- GET / 200 in 138ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 438ms
- GET / 200 in 95ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 43ms
- GET / 200 in 170ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 77ms
- GET /admin/navigation?bypass=true 200 in 46ms
- GET / 200 in 80ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 160ms
- GET / 200 in 114ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 106ms
- GET / 200 in 86ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 69ms
- GET / 200 in 76ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- ○ Compiling /admin/products ...
- ✓ Compiled /admin/products in 1737ms (1723 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/products?bypass=true 200 in 2244ms
- GET /admin/products?bypass=true 200 in 2230ms
- ○ Compiling /menu ...
- ✓ Compiled /menu in 1974ms (1733 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET /menu 200 in 2428ms
- GET /admin/products?bypass=true 200 in 76ms
- GET /menu 200 in 80ms
- GET /menu 200 in 74ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 4.5s (2424 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /checkout?bypass=true 200 in 5007ms
- ○ Compiling /admin/website-content ...
- ✓ Compiled /admin/website-content in 763ms (1312 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/website-content?bypass=true 200 in 1057ms
- GET /admin/website-content?bypass=true 200 in 69ms
- GET /admin/website-content?bypass=true 200 in 60ms
- GET /admin/website-content?bypass=true 200 in 51ms
- GET /admin/website-content?bypass=true 200 in 102ms
- GET /admin/website-content?bypass=true 200 in 54ms
- GET /admin/website-content?bypass=true 200 in 69ms
- GET /admin/website-content?bypass=true 200 in 42ms
+ GET /admin/website-content?bypass=true 200 in 19356ms
+ GET /admin/website-content?bypass=true 200 in 19306ms
+ ✓ Compiled in 2.2s (740 modules)
+ GET /admin/website-content?bypass=true 200 in 186ms
  GET /admin/website-content?bypass=true 200 in 70ms
- GET /shop/1?bypass=true 200 in 138ms
- GET /shop/1?bypass=true 200 in 165ms
- GET /admin/navigation?bypass=true 200 in 116ms
- GET / 200 in 153ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET / 200 in 140ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /menu 200 in 422ms
- GET /admin/navigation?bypass=true 200 in 430ms
- GET / 200 in 226ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET / 200 in 188ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 305ms
- GET / 200 in 178ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /admin/navigation?bypass=true 200 in 94ms
- GET / 200 in 111ms
- ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
- GET /menu 200 in 49ms
- ○ Compiling /wishlist ...
- ✓ Compiled /wishlist in 2.9s (2449 modules)
+ GET /admin/website-content?bypass=true 200 in 58ms
+ GET /admin/website-content?bypass=true 200 in 78ms
+ GET /admin/website-content?bypass=true 200 in 43ms
+ GET /admin/website-content?bypass=true 200 in 53ms
+ GET /admin/website-content?bypass=true 200 in 48ms
+ GET /admin/website-content?bypass=true 200 in 46ms
+ ✓ Compiled in 3.3s (1610 modules)
+ ✓ Compiled in 678ms (740 modules)
+ ✓ Compiled in 4.3s (1610 modules)
+ ○ Compiling /admin/megamenu ...
+ ✓ Compiled /admin/megamenu in 2.3s (1622 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /menu 200 in 480ms
- GET /admin/navigation?bypass=true 200 in 123ms
- GET / 200 in 167ms
+ GET /admin/megamenu?bypass=true 200 in 2772ms
+ GET /admin/megamenu?bypass=true 200 in 2782ms
+ GET /admin/megamenu?bypass=true 200 in 68ms
+ GET /admin/megamenu?bypass=true 200 in 64ms
+ GET /admin/website-content?bypass=true 200 in 159ms
+ GET /admin/website-content?bypass=true 200 in 172ms
+ GET /admin/website-content?bypass=true 200 in 72ms
+ GET /admin/website-content?bypass=true 200 in 133ms
+ GET /admin/website-content?bypass=true 200 in 58ms
+ GET /admin/website-content?bypass=true 200 in 109ms
+ GET /admin/website-content?bypass=true 200 in 45ms
+ GET /admin/website-content?bypass=true 200 in 89ms
+ GET /admin/website-content?bypass=true 200 in 47ms
+ GET /admin/megamenu?bypass=true 200 in 55ms
+ GET /admin/megamenu?bypass=true 200 in 54ms
+ ○ Compiling /admin/navigation ...
+ ✓ Compiled /admin/navigation in 996ms (1640 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/navigation?bypass=true 200 in 1496ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.3s (1734 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 2803ms
  ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET /admin/megamenu?bypass=true 200 in 84ms
+ GET / 200 in 112ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET /admin/megamenu?bypass=true 200 in 70ms
+ GET / 200 in 104ms
+ ⨯ upstream image response failed for https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80 404
+ GET /admin/megamenu?bypass=true 200 in 59ms
+ GET /admin/navigation?bypass=true 200 in 87ms
+ GET /admin/website-content?bypass=true 200 in 199ms
+ GET /admin/website-content?bypass=true 200 in 212ms
+ GET /admin/website-content?bypass=true 200 in 54ms
+ GET /admin/website-content?bypass=true 200 in 163ms
+ GET /admin/website-content?bypass=true 200 in 52ms
+ GET /admin/website-content?bypass=true 200 in 44ms
+ GET /admin/website-content?bypass=true 200 in 55ms
+ GET /admin/website-content?bypass=true 200 in 114ms
+ GET /admin/website-content?bypass=true 200 in 48ms
+ GET /admin/megamenu?bypass=true 200 in 76ms
+ GET /admin/megamenu?bypass=true 200 in 159ms
