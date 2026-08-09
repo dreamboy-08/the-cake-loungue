@@ -202,3 +202,11 @@ export interface CMSCategory {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface FeaturedProductsSettings {
+  id: string; // 'featured_products'
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  productIds: string[]; // List of curated product IDs (strings)
+}

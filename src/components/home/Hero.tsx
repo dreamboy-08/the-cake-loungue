@@ -9,8 +9,8 @@ import { ShoppingBag, LayoutGrid } from 'lucide-react';
 const DEFAULT_COLLAGE_IMAGES = [
   "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80",
   "https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&q=80",
-  "https://images.unsplash.com/photo-1535141192574-5d4897c13636?w=500&q=80",
-  "https://images.unsplash.com/photo-1618426703623-c1b334571d97?w=500&q=80"
+  "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=500&q=80",
+  "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&q=80"
 ];
 
 const Hero = () => {

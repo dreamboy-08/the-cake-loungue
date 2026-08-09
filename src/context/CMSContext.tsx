@@ -14,7 +14,8 @@ import {
   CMSSEOMetadata,
   CMSGeneralSettings,
   AboutSectionSettings,
-  CMSCategory
+  CMSCategory,
+  FeaturedProductsSettings
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -27,7 +28,8 @@ import {
   DEFAULT_SEO_METADATA,
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_ABOUT_SETTINGS,
-  DEFAULT_CATEGORIES
+  DEFAULT_CATEGORIES,
+  DEFAULT_FEATURED_PRODUCTS_SETTINGS
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -42,6 +44,7 @@ interface CMSContextType {
   seoMetadata: CMSSEOMetadata[];
   generalSettings: CMSGeneralSettings;
   aboutSettings: AboutSectionSettings;
+  featuredProducts: FeaturedProductsSettings;
   loading: boolean;
 
   // Setters
@@ -56,6 +59,7 @@ interface CMSContextType {
   updateSEOMetadata: (metadata: CMSSEOMetadata[]) => Promise<void>;
   updateGeneralSettings: (settings: CMSGeneralSettings) => Promise<void>;
   updateAboutSettings: (settings: AboutSectionSettings) => Promise<void>;
+  updateFeaturedProducts: (settings: FeaturedProductsSettings) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -72,6 +76,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [seoMetadata, setSeoMetadata] = useState<CMSSEOMetadata[]>([]);
   const [generalSettings, setGeneralSettings] = useState<CMSGeneralSettings>(DEFAULT_GENERAL_SETTINGS);
   const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
+  const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   const isFirebaseConfigured =
@@ -93,6 +98,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSeoMetadata(DEFAULT_SEO_METADATA);
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+      setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       setLoading(false);
       return;
     }
@@ -114,6 +120,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSeoMetadata(getStored('seoMetadata', DEFAULT_SEO_METADATA));
       setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
       setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
+      setFeaturedProducts(getStored('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS));
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -127,6 +134,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSeoMetadata(DEFAULT_SEO_METADATA);
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+      setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
     } finally {
       setLoading(false);
     }
@@ -315,6 +323,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const updateFeaturedProducts = async (settings: FeaturedProductsSettings) => {
+    setFeaturedProducts(settings);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('featuredProducts', settings);
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'settings', 'featured_products'), settings);
+    } catch (err) {
+      console.error("Failed to update featuredProducts settings in Firestore:", err);
+      saveOfflineCMS('featuredProducts', settings);
+    }
+  };
+
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -412,6 +434,18 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     unsubs.push(unsubAbout);
 
+    const unsubFeatured = onSnapshot(doc(db, 'settings', 'featured_products'), (snap) => {
+      if (snap.exists()) {
+        setFeaturedProducts(snap.data() as FeaturedProductsSettings);
+      } else {
+        setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      }
+    }, (error) => {
+      console.error("Failed to read featured products settings, using default:", error);
+      setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+    });
+    unsubs.push(unsubFeatured);
+
     setLoading(false);
 
     return () => {
@@ -432,6 +466,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       seoMetadata,
       generalSettings,
       aboutSettings,
+      featuredProducts,
       loading,
 
       updateNavigation,
@@ -444,7 +479,8 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateMediaItems,
       updateSEOMetadata,
       updateGeneralSettings,
-      updateAboutSettings
+      updateAboutSettings,
+      updateFeaturedProducts
     }}>
       {children}
     </CMSContext.Provider>
