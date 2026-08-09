@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   BookOpen,
-  Grid
+  Grid,
+  Megaphone
 } from 'lucide-react';
 import { Suspense } from 'react';
 import { CMSProvider } from '@/context/CMSContext';
@@ -95,6 +96,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Our Story', href: '/admin/our-story', icon: <BookOpen size={20} /> },
     { label: 'Navigation', href: '/admin/navigation', icon: <Menu size={20} /> },
     { label: 'Mega Menu', href: '/admin/megamenu', icon: <Grid size={20} /> },
+    { label: 'Announcements', href: '/admin/announcements', icon: <Megaphone size={20} /> },
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
