@@ -19,7 +19,8 @@ import {
   Grid,
   Megaphone,
   Layout,
-  Star
+  Star,
+  Settings
 } from 'lucide-react';
 import { Suspense } from 'react';
 import { CMSProvider } from '@/context/CMSContext';
@@ -95,6 +96,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
 
   const menuItems = [
     { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
+    { label: 'Website Settings', href: '/admin/website-content?tab=settings', icon: <Settings size={20} /> },
     { label: 'Hero Banner', href: '/admin/hero', icon: <Layout size={20} /> },
     { label: 'Our Story', href: '/admin/our-story', icon: <BookOpen size={20} /> },
     { label: 'Featured Products', href: '/admin/featured-products', icon: <Star size={20} /> },
@@ -189,7 +191,9 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
           {/* Navigation Links */}
           <nav className="flex-1 space-y-1.5">
             {menuItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.href.includes('?')
+                ? pathname === item.href.split('?')[0] && searchParams?.get('tab') === item.href.split('tab=')[1]
+                : pathname === item.href;
               return (
                 <Link
                   key={item.label}

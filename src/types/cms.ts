@@ -100,6 +100,7 @@ export interface CMSWebsiteSettings {
   instagramUrl?: string;
   facebookUrl?: string;
   pinterestUrl?: string;
+  youtubeUrl?: string;
 }
 
 export interface CMSMediaItem {

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCMS } from '@/context/CMSContext';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 import {
   NavigationItem,
   MegaMenuSection,
@@ -45,7 +46,8 @@ import {
   Search,
   Grid,
   Copy,
-  Check
+  Check,
+  Youtube
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -77,6 +79,16 @@ const AdminCMS = () => {
   const [activeTab, setActiveTab] = useState<
     'navigation' | 'megamenu' | 'homepage' | 'announcements' | 'collections' | 'settings' | 'media' | 'seo' | 'general'
   >('navigation');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab && ['navigation', 'megamenu', 'homepage', 'announcements', 'collections', 'settings', 'media', 'seo', 'general'].includes(tab)) {
+        setActiveTab(tab as any);
+      }
+    }
+  }, []);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -185,6 +197,53 @@ const AdminCMS = () => {
       showToast(`Failed to save ${tabName} changes`, 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [faviconUploading, setFaviconUploading] = useState(false);
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setLogoUploading(true);
+      try {
+        const url = await uploadToCloudinary(file);
+        updateWebsiteSettings({ ...websiteSettings, logoUrl: url });
+        showToast("Logo uploaded successfully!");
+      } catch (err) {
+        console.warn("Cloudinary upload failed, using local base64/blob url instead:", err);
+        const reader = new FileReader();
+        reader.onload = () => {
+          updateWebsiteSettings({ ...websiteSettings, logoUrl: reader.result as string });
+          showToast("Logo updated (locally)!");
+        };
+        reader.readAsDataURL(file);
+      } finally {
+        setLogoUploading(false);
+      }
+    }
+  };
+
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFaviconUploading(true);
+      try {
+        const url = await uploadToCloudinary(file);
+        updateWebsiteSettings({ ...websiteSettings, faviconUrl: url });
+        showToast("Favicon uploaded successfully!");
+      } catch (err) {
+        console.warn("Cloudinary upload failed, using local base64/blob url instead:", err);
+        const reader = new FileReader();
+        reader.onload = () => {
+          updateWebsiteSettings({ ...websiteSettings, faviconUrl: reader.result as string });
+          showToast("Favicon updated (locally)!");
+        };
+        reader.readAsDataURL(file);
+      } finally {
+        setFaviconUploading(false);
+      }
     }
   };
 
@@ -1135,6 +1194,7 @@ const AdminCMS = () => {
       {/* --- TAB 6: WEBSITE & THEME SETTINGS --- */}
       {activeTab === 'settings' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Branding Card */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
               <Settings size={22} className="text-rose-deep" /> Branding & Styling Settings
@@ -1159,6 +1219,83 @@ const AdminCMS = () => {
                   onChange={(e) => updateWebsiteSettings({ ...websiteSettings, websiteName: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
                 />
+              </div>
+
+              {/* Logo / Favicon Visual Upload Section */}
+              <div className="col-span-full grid grid-cols-1 sm:grid-cols-2 gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                {/* Logo Uploader */}
+                <div className="flex flex-col items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Logo Brand Image</span>
+                  <div
+                    className="relative w-full h-16 rounded-xl border border-dashed border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center cursor-pointer group"
+                    onClick={() => document.getElementById('logo-file-input')?.click()}
+                  >
+                    {websiteSettings.logoUrl ? (
+                      <>
+                        <img src={websiteSettings.logoUrl} alt="Logo Preview" className="h-10 object-contain" />
+                        <div className="absolute inset-0 bg-chocolate/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Upload size={18} className="text-white animate-pulse" />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        {logoUploading ? <Loader2 className="animate-spin" size={18} /> : <Upload size={18} />}
+                        <span className="text-[9px] font-bold uppercase mt-1">Click to Upload</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="logo-file-input"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleLogoUpload}
+                  />
+                  <input
+                    type="text"
+                    value={websiteSettings.logoUrl || ''}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, logoUrl: e.target.value })}
+                    placeholder="Or paste Logo URL directly..."
+                    className="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-xs focus:ring-1 focus:ring-rose-deep font-semibold"
+                  />
+                </div>
+
+                {/* Favicon Uploader */}
+                <div className="flex flex-col items-center gap-3 p-4 bg-white rounded-xl border border-gray-100">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">Favicon Site Icon</span>
+                  <div
+                    className="relative w-12 h-12 rounded-xl border border-dashed border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center cursor-pointer group"
+                    onClick={() => document.getElementById('favicon-file-input')?.click()}
+                  >
+                    {websiteSettings.faviconUrl ? (
+                      <>
+                        <img src={websiteSettings.faviconUrl} alt="Favicon Preview" className="w-8 h-8 object-contain" />
+                        <div className="absolute inset-0 bg-chocolate/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Upload size={14} className="text-white animate-pulse" />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        {faviconUploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                        <span className="text-[8px] font-bold uppercase mt-1">Upload</span>
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    id="favicon-file-input"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFaviconUpload}
+                  />
+                  <input
+                    type="text"
+                    value={websiteSettings.faviconUrl || ''}
+                    onChange={(e) => updateWebsiteSettings({ ...websiteSettings, faviconUrl: e.target.value })}
+                    placeholder="Or paste Favicon URL..."
+                    className="w-full px-3 py-1.5 rounded-lg border border-gray-200 text-xs focus:ring-1 focus:ring-rose-deep font-semibold"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1">
@@ -1216,17 +1353,6 @@ const AdminCMS = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Favicon URL</label>
-                <input
-                  type="text"
-                  value={websiteSettings.faviconUrl || ''}
-                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, faviconUrl: e.target.value })}
-                  placeholder="/favicon.ico"
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs"
-                />
-              </div>
-
-              <div className="space-y-1">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Typography Fonts</label>
                 <input
                   type="text"
@@ -1258,6 +1384,7 @@ const AdminCMS = () => {
             </div>
           </div>
 
+          {/* Business & Contact Card */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
               <Phone size={22} className="text-rose-deep" /> Business & Contact Directory
@@ -1310,7 +1437,7 @@ const AdminCMS = () => {
                   type="text"
                   value={websiteSettings.googleMapsUrl || ''}
                   onChange={(e) => updateWebsiteSettings({ ...websiteSettings, googleMapsUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500 font-semibold"
                 />
               </div>
 
@@ -1340,7 +1467,7 @@ const AdminCMS = () => {
                   type="text"
                   value={websiteSettings.instagramUrl || ''}
                   onChange={(e) => updateWebsiteSettings({ ...websiteSettings, instagramUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500 font-semibold"
                 />
               </div>
 
@@ -1350,7 +1477,27 @@ const AdminCMS = () => {
                   type="text"
                   value={websiteSettings.facebookUrl || ''}
                   onChange={(e) => updateWebsiteSettings({ ...websiteSettings, facebookUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500"
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500 font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Pinterest URL</label>
+                <input
+                  type="text"
+                  value={websiteSettings.pinterestUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, pinterestUrl: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500 font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">YouTube URL</label>
+                <input
+                  type="text"
+                  value={websiteSettings.youtubeUrl || ''}
+                  onChange={(e) => updateWebsiteSettings({ ...websiteSettings, youtubeUrl: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-xs text-gray-500 font-semibold"
                 />
               </div>
             </div>

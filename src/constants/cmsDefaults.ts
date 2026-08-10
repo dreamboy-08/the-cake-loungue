@@ -656,7 +656,8 @@ export const DEFAULT_WEBSITE_SETTINGS: CMSWebsiteSettings = {
   businessHoursSatSun: '09:00 AM - 11:00 PM',
   instagramUrl: 'https://instagram.com/thecakelounge',
   facebookUrl: 'https://facebook.com/thecakelounge',
-  pinterestUrl: 'https://pinterest.com/thecakelounge'
+  pinterestUrl: 'https://pinterest.com/thecakelounge',
+  youtubeUrl: 'https://youtube.com/thecakelounge'
 };
 
 export const DEFAULT_MEDIA_LIBRARY: CMSMediaItem[] = [
