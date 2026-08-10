@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Loader2, Info } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 import { useCMS } from '@/context/CMSContext';
 import { CMSTestimonial } from '@/types/cms';
 
@@ -34,7 +34,6 @@ const TestimonialForm = ({ item, allTestimonials, onClose, onSuccess }: Testimon
     text: item?.text || '',
     rating: item?.rating || 5,
     tag: item?.tag || '',
-    avatar: item?.avatar || 'https://i.pravatar.cc/100?img=47',
     enabled: item?.enabled !== undefined ? item?.enabled : true,
     displayOrder: item !== undefined && item !== null ? item.displayOrder + 1 : (allTestimonials.length + 1),
   });
@@ -53,12 +52,13 @@ const TestimonialForm = ({ item, allTestimonials, onClose, onSuccess }: Testimon
       }
 
       const currentItem: CMSTestimonial = {
+        ...item, // Preserve existing properties like id, status, orderId, etc.
         id: item?.id || 'test_' + Date.now(),
         name: formData.name,
         text: formData.text,
         rating: Number(formData.rating),
         tag: formData.tag || undefined,
-        avatar: formData.avatar,
+        avatar: item?.avatar || '', // Do not require avatar
         enabled: formData.enabled,
         displayOrder: 0, // Assigned sequentially
       };
@@ -160,18 +160,6 @@ const TestimonialForm = ({ item, allTestimonials, onClose, onSuccess }: Testimon
                 value={formData.tag}
                 onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
                 className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-semibold text-gray-700"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Avatar Image URL</label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. https://..."
-                value={formData.avatar}
-                onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                className="w-full px-5 py-4 rounded-2xl border border-gray-100 focus:border-rose-deep outline-none text-xs font-mono font-semibold text-gray-700"
               />
             </div>
 

@@ -12,10 +12,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from '@/components/BackButton';
 import PageWrapper from '@/components/PageWrapper';
 import Toast from '@/components/Toast';
+import { useCMS } from '@/context/CMSContext';
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const { testimonials } = useCMS();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -182,6 +184,7 @@ const OrderDetailsPage = () => {
   }
 
   const currentStep = getStatusStep(order.status);
+  const alreadyReviewed = order ? testimonials.some((t: any) => t.orderId === order.id) : false;
 
   return (
     <PageWrapper>
@@ -320,13 +323,20 @@ const OrderDetailsPage = () => {
                   <h2 className="text-2xl font-bold text-chocolate">Order Delivered Successfully!</h2>
                   <p className="text-text-soft">We hope you love your Cake Lounge treats. How was your experience?</p>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                    <Link
-                      href={`/reviews?orderId=${order.id}`}
-                      className="bg-chocolate text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-brown transition-all shadow-md"
-                    >
-                      <Star size={18} className="text-blush" />
-                      Write a Review
-                    </Link>
+                    {alreadyReviewed ? (
+                      <div className="bg-cream border border-cream-dark text-chocolate px-8 py-3 rounded-full font-bold flex items-center gap-2 cursor-default select-none shadow-sm">
+                        <CheckCircle2 size={18} className="text-green-600" />
+                        {"You've Reviewed This Order"}
+                      </div>
+                    ) : (
+                      <Link
+                        href={`/reviews?orderId=${order.id}`}
+                        className="bg-chocolate text-white px-8 py-3 rounded-full font-bold flex items-center gap-2 hover:bg-brown transition-all shadow-md"
+                      >
+                        <Star size={18} className="text-blush" />
+                        Write a Review
+                      </Link>
+                    )}
                     <div className="flex items-center gap-1 text-rose-deep font-bold">
                       <Sparkles size={18} />
                       <span>Thank you!</span>

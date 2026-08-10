@@ -218,7 +218,13 @@ export interface CMSTestimonial {
   text: string;
   rating: number;
   tag?: string;
-  avatar: string;
+  avatar?: string;
   displayOrder: number;
   enabled: boolean;
+  status?: 'pending' | 'approved' | 'rejected';
+  verified?: boolean;
+  customerId?: string;
+  orderId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -69,6 +69,7 @@ const Footer = () => {
               <Link href="/custom-cake" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Custom Cake</Link>
               <Link href="/#about" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Our Story</Link>
               <Link href="/#contact" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Contact</Link>
+              <Link href="/reviews" className="text-[0.83rem] text-[rgba(255,255,255,0.5)] hover:text-blush transition-colors">Write a Review</Link>
             </div>
           </div>
 
