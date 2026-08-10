@@ -642,22 +642,22 @@ export const DEFAULT_WEBSITE_SETTINGS: CMSWebsiteSettings = {
   websiteName: 'The Cake Lounge',
   primaryColor: '#3d1f10',
   secondaryColor: '#fdf6ee',
-  accentColor: '#d4a45a',
+  accentColor: '#c9614a',
   typography: 'Playfair Display, Poppins',
   borderRadius: '22px',
   footerText: 'Crafting moments of sweetness since 2015. Every cake tells a story — let us tell yours.',
-  businessName: 'The Cake Lounge Patisserie',
-  address: 'The Cake Lounge, Galleria Market, DLF Phase 4, Gurugram, Haryana, 122009',
-  email: 'hello@thecakelounge.com',
-  phone: '+91 98765 43210',
-  whatsapp: '+91 98765 43210',
-  googleMapsUrl: 'https://maps.google.com',
+  businessName: 'The Cake Lounge',
+  address: 'The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana',
+  email: 'thecakeloungegurgaon@gmail.com',
+  phone: '+91 77038 70170',
+  whatsapp: '+91 77038 70170',
+  googleMapsUrl: '',
   businessHoursMonFri: '10:00 AM - 10:00 PM',
   businessHoursSatSun: '09:00 AM - 11:00 PM',
-  instagramUrl: 'https://instagram.com/thecakelounge',
-  facebookUrl: 'https://facebook.com/thecakelounge',
-  pinterestUrl: 'https://pinterest.com/thecakelounge',
-  youtubeUrl: 'https://youtube.com/thecakelounge'
+  instagramUrl: 'https://instagram.com',
+  facebookUrl: 'https://facebook.com',
+  pinterestUrl: 'https://pinterest.com',
+  youtubeUrl: ''
 };
 
 export const DEFAULT_MEDIA_LIBRARY: CMSMediaItem[] = [
