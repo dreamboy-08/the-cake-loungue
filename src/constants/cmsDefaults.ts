@@ -12,7 +12,8 @@ import {
   AboutSectionSettings,
   CMSCategory,
   FeaturedProductsSettings,
-  CMSTestimonial
+  CMSTestimonial,
+  CMSGalleryItem
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -874,5 +875,56 @@ export const DEFAULT_TESTIMONIALS: CMSTestimonial[] = [
     rating: 4.5,
     displayOrder: 2,
     enabled: true
+  }
+];
+
+export const DEFAULT_GALLERY: CMSGalleryItem[] = [
+  {
+    id: 'gal_1',
+    src: '/images/products/Royal Raspberry Birthday Cake.jpg',
+    label: 'Royal Raspberry Birthday Cake',
+    displayOrder: 0,
+    enabled: true,
+    link: '/shop/1'
+  },
+  {
+    id: 'gal_2',
+    src: '/images/products/Champagne Velvet Birthday Cake.jpg',
+    label: 'Champagne Velvet Birthday Cake',
+    displayOrder: 1,
+    enabled: true,
+    link: '/shop/2'
+  },
+  {
+    id: 'gal_3',
+    src: '/images/products/Golden Confetti Birthday Cake.jpg',
+    label: 'Golden Confetti Birthday Cake',
+    displayOrder: 2,
+    enabled: true,
+    link: '/shop/3'
+  },
+  {
+    id: 'gal_4',
+    src: '/images/products/Chocolate Crown Birthday Cake.jpg',
+    label: 'Chocolate Crown Birthday Cake',
+    displayOrder: 3,
+    enabled: true,
+    link: '/shop/5'
+  },
+  {
+    id: 'gal_5',
+    src: '/images/products/Pearl Blossom Birthday Cake.jpg',
+    label: 'Pearl Blossom Birthday Cake',
+    displayOrder: 4,
+    enabled: true,
+    link: '/shop/4'
+  },
+  {
+    id: 'gal_6',
+    src: '/images/products/Silk Anniversary Romance Cake.jpg',
+    label: 'Silk Anniversary Romance Cake',
+    displayOrder: 5,
+    enabled: true,
+    link: '/shop/7'
   }
 ];
