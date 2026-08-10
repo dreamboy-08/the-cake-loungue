@@ -12,30 +12,36 @@ export default function CMSStyleRoot() {
 
   let styleContent = "";
 
-  if (primaryColor) {
+  // Only inject if primaryColor was changed from original production default (#3d1f10)
+  if (primaryColor && primaryColor !== '#3d1f10') {
     styleContent += `
       :root {
         --chocolate: ${primaryColor} !important;
       }
     `;
   }
-  if (secondaryColor) {
+
+  // Only inject if secondaryColor was changed from original production default (#fdf6ee)
+  if (secondaryColor && secondaryColor !== '#fdf6ee') {
     styleContent += `
       :root {
         --cream: ${secondaryColor} !important;
       }
     `;
   }
-  if (accentColor) {
+
+  // Only inject if accentColor was changed from original production default (#c9614a)
+  if (accentColor && accentColor !== '#c9614a') {
     styleContent += `
       :root {
-        --gold: ${accentColor} !important;
-        --rose: ${accentColor} !important;
         --rose-deep: ${accentColor} !important;
+        --rose: ${accentColor} !important;
       }
     `;
   }
-  if (borderRadius) {
+
+  // Only inject if borderRadius was changed from original production default (22px)
+  if (borderRadius && borderRadius !== '22px') {
     // Treat numeric/string inputs safely (e.g. "22px" or just "22")
     const radiusVal = borderRadius.endsWith('px') || borderRadius.endsWith('rem') || borderRadius.endsWith('%')
       ? borderRadius
@@ -50,7 +56,9 @@ export default function CMSStyleRoot() {
       }
     `;
   }
-  if (typography) {
+
+  // Only inject if typography was changed from original production default (Playfair Display, Poppins)
+  if (typography && typography !== 'Playfair Display, Poppins') {
     // Split fonts if comma-separated
     const fonts = typography.split(',').map(f => f.trim()).filter(Boolean);
     if (fonts.length > 0) {
@@ -61,6 +69,8 @@ export default function CMSStyleRoot() {
       `;
     }
   }
+
+  if (!styleContent) return null;
 
   return (
     <style dangerouslySetInnerHTML={{ __html: styleContent }} />

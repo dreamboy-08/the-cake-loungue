@@ -15,6 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } from '@/constants/delivery';
 import { getContactInfo } from '@/utils/adminService';
 import { isSlotValid, getMinSelectableDate } from '@/utils/deliveryValidation';
+import { useCMS } from '@/context/CMSContext';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -38,7 +39,9 @@ const CheckoutPage = () => {
   const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>('');
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
-  const [contactWhatsapp, setContactWhatsapp] = useState<string>('917703870170');
+  const { websiteSettings } = useCMS();
+  const rawWhatsapp = websiteSettings?.whatsapp || "+91 77038 70170";
+  const contactWhatsapp = rawWhatsapp.replace(/[^0-9]/g, '');
 
   const [isBuyNow, setIsBuyNow] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState<any[]>([]);
@@ -61,16 +64,6 @@ const CheckoutPage = () => {
 
   const desktopCalendarRef = React.useRef<HTMLDivElement>(null);
 
-  // Fetch WhatsApp number dynamically from CMS on mount
-  useEffect(() => {
-    getContactInfo().then((info) => {
-      if (info && info.whatsapp) {
-        setContactWhatsapp(info.whatsapp);
-      }
-    }).catch((err) => {
-      console.error("Failed to load contact info:", err);
-    });
-  }, []);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const verificationStarted = React.useRef(false);
 

@@ -15,13 +15,13 @@ test.describe('Phase 8 Website Settings & Branding Integration E2E', () => {
     const logoInput = page.locator('input[value="The Cake Lounge"]').first();
     await logoInput.fill('Elite Patisserie TEST');
 
-    const businessNameInput = page.locator('input[value="The Cake Lounge Patisserie"]').first();
+    const businessNameInput = page.locator('input[value="The Cake Lounge"]').first();
     await businessNameInput.fill('Elite Patisserie Corp');
 
-    const phoneInput = page.locator('input[value="+91 98765 43210"]').first();
+    const phoneInput = page.locator('input[value="+91 77038 70170"]').first();
     await phoneInput.fill('+91 12345 67890');
 
-    const whatsappInput = page.locator('input[value="+91 98765 43210"]').last();
+    const whatsappInput = page.locator('input[value="+91 77038 70170"]').last();
     await whatsappInput.fill('+91 55555 44444');
 
     const addressInput = page.locator('textarea').last();
