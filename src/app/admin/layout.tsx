@@ -19,7 +19,10 @@ import {
   Grid,
   Megaphone,
   Layout,
-  Star
+  Star,
+  Image as ImageIcon,
+  MessageSquare,
+  Phone
 } from 'lucide-react';
 import { Suspense } from 'react';
 import { CMSProvider } from '@/context/CMSContext';
@@ -97,6 +100,9 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
     { label: 'Hero Banner', href: '/admin/hero', icon: <Layout size={20} /> },
     { label: 'Our Story', href: '/admin/our-story', icon: <BookOpen size={20} /> },
+    { label: 'Featured Gallery', href: '/admin/gallery', icon: <ImageIcon size={20} /> },
+    { label: 'Testimonials', href: '/admin/testimonials', icon: <MessageSquare size={20} /> },
+    { label: 'Contact Coordinates', href: '/admin/contact', icon: <Phone size={20} /> },
     { label: 'Featured Products', href: '/admin/featured-products', icon: <Star size={20} /> },
     { label: 'Navigation', href: '/admin/navigation', icon: <Menu size={20} /> },
     { label: 'Mega Menu', href: '/admin/megamenu', icon: <Grid size={20} /> },

@@ -11,7 +11,10 @@ import {
   AboutFeatureCard,
   AboutSectionSettings,
   CMSCategory,
-  FeaturedProductsSettings
+  FeaturedProductsSettings,
+  GallerySettings,
+  TestimonialsSettings,
+  ContactSettings
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -840,4 +843,64 @@ export const DEFAULT_FEATURED_PRODUCTS_SETTINGS: FeaturedProductsSettings = {
   title: 'Featured Cakes',
   subtitle: 'Our Bestsellers',
   productIds: ['1', '2', '3', '5', '6', '7', '9', '11', '13', '17', '55', '59', '103', '114', '325', '327']
+};
+
+export const DEFAULT_GALLERY_SETTINGS: GallerySettings = {
+  id: 'gallery_settings',
+  enabled: true,
+  title: 'A Feast for the Eyes',
+  subtitle: 'Our Creations',
+  items: [
+    { id: 'g1', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80', caption: 'Chocolate Fantasy', displayOrder: 0 },
+    { id: 'g2', image: 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=500&q=80', caption: 'Strawberry Rose bento', displayOrder: 1 },
+    { id: 'g3', image: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=500&q=80', caption: 'Blueberry Swirl', displayOrder: 2 },
+    { id: 'g4', image: 'https://images.unsplash.com/photo-1557821552-17105176677c?w=500&q=80', caption: 'Red Velvet Classic', displayOrder: 3 }
+  ]
+};
+
+export const DEFAULT_TESTIMONIALS_SETTINGS: TestimonialsSettings = {
+  id: 'testimonials_settings',
+  enabled: true,
+  title: 'What People Are Saying',
+  subtitle: 'Happy Customers',
+  items: [
+    {
+      id: 't1',
+      name: 'Priya Sharma',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80',
+      tag: 'Loyal Customer · 3 yrs',
+      rating: 5,
+      text: 'The chocolate truffle cake was absolute heaven! Not too sweet, incredibly moist, and beautifully presented.',
+      displayOrder: 0
+    },
+    {
+      id: 't2',
+      name: 'Rohan Gupta',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80',
+      tag: 'Verified Purchaser',
+      rating: 5,
+      text: 'Ordered a customized bento cake for my anniversary. The attention to detail in the hand-painted frosting was remarkable.',
+      displayOrder: 1
+    },
+    {
+      id: 't3',
+      name: 'Ananya Sen',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80',
+      tag: 'Event Organiser',
+      rating: 5,
+      text: 'Our guests could not stop raving about the wedding cake. It was the perfect center-piece for our big day!',
+      displayOrder: 2
+    }
+  ]
+};
+
+export const DEFAULT_CONTACT_SETTINGS: ContactSettings = {
+  id: 'contact_settings',
+  enabled: true,
+  heading: 'Let\'s Create Something Sweet Together',
+  subheading: 'Have a special order in mind? Want to know more about our bespoke cakes? Reach out to us through any of these channels.',
+  address: 'The Cake Lounge, U-block, DLF phase-3, sector-24, Gurugram, Haryana',
+  phone: '+91 77038 70170',
+  email: 'thecakeloungegurgaon@gmail.com',
+  hoursMonSun: 'Mon–Sun 8am–10pm'
 };

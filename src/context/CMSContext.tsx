@@ -15,7 +15,10 @@ import {
   CMSGeneralSettings,
   AboutSectionSettings,
   CMSCategory,
-  FeaturedProductsSettings
+  FeaturedProductsSettings,
+  GallerySettings,
+  TestimonialsSettings,
+  ContactSettings
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -29,7 +32,10 @@ import {
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_ABOUT_SETTINGS,
   DEFAULT_CATEGORIES,
-  DEFAULT_FEATURED_PRODUCTS_SETTINGS
+  DEFAULT_FEATURED_PRODUCTS_SETTINGS,
+  DEFAULT_GALLERY_SETTINGS,
+  DEFAULT_TESTIMONIALS_SETTINGS,
+  DEFAULT_CONTACT_SETTINGS
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -45,6 +51,9 @@ interface CMSContextType {
   generalSettings: CMSGeneralSettings;
   aboutSettings: AboutSectionSettings;
   featuredProducts: FeaturedProductsSettings;
+  gallerySettings: GallerySettings;
+  testimonialsSettings: TestimonialsSettings;
+  contactSettings: ContactSettings;
   loading: boolean;
 
   // Setters
@@ -60,6 +69,9 @@ interface CMSContextType {
   updateGeneralSettings: (settings: CMSGeneralSettings) => Promise<void>;
   updateAboutSettings: (settings: AboutSectionSettings) => Promise<void>;
   updateFeaturedProducts: (settings: FeaturedProductsSettings) => Promise<void>;
+  updateGallerySettings: (settings: GallerySettings) => Promise<void>;
+  updateTestimonialsSettings: (settings: TestimonialsSettings) => Promise<void>;
+  updateContactSettings: (settings: ContactSettings) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -77,6 +89,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [generalSettings, setGeneralSettings] = useState<CMSGeneralSettings>(DEFAULT_GENERAL_SETTINGS);
   const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+  const [gallerySettings, setGallerySettings] = useState<GallerySettings>(DEFAULT_GALLERY_SETTINGS);
+  const [testimonialsSettings, setTestimonialsSettings] = useState<TestimonialsSettings>(DEFAULT_TESTIMONIALS_SETTINGS);
+  const [contactSettings, setContactSettings] = useState<ContactSettings>(DEFAULT_CONTACT_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   const isFirebaseConfigured =
@@ -99,6 +114,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      setGallerySettings(DEFAULT_GALLERY_SETTINGS);
+      setTestimonialsSettings(DEFAULT_TESTIMONIALS_SETTINGS);
+      setContactSettings(DEFAULT_CONTACT_SETTINGS);
       setLoading(false);
       return;
     }
@@ -121,6 +139,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
       setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
       setFeaturedProducts(getStored('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS));
+      setGallerySettings(getStored('gallerySettings', DEFAULT_GALLERY_SETTINGS));
+      setTestimonialsSettings(getStored('testimonialsSettings', DEFAULT_TESTIMONIALS_SETTINGS));
+      setContactSettings(getStored('contactSettings', DEFAULT_CONTACT_SETTINGS));
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -135,6 +156,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      setGallerySettings(DEFAULT_GALLERY_SETTINGS);
+      setTestimonialsSettings(DEFAULT_TESTIMONIALS_SETTINGS);
+      setContactSettings(DEFAULT_CONTACT_SETTINGS);
     } finally {
       setLoading(false);
     }
@@ -337,6 +361,48 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const updateGallerySettings = async (settings: GallerySettings) => {
+    setGallerySettings(settings);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('gallerySettings', settings);
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'settings', 'gallery_settings'), settings);
+    } catch (err) {
+      console.error("Failed to update gallery settings in Firestore:", err);
+      saveOfflineCMS('gallerySettings', settings);
+    }
+  };
+
+  const updateTestimonialsSettings = async (settings: TestimonialsSettings) => {
+    setTestimonialsSettings(settings);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('testimonialsSettings', settings);
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'settings', 'testimonials_settings'), settings);
+    } catch (err) {
+      console.error("Failed to update testimonials settings in Firestore:", err);
+      saveOfflineCMS('testimonialsSettings', settings);
+    }
+  };
+
+  const updateContactSettings = async (settings: ContactSettings) => {
+    setContactSettings(settings);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('contactSettings', settings);
+      return;
+    }
+    try {
+      await setDoc(doc(db, 'settings', 'contact_settings'), settings);
+    } catch (err) {
+      console.error("Failed to update contact settings in Firestore:", err);
+      saveOfflineCMS('contactSettings', settings);
+    }
+  };
+
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -446,6 +512,42 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     unsubs.push(unsubFeatured);
 
+    const unsubGallery = onSnapshot(doc(db, 'settings', 'gallery_settings'), (snap) => {
+      if (snap.exists()) {
+        setGallerySettings(snap.data() as GallerySettings);
+      } else {
+        setGallerySettings(DEFAULT_GALLERY_SETTINGS);
+      }
+    }, (error) => {
+      console.error("Failed to read gallery settings, using default:", error);
+      setGallerySettings(DEFAULT_GALLERY_SETTINGS);
+    });
+    unsubs.push(unsubGallery);
+
+    const unsubTestimonials = onSnapshot(doc(db, 'settings', 'testimonials_settings'), (snap) => {
+      if (snap.exists()) {
+        setTestimonialsSettings(snap.data() as TestimonialsSettings);
+      } else {
+        setTestimonialsSettings(DEFAULT_TESTIMONIALS_SETTINGS);
+      }
+    }, (error) => {
+      console.error("Failed to read testimonials settings, using default:", error);
+      setTestimonialsSettings(DEFAULT_TESTIMONIALS_SETTINGS);
+    });
+    unsubs.push(unsubTestimonials);
+
+    const unsubContact = onSnapshot(doc(db, 'settings', 'contact_settings'), (snap) => {
+      if (snap.exists()) {
+        setContactSettings(snap.data() as ContactSettings);
+      } else {
+        setContactSettings(DEFAULT_CONTACT_SETTINGS);
+      }
+    }, (error) => {
+      console.error("Failed to read contact settings, using default:", error);
+      setContactSettings(DEFAULT_CONTACT_SETTINGS);
+    });
+    unsubs.push(unsubContact);
+
     setLoading(false);
 
     return () => {
@@ -467,6 +569,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       generalSettings,
       aboutSettings,
       featuredProducts,
+      gallerySettings,
+      testimonialsSettings,
+      contactSettings,
       loading,
 
       updateNavigation,
@@ -480,7 +585,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateSEOMetadata,
       updateGeneralSettings,
       updateAboutSettings,
-      updateFeaturedProducts
+      updateFeaturedProducts,
+      updateGallerySettings,
+      updateTestimonialsSettings,
+      updateContactSettings
     }}>
       {children}
     </CMSContext.Provider>

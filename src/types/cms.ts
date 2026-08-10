@@ -210,3 +210,47 @@ export interface FeaturedProductsSettings {
   subtitle: string;
   productIds: string[]; // List of curated product IDs (strings)
 }
+
+export interface GalleryItem {
+  id: string;
+  image: string;
+  caption: string;
+  displayOrder: number;
+}
+
+export interface GallerySettings {
+  id: string; // 'gallery_settings'
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  items: GalleryItem[];
+}
+
+export interface TestimonialItem {
+  id: string;
+  name: string;
+  avatar: string;
+  tag: string;
+  rating: number;
+  text: string;
+  displayOrder: number;
+}
+
+export interface TestimonialsSettings {
+  id: string; // 'testimonials_settings'
+  enabled: boolean;
+  title: string;
+  subtitle: string;
+  items: TestimonialItem[];
+}
+
+export interface ContactSettings {
+  id: string; // 'contact_settings'
+  enabled: boolean;
+  heading: string;
+  subheading: string;
+  address: string;
+  phone: string;
+  email: string;
+  hoursMonSun: string;
+}
