@@ -15,7 +15,8 @@ import {
   CMSGeneralSettings,
   AboutSectionSettings,
   CMSCategory,
-  FeaturedProductsSettings
+  FeaturedProductsSettings,
+  CMSTestimonial
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -29,7 +30,8 @@ import {
   DEFAULT_GENERAL_SETTINGS,
   DEFAULT_ABOUT_SETTINGS,
   DEFAULT_CATEGORIES,
-  DEFAULT_FEATURED_PRODUCTS_SETTINGS
+  DEFAULT_FEATURED_PRODUCTS_SETTINGS,
+  DEFAULT_TESTIMONIALS
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -45,6 +47,7 @@ interface CMSContextType {
   generalSettings: CMSGeneralSettings;
   aboutSettings: AboutSectionSettings;
   featuredProducts: FeaturedProductsSettings;
+  testimonials: CMSTestimonial[];
   loading: boolean;
 
   // Setters
@@ -60,6 +63,8 @@ interface CMSContextType {
   updateGeneralSettings: (settings: CMSGeneralSettings) => Promise<void>;
   updateAboutSettings: (settings: AboutSectionSettings) => Promise<void>;
   updateFeaturedProducts: (settings: FeaturedProductsSettings) => Promise<void>;
+  updateTestimonials: (items: CMSTestimonial[]) => Promise<void>;
+  deleteTestimonialFromDB: (id: string) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -77,6 +82,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [generalSettings, setGeneralSettings] = useState<CMSGeneralSettings>(DEFAULT_GENERAL_SETTINGS);
   const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+  const [testimonials, setTestimonials] = useState<CMSTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
   const isFirebaseConfigured =
@@ -99,6 +105,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      setTestimonials(DEFAULT_TESTIMONIALS);
       setLoading(false);
       return;
     }
@@ -121,6 +128,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
       setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
       setFeaturedProducts(getStored('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS));
+      setTestimonials(getStored('testimonials', DEFAULT_TESTIMONIALS));
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -135,6 +143,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      setTestimonials(DEFAULT_TESTIMONIALS);
     } finally {
       setLoading(false);
     }
@@ -337,6 +346,34 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const updateTestimonials = async (items: CMSTestimonial[]) => {
+    setTestimonials(items);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('testimonials', items);
+      return;
+    }
+    try {
+      await Promise.all(items.map(item =>
+        setDoc(doc(db, 'testimonials', item.id), item)
+      ));
+    } catch (err) {
+      console.error("Failed to update testimonials in Firestore:", err);
+      saveOfflineCMS('testimonials', items);
+    }
+  };
+
+  const deleteTestimonialFromDB = async (id: string) => {
+    if (!isFirebaseConfigured) {
+      return;
+    }
+    try {
+      const { deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, 'testimonials', id));
+    } catch (err) {
+      console.error("Failed to delete testimonial from Firestore:", err);
+    }
+  };
+
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -395,6 +432,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     registerListener('collections', 'displayOrder', setCollections, DEFAULT_COLLECTIONS);
     registerListener('categories', 'displayOrder', setCategories, DEFAULT_CATEGORIES);
     registerListener('media', 'createdAt', setMediaItems, DEFAULT_MEDIA_LIBRARY);
+    registerListener('testimonials', 'displayOrder', setTestimonials, DEFAULT_TESTIMONIALS);
     registerListener('seo', null, setSeoMetadata, DEFAULT_SEO_METADATA);
 
     // Listen to individual config documents in 'settings' collection
@@ -467,6 +505,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       generalSettings,
       aboutSettings,
       featuredProducts,
+      testimonials,
       loading,
 
       updateNavigation,
@@ -480,7 +519,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateSEOMetadata,
       updateGeneralSettings,
       updateAboutSettings,
-      updateFeaturedProducts
+      updateFeaturedProducts,
+      updateTestimonials,
+      deleteTestimonialFromDB
     }}>
       {children}
     </CMSContext.Provider>
