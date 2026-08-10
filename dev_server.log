@@ -1,6 +1,6 @@
 
 > cake-lounge-frontend@0.1.0 dev
-> next dev
+> next dev -p 3000
 
   ▲ Next.js 14.2.35
   - Local:        http://localhost:3000
@@ -33,3 +33,15 @@ Firebase configuration is missing or invalid. Please check your environment vari
  GET /admin/website-content?bypass=true 200 in 45ms
  GET /admin/website-content?bypass=true 200 in 100ms
  GET /admin/website-content?bypass=true 200 in 51ms
+ ✓ Ready in 2.3s
+ ○ Compiling /admin/our-story ...
+ ✓ Compiled /admin/our-story in 12.2s (1650 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/our-story?bypass=true 200 in 13626ms
+ ✓ Compiled in 1419ms (760 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 4.5s (1715 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 4985ms
+ ✓ Compiled in 972ms (785 modules)
+ ✓ Compiled in 951ms (785 modules)

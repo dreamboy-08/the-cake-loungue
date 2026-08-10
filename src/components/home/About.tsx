@@ -45,6 +45,10 @@ const getIconComponent = (iconName: string, size = 20) => {
   }
 };
 
+/**
+ * About Section Component - Fully CMS-driven and responsive
+ * Dynamically rendered based on settings persisted in Firestore/localStorage
+ */
 const About = () => {
   const { aboutSettings, loading } = useCMS();
 

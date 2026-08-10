@@ -88,6 +88,11 @@ const renderCmsIcon = (iconName: string, size = 18) => {
   }
 };
 
+/**
+ * OurStoryAdmin Component - Direct editorial management of the storefront 'About Us' section
+ * Supports rich HTML text, visual image replacement with real-time visual cropping (aspect 4:5),
+ * floating statistic badges, and entrance transitions.
+ */
 const OurStoryAdmin = () => {
   const { aboutSettings, updateAboutSettings, loading } = useCMS();
   const [localSettings, setLocalSettings] = useState<AboutSectionSettings | null>(null);
