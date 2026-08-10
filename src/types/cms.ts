@@ -211,3 +211,14 @@ export interface FeaturedProductsSettings {
   subtitle: string;
   productIds: string[]; // List of curated product IDs (strings)
 }
+
+export interface CMSTestimonial {
+  id: string;
+  name: string;
+  text: string;
+  rating: number;
+  tag?: string;
+  avatar: string;
+  displayOrder: number;
+  enabled: boolean;
+}
