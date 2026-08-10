@@ -111,6 +111,7 @@ test.describe('Testimonials CMS Verification', () => {
     // Go to storefront and check that Second Test Customer comes before Updated Test Customer
     await page.goto('http://localhost:3000/?bypass=true', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#testimonials')).toBeVisible();
+    await expect(page.locator('#testimonials').locator('text=Second Test Customer').first()).toBeVisible();
 
     const textOfTestimonials = await page.locator('#testimonials').locator('.text-chocolate').allInnerTexts();
     const secondIndex = textOfTestimonials.indexOf('Second Test Customer');
