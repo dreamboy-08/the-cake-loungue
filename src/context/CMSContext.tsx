@@ -16,7 +16,8 @@ import {
   AboutSectionSettings,
   CMSCategory,
   FeaturedProductsSettings,
-  CMSTestimonial
+  CMSTestimonial,
+  CMSGalleryItem
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -31,7 +32,8 @@ import {
   DEFAULT_ABOUT_SETTINGS,
   DEFAULT_CATEGORIES,
   DEFAULT_FEATURED_PRODUCTS_SETTINGS,
-  DEFAULT_TESTIMONIALS
+  DEFAULT_TESTIMONIALS,
+  DEFAULT_GALLERY
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -48,6 +50,7 @@ interface CMSContextType {
   aboutSettings: AboutSectionSettings;
   featuredProducts: FeaturedProductsSettings;
   testimonials: CMSTestimonial[];
+  galleryItems: CMSGalleryItem[];
   loading: boolean;
 
   // Setters
@@ -65,6 +68,8 @@ interface CMSContextType {
   updateFeaturedProducts: (settings: FeaturedProductsSettings) => Promise<void>;
   updateTestimonials: (items: CMSTestimonial[]) => Promise<void>;
   deleteTestimonialFromDB: (id: string) => Promise<void>;
+  updateGalleryItems: (items: CMSGalleryItem[]) => Promise<void>;
+  deleteGalleryItemFromDB: (id: string) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -83,6 +88,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [aboutSettings, setAboutSettings] = useState<AboutSectionSettings>(DEFAULT_ABOUT_SETTINGS);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
   const [testimonials, setTestimonials] = useState<CMSTestimonial[]>([]);
+  const [galleryItems, setGalleryItems] = useState<CMSGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const isFirebaseConfigured =
@@ -106,6 +112,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       setTestimonials(DEFAULT_TESTIMONIALS);
+      setGalleryItems(DEFAULT_GALLERY);
       setLoading(false);
       return;
     }
@@ -129,6 +136,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
       setFeaturedProducts(getStored('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS));
       setTestimonials(getStored('testimonials', DEFAULT_TESTIMONIALS));
+      setGalleryItems(getStored('galleryItems', DEFAULT_GALLERY));
     } catch (e) {
       console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
       setNavigation(DEFAULT_NAVIGATION);
@@ -144,6 +152,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       setTestimonials(DEFAULT_TESTIMONIALS);
+      setGalleryItems(DEFAULT_GALLERY);
     } finally {
       setLoading(false);
     }
@@ -374,6 +383,34 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const updateGalleryItems = async (items: CMSGalleryItem[]) => {
+    setGalleryItems(items);
+    if (!isFirebaseConfigured) {
+      saveOfflineCMS('galleryItems', items);
+      return;
+    }
+    try {
+      await Promise.all(items.map(item =>
+        setDoc(doc(db, 'gallery', item.id), item)
+      ));
+    } catch (err) {
+      console.error("Failed to update gallery items in Firestore:", err);
+      saveOfflineCMS('galleryItems', items);
+    }
+  };
+
+  const deleteGalleryItemFromDB = async (id: string) => {
+    if (!isFirebaseConfigured) {
+      return;
+    }
+    try {
+      const { deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, 'gallery', id));
+    } catch (err) {
+      console.error("Failed to delete gallery item from Firestore:", err);
+    }
+  };
+
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -433,6 +470,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     registerListener('categories', 'displayOrder', setCategories, DEFAULT_CATEGORIES);
     registerListener('media', 'createdAt', setMediaItems, DEFAULT_MEDIA_LIBRARY);
     registerListener('testimonials', 'displayOrder', setTestimonials, DEFAULT_TESTIMONIALS);
+    registerListener('gallery', 'displayOrder', setGalleryItems, DEFAULT_GALLERY);
     registerListener('seo', null, setSeoMetadata, DEFAULT_SEO_METADATA);
 
     // Listen to individual config documents in 'settings' collection
@@ -506,6 +544,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       aboutSettings,
       featuredProducts,
       testimonials,
+      galleryItems,
       loading,
 
       updateNavigation,
@@ -521,7 +560,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateAboutSettings,
       updateFeaturedProducts,
       updateTestimonials,
-      deleteTestimonialFromDB
+      deleteTestimonialFromDB,
+      updateGalleryItems,
+      deleteGalleryItemFromDB
     }}>
       {children}
     </CMSContext.Provider>

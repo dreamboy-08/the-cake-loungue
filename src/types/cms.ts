@@ -30,6 +30,15 @@ export interface MegaMenuItem {
   enabled: boolean;
 }
 
+export interface CMSGalleryItem {
+  id: string;
+  src: string;
+  label: string; // Alt text / title / caption
+  displayOrder: number;
+  enabled: boolean;
+  link?: string;
+}
+
 export interface MegaMenuSection {
   id: string;
   title: string;

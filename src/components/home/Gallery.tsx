@@ -3,41 +3,26 @@
 import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useProducts } from '@/context/ProductsContext';
+import { useCMS } from '@/context/CMSContext';
 
 const Gallery = () => {
-  const { products } = useProducts();
+  const { galleryItems } = useCMS();
 
   const galleryImgs = useMemo(() => {
-    const prioritizedCategories = [
-      'Birthday Cakes',
-      'Wedding Cakes',
-      'Chocolate Cakes',
-      'Bento Cakes',
-      'Theme Cakes',
-      'Red Velvet Cakes',
-      'Fruit Cakes',
-      'Anniversary Cakes',
-      'Designer Cakes',
-      'Custom Cakes'
-    ];
+    return (galleryItems || [])
+      .filter(item => item.enabled !== false)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .map(item => ({
+        id: item.id,
+        src: item.src,
+        label: item.label,
+        link: item.link || '/menu'
+      }));
+  }, [galleryItems]);
 
-    return prioritizedCategories.map(cat => {
-      const categoryProducts = products.filter(p => p.category === cat);
-      if (categoryProducts.length === 0) return null;
-
-      // Select the highest-quality image based on rating * reviews
-      const bestProduct = [...categoryProducts].sort((a, b) =>
-        (b.rating * b.reviews) - (a.rating * a.reviews)
-      )[0];
-
-      return {
-        id: bestProduct.id,
-        src: bestProduct.img,
-        label: bestProduct.name
-      };
-    }).filter((img): img is { id: any; src: string; label: string } => img !== null);
-  }, [products]);
+  if (galleryImgs.length === 0) {
+    return null;
+  }
 
   return (
     <section id="gallery" className="py-20 bg-chocolate overflow-hidden">
@@ -51,7 +36,7 @@ const Gallery = () => {
           {[...galleryImgs, ...galleryImgs].map((img, i) => (
             <Link
               key={i}
-              href={`/shop/${img.id}`}
+              href={img.link}
               className="w-[280px] h-[340px] min-w-[280px] rounded-[18px] overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.4)] group block"
             >
               <Image
