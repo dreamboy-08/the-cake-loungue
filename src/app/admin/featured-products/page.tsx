@@ -18,19 +18,24 @@ import {
   AlertCircle,
   Sparkles,
   RefreshCw,
+  RotateCcw,
   Package,
   X
 } from 'lucide-react';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DEFAULT_FEATURED_IDS = ['1', '2', '3', '5', '6', '7', '9', '11', '13', '17', '55', '59', '103', '114', '325', '327'];
 
 const AdminFeaturedProducts = () => {
-  const { featuredProducts, updateFeaturedProducts, loading: cmsLoading } = useCMS();
+  const { featuredProducts, updateFeaturedProducts, loading: cmsLoading, hasUndo, undo, restoreDefaults } = useCMS();
   const { products, loading: productsLoading } = useProducts();
 
   const [localSettings, setLocalSettings] = useState<FeaturedProductsSettings | null>(null);
   const [saving, setSaving] = useState(false);
+  const [undoing, setUndoing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Search/Filter states for the product picker list
@@ -106,17 +111,31 @@ const AdminFeaturedProducts = () => {
     }
   };
 
-  // Reset to static system defaults
-  const handleResetToDefaults = () => {
-    if (!localSettings) return;
-    setLocalSettings({
-      id: 'featured_products',
-      enabled: true,
-      title: 'Featured Cakes',
-      subtitle: 'Our Bestsellers',
-      productIds: [...DEFAULT_FEATURED_IDS]
-    });
-    showToast("Reset local inputs to default array. Save to apply.");
+  const handleUndo = async () => {
+    setUndoing(true);
+    try {
+      await undo('featuredProducts');
+      showToast("Previous state restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore previous state.", "error");
+    } finally {
+      setUndoing(false);
+    }
+  };
+
+  const handleRestoreDefaults = async () => {
+    setRestoring(true);
+    try {
+      await restoreDefaults('featuredProducts');
+      setShowRestoreConfirm(false);
+      showToast("Default content restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore default content.", "error");
+    } finally {
+      setRestoring(false);
+    }
   };
 
   // Get categories from the catalog list to populate search filter
@@ -178,13 +197,25 @@ const AdminFeaturedProducts = () => {
           <p className="text-gray-500 mt-1 text-sm">Select, remove, and sort which products show in the homepage Featured section dynamically.</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 justify-end">
+          {hasUndo('featuredProducts') && (
+            <button
+              onClick={handleUndo}
+              disabled={undoing}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-rose-deep/20 bg-rose-deep/5 hover:bg-rose-deep/10 text-rose-deep h-11 min-h-[44px] disabled:opacity-50"
+            >
+              <RefreshCw size={14} className={undoing ? "animate-spin" : ""} />
+              <span>Undo Last Change</span>
+            </button>
+          )}
+
           <button
-            onClick={handleResetToDefaults}
+            onClick={() => setShowRestoreConfirm(true)}
+            disabled={restoring}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 h-11 min-h-[44px]"
           >
-            <RefreshCw size={14} />
-            <span>Reset Defaults</span>
+            <RotateCcw size={14} />
+            <span>Restore Defaults</span>
           </button>
 
           <button
@@ -393,6 +424,18 @@ const AdminFeaturedProducts = () => {
         </div>
 
       </div>
+
+      <AdminConfirmationModal
+        isOpen={showRestoreConfirm}
+        onClose={() => setShowRestoreConfirm(false)}
+        onConfirm={handleRestoreDefaults}
+        title="Restore Default Content?"
+        message="This will replace the current content in this section with the original default content. Your current changes can be recovered using Undo."
+        confirmText="Restore Defaults"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={restoring}
+      />
     </div>
   );
 };

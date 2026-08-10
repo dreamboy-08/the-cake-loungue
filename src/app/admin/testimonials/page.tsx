@@ -16,7 +16,9 @@ import {
   User,
   ThumbsUp,
   ThumbsDown,
-  MessageSquare
+  MessageSquare,
+  RefreshCw,
+  RotateCcw
 } from 'lucide-react';
 import TestimonialForm from '@/components/admin/TestimonialForm';
 import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
@@ -24,13 +26,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 const AdminTestimonials = () => {
-  const { testimonials, updateTestimonials, deleteTestimonialFromDB, loading } = useCMS();
+  const { testimonials, updateTestimonials, deleteTestimonialFromDB, loading, hasUndo, undo, restoreDefaults } = useCMS();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CMSTestimonial | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
 
   // Status and feedback states
   const [statusUpdating, setStatusUpdating] = useState<string | null>(null);
+  const [undoing, setUndoing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   // Tabs for moderation: 'all' | 'pending' | 'approved' | 'rejected'
@@ -102,6 +107,33 @@ const AdminTestimonials = () => {
     }
   };
 
+  const handleUndo = async () => {
+    setUndoing(true);
+    try {
+      await undo('testimonials');
+      showToast("Previous state restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore previous state.", "error");
+    } finally {
+      setUndoing(false);
+    }
+  };
+
+  const handleRestoreDefaults = async () => {
+    setRestoring(true);
+    try {
+      await restoreDefaults('testimonials');
+      setShowRestoreConfirm(false);
+      showToast("Default content restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore default content.", "error");
+    } finally {
+      setRestoring(false);
+    }
+  };
+
   const getInitials = (name: string) => {
     if (!name) return 'C';
     const parts = name.trim().split(/\s+/);
@@ -144,16 +176,38 @@ const AdminTestimonials = () => {
           <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Testimonials CMS</h1>
           <p className="text-gray-500 text-sm mt-1">Manage and moderate customer reviews and manual testimonials.</p>
         </div>
-        <button
-          onClick={() => {
-            setSelectedItem(null);
-            setIsFormOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full sm:w-auto h-11 min-h-[44px]"
-        >
-          <Plus size={20} />
-          <span>Add Testimonial</span>
-        </button>
+        <div className="flex flex-wrap gap-3 items-center w-full sm:w-auto justify-end">
+          {hasUndo('testimonials') && (
+            <button
+              onClick={handleUndo}
+              disabled={undoing}
+              className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-rose-deep/20 bg-rose-deep/5 hover:bg-rose-deep/10 text-rose-deep h-11 min-h-[44px] disabled:opacity-50"
+            >
+              <RefreshCw size={14} className={undoing ? "animate-spin" : ""} />
+              <span>Undo Last Change</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowRestoreConfirm(true)}
+            disabled={restoring}
+            className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 h-11 min-h-[44px]"
+          >
+            <RotateCcw size={14} />
+            <span>Restore Defaults</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setSelectedItem(null);
+              setIsFormOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 bg-rose-deep text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-rose-deep/20 hover:bg-brown transition-all w-full sm:w-auto h-11 min-h-[44px]"
+          >
+            <Plus size={20} />
+            <span>Add Testimonial</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -345,6 +399,18 @@ const AdminTestimonials = () => {
         confirmText="Confirm Delete"
         cancelText="Cancel"
         type="danger"
+      />
+
+      <AdminConfirmationModal
+        isOpen={showRestoreConfirm}
+        onClose={() => setShowRestoreConfirm(false)}
+        onConfirm={handleRestoreDefaults}
+        title="Restore Default Content?"
+        message="This will replace the current content in this section with the original default content. Your current changes can be recovered using Undo."
+        confirmText="Restore Defaults"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={restoring}
       />
     </div>
   );

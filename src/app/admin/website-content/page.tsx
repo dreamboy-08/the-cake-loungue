@@ -47,9 +47,13 @@ import {
   Grid,
   Copy,
   Check,
-  Youtube
+  Youtube,
+  RotateCcw,
+  ShieldCheck,
+  RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
 
 const AdminCMS = () => {
   const {
@@ -72,7 +76,11 @@ const AdminCMS = () => {
     updateWebsiteSettings,
     updateMediaItems,
     updateSEOMetadata,
-    updateGeneralSettings
+    updateGeneralSettings,
+
+    hasUndo,
+    undo,
+    restoreDefaults
   } = useCMS();
 
   const [saving, setSaving] = useState(false);
@@ -91,6 +99,72 @@ const AdminCMS = () => {
   }, []);
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // Safety / Recovery states and helpers
+  const [undoing, setUndoing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
+
+  const getCmsKeyForTab = (tab: string) => {
+    switch (tab) {
+      case 'navigation': return 'navigation';
+      case 'megamenu': return 'megaMenus';
+      case 'homepage': return 'homepageSections';
+      case 'announcements': return 'announcements';
+      case 'collections': return 'collections';
+      case 'settings': return 'websiteSettings';
+      case 'media': return 'mediaItems';
+      case 'seo': return 'seoMetadata';
+      case 'general': return 'generalSettings';
+      default: return '';
+    }
+  };
+
+  const getTabLabel = (tab: string) => {
+    switch (tab) {
+      case 'navigation': return 'Header Navigation';
+      case 'megamenu': return 'Mega Menu';
+      case 'homepage': return 'Homepage Hero & Layout';
+      case 'announcements': return 'Announcements & Marquee';
+      case 'collections': return 'Collections';
+      case 'settings': return 'Website Settings & Branding';
+      case 'media': return 'Media Library References';
+      case 'seo': return 'SEO Metadata';
+      case 'general': return 'General & Checkout Config';
+      default: return tab;
+    }
+  };
+
+  const handleUndo = async () => {
+    const key = getCmsKeyForTab(activeTab);
+    if (!key) return;
+    setUndoing(true);
+    try {
+      await undo(key);
+      showToast("Previous state restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore previous state.", 'error');
+    } finally {
+      setUndoing(false);
+    }
+  };
+
+  const handleRestoreDefaults = async () => {
+    const key = getCmsKeyForTab(activeTab);
+    if (!key) return;
+    setRestoring(true);
+    try {
+      await restoreDefaults(key);
+      setShowRestoreConfirm(false);
+      showToast("Default content restored successfully.");
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to restore default content.", 'error');
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   // Drag and drop states
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -306,6 +380,37 @@ const AdminCMS = () => {
               <span className="inline-block">{tab.label}</span>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* CMS Safety & Recovery Actions Bar */}
+      <div className="bg-cream p-4 rounded-[22px] border border-rose/10 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="text-rose-deep shrink-0" size={18} />
+          <span className="text-xs font-bold text-chocolate uppercase tracking-wider">
+            CMS Safety Active — <span className="underline">{getTabLabel(activeTab)}</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2.5">
+          {hasUndo(getCmsKeyForTab(activeTab)) && (
+            <button
+              onClick={handleUndo}
+              disabled={undoing}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-rose-deep/20 bg-rose-deep/5 hover:bg-rose-deep/10 text-rose-deep disabled:opacity-50 h-10 shrink-0 animate-fade-in"
+            >
+              <RefreshCw size={14} className={undoing ? "animate-spin" : ""} />
+              <span>Undo Last Change</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowRestoreConfirm(true)}
+            disabled={restoring}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 h-10 shrink-0"
+          >
+            <RotateCcw size={14} />
+            <span>Restore Defaults</span>
+          </button>
         </div>
       </div>
 
@@ -1933,6 +2038,18 @@ const AdminCMS = () => {
           </div>
         </div>
       )}
+
+      <AdminConfirmationModal
+        isOpen={showRestoreConfirm}
+        onClose={() => setShowRestoreConfirm(false)}
+        onConfirm={handleRestoreDefaults}
+        title="Restore Default Content?"
+        message={`This will replace the current content in the ${getTabLabel(activeTab)} section with the original default content. Your current changes can be recovered using Undo.`}
+        confirmText="Restore Defaults"
+        cancelText="Cancel"
+        type="danger"
+        isLoading={restoring}
+      />
     </div>
   );
 };

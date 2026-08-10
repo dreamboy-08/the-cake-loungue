@@ -51,20 +51,25 @@ interface CMSContextType {
   loading: boolean;
 
   // Setters
-  updateNavigation: (items: NavigationItem[]) => Promise<void>;
-  updateMegaMenus: (sections: MegaMenuSection[]) => Promise<void>;
-  updateHomepageSections: (sections: HomepageSection[]) => Promise<void>;
-  updateAnnouncements: (items: Announcement[]) => Promise<void>;
-  updateCollections: (items: CollectionCMSItem[]) => Promise<void>;
-  updateCategories: (items: CMSCategory[]) => Promise<void>;
-  updateWebsiteSettings: (settings: CMSWebsiteSettings) => Promise<void>;
-  updateMediaItems: (items: CMSMediaItem[]) => Promise<void>;
-  updateSEOMetadata: (metadata: CMSSEOMetadata[]) => Promise<void>;
-  updateGeneralSettings: (settings: CMSGeneralSettings) => Promise<void>;
-  updateAboutSettings: (settings: AboutSectionSettings) => Promise<void>;
-  updateFeaturedProducts: (settings: FeaturedProductsSettings) => Promise<void>;
-  updateTestimonials: (items: CMSTestimonial[]) => Promise<void>;
+  updateNavigation: (items: NavigationItem[], trackHistory?: boolean) => Promise<void>;
+  updateMegaMenus: (sections: MegaMenuSection[], trackHistory?: boolean) => Promise<void>;
+  updateHomepageSections: (sections: HomepageSection[], trackHistory?: boolean) => Promise<void>;
+  updateAnnouncements: (items: Announcement[], trackHistory?: boolean) => Promise<void>;
+  updateCollections: (items: CollectionCMSItem[], trackHistory?: boolean) => Promise<void>;
+  updateCategories: (items: CMSCategory[], trackHistory?: boolean) => Promise<void>;
+  updateWebsiteSettings: (settings: CMSWebsiteSettings, trackHistory?: boolean) => Promise<void>;
+  updateMediaItems: (items: CMSMediaItem[], trackHistory?: boolean) => Promise<void>;
+  updateSEOMetadata: (metadata: CMSSEOMetadata[], trackHistory?: boolean) => Promise<void>;
+  updateGeneralSettings: (settings: CMSGeneralSettings, trackHistory?: boolean) => Promise<void>;
+  updateAboutSettings: (settings: AboutSectionSettings, trackHistory?: boolean) => Promise<void>;
+  updateFeaturedProducts: (settings: FeaturedProductsSettings, trackHistory?: boolean) => Promise<void>;
+  updateTestimonials: (items: CMSTestimonial[], trackHistory?: boolean) => Promise<void>;
   deleteTestimonialFromDB: (id: string) => Promise<void>;
+
+  // CMS Safety / Recovery System
+  hasUndo: (key: string) => boolean;
+  undo: (key: string) => Promise<void>;
+  restoreDefaults: (key: string) => Promise<void>;
 }
 
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
@@ -84,6 +89,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
   const [testimonials, setTestimonials] = useState<CMSTestimonial[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Undo / Safety System State
+  const [previousStates, setPreviousStates] = useState<Record<string, any>>({});
 
   const isFirebaseConfigured =
     typeof process !== 'undefined' &&
@@ -160,8 +168,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
+  // --- SAVE PREVIOUS STATE HELPER ---
+  const savePreviousState = useCallback((key: string, currentState: any) => {
+    if (currentState === undefined || currentState === null) return;
+    setPreviousStates(prev => ({
+      ...prev,
+      [key]: JSON.parse(JSON.stringify(currentState))
+    }));
+  }, []);
+
   // --- SETTER FUNCTIONS (Saves to Firestore or falls back offline) ---
-  const updateNavigation = async (items: NavigationItem[]) => {
+  const updateNavigation = async (items: NavigationItem[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('navigation', navigation);
+    }
     setNavigation(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('navigation', items);
@@ -178,7 +198,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateMegaMenus = async (sections: MegaMenuSection[]) => {
+  const updateMegaMenus = async (sections: MegaMenuSection[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('megaMenus', megaMenus);
+    }
     setMegaMenus(sections);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('megaMenus', sections);
@@ -194,7 +217,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateHomepageSections = async (sections: HomepageSection[]) => {
+  const updateHomepageSections = async (sections: HomepageSection[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('homepageSections', homepageSections);
+    }
     setHomepageSections(sections);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('homepageSections', sections);
@@ -210,7 +236,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateAnnouncements = async (items: Announcement[]) => {
+  const updateAnnouncements = async (items: Announcement[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('announcements', announcements);
+    }
     setAnnouncements(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('announcements', items);
@@ -226,7 +255,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateCollections = async (items: CollectionCMSItem[]) => {
+  const updateCollections = async (items: CollectionCMSItem[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('collections', collections);
+    }
     setCollections(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('collections', items);
@@ -242,7 +274,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateCategories = async (items: CMSCategory[]) => {
+  const updateCategories = async (items: CMSCategory[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('categories', categories);
+    }
     setCategories(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('categories', items);
@@ -258,7 +293,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateWebsiteSettings = async (settings: CMSWebsiteSettings) => {
+  const updateWebsiteSettings = async (settings: CMSWebsiteSettings, trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('websiteSettings', websiteSettings);
+    }
     setWebsiteSettings(settings);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('websiteSettings', settings);
@@ -272,7 +310,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateMediaItems = async (items: CMSMediaItem[]) => {
+  const updateMediaItems = async (items: CMSMediaItem[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('mediaItems', mediaItems);
+    }
     setMediaItems(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('mediaItems', items);
@@ -288,7 +329,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateSEOMetadata = async (metadata: CMSSEOMetadata[]) => {
+  const updateSEOMetadata = async (metadata: CMSSEOMetadata[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('seoMetadata', seoMetadata);
+    }
     setSeoMetadata(metadata);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('seoMetadata', metadata);
@@ -304,7 +348,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateGeneralSettings = async (settings: CMSGeneralSettings) => {
+  const updateGeneralSettings = async (settings: CMSGeneralSettings, trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('generalSettings', generalSettings);
+    }
     setGeneralSettings(settings);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('generalSettings', settings);
@@ -318,7 +365,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateAboutSettings = async (settings: AboutSectionSettings) => {
+  const updateAboutSettings = async (settings: AboutSectionSettings, trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('aboutSettings', aboutSettings);
+    }
     setAboutSettings(settings);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('aboutSettings', settings);
@@ -332,7 +382,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateFeaturedProducts = async (settings: FeaturedProductsSettings) => {
+  const updateFeaturedProducts = async (settings: FeaturedProductsSettings, trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('featuredProducts', featuredProducts);
+    }
     setFeaturedProducts(settings);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('featuredProducts', settings);
@@ -346,7 +399,10 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateTestimonials = async (items: CMSTestimonial[]) => {
+  const updateTestimonials = async (items: CMSTestimonial[], trackHistory = true) => {
+    if (trackHistory) {
+      savePreviousState('testimonials', testimonials);
+    }
     setTestimonials(items);
     if (!isFirebaseConfigured) {
       saveOfflineCMS('testimonials', items);
@@ -373,6 +429,141 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error("Failed to delete testimonial from Firestore:", err);
     }
   };
+
+  // --- CMS Safety / Recovery Actions ---
+  const hasUndo = useCallback((key: string) => {
+    // Standardize key mappings
+    const normalizedKey = key === 'hero' ? 'homepageSections' : key;
+    return !!previousStates[normalizedKey];
+  }, [previousStates]);
+
+  const undo = useCallback(async (key: string) => {
+    const normalizedKey = key === 'hero' ? 'homepageSections' : key;
+    const prevState = previousStates[normalizedKey];
+    if (!prevState) return;
+
+    switch (normalizedKey) {
+      case 'navigation':
+        await updateNavigation(prevState, false);
+        break;
+      case 'megaMenus':
+        await updateMegaMenus(prevState, false);
+        break;
+      case 'homepageSections':
+        await updateHomepageSections(prevState, false);
+        break;
+      case 'announcements':
+        await updateAnnouncements(prevState, false);
+        break;
+      case 'collections':
+        await updateCollections(prevState, false);
+        break;
+      case 'categories':
+        await updateCategories(prevState, false);
+        break;
+      case 'websiteSettings':
+        await updateWebsiteSettings(prevState, false);
+        break;
+      case 'mediaItems':
+        await updateMediaItems(prevState, false);
+        break;
+      case 'seoMetadata':
+        await updateSEOMetadata(prevState, false);
+        break;
+      case 'generalSettings':
+        await updateGeneralSettings(prevState, false);
+        break;
+      case 'aboutSettings':
+        await updateAboutSettings(prevState, false);
+        break;
+      case 'featuredProducts':
+        await updateFeaturedProducts(prevState, false);
+        break;
+      case 'testimonials':
+        await updateTestimonials(prevState, false);
+        break;
+    }
+
+    setPreviousStates(prev => {
+      const next = { ...prev };
+      delete next[normalizedKey];
+      return next;
+    });
+  }, [
+    previousStates,
+    updateNavigation,
+    updateMegaMenus,
+    updateHomepageSections,
+    updateAnnouncements,
+    updateCollections,
+    updateCategories,
+    updateWebsiteSettings,
+    updateMediaItems,
+    updateSEOMetadata,
+    updateGeneralSettings,
+    updateAboutSettings,
+    updateFeaturedProducts,
+    updateTestimonials
+  ]);
+
+  const restoreDefaults = useCallback(async (key: string) => {
+    const normalizedKey = key === 'hero' ? 'homepageSections' : key;
+    switch (normalizedKey) {
+      case 'navigation':
+        await updateNavigation(DEFAULT_NAVIGATION);
+        break;
+      case 'megaMenus':
+        await updateMegaMenus(DEFAULT_MEGA_MENUS);
+        break;
+      case 'homepageSections':
+        await updateHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
+        break;
+      case 'announcements':
+        await updateAnnouncements(DEFAULT_ANNOUNCEMENTS);
+        break;
+      case 'collections':
+        await updateCollections(DEFAULT_COLLECTIONS);
+        break;
+      case 'categories':
+        await updateCategories(DEFAULT_CATEGORIES);
+        break;
+      case 'websiteSettings':
+        await updateWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
+        break;
+      case 'mediaItems':
+        await updateMediaItems(DEFAULT_MEDIA_LIBRARY);
+        break;
+      case 'seoMetadata':
+        await updateSEOMetadata(DEFAULT_SEO_METADATA);
+        break;
+      case 'generalSettings':
+        await updateGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+        break;
+      case 'aboutSettings':
+        await updateAboutSettings(DEFAULT_ABOUT_SETTINGS);
+        break;
+      case 'featuredProducts':
+        await updateFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+        break;
+      case 'testimonials':
+        await updateTestimonials(DEFAULT_TESTIMONIALS);
+        break;
+    }
+  }, [
+    updateNavigation,
+    updateMegaMenus,
+    updateHomepageSections,
+    updateAnnouncements,
+    updateCollections,
+    updateCategories,
+    updateWebsiteSettings,
+    updateMediaItems,
+    updateSEOMetadata,
+    updateGeneralSettings,
+    updateAboutSettings,
+    updateFeaturedProducts,
+    updateTestimonials
+  ]);
 
   // --- INITIAL LOAD & REAL-TIME LISTENERS ---
   useEffect(() => {
@@ -521,7 +712,11 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateAboutSettings,
       updateFeaturedProducts,
       updateTestimonials,
-      deleteTestimonialFromDB
+      deleteTestimonialFromDB,
+
+      hasUndo,
+      undo,
+      restoreDefaults
     }}>
       {children}
     </CMSContext.Provider>
