@@ -41,10 +41,14 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
       }));
   }, [decorations]);
 
-  // Memoize recommendation calculations
-  const recommendedList = useMemo(() => {
-    const baseRecs = getRecommendations(currentProduct, allProducts, { limit: 12 });
-    if (activeDecorations.length === 0) return baseRecs;
+  // Memoize recommendation calculations for Cakes
+  const recommendedCakes = useMemo(() => {
+    return getRecommendations(currentProduct, allProducts, { limit: 12 });
+  }, [currentProduct, allProducts]);
+
+  // Memoize recommendation calculations for Decorations
+  const recommendedDecorations = useMemo(() => {
+    if (activeDecorations.length === 0) return [];
 
     // Rank decorations based on matchmaking signals
     const scoredDecorations = activeDecorations.map((dec) => {
@@ -77,33 +81,24 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
 
     // Sort decorations by matchmaking score desc
     scoredDecorations.sort((a, b) => b.score - a.score);
-    const sortedDecorationsList = scoredDecorations.map(sd => sd.dec);
+    return scoredDecorations.map(sd => sd.dec).slice(0, 12);
+  }, [currentProduct, activeDecorations]);
 
-    // Mixed pool with interleaving (e.g. 2 cakes, then 2 decorations, etc.)
-    const mixedPool: any[] = [];
-    let cakeIdx = 0;
-    let decorIdx = 0;
-
-    while (cakeIdx < baseRecs.length || decorIdx < sortedDecorationsList.length) {
-      // Add up to 2 cakes
-      for (let k = 0; k < 2 && cakeIdx < baseRecs.length; k++) {
-        mixedPool.push(baseRecs[cakeIdx++]);
-      }
-      // Add up to 2 decorations
-      for (let d = 0; d < 2 && decorIdx < sortedDecorationsList.length; d++) {
-        mixedPool.push(sortedDecorationsList[decorIdx++]);
-      }
-    }
-
-    return mixedPool.slice(0, 12);
-  }, [currentProduct, allProducts, activeDecorations]);
+  // Combined full list for the Drawer (cakes first, then decorations)
+  const recommendedList = useMemo(() => {
+    return [...recommendedCakes, ...recommendedDecorations];
+  }, [recommendedCakes, recommendedDecorations]);
 
   // First 4 products to display in the main PDP section
-  const pdpRecommendations = useMemo(() => {
-    return recommendedList.slice(0, 4);
-  }, [recommendedList]);
+  const pdpCakes = useMemo(() => {
+    return recommendedCakes.slice(0, 4);
+  }, [recommendedCakes]);
 
-  if (recommendedList.length === 0) {
+  const pdpDecorations = useMemo(() => {
+    return recommendedDecorations.slice(0, 4);
+  }, [recommendedDecorations]);
+
+  if (pdpCakes.length === 0 && pdpDecorations.length === 0) {
     return null;
   }
 
@@ -124,38 +119,65 @@ export const ProductRecommendations: React.FC<ProductRecommendationsProps> = ({
         </button>
       </div>
 
-      {/* Recommendations Cards Grid */}
-      {/*
-        Responsive layout requirements:
-        - Desktop: 4 recommended products
-        - Tablet: 2 products per row
-        - Mobile: 1.2 - 1.5 cards with smooth horizontal scrolling
-      */}
-      <div className="relative overflow-hidden sm:overflow-visible">
-        {/* Mobile: horizontal scrollable flex container | Tablet/Desktop: Grid layout */}
-        <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {pdpRecommendations.map((product) => (
-            <div key={product.id} className="animate-fade-up">
-              <RecommendationCard product={product} />
+      {/* Cakes Section */}
+      {pdpCakes.length > 0 && (
+        <div className="mb-10">
+          <h4 className="text-lg md:text-xl font-bold font-playfair text-chocolate mb-4">Cakes</h4>
+          <div className="relative overflow-hidden sm:overflow-visible">
+            <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {pdpCakes.map((product) => (
+                <div key={product.id} className="animate-fade-up">
+                  <RecommendationCard product={product} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Mobile Horizontal Scroll with seamless edge bleeding */}
-        <div
-          className="flex sm:hidden overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-6 px-6"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {pdpRecommendations.map((product) => (
             <div
-              key={product.id}
-              className="w-[75vw] min-w-[260px] max-w-[320px] shrink-0 snap-start snap-always"
+              className="flex sm:hidden overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-6 px-6"
+              style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              <RecommendationCard product={product} />
+              {pdpCakes.map((product) => (
+                <div
+                  key={product.id}
+                  className="w-[75vw] min-w-[260px] max-w-[320px] shrink-0 snap-start snap-always"
+                >
+                  <RecommendationCard product={product} />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Decorations Section */}
+      {pdpDecorations.length > 0 && (
+        <div>
+          <h4 className="text-lg md:text-xl font-bold font-playfair text-chocolate mb-4">Decorations</h4>
+          <div className="relative overflow-hidden sm:overflow-visible">
+            <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
+              {pdpDecorations.map((product) => (
+                <div key={product.id} className="animate-fade-up">
+                  <RecommendationCard product={product} />
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="flex sm:hidden overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-6 px-6"
+              style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+              {pdpDecorations.map((product) => (
+                <div
+                  key={product.id}
+                  className="w-[75vw] min-w-[260px] max-w-[320px] shrink-0 snap-start snap-always"
+                >
+                  <RecommendationCard product={product} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Drawer showing full recommendation pool */}
       <RecommendationsDrawer
