@@ -96,8 +96,8 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key";
 
-  // --- LOCAL OFFLINE FALLBACK LOADER ---
-  const loadOfflineCMS = useCallback(() => {
+  // --- LOAD CACHED CMS AS FAST FALLBACK ---
+  const loadCachedCMS = useCallback(() => {
     if (typeof window === 'undefined') {
       setNavigation(DEFAULT_NAVIGATION);
       setMegaMenus(DEFAULT_MEGA_MENUS);
@@ -113,7 +113,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       setTestimonials(DEFAULT_TESTIMONIALS);
       setGalleryItems(DEFAULT_GALLERY);
-      setLoading(false);
       return;
     }
 
@@ -153,10 +152,14 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       setTestimonials(DEFAULT_TESTIMONIALS);
       setGalleryItems(DEFAULT_GALLERY);
-    } finally {
-      setLoading(false);
     }
   }, []);
+
+  // --- LOCAL OFFLINE FALLBACK LOADER ---
+  const loadOfflineCMS = useCallback(() => {
+    loadCachedCMS();
+    setLoading(false);
+  }, [loadCachedCMS]);
 
   // --- SAVE STATE OFFLINE HELPER ---
   const saveOfflineCMS = useCallback((key: string, data: any) => {
@@ -425,9 +428,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
     }
 
-    console.log("Subscribing to real-time Firestore CMS configurations...");
+    console.log("Loading cached CMS and subscribing to real-time Firestore CMS configurations...");
+
+    // First, load cached content from local storage immediately as a fast fallback to prevent layout shift or empty lists
+    loadCachedCMS();
 
     const unsubs: (() => void)[] = [];
+    const loadedListeners = new Set<string>();
+
+    const markListenerLoaded = (key: string) => {
+      loadedListeners.add(key);
+      if (loadedListeners.size === 14) {
+        setLoading(false);
+      }
+    };
 
     // Helper to query and order
     const registerListener = <T,>(
@@ -449,19 +463,24 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               id: doc.id
             })) as unknown as T[];
             setter(items);
+            // Update local storage cache to match authoritative Firestore data
+            saveOfflineCMS(collectionName, items);
           } else {
             setter(fallback);
+            saveOfflineCMS(collectionName, fallback);
           }
+          markListenerLoaded(collectionName);
         },
         (error) => {
           console.error(`Real-time fetch failed for ${collectionName}, using fallback:`, error);
           setter(fallback);
+          markListenerLoaded(collectionName);
         }
       );
       unsubs.push(unsub);
     };
 
-    // Listen to arrays
+    // Listen to arrays (10 listeners)
     registerListener('navigation', 'displayOrder', setNavigation, DEFAULT_NAVIGATION);
     registerListener('megaMenus', 'displayOrder', setMegaMenus, DEFAULT_MEGA_MENUS);
     registerListener('homepageSections', 'order', setHomepageSections, DEFAULT_HOMEPAGE_SECTIONS);
@@ -473,61 +492,79 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     registerListener('gallery', 'displayOrder', setGalleryItems, DEFAULT_GALLERY);
     registerListener('seo', null, setSeoMetadata, DEFAULT_SEO_METADATA);
 
-    // Listen to individual config documents in 'settings' collection
+    // Listen to individual config documents in 'settings' collection (4 listeners)
     const unsubGlobal = onSnapshot(doc(db, 'settings', 'global_settings'), (snap) => {
       if (snap.exists()) {
-        setWebsiteSettings(snap.data() as CMSWebsiteSettings);
+        const data = snap.data() as CMSWebsiteSettings;
+        setWebsiteSettings(data);
+        saveOfflineCMS('websiteSettings', data);
       } else {
         setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
+        saveOfflineCMS('websiteSettings', DEFAULT_WEBSITE_SETTINGS);
       }
+      markListenerLoaded('global_settings');
     }, (error) => {
       console.error("Failed to read global website settings, using default:", error);
       setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
+      markListenerLoaded('global_settings');
     });
     unsubs.push(unsubGlobal);
 
     const unsubGeneral = onSnapshot(doc(db, 'settings', 'general_cms_config'), (snap) => {
       if (snap.exists()) {
-        setGeneralSettings(snap.data() as CMSGeneralSettings);
+        const data = snap.data() as CMSGeneralSettings;
+        setGeneralSettings(data);
+        saveOfflineCMS('generalSettings', data);
       } else {
         setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+        saveOfflineCMS('generalSettings', DEFAULT_GENERAL_SETTINGS);
       }
+      markListenerLoaded('general_cms_config');
     }, (error) => {
       console.error("Failed to read general settings, using default:", error);
       setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+      markListenerLoaded('general_cms_config');
     });
     unsubs.push(unsubGeneral);
 
     const unsubAbout = onSnapshot(doc(db, 'settings', 'about_settings'), (snap) => {
       if (snap.exists()) {
-        setAboutSettings(snap.data() as AboutSectionSettings);
+        const data = snap.data() as AboutSectionSettings;
+        setAboutSettings(data);
+        saveOfflineCMS('aboutSettings', data);
       } else {
         setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+        saveOfflineCMS('aboutSettings', DEFAULT_ABOUT_SETTINGS);
       }
+      markListenerLoaded('about_settings');
     }, (error) => {
       console.error("Failed to read about settings, using default:", error);
       setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+      markListenerLoaded('about_settings');
     });
     unsubs.push(unsubAbout);
 
     const unsubFeatured = onSnapshot(doc(db, 'settings', 'featured_products'), (snap) => {
       if (snap.exists()) {
-        setFeaturedProducts(snap.data() as FeaturedProductsSettings);
+        const data = snap.data() as FeaturedProductsSettings;
+        setFeaturedProducts(data);
+        saveOfflineCMS('featuredProducts', data);
       } else {
         setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+        saveOfflineCMS('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS);
       }
+      markListenerLoaded('featured_products');
     }, (error) => {
       console.error("Failed to read featured products settings, using default:", error);
       setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+      markListenerLoaded('featured_products');
     });
     unsubs.push(unsubFeatured);
-
-    setLoading(false);
 
     return () => {
       unsubs.forEach(unsub => unsub());
     };
-  }, [isFirebaseConfigured, loadOfflineCMS]);
+  }, [isFirebaseConfigured, loadOfflineCMS, loadCachedCMS, saveOfflineCMS]);
 
   return (
     <CMSContext.Provider value={{
