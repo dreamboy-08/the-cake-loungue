@@ -83,9 +83,9 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
 
     // 16. Cleanup / Restore Default configurations
     await page.goto('/admin/hero?bypass=true');
-    await page.locator('button:has-text("Reset Defaults")').click();
-    await page.locator('button:has-text("Save All Settings")').click();
-    await expect(page.locator('text=Homepage Hero configurations saved successfully!')).toBeVisible();
+    await page.locator('button:has-text("Restore Defaults")').first().click();
+    await page.locator('button:has-text("Restore Defaults")').last().click(); // confirm dialog
+    await expect(page.locator('text=Default content restored successfully.')).toBeVisible();
 
     // 17. Verify original heading returned to homepage
     await page.goto('/');

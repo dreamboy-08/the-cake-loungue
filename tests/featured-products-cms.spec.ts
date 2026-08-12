@@ -18,8 +18,9 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
     await expect(page.getByText('Curated Featured List')).toBeVisible();
 
     // Reset defaults first to ensure clean state
-    await page.click('button:has-text("Reset Defaults")');
-    await expect(page.getByText('Reset local inputs to default array. Save to apply.')).toBeVisible();
+    await page.locator('button:has-text("Restore Defaults")').first().click();
+    await page.locator('button:has-text("Restore Defaults")').last().click(); // click on confirm modal button
+    await expect(page.locator('text=Default content restored successfully.')).toBeVisible();
 
     // 2. Customize Title & Subtitle Labels
     const headingInput = page.locator('input[placeholder="e.g. Featured Cakes"]');
