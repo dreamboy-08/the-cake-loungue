@@ -13,7 +13,8 @@ import {
   CMSCategory,
   FeaturedProductsSettings,
   CMSTestimonial,
-  CMSGalleryItem
+  CMSGalleryItem,
+  CMSDecorationItem
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -926,5 +927,48 @@ export const DEFAULT_GALLERY: CMSGalleryItem[] = [
     displayOrder: 5,
     enabled: true,
     link: '/shop/7'
+  }
+];
+
+export const DEFAULT_DECORATIONS: CMSDecorationItem[] = [
+  {
+    id: 'dec_1',
+    name: 'Premium Pastel Balloon Bouquet',
+    description: 'A beautiful bouquet of 15 premium pastel balloons in soft pink, blue, and gold accents. Perfect for birthdays and anniversaries.',
+    price: 349,
+    img: '/images/products/Velvet Pearl Cupcake.jpg',
+    category: 'Balloons',
+    enabled: true,
+    displayOrder: 0
+  },
+  {
+    id: 'dec_2',
+    name: 'Luxury Golden Sparkler Candles',
+    description: 'Pack of 4 gold-plated sparkling candles. Adds a magical and premium luxury touch to your celebration.',
+    price: 99,
+    img: '/images/products/Velvet Pearl Cupcake.jpg',
+    category: 'Candles',
+    enabled: true,
+    displayOrder: 1
+  },
+  {
+    id: 'dec_3',
+    name: 'Elegant Acrylic Happy Birthday Topper',
+    description: 'High-quality gold acrylic topper for your cake. Reusable and elegant.',
+    price: 149,
+    img: '/images/products/Velvet Pearl Cupcake.jpg',
+    category: 'Toppers',
+    enabled: true,
+    displayOrder: 2
+  },
+  {
+    id: 'dec_4',
+    name: 'Romantic Rose Petals & Tea Lights Kit',
+    description: 'Includes 100 artificial red rose petals and 10 LED tea light candles to create a romantic ambient surprise.',
+    price: 249,
+    img: '/images/products/Velvet Pearl Cupcake.jpg',
+    category: 'Party Kits',
+    enabled: true,
+    displayOrder: 3
   }
 ];

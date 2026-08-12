@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
 import { useProducts } from '@/context/ProductsContext';
+import { useCMS } from '@/context/CMSContext';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -18,48 +19,75 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const { cart, removeFromCart, updateQuantity, cartTotal, cartCount, isLoading, addToCart } = useCart();
   const router = useRouter();
   const { products } = useProducts();
+  const { decorations } = useCMS();
 
   const recommendations = React.useMemo(() => {
+    const activeDecorations = (decorations || [])
+      .filter(d => d.enabled !== false)
+      .map(d => ({
+        id: d.id as any,
+        name: d.name,
+        flavor: 'Standard',
+        category: d.category,
+        price: d.price,
+        oldPrice: 0,
+        rating: 5,
+        reviews: 12,
+        tag: 'Decoration',
+        img: d.img,
+        description: d.description,
+        preparationTime: 0,
+      }));
+
+    const cartItemIds = cart.map((item) => item.id.toString());
+
     if (cart.length === 0) {
-      // If cart is empty, show top popular bestseller products
-      return products
-        .filter(p => p.tag === 'Bestseller' || p.tag === 'Trending' || p.rating >= 4)
+      const fallbackProducts = products
+        .filter(p => p.tag === 'Bestseller' || p.tag === 'Trending' || p.rating >= 4);
+
+      const mixed = [...fallbackProducts, ...activeDecorations]
+        .filter(p => !cartItemIds.includes(p.id.toString()))
         .slice(0, 4);
+      return mixed;
     }
 
-    const cartItemIds = cart.map((item) => item.id);
     const cartCategories = Array.from(new Set(cart.map((item) => {
-      // Retrieve category of product from constants using id fallback
-      const matchingProduct = products.find(p => p.id.toString() === item.id.toString());
+      const matchingProduct = products.find(p => p.id.toString() === item.id.toString()) ||
+                              activeDecorations.find(d => d.id.toString() === item.id.toString());
       return matchingProduct ? matchingProduct.category : null;
     }).filter(Boolean)));
 
-    // Exclude items already in the cart
-    const eligibleProducts = products.filter((p) => !cartItemIds.map(String).includes(p.id.toString()));
+    const eligibleProducts = products.filter((p) => !cartItemIds.includes(p.id.toString()));
+    const eligibleDecorations = activeDecorations.filter((d) => !cartItemIds.includes(d.id.toString()));
 
-    // Score and rank products
-    const scored = eligibleProducts.map((product) => {
+    const scoredCakes = eligibleProducts.map((product) => {
       let score = 0;
-      // 1. Same category
       if (cartCategories.includes(product.category)) {
         score += 100;
       }
-      // 2. Similar / Bestseller tags
       if (product.tag === 'Bestseller' || product.tag === 'Trending') {
         score += 20;
       }
-      // 3. Popularity (rating & reviews count)
       score += product.rating * 5 + (product.reviews / 5);
 
       return { product, score };
     });
 
-    // Sort descending by score
-    scored.sort((a, b) => b.score - a.score);
+    scoredCakes.sort((a, b) => b.score - a.score);
+    const topCakes = scoredCakes.map((s) => s.product);
 
-    // Take top 4 recommended products
-    return scored.slice(0, 4).map((s) => s.product);
-  }, [cart, products]);
+    const finalRecs: any[] = [];
+    finalRecs.push(...topCakes.slice(0, 2));
+    finalRecs.push(...eligibleDecorations.slice(0, 2));
+
+    if (finalRecs.length < 4) {
+      const remainingCakes = topCakes.slice(2);
+      const remainingDecorations = eligibleDecorations.slice(2);
+      finalRecs.push(...remainingCakes, ...remainingDecorations);
+    }
+
+    return finalRecs.slice(0, 4);
+  }, [cart, products, decorations]);
 
   return (
     <AnimatePresence>
@@ -169,7 +197,11 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                 </button>
                               </div>
                               <p className="text-xs text-text-soft mt-1">
-                                {item.flavor || 'Standard'} • {item.weight || '0.5 Kg'}{item.serves ? ` • Serves ${item.serves}` : ''}
+                                {[
+                                  item.flavor,
+                                  item.weight,
+                                  item.serves ? `Serves ${item.serves}` : null
+                                ].filter(Boolean).join(' • ') || 'Celebration Accessory'}
                               </p>
                               {item.message && (
                                 <p className="text-[11px] font-bold text-rose-deep mt-1 bg-cream-dark/30 px-2 py-0.5 rounded-md inline-block">
