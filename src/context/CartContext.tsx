@@ -6,7 +6,7 @@ import { db } from '@/utils/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 export interface CartItem {
-  id: number;
+  id: string | number;
   cartItemId: string; // Unique identifier for items with different options
   name: string;
   price: number;

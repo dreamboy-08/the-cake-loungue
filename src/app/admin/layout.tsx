@@ -106,6 +106,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Announcements', href: '/admin/announcements', icon: <Megaphone size={20} /> },
     { label: 'Testimonials', href: '/admin/testimonials', icon: <Star size={20} /> },
     { label: 'Gallery', href: '/admin/gallery', icon: <ImageIcon size={20} /> },
+    { label: 'Decorative Items', href: '/admin/decorations', icon: <Tags size={20} /> },
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Categories', href: '/admin/categories', icon: <Tags size={20} /> },
     { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
