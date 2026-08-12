@@ -89,6 +89,14 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     return finalRecs.slice(0, 4);
   }, [cart, products, decorations]);
 
+  const recommendationsCakes = React.useMemo(() => {
+    return recommendations.filter((p) => p.tag !== 'Decoration');
+  }, [recommendations]);
+
+  const recommendationsDecorations = React.useMemo(() => {
+    return recommendations.filter((p) => p.tag === 'Decoration');
+  }, [recommendations]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -244,55 +252,122 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                       <h4 className="text-chocolate font-bold text-base font-playfair mb-4 flex items-center gap-2">
                         <span>✨</span> You May Also Like
                       </h4>
-                      <div className="grid grid-cols-1 gap-4">
-                        {recommendations.map((prod) => (
-                          <div
-                            key={prod.id}
-                            className="bg-white rounded-[20px] p-3 flex gap-3 shadow-sm border border-cream/50 hover:shadow-md transition-all"
-                          >
-                            <div
-                              onClick={() => {
-                                onClose();
-                                router.push(`/shop/${prod.id}`);
-                              }}
-                              className="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream cursor-pointer hover:opacity-90 transition-opacity"
-                            >
-                              <Image src={prod.img} alt={prod.name} fill className="object-cover" />
-                            </div>
 
-                            <div className="flex-1 flex flex-col justify-between min-w-0">
+                      {/* Cakes Group */}
+                      {recommendationsCakes.length > 0 && (
+                        <div className="mb-6">
+                          <h5 className="text-[11px] font-bold font-playfair text-chocolate/80 mb-3 uppercase tracking-wider border-b border-cream pb-1">
+                            Cakes
+                          </h5>
+                          <div className="grid grid-cols-1 gap-4">
+                            {recommendationsCakes.map((prod) => (
                               <div
-                                onClick={() => {
-                                  onClose();
-                                  router.push(`/shop/${prod.id}`);
-                                }}
-                                className="cursor-pointer group/rec min-w-0"
+                                key={prod.id}
+                                className="bg-white rounded-[20px] p-3 flex gap-3 shadow-sm border border-cream/50 hover:shadow-md transition-all"
                               >
-                                <h5 className="m-0 text-xs font-bold text-chocolate truncate group-hover/rec:text-rose-deep transition-colors leading-snug">{prod.name}</h5>
-                                <p className="text-[10px] text-text-soft mt-0.5 truncate">{prod.category}</p>
-                              </div>
-
-                              <div className="flex justify-between items-center mt-1">
-                                <span className="text-sm font-bold text-rose-deep">₹{prod.price}</span>
-                                <button
+                                <div
                                   onClick={() => {
-                                    addToCart({
-                                      id: prod.id,
-                                      name: prod.name,
-                                      price: prod.price,
-                                      img: prod.img,
-                                      weight: prod.weights?.[0]?.label || '0.5 Kg',
-                                    });
+                                    onClose();
+                                    router.push(`/shop/${prod.id}`);
                                   }}
-                                  className="px-3 py-1 bg-rose-deep hover:bg-brown text-white rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95"
+                                  className="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream cursor-pointer hover:opacity-90 transition-opacity"
                                 >
-                                  Add to Cart
-                                </button>
+                                  <Image src={prod.img} alt={prod.name} fill className="object-cover" />
+                                </div>
+
+                                <div className="flex-1 flex flex-col justify-between min-w-0">
+                                  <div
+                                    onClick={() => {
+                                      onClose();
+                                      router.push(`/shop/${prod.id}`);
+                                    }}
+                                    className="cursor-pointer group/rec min-w-0"
+                                  >
+                                    <h5 className="m-0 text-xs font-bold text-chocolate truncate group-hover/rec:text-rose-deep transition-colors leading-snug">{prod.name}</h5>
+                                    <p className="text-[10px] text-text-soft mt-0.5 truncate">{prod.category}</p>
+                                  </div>
+
+                                  <div className="flex justify-between items-center mt-1">
+                                    <span className="text-sm font-bold text-rose-deep">₹{prod.price}</span>
+                                    <button
+                                      onClick={() => {
+                                        addToCart({
+                                          id: prod.id,
+                                          name: prod.name,
+                                          price: prod.price,
+                                          img: prod.img,
+                                          weight: prod.weights?.[0]?.label || '0.5 Kg',
+                                        });
+                                      }}
+                                      className="px-3 py-1 bg-rose-deep hover:bg-brown text-white rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95"
+                                    >
+                                      Add to Cart
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      )}
+
+                      {/* Decorations Group */}
+                      {recommendationsDecorations.length > 0 && (
+                        <div>
+                          <h5 className="text-[11px] font-bold font-playfair text-chocolate/80 mb-3 uppercase tracking-wider border-b border-cream pb-1">
+                            Decorations
+                          </h5>
+                          <div className="grid grid-cols-1 gap-4">
+                            {recommendationsDecorations.map((prod) => (
+                              <div
+                                key={prod.id}
+                                className="bg-white rounded-[20px] p-3 flex gap-3 shadow-sm border border-cream/50 hover:shadow-md transition-all"
+                              >
+                                <div
+                                  onClick={() => {
+                                    onClose();
+                                    router.push(`/shop/${prod.id}`);
+                                  }}
+                                  className="shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-[#f7efe6] relative border border-cream cursor-pointer hover:opacity-90 transition-opacity"
+                                >
+                                  <Image src={prod.img} alt={prod.name} fill className="object-cover" />
+                                </div>
+
+                                <div className="flex-1 flex flex-col justify-between min-w-0">
+                                  <div
+                                    onClick={() => {
+                                      onClose();
+                                      router.push(`/shop/${prod.id}`);
+                                    }}
+                                    className="cursor-pointer group/rec min-w-0"
+                                  >
+                                    <h5 className="m-0 text-xs font-bold text-chocolate truncate group-hover/rec:text-rose-deep transition-colors leading-snug">{prod.name}</h5>
+                                    <p className="text-[10px] text-text-soft mt-0.5 truncate">{prod.category}</p>
+                                  </div>
+
+                                  <div className="flex justify-between items-center mt-1">
+                                    <span className="text-sm font-bold text-rose-deep">₹{prod.price}</span>
+                                    <button
+                                      onClick={() => {
+                                        addToCart({
+                                          id: prod.id,
+                                          name: prod.name,
+                                          price: prod.price,
+                                          img: prod.img,
+                                          weight: prod.weights?.[0]?.label || '0.5 Kg',
+                                        });
+                                      }}
+                                      className="px-3 py-1 bg-rose-deep hover:bg-brown text-white rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95"
+                                    >
+                                      Add to Cart
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

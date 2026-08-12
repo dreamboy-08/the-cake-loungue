@@ -6,34 +6,86 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 2.3s
- ○ Compiling /admin/decorations ...
- ✓ Compiled /admin/decorations in 17.8s (1634 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/decorations?bypass=true 200 in 19927ms
- GET /admin/decorations?bypass=true 200 in 19993ms
- ✓ Compiled in 2.2s (747 modules)
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 9.6s (1646 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /shop/dec_1 200 in 10689ms
- GET /admin/decorations?bypass=true 200 in 312ms
- GET /admin/decorations?bypass=true 200 in 58ms
- GET /shop/dec_1 200 in 116ms
- GET /shop/1 200 in 141ms
- GET /admin/decorations?bypass=true 200 in 44ms
- GET /admin/decorations?bypass=true 200 in 60ms
- GET /shop/dec_1 200 in 103ms
- GET /shop/1 200 in 103ms
- ○ Compiling /admin/website-content ...
- ✓ Compiled /admin/website-content in 1445ms (1672 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/website-content?tab=settings&bypass=true 200 in 2003ms
+ ✓ Ready in 1770ms
  ○ Compiling / ...
- ✓ Compiled / in 1022ms (1762 modules)
+ ✓ Compiled / in 10.7s (1677 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 1438ms
- GET / 200 in 228ms
- GET / 200 in 119ms
- GET / 200 in 114ms
- GET /admin/decorations?bypass=true 200 in 103ms
+ HEAD / 200 in 11524ms
+ ✓ Compiled in 1281ms (760 modules)
+ ○ Compiling /admin/decorations ...
+ ✓ Compiled /admin/decorations in 2.8s (1702 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/decorations?bypass=true 200 in 3109ms
+ GET /admin/decorations?bypass=true 200 in 3269ms
+ ○ Compiling /shop/[id] ...
+ ✓ Compiled /shop/[id] in 1161ms (1738 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /shop/dec_1 200 in 2633ms
+ GET /shop/1 200 in 140ms
+ ✓ Compiled in 2.4s (1673 modules)
+ ✓ Compiled in 758ms (804 modules)
+ ✓ Compiled in 3.4s (1673 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/decorations?bypass=true 200 in 736ms
+ GET /admin/decorations?bypass=true 200 in 770ms
+ ○ Compiling /shop/[id] ...
+ ✓ Compiled /shop/[id] in 2.4s (892 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /shop/dec_1 200 in 3200ms
+ GET /shop/1 200 in 112ms
+ GET /shop/1 200 in 118ms
+ ✓ Compiled / in 481ms (948 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 873ms
+ GET /shop/1 200 in 259ms
+ GET /shop/1 200 in 259ms
+ GET /shop/1 200 in 162ms
+ GET /shop/1 200 in 163ms
+ ○ Compiling /menu ...
+ ✓ Compiled /menu in 2.4s (1746 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /menu 200 in 3110ms
+ GET /admin/decorations?bypass=true 200 in 3096ms
+ GET /admin/decorations?bypass=true 200 in 185ms
+ GET /shop/dec_1 200 in 180ms
+ GET /shop/1 200 in 90ms
+ GET /menu 200 in 95ms
+ GET /menu 200 in 67ms
+ GET /admin/decorations?bypass=true 200 in 68ms
+ GET /admin/decorations?bypass=true 200 in 76ms
+ GET /shop/dec_1 200 in 163ms
+ GET /shop/1 200 in 103ms
+ GET /shop/1 200 in 80ms
+ GET /shop/1 200 in 74ms
+ GET / 200 in 152ms
+ ○ Compiling /admin/categories ...
+ ✓ Compiled /admin/categories in 3.3s (1760 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/categories?bypass=true 200 in 3909ms
+ GET / 200 in 165ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 1263ms (1763 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /images/categories/Milestone Treat.jpg 404 in 1988ms
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Treat.jpg received null
+ GET /admin/categories?bypass=true 200 in 257ms
+ GET / 200 in 196ms
+ GET /images/categories/Milestone Deluxe.jpg 404 in 61ms
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
+ GET /admin/categories?bypass=true 200 in 61ms
+ GET / 200 in 90ms
+ GET /images/categories/Milestone Deluxe.jpg 404 in 110ms
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
+ GET /admin/categories?bypass=true 200 in 149ms
+ GET / 200 in 89ms
+ GET /admin/categories?bypass=true 200 in 136ms
+ GET / 200 in 81ms
+ GET /shop/1 200 in 206ms
+ GET /shop/1 200 in 345ms
+ GET /admin/decorations?bypass=true 200 in 162ms
+ GET /admin/decorations?bypass=true 200 in 196ms
+ GET /shop/dec_1 200 in 491ms
+ GET /shop/1 200 in 212ms
+ GET /shop/1 200 in 108ms
+ GET /shop/1 200 in 228ms
+ GET /shop/1 200 in 214ms
