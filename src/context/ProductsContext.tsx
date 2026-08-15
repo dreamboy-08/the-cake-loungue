@@ -19,12 +19,20 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const loadOfflineProducts = useCallback(() => {
     if (typeof window !== 'undefined') {
-      const offlineList = (window as any)._adminProducts;
-      if (offlineList && Array.isArray(offlineList)) {
-        setProducts(offlineList);
-      } else {
-        setProducts(staticProducts);
+      try {
+        const stored = localStorage.getItem('cakeLounge_cms_products');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setProducts(parsed);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Error reading cakeLounge_cms_products from localStorage:", e);
       }
+      setProducts(staticProducts);
     } else {
       setProducts(staticProducts);
     }
@@ -74,9 +82,17 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const handleLocalUpdate = () => {
         loadOfflineProducts();
       };
+      const handleStorageUpdate = (e: StorageEvent) => {
+        if (e.key === 'cakeLounge_cms_products') {
+          loadOfflineProducts();
+        }
+      };
+
       window.addEventListener('admin_products_updated', handleLocalUpdate);
+      window.addEventListener('storage', handleStorageUpdate);
       return () => {
         window.removeEventListener('admin_products_updated', handleLocalUpdate);
+        window.removeEventListener('storage', handleStorageUpdate);
       };
     }
 

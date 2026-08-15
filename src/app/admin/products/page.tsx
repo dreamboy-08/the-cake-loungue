@@ -72,8 +72,13 @@ const AdminProducts = () => {
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
       console.warn("Firebase not configured, falling back to static products in Admin Catalog.");
       if (typeof window !== 'undefined') {
-        const currentList = (window as any)._adminProducts || staticProducts;
-        setProducts(currentList);
+        try {
+          const stored = localStorage.getItem('cakeLounge_cms_products');
+          const currentList = stored ? JSON.parse(stored) : staticProducts;
+          setProducts(currentList);
+        } catch {
+          setProducts(staticProducts);
+        }
         setHasMore(false);
       }
       setLoading(false);
@@ -105,10 +110,15 @@ const AdminProducts = () => {
       setLastDoc(lastVisible);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
-      console.error("Error fetching products, falling back to static:", error);
+      console.error("Error fetching products, falling back to static/cached:", error);
       if (typeof window !== 'undefined') {
-        const currentList = (window as any)._adminProducts || staticProducts;
-        setProducts(currentList);
+        try {
+          const stored = localStorage.getItem('cakeLounge_cms_products');
+          const currentList = stored ? JSON.parse(stored) : staticProducts;
+          setProducts(currentList);
+        } catch {
+          setProducts(staticProducts);
+        }
         setHasMore(false);
       }
     } finally {
@@ -223,9 +233,16 @@ const AdminProducts = () => {
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
       console.warn("Firebase not configured, performing local delete.");
       if (typeof window !== 'undefined') {
-        const currentList = (window as any)._adminProducts || Array.from(staticProducts);
+        let currentList = staticProducts;
+        try {
+          const stored = localStorage.getItem('cakeLounge_cms_products');
+          if (stored) currentList = JSON.parse(stored);
+        } catch (e) {}
+
         const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
-        (window as any)._adminProducts = updatedList;
+        try {
+          localStorage.setItem('cakeLounge_cms_products', JSON.stringify(updatedList));
+        } catch (e) {}
         window.dispatchEvent(new Event('admin_products_updated'));
       }
       setShowDeleteConfirm(null);
@@ -242,9 +259,16 @@ const AdminProducts = () => {
     } catch (error) {
       console.error("Error deleting product, attempting local fallback:", error);
       if (typeof window !== 'undefined') {
-        const currentList = (window as any)._adminProducts || Array.from(staticProducts);
+        let currentList = staticProducts;
+        try {
+          const stored = localStorage.getItem('cakeLounge_cms_products');
+          if (stored) currentList = JSON.parse(stored);
+        } catch (e) {}
+
         const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
-        (window as any)._adminProducts = updatedList;
+        try {
+          localStorage.setItem('cakeLounge_cms_products', JSON.stringify(updatedList));
+        } catch (e) {}
         window.dispatchEvent(new Event('admin_products_updated'));
       }
       setShowDeleteConfirm(null);
