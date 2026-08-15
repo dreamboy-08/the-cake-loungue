@@ -247,11 +247,16 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
         console.warn("Firebase not configured, performing local state CRUD.");
         if (typeof window !== 'undefined') {
-          const currentList = (window as any)._adminProducts || Array.from(products);
+          let currentList = products;
+          try {
+            const stored = localStorage.getItem('cakeLounge_cms_products');
+            if (stored) currentList = JSON.parse(stored);
+          } catch (e) {}
+
+          let updatedList;
           if (product?.id) {
             // Edit
-            const updatedList = currentList.map((p: any) => (p.id === product.id || p.id.toString() === product.id.toString()) ? { ...p, ...productData } : p);
-            (window as any)._adminProducts = updatedList;
+            updatedList = currentList.map((p: any) => (p.id === product.id || p.id.toString() === product.id.toString()) ? { ...p, ...productData } : p);
           } else {
             // Create
             const newProduct = {
@@ -259,8 +264,12 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
               id: 'new-id-123',
               createdAt: new Date().toISOString(),
             };
-            (window as any)._adminProducts = [newProduct, ...currentList];
+            updatedList = [newProduct, ...currentList];
           }
+
+          try {
+            localStorage.setItem('cakeLounge_cms_products', JSON.stringify(updatedList));
+          } catch (e) {}
         }
         showToast(product ? "Product updated successfully!" : "Product created successfully!", "success");
         if (typeof window !== 'undefined') {
