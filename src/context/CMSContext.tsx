@@ -636,11 +636,20 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loadOfflineCMS();
 
       const handleCmsUpdate = () => {
-        loadOfflineCMS();
+        loadCachedCMS();
       };
+      const handleStorageUpdate = (e: StorageEvent) => {
+        if (e.key && e.key.startsWith('cakeLounge_cms_')) {
+          loadCachedCMS();
+        }
+      };
+
       window.addEventListener('cms_updated', handleCmsUpdate);
+      window.addEventListener('storage', handleStorageUpdate);
+
       return () => {
         window.removeEventListener('cms_updated', handleCmsUpdate);
+        window.removeEventListener('storage', handleStorageUpdate);
       };
     }
 
