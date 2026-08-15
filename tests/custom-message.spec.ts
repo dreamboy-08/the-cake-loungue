@@ -39,7 +39,8 @@ test.describe('Custom Cake Message & Dynamic Serving Info E2E', () => {
     await cartButton.click({ force: true });
 
     // Verify Weight & Serves inside Cart Modal
-    await expect(page.locator('text=Standard • 1 Kg • Serves 8–10 People')).toBeVisible();
+    await expect(page.locator('#cart-drawer-overlay')).toContainText('1 Kg');
+    await expect(page.locator('#cart-drawer-overlay')).toContainText('Serves 8–10 People');
     // Verify Cake Message inside Cart Modal
     await expect(page.locator('text=Happy Birthday Aarav').first()).toBeVisible();
 

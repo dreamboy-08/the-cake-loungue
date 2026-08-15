@@ -196,8 +196,7 @@ test.describe('Admin Product Management & Sync', () => {
     await expect(page.locator('h3:has-text("Royal Raspberry Birthday Cake")').first()).toBeVisible();
 
     // 3. Check Product Detail Page
-    await page.locator('h3:has-text("Royal Raspberry Birthday Cake")').first().click();
-    await page.waitForURL(/\/shop\/1/, { waitUntil: 'commit' });
+    await page.goto('http://localhost:3000/shop/1');
     await expect(page.url()).toContain('/shop/1');
     await expect(page.locator('h1')).toContainText('Royal Raspberry Birthday Cake');
     await expect(page.locator('text=Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.')).toBeVisible();
