@@ -89,9 +89,11 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       };
 
       window.addEventListener('admin_products_updated', handleLocalUpdate);
+      window.addEventListener('cms_updated', handleLocalUpdate);
       window.addEventListener('storage', handleStorageUpdate);
       return () => {
         window.removeEventListener('admin_products_updated', handleLocalUpdate);
+        window.removeEventListener('cms_updated', handleLocalUpdate);
         window.removeEventListener('storage', handleStorageUpdate);
       };
     }
@@ -108,6 +110,11 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             id: doc.id
           })) as unknown as Product[];
           setProducts(fetched);
+          if (typeof window !== 'undefined') {
+            try {
+              localStorage.setItem('cakeLounge_cms_products', JSON.stringify(fetched));
+            } catch (e) {}
+          }
         } else {
           console.warn("Firestore products collection is empty. Falling back to static products.");
           setProducts(staticProducts);
@@ -121,7 +128,9 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, [loadOfflineProducts, refreshProducts]);
 
   return (
