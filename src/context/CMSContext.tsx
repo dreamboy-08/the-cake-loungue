@@ -111,70 +111,107 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key";
 
   // --- LOAD CACHED CMS AS FAST FALLBACK ---
-  const loadCachedCMS = useCallback(() => {
+  // If fallbackToDefaults is true (e.g. offline/non-Firebase mode or when cache is expected as absolute fallback),
+  // we fall back to DEFAULT_* constants. If false (e.g. online Firestore mode), we only load from localStorage if present
+  // so fresh users do NOT get populated with old static defaults while waiting for Firestore.
+  const loadCachedCMS = useCallback((fallbackToDefaults = false) => {
     if (typeof window === 'undefined') {
-      setNavigation(DEFAULT_NAVIGATION);
-      setMegaMenus(DEFAULT_MEGA_MENUS);
-      setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
-      setAnnouncements(DEFAULT_ANNOUNCEMENTS);
-      setCollections(DEFAULT_COLLECTIONS);
-      setCategories(DEFAULT_CATEGORIES);
-      setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
-      setMediaItems(DEFAULT_MEDIA_LIBRARY);
-      setSeoMetadata(DEFAULT_SEO_METADATA);
-      setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
-      setAboutSettings(DEFAULT_ABOUT_SETTINGS);
-      setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
-      setTestimonials(DEFAULT_TESTIMONIALS);
-      setGalleryItems(DEFAULT_GALLERY);
-      setDecorations(DEFAULT_DECORATIONS);
+      if (fallbackToDefaults) {
+        setNavigation(DEFAULT_NAVIGATION);
+        setMegaMenus(DEFAULT_MEGA_MENUS);
+        setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
+        setAnnouncements(DEFAULT_ANNOUNCEMENTS);
+        setCollections(DEFAULT_COLLECTIONS);
+        setCategories(DEFAULT_CATEGORIES);
+        setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
+        setMediaItems(DEFAULT_MEDIA_LIBRARY);
+        setSeoMetadata(DEFAULT_SEO_METADATA);
+        setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+        setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+        setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+        setTestimonials(DEFAULT_TESTIMONIALS);
+        setGalleryItems(DEFAULT_GALLERY);
+        setDecorations(DEFAULT_DECORATIONS);
+      }
       return;
     }
 
     try {
-      const getStored = <T,>(key: string, fallback: T): T => {
+      const getStored = <T,>(key: string, fallback: T | null): T | null => {
         const stored = localStorage.getItem(`cakeLounge_cms_${key}`);
         return stored ? JSON.parse(stored) : fallback;
       };
 
-      setNavigation(getStored('navigation', DEFAULT_NAVIGATION));
-      setMegaMenus(getStored('megaMenus', DEFAULT_MEGA_MENUS));
-      setHomepageSections(getStored('homepageSections', DEFAULT_HOMEPAGE_SECTIONS));
-      setAnnouncements(getStored('announcements', DEFAULT_ANNOUNCEMENTS));
-      setCollections(getStored('collections', DEFAULT_COLLECTIONS));
-      setCategories(getStored('categories', DEFAULT_CATEGORIES));
-      setWebsiteSettings(getStored('websiteSettings', DEFAULT_WEBSITE_SETTINGS));
-      setMediaItems(getStored('mediaItems', DEFAULT_MEDIA_LIBRARY));
-      setSeoMetadata(getStored('seoMetadata', DEFAULT_SEO_METADATA));
-      setGeneralSettings(getStored('generalSettings', DEFAULT_GENERAL_SETTINGS));
-      setAboutSettings(getStored('aboutSettings', DEFAULT_ABOUT_SETTINGS));
-      setFeaturedProducts(getStored('featuredProducts', DEFAULT_FEATURED_PRODUCTS_SETTINGS));
-      setTestimonials(getStored('testimonials', DEFAULT_TESTIMONIALS));
-      setGalleryItems(getStored('galleryItems', DEFAULT_GALLERY));
-      setDecorations(getStored('decorations', DEFAULT_DECORATIONS));
+      const storedNav = getStored<NavigationItem[]>('navigation', fallbackToDefaults ? DEFAULT_NAVIGATION : null);
+      if (storedNav !== null) setNavigation(storedNav);
+
+      const storedMega = getStored<MegaMenuSection[]>('megaMenus', fallbackToDefaults ? DEFAULT_MEGA_MENUS : null);
+      if (storedMega !== null) setMegaMenus(storedMega);
+
+      const storedSections = getStored<HomepageSection[]>('homepageSections', fallbackToDefaults ? DEFAULT_HOMEPAGE_SECTIONS : null);
+      if (storedSections !== null) setHomepageSections(storedSections);
+
+      const storedAnnouncements = getStored<Announcement[]>('announcements', fallbackToDefaults ? DEFAULT_ANNOUNCEMENTS : null);
+      if (storedAnnouncements !== null) setAnnouncements(storedAnnouncements);
+
+      const storedCollections = getStored<CollectionCMSItem[]>('collections', fallbackToDefaults ? DEFAULT_COLLECTIONS : null);
+      if (storedCollections !== null) setCollections(storedCollections);
+
+      const storedCategories = getStored<CMSCategory[]>('categories', fallbackToDefaults ? DEFAULT_CATEGORIES : null);
+      if (storedCategories !== null) setCategories(storedCategories);
+
+      const storedWebsite = getStored<CMSWebsiteSettings>('websiteSettings', fallbackToDefaults ? DEFAULT_WEBSITE_SETTINGS : null);
+      if (storedWebsite !== null) setWebsiteSettings(storedWebsite);
+
+      const storedMedia = getStored<CMSMediaItem[]>('mediaItems', fallbackToDefaults ? DEFAULT_MEDIA_LIBRARY : null);
+      if (storedMedia !== null) setMediaItems(storedMedia);
+
+      const storedSEO = getStored<CMSSEOMetadata[]>('seoMetadata', fallbackToDefaults ? DEFAULT_SEO_METADATA : null);
+      if (storedSEO !== null) setSeoMetadata(storedSEO);
+
+      const storedGeneral = getStored<CMSGeneralSettings>('generalSettings', fallbackToDefaults ? DEFAULT_GENERAL_SETTINGS : null);
+      if (storedGeneral !== null) setGeneralSettings(storedGeneral);
+
+      const storedAbout = getStored<AboutSectionSettings>('aboutSettings', fallbackToDefaults ? DEFAULT_ABOUT_SETTINGS : null);
+      if (storedAbout !== null) setAboutSettings(storedAbout);
+
+      const storedFeatured = getStored<FeaturedProductsSettings>('featuredProducts', fallbackToDefaults ? DEFAULT_FEATURED_PRODUCTS_SETTINGS : null);
+      if (storedFeatured !== null) setFeaturedProducts(storedFeatured);
+
+      const storedTestimonials = getStored<CMSTestimonial[]>('testimonials', fallbackToDefaults ? DEFAULT_TESTIMONIALS : null);
+      if (storedTestimonials !== null) setTestimonials(storedTestimonials);
+
+      const storedGallery = getStored<CMSGalleryItem[]>('galleryItems', fallbackToDefaults ? DEFAULT_GALLERY : null);
+      if (storedGallery !== null) setGalleryItems(storedGallery);
+
+      const storedDecorations = getStored<CMSDecorationItem[]>('decorations', fallbackToDefaults ? DEFAULT_DECORATIONS : null);
+      if (storedDecorations !== null) setDecorations(storedDecorations);
+
     } catch (e) {
-      console.error("Failed to parse stored offline CMS config, falling back to static defaults:", e);
-      setNavigation(DEFAULT_NAVIGATION);
-      setMegaMenus(DEFAULT_MEGA_MENUS);
-      setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
-      setAnnouncements(DEFAULT_ANNOUNCEMENTS);
-      setCollections(DEFAULT_COLLECTIONS);
-      setCategories(DEFAULT_CATEGORIES);
-      setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
-      setMediaItems(DEFAULT_MEDIA_LIBRARY);
-      setSeoMetadata(DEFAULT_SEO_METADATA);
-      setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
-      setAboutSettings(DEFAULT_ABOUT_SETTINGS);
-      setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
-      setTestimonials(DEFAULT_TESTIMONIALS);
-      setGalleryItems(DEFAULT_GALLERY);
-      setDecorations(DEFAULT_DECORATIONS);
+      console.error("Failed to parse stored offline CMS config:", e);
+      if (fallbackToDefaults) {
+        setNavigation(DEFAULT_NAVIGATION);
+        setMegaMenus(DEFAULT_MEGA_MENUS);
+        setHomepageSections(DEFAULT_HOMEPAGE_SECTIONS);
+        setAnnouncements(DEFAULT_ANNOUNCEMENTS);
+        setCollections(DEFAULT_COLLECTIONS);
+        setCategories(DEFAULT_CATEGORIES);
+        setWebsiteSettings(DEFAULT_WEBSITE_SETTINGS);
+        setMediaItems(DEFAULT_MEDIA_LIBRARY);
+        setSeoMetadata(DEFAULT_SEO_METADATA);
+        setGeneralSettings(DEFAULT_GENERAL_SETTINGS);
+        setAboutSettings(DEFAULT_ABOUT_SETTINGS);
+        setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
+        setTestimonials(DEFAULT_TESTIMONIALS);
+        setGalleryItems(DEFAULT_GALLERY);
+        setDecorations(DEFAULT_DECORATIONS);
+      }
     }
   }, []);
 
   // --- LOCAL OFFLINE FALLBACK LOADER ---
   const loadOfflineCMS = useCallback(() => {
-    loadCachedCMS();
+    loadCachedCMS(true);
     setLoading(false);
   }, [loadCachedCMS]);
 

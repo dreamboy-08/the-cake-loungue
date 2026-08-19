@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 import Hero from "@/components/home/Hero";
 import OfferMarquee from "@/components/home/OfferMarquee";
