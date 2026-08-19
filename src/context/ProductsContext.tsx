@@ -17,7 +17,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadOfflineProducts = useCallback(() => {
+  const loadOfflineProducts = useCallback((fallbackToStatic = false) => {
     if (typeof window !== 'undefined') {
       try {
         const stored = localStorage.getItem('cakeLounge_cms_products');
@@ -25,18 +25,22 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setProducts(parsed);
-            setLoading(false);
-            return;
+            if (fallbackToStatic) setLoading(false);
+            return true;
           }
         }
       } catch (e) {
         console.error("Error reading cakeLounge_cms_products from localStorage:", e);
       }
+      if (fallbackToStatic) {
+        setProducts(staticProducts);
+        setLoading(false);
+      }
+    } else if (fallbackToStatic) {
       setProducts(staticProducts);
-    } else {
-      setProducts(staticProducts);
+      setLoading(false);
     }
-    setLoading(false);
+    return false;
   }, []);
 
   const refreshProducts = useCallback(async () => {
@@ -76,15 +80,15 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     if (!isFirebaseConfigured) {
       console.warn("Firebase not configured, utilizing offline product state in ProductsProvider.");
-      loadOfflineProducts();
+      loadOfflineProducts(true);
 
       // Listen to a custom event for local updates so that multiple tabs or components can stay in sync
       const handleLocalUpdate = () => {
-        loadOfflineProducts();
+        loadOfflineProducts(true);
       };
       const handleStorageUpdate = (e: StorageEvent) => {
         if (e.key === 'cakeLounge_cms_products') {
-          loadOfflineProducts();
+          loadOfflineProducts(true);
         }
       };
 
@@ -97,6 +101,9 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         window.removeEventListener('storage', handleStorageUpdate);
       };
     }
+
+    // Try loading cached products optimistically if present in localStorage (without falling back to staticDefaults yet)
+    loadOfflineProducts(false);
 
     console.log("Subscribing to real-time Firestore products...");
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
@@ -124,6 +131,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       (error) => {
         console.error("Firestore onSnapshot subscription failed, falling back to getDocs or static:", error);
         // Fallback to manual load as backup
+        loadOfflineProducts(true);
         refreshProducts();
       }
     );
