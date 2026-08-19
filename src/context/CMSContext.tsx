@@ -17,8 +17,7 @@ import {
   CMSCategory,
   FeaturedProductsSettings,
   CMSTestimonial,
-  CMSGalleryItem,
-  CMSDecorationItem
+  CMSGalleryItem
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -34,8 +33,7 @@ import {
   DEFAULT_CATEGORIES,
   DEFAULT_FEATURED_PRODUCTS_SETTINGS,
   DEFAULT_TESTIMONIALS,
-  DEFAULT_GALLERY,
-  DEFAULT_DECORATIONS
+  DEFAULT_GALLERY
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -53,7 +51,6 @@ interface CMSContextType {
   featuredProducts: FeaturedProductsSettings;
   testimonials: CMSTestimonial[];
   galleryItems: CMSGalleryItem[];
-  decorations: CMSDecorationItem[];
   loading: boolean;
 
   // Setters
@@ -73,8 +70,6 @@ interface CMSContextType {
   deleteTestimonialFromDB: (id: string) => Promise<void>;
   updateGalleryItems: (items: CMSGalleryItem[], saveHistory?: boolean) => Promise<void>;
   deleteGalleryItemFromDB: (id: string) => Promise<void>;
-  updateDecorations: (items: CMSDecorationItem[], saveHistory?: boolean) => Promise<void>;
-  deleteDecorationFromDB: (id: string) => Promise<void>;
 
   // CMS Safety / Recovery Actions
   hasUndo: (key: string) => boolean;
@@ -99,7 +94,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductsSettings>(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
   const [testimonials, setTestimonials] = useState<CMSTestimonial[]>([]);
   const [galleryItems, setGalleryItems] = useState<CMSGalleryItem[]>([]);
-  const [decorations, setDecorations] = useState<CMSDecorationItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Deep state snapshot history tracking via previousStates mapping
@@ -131,7 +125,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
         setTestimonials(DEFAULT_TESTIMONIALS);
         setGalleryItems(DEFAULT_GALLERY);
-        setDecorations(DEFAULT_DECORATIONS);
       }
       return;
     }
@@ -184,9 +177,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const storedGallery = getStored<CMSGalleryItem[]>('galleryItems', fallbackToDefaults ? DEFAULT_GALLERY : null);
       if (storedGallery !== null) setGalleryItems(storedGallery);
 
-      const storedDecorations = getStored<CMSDecorationItem[]>('decorations', fallbackToDefaults ? DEFAULT_DECORATIONS : null);
-      if (storedDecorations !== null) setDecorations(storedDecorations);
-
     } catch (e) {
       console.error("Failed to parse stored offline CMS config:", e);
       if (fallbackToDefaults) {
@@ -204,7 +194,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setFeaturedProducts(DEFAULT_FEATURED_PRODUCTS_SETTINGS);
         setTestimonials(DEFAULT_TESTIMONIALS);
         setGalleryItems(DEFAULT_GALLERY);
-        setDecorations(DEFAULT_DECORATIONS);
       }
     }
   }, []);
@@ -489,35 +478,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateDecorations = async (items: CMSDecorationItem[], saveHistory = true) => {
-    if (saveHistory) saveStateHistory('decorations', decorations);
-    setDecorations(items);
-    if (!isFirebaseConfigured) {
-      saveOfflineCMS('decorations', items);
-      return;
-    }
-    try {
-      await Promise.all(items.map(item =>
-        setDoc(doc(db, 'decorations', item.id), item)
-      ));
-    } catch (err) {
-      console.error("Failed to update decorations in Firestore:", err);
-      saveOfflineCMS('decorations', items);
-    }
-  };
-
-  const deleteDecorationFromDB = async (id: string) => {
-    if (!isFirebaseConfigured) {
-      return;
-    }
-    try {
-      const { deleteDoc } = await import('firebase/firestore');
-      await deleteDoc(doc(db, 'decorations', id));
-    } catch (err) {
-      console.error("Failed to delete decoration from Firestore:", err);
-    }
-  };
-
   // --- CMS Safety / Recovery Actions ---
   const hasUndo = useCallback((key: string) => {
     const normalizedKey = key === 'hero' ? 'homepageSections' : key;
@@ -572,9 +532,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       case 'galleryItems':
         await updateGalleryItems(prevState, false);
         break;
-      case 'decorations':
-        await updateDecorations(prevState, false);
-        break;
     }
 
     setPreviousStates(prev => {
@@ -597,8 +554,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     aboutSettings,
     featuredProducts,
     testimonials,
-    galleryItems,
-    decorations
+    galleryItems
   ]);
 
   const restoreDefaults = useCallback(async (key: string) => {
@@ -645,9 +601,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         break;
       case 'galleryItems':
         await updateGalleryItems(DEFAULT_GALLERY);
-        break;
-      case 'decorations':
-        await updateDecorations(DEFAULT_DECORATIONS);
         break;
     }
   }, [
@@ -700,7 +653,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const markListenerLoaded = (key: string) => {
       loadedListeners.add(key);
-      if (loadedListeners.size === 15) {
+      if (loadedListeners.size === 14) {
         setLoading(false);
       }
     };
@@ -742,7 +695,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       unsubs.push(unsub);
     };
 
-    // Listen to arrays (11 listeners now with decorations)
+    // Listen to arrays (10 listeners now)
     registerListener('navigation', 'displayOrder', setNavigation, DEFAULT_NAVIGATION);
     registerListener('megaMenus', 'displayOrder', setMegaMenus, DEFAULT_MEGA_MENUS);
     registerListener('homepageSections', 'order', setHomepageSections, DEFAULT_HOMEPAGE_SECTIONS);
@@ -752,7 +705,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     registerListener('media', 'createdAt', setMediaItems, DEFAULT_MEDIA_LIBRARY);
     registerListener('testimonials', 'displayOrder', setTestimonials, DEFAULT_TESTIMONIALS);
     registerListener('gallery', 'displayOrder', setGalleryItems, DEFAULT_GALLERY);
-    registerListener('decorations', 'displayOrder', setDecorations, DEFAULT_DECORATIONS);
     registerListener('seo', null, setSeoMetadata, DEFAULT_SEO_METADATA);
 
     // Listen to individual config documents in 'settings' collection (4 listeners)
@@ -845,7 +797,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       featuredProducts,
       testimonials,
       galleryItems,
-      decorations,
       loading,
 
       updateNavigation,
@@ -864,8 +815,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deleteTestimonialFromDB,
       updateGalleryItems,
       deleteGalleryItemFromDB,
-      updateDecorations,
-      deleteDecorationFromDB,
 
       hasUndo,
       undo,
