@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useParams, notFound, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star, Heart, ShoppingCart, ShieldCheck, Truck, RefreshCcw, Check, Loader2, AlertCircle, Clock, Plus, Minus } from 'lucide-react';
@@ -18,7 +18,6 @@ import GSTBadge from '@/components/GSTBadge';
 import ProductRecommendations from '@/components/ProductRecommendations';
 import CakeMessageInput from '@/components/shop/CakeMessageInput';
 import { getServingsForWeight } from '@/utils/servingHelper';
-import { useCMS } from '@/context/CMSContext';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -29,7 +28,6 @@ const ProductDetail = () => {
   const [localAdded, setLocalAdded] = useState(false);
 
   const { products, loading: productsLoading } = useProducts();
-  const { decorations } = useCMS();
 
   const [product, setProduct] = useState<Product | null>(null);
   const isWishlisted = product ? isInWishlist(product.id) : false;
@@ -58,26 +56,7 @@ const ProductDetail = () => {
     setLoading(true);
     setError(null);
 
-    let foundProduct = products.find(p => p.id.toString() === id.toString());
-    if (!foundProduct && decorations) {
-      const foundDecor = decorations.find(d => d.id.toString() === id.toString() && d.enabled !== false);
-      if (foundDecor) {
-        foundProduct = {
-          id: foundDecor.id as any,
-          name: foundDecor.name,
-          flavor: 'Standard',
-          category: foundDecor.category,
-          price: foundDecor.price,
-          oldPrice: 0,
-          rating: 5,
-          reviews: 12,
-          tag: 'Decoration',
-          img: foundDecor.img,
-          description: foundDecor.description,
-          preparationTime: 0
-        };
-      }
-    }
+    const foundProduct = products.find(p => p.id.toString() === id.toString());
 
     if (foundProduct) {
       setProduct(foundProduct);
@@ -91,7 +70,7 @@ const ProductDetail = () => {
       setError('Product not found in our catalog');
     }
     setLoading(false);
-  }, [id, products, productsLoading, decorations]);
+  }, [id, products, productsLoading]);
 
   if (loading) {
     return (
@@ -241,25 +220,23 @@ const ProductDetail = () => {
             </div>
 
             {/* Premium Info Box stating preparation time rules */}
-            {product.tag !== 'Decoration' && (
-              <div className="mb-8 p-5 bg-rose-50/40 rounded-[22px] border-2 border-rose-100/60 text-chocolate">
-                <div className="flex items-start gap-3">
-                  <Clock className="text-rose-deep mt-0.5 shrink-0" size={18} />
-                  <div className="space-y-1.5">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-rose-deep">Dynamic Preparation Time Rule</h4>
-                    <p className="text-xs text-text-soft font-medium leading-relaxed">
-                      Preparation Time: This product requires a minimum of {prepHours} hours to prepare. The earliest available delivery slot will be automatically calculated based on your order time.
-                    </p>
-                    {earliestDelivery && (
-                      <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-rose-100/80 rounded-xl text-xs font-bold text-rose-deep shadow-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-deep animate-pulse" />
-                        Earliest Delivery: {earliestDelivery.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}, {earliestDelivery.slot}
-                      </div>
-                    )}
-                  </div>
+            <div className="mb-8 p-5 bg-rose-50/40 rounded-[22px] border-2 border-rose-100/60 text-chocolate">
+              <div className="flex items-start gap-3">
+                <Clock className="text-rose-deep mt-0.5 shrink-0" size={18} />
+                <div className="space-y-1.5">
+                  <h4 className="font-bold text-xs uppercase tracking-wider text-rose-deep">Dynamic Preparation Time Rule</h4>
+                  <p className="text-xs text-text-soft font-medium leading-relaxed">
+                    Preparation Time: This product requires a minimum of {prepHours} hours to prepare. The earliest available delivery slot will be automatically calculated based on your order time.
+                  </p>
+                  {earliestDelivery && (
+                    <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-rose-100/80 rounded-xl text-xs font-bold text-rose-deep shadow-sm">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-deep animate-pulse" />
+                      Earliest Delivery: {earliestDelivery.date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}, {earliestDelivery.slot}
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Weight Selector */}
             {product.weights && product.weights.length > 0 && (
@@ -284,34 +261,30 @@ const ProductDetail = () => {
             )}
 
             {/* Serving Information */}
-            {product.tag !== 'Decoration' && (
-              <div className="mb-8 p-4 rounded-2xl bg-cream border border-cream-dark/60 flex items-center justify-between shadow-sm">
-                <div>
-                  <span className="block text-[10px] font-black text-text-soft uppercase tracking-widest mb-1">Serving Information</span>
-                  <motion.span
-                    key={selectedWeight}
-                    initial={{ opacity: 0, y: -2 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-base font-bold text-chocolate animate-fade-in"
-                  >
-                    Serves {activeServes}
-                  </motion.span>
-                </div>
+            <div className="mb-8 p-4 rounded-2xl bg-cream border border-cream-dark/60 flex items-center justify-between shadow-sm">
+              <div>
+                <span className="block text-[10px] font-black text-text-soft uppercase tracking-widest mb-1">Serving Information</span>
+                <motion.span
+                  key={selectedWeight}
+                  initial={{ opacity: 0, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-base font-bold text-chocolate animate-fade-in"
+                >
+                  Serves {activeServes}
+                </motion.span>
               </div>
-            )}
+            </div>
 
             {/* Custom Cake Message */}
-            {product.tag !== 'Decoration' && (
-              <div className="mb-8">
-                <CakeMessageInput
-                  value={cakeMessage}
-                  onChange={(msg, isValid) => {
-                    setCakeMessage(msg);
-                    setIsMessageValid(isValid);
-                  }}
-                />
-              </div>
-            )}
+            <div className="mb-8">
+              <CakeMessageInput
+                value={cakeMessage}
+                onChange={(msg, isValid) => {
+                  setCakeMessage(msg);
+                  setIsMessageValid(isValid);
+                }}
+              />
+            </div>
 
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-text-mid">

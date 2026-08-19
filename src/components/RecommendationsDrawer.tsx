@@ -111,7 +111,7 @@ export const RecommendationsDrawer: React.FC<RecommendationsDrawerProps> = ({
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }} // ease-out cubic-like
+            transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
             onKeyDown={handleKeyDown}
             role="dialog"
             aria-modal="true"
@@ -146,12 +146,8 @@ export const RecommendationsDrawer: React.FC<RecommendationsDrawerProps> = ({
 
             {/* Drawer Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar space-y-8">
-              {/* Cakes Section */}
-              {products.filter(p => p.tag !== 'Decoration').length > 0 && (
+              {products.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-bold font-playfair text-chocolate mb-4 uppercase tracking-wider border-b border-cream-dark pb-2">
-                    Cakes
-                  </h3>
                   <motion.div
                     variants={{
                       hidden: { opacity: 0 },
@@ -167,51 +163,7 @@ export const RecommendationsDrawer: React.FC<RecommendationsDrawerProps> = ({
                     animate="show"
                     className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
                   >
-                    {products.filter(p => p.tag !== 'Decoration').map((product) => (
-                      <motion.div
-                        key={product.id}
-                        variants={{
-                          hidden: { opacity: 0, y: 15 },
-                          show: {
-                            opacity: 1,
-                            y: 0,
-                            transition: {
-                              type: "spring",
-                              stiffness: 100,
-                              damping: 15
-                            }
-                          }
-                        }}
-                      >
-                        <RecommendationCard product={product} />
-                      </motion.div>
-                    ))}
-                  </motion.div>
-                </div>
-              )}
-
-              {/* Decorations Section */}
-              {products.filter(p => p.tag === 'Decoration').length > 0 && (
-                <div>
-                  <h3 className="text-sm font-bold font-playfair text-chocolate mb-4 uppercase tracking-wider border-b border-cream-dark pb-2">
-                    Decorations
-                  </h3>
-                  <motion.div
-                    variants={{
-                      hidden: { opacity: 0 },
-                      show: {
-                        opacity: 1,
-                        transition: {
-                          staggerChildren: 0.05,
-                          delayChildren: 0.1,
-                        }
-                      }
-                    }}
-                    initial="hidden"
-                    animate="show"
-                    className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6"
-                  >
-                    {products.filter(p => p.tag === 'Decoration').map((product) => (
+                    {products.map((product) => (
                       <motion.div
                         key={product.id}
                         variants={{

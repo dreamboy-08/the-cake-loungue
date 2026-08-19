@@ -701,17 +701,15 @@ const CheckoutPage = () => {
                       <h4 className="text-sm font-bold text-chocolate line-clamp-1 group-hover/item:text-rose-deep transition-colors">{item.name}</h4>
 
                       <div className="flex flex-wrap items-center gap-2 mt-1">
-                        {!item.id.toString().startsWith('dec_') && (
-                          <span className="text-[10px] text-text-soft font-bold">
-                            Weight: {item.weight || '0.5 Kg'}
-                          </span>
-                        )}
+                        <span className="text-[10px] text-text-soft font-bold">
+                          Weight: {item.weight || '0.5 Kg'}
+                        </span>
                         {item.serves && (
                           <span className="text-[10px] text-rose-deep font-bold bg-cream-dark/40 px-1.5 py-0.5 rounded">
                             Serves: {item.serves}
                           </span>
                         )}
-                        {item.flavor && !item.id.toString().startsWith('dec_') && (
+                        {item.flavor && (
                           <span className="text-[10px] text-chocolate/60 font-bold bg-cream px-1.5 py-0.5 rounded border border-cream-dark/40">
                             {item.flavor}
                           </span>

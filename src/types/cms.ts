@@ -213,19 +213,6 @@ export interface CMSCategory {
   updatedAt?: string;
 }
 
-export interface CMSDecorationItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  img: string;
-  category: string;
-  enabled: boolean;
-  displayOrder: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export interface FeaturedProductsSettings {
   id: string; // 'featured_products'
   enabled: boolean;

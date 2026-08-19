@@ -2,19 +2,51 @@
 > cake-lounge-frontend@0.1.0 start
 > next start
 
- ⨯ Failed to start server
-Error: listen EADDRINUSE: address already in use :::3000
-    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
-    at listenInCluster (node:net:1997:12)
-    at Server.listen (node:net:2102:7)
-    at /app/node_modules/next/dist/server/lib/start-server.js:280:16
-    at new Promise (<anonymous>)
-    at startServer (/app/node_modules/next/dist/server/lib/start-server.js:191:11)
-    at Module.nextStart (/app/node_modules/next/dist/cli/next-start.js:25:40)
-    at /app/node_modules/next/dist/bin/next:105:856 {
-  code: 'EADDRINUSE',
-  errno: -98,
-  syscall: 'listen',
-  address: '::',
-  port: 3000
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 433ms
+Firebase configuration is missing or invalid. Please check your environment variables.
+ ⚠ For production Image Optimization with Next.js, the optional 'sharp' package is strongly recommended. Run 'npm i sharp', and Next.js will use it automatically for Image Optimization.
+Read more: https://nextjs.org/docs/messages/sharp-missing-in-production
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Treat.jpg received null
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
+ ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
+ ⨯ TypeError: fetch failed
+    at node:internal/deps/undici/undici:14902:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async fetchExternalImage (/app/node_modules/next/dist/server/image-optimizer.js:723:17)
+    at async NextNodeServer.imageOptimizer (/app/node_modules/next/dist/server/next-server.js:654:48)
+    at async cacheEntry.imageResponseCache.get.incrementalCache (/app/node_modules/next/dist/server/next-server.js:182:65)
+    at async /app/node_modules/next/dist/server/response-cache/index.js:90:36
+    at async /app/node_modules/next/dist/lib/batcher.js:45:32 {
+  [cause]: ConnectTimeoutError: Connect Timeout Error (attempted address: images.unsplash.com:443, timeout: 10000ms)
+      at onConnectTimeout (node:internal/deps/undici/undici:2718:28)
+      at Immediate._onImmediate (node:internal/deps/undici/undici:2699:11)
+      at process.processImmediate (node:internal/timers:484:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17) {
+    code: 'UND_ERR_CONNECT_TIMEOUT',
+    [Symbol(undici.error.UND_ERR)]: true,
+    [Symbol(undici.error.UND_ERR_CONNECT_TIMEOUT)]: true
+  }
+}
+ ⨯ TypeError: fetch failed
+    at node:internal/deps/undici/undici:14902:13
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async fetchExternalImage (/app/node_modules/next/dist/server/image-optimizer.js:723:17)
+    at async NextNodeServer.imageOptimizer (/app/node_modules/next/dist/server/next-server.js:654:48)
+    at async cacheEntry.imageResponseCache.get.incrementalCache (/app/node_modules/next/dist/server/next-server.js:182:65)
+    at async /app/node_modules/next/dist/server/response-cache/index.js:90:36
+    at async /app/node_modules/next/dist/lib/batcher.js:45:32 {
+  [cause]: ConnectTimeoutError: Connect Timeout Error (attempted address: images.unsplash.com:443, timeout: 10000ms)
+      at onConnectTimeout (node:internal/deps/undici/undici:2718:28)
+      at Immediate._onImmediate (node:internal/deps/undici/undici:2699:11)
+      at process.processImmediate (node:internal/timers:484:21)
+      at process.callbackTrampoline (node:internal/async_hooks:130:17) {
+    code: 'UND_ERR_CONNECT_TIMEOUT',
+    [Symbol(undici.error.UND_ERR)]: true,
+    [Symbol(undici.error.UND_ERR_CONNECT_TIMEOUT)]: true
+  }
 }
