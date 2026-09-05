@@ -32,8 +32,9 @@ export interface MegaMenuItem {
 
 export interface CMSGalleryItem {
   id: string;
-  src: string;
-  label: string; // Alt text / title / caption
+  productId?: string;
+  src?: string;
+  label?: string;
   displayOrder: number;
   enabled: boolean;
   link?: string;
