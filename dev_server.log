@@ -1,91 +1,55 @@
-
-> cake-lounge-frontend@0.1.0 dev
-> next dev
-
+$ next dev
   ▲ Next.js 14.2.35
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1770ms
+ ✓ Ready in 1734ms
+ ○ Compiling /admin/gallery ...
+ ✓ Compiled /admin/gallery in 12.4s (1626 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/gallery?bypass=true 200 in 13787ms
+ ✓ Compiled in 1325ms (743 modules)
+ GET /admin/gallery?bypass=true 200 in 58ms
  ○ Compiling / ...
- ✓ Compiled / in 10.7s (1677 modules)
+ ✓ Compiled / in 1759ms (1694 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- HEAD / 200 in 11524ms
- ✓ Compiled in 1281ms (760 modules)
- ○ Compiling /admin/decorations ...
- ✓ Compiled /admin/decorations in 2.8s (1702 modules)
+ GET /?bypass=true 200 in 2339ms
+ GET /admin/gallery?bypass=true 200 in 115ms
+ GET /admin/gallery?bypass=true 200 in 70ms
+ ○ Compiling /admin/featured-products ...
+ ✓ Compiled /admin/featured-products in 1493ms (1732 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/decorations?bypass=true 200 in 3109ms
- GET /admin/decorations?bypass=true 200 in 3269ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 1161ms (1738 modules)
+ GET /admin/featured-products?bypass=true 200 in 1793ms
+ GET /admin/website-content?tab=settings&bypass=true 200 in 1812ms
+ GET / 200 in 194ms
+ ○ Compiling /preview-images ...
+ ✓ Compiled /preview-images in 1089ms (1740 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /shop/dec_1 200 in 2633ms
- GET /shop/1 200 in 140ms
- ✓ Compiled in 2.4s (1673 modules)
- ✓ Compiled in 758ms (804 modules)
- ✓ Compiled in 3.4s (1673 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/decorations?bypass=true 200 in 736ms
- GET /admin/decorations?bypass=true 200 in 770ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 2.4s (892 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /shop/dec_1 200 in 3200ms
- GET /shop/1 200 in 112ms
- GET /shop/1 200 in 118ms
- ✓ Compiled / in 481ms (948 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 873ms
- GET /shop/1 200 in 259ms
- GET /shop/1 200 in 259ms
- GET /shop/1 200 in 162ms
- GET /shop/1 200 in 163ms
+ GET /preview-images 200 in 1531ms
+ GET / 200 in 189ms
+ GET /admin/featured-products?bypass=true 200 in 95ms
+ GET /preview-images 200 in 745ms
+ GET / 200 in 112ms
+ GET / 200 in 560ms
+ GET /admin/featured-products?bypass=true 200 in 87ms
+ GET /preview-images 200 in 305ms
+ GET / 200 in 118ms
  ○ Compiling /menu ...
- ✓ Compiled /menu in 2.4s (1746 modules)
+ ✓ Compiled /menu in 5.7s (1750 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /menu 200 in 3110ms
- GET /admin/decorations?bypass=true 200 in 3096ms
- GET /admin/decorations?bypass=true 200 in 185ms
- GET /shop/dec_1 200 in 180ms
- GET /shop/1 200 in 90ms
- GET /menu 200 in 95ms
- GET /menu 200 in 67ms
- GET /admin/decorations?bypass=true 200 in 68ms
- GET /admin/decorations?bypass=true 200 in 76ms
- GET /shop/dec_1 200 in 163ms
- GET /shop/1 200 in 103ms
- GET /shop/1 200 in 80ms
- GET /shop/1 200 in 74ms
- GET / 200 in 152ms
- ○ Compiling /admin/categories ...
- ✓ Compiled /admin/categories in 3.3s (1760 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /menu 200 in 6736ms
+ GET / 200 in 1141ms
+ GET /admin/gallery?bypass=true 200 in 114ms
+ GET /?bypass=true 200 in 108ms
+ GET /admin/gallery?bypass=true 200 in 100ms
+ GET /admin/gallery?bypass=true 200 in 63ms
+ GET /admin/gallery?bypass=true 200 in 59ms
+ GET /?bypass=true 200 in 100ms
+ ✓ Compiled in 3.3s (1758 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/categories?bypass=true 200 in 3909ms
- GET / 200 in 165ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1263ms (1763 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /images/categories/Milestone Treat.jpg 404 in 1988ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Treat.jpg received null
- GET /admin/categories?bypass=true 200 in 257ms
- GET / 200 in 196ms
- GET /images/categories/Milestone Deluxe.jpg 404 in 61ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
- GET /admin/categories?bypass=true 200 in 61ms
- GET / 200 in 90ms
- GET /images/categories/Milestone Deluxe.jpg 404 in 110ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
- GET /admin/categories?bypass=true 200 in 149ms
- GET / 200 in 89ms
- GET /admin/categories?bypass=true 200 in 136ms
- GET / 200 in 81ms
- GET /shop/1 200 in 206ms
- GET /shop/1 200 in 345ms
- GET /admin/decorations?bypass=true 200 in 162ms
- GET /admin/decorations?bypass=true 200 in 196ms
- GET /shop/dec_1 200 in 491ms
- GET /shop/1 200 in 212ms
- GET /shop/1 200 in 108ms
- GET /shop/1 200 in 228ms
- GET /shop/1 200 in 214ms
+ GET /admin/gallery?bypass=true 200 in 493ms
+ GET /?bypass=true 200 in 151ms
+ GET /admin/gallery?bypass=true 200 in 138ms
+ GET /admin/gallery?bypass=true 200 in 56ms

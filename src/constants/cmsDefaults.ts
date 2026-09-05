@@ -882,6 +882,7 @@ export const DEFAULT_TESTIMONIALS: CMSTestimonial[] = [
 export const DEFAULT_GALLERY: CMSGalleryItem[] = [
   {
     id: 'gal_1',
+    productId: '1',
     src: '/images/products/Royal Raspberry Birthday Cake.jpg',
     label: 'Royal Raspberry Birthday Cake',
     displayOrder: 0,
@@ -890,6 +891,7 @@ export const DEFAULT_GALLERY: CMSGalleryItem[] = [
   },
   {
     id: 'gal_2',
+    productId: '2',
     src: '/images/products/Champagne Velvet Birthday Cake.jpg',
     label: 'Champagne Velvet Birthday Cake',
     displayOrder: 1,
@@ -898,6 +900,7 @@ export const DEFAULT_GALLERY: CMSGalleryItem[] = [
   },
   {
     id: 'gal_3',
+    productId: '3',
     src: '/images/products/Golden Confetti Birthday Cake.jpg',
     label: 'Golden Confetti Birthday Cake',
     displayOrder: 2,
@@ -906,6 +909,7 @@ export const DEFAULT_GALLERY: CMSGalleryItem[] = [
   },
   {
     id: 'gal_4',
+    productId: '4',
     src: '/images/products/Chocolate Crown Birthday Cake.jpg',
     label: 'Chocolate Crown Birthday Cake',
     displayOrder: 3,

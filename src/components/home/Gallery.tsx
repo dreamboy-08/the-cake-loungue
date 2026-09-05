@@ -4,21 +4,45 @@ import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCMS } from '@/context/CMSContext';
+import { useProducts } from '@/context/ProductsContext';
 
 const Gallery = () => {
   const { galleryItems } = useCMS();
+  const { products } = useProducts();
 
   const galleryImgs = useMemo(() => {
     return (galleryItems || [])
       .filter(item => item.enabled !== false)
       .sort((a, b) => a.displayOrder - b.displayOrder)
-      .map(item => ({
-        id: item.id,
-        src: item.src,
-        label: item.label,
-        link: item.link || '/menu'
-      }));
-  }, [galleryItems]);
+      .map(item => {
+        // Find referenced product from Products CMS if productId exists
+        const matchedProduct = item.productId
+          ? products.find(p => p.id.toString() === item.productId?.toString())
+          : null;
+
+        if (matchedProduct) {
+          return {
+            id: item.id,
+            src: matchedProduct.img,
+            label: matchedProduct.name,
+            link: `/shop/${matchedProduct.id}`
+          };
+        }
+
+        // Fallback to legacy fields if present
+        if (item.src) {
+          return {
+            id: item.id,
+            src: item.src,
+            label: item.label || 'Our Creation',
+            link: item.link || '/menu'
+          };
+        }
+
+        return null;
+      })
+      .filter((item): item is { id: string; src: string; label: string; link: string } => item !== null);
+  }, [galleryItems, products]);
 
   if (galleryImgs.length === 0) {
     return null;
