@@ -196,7 +196,9 @@ const About = () => {
               <div
                 style={{ color: settings.textColor || '#a07860' }}
                 className="mt-4 text-[0.95rem] leading-[1.7] max-w-full space-y-4 font-poppins font-normal"
-                dangerouslySetInnerHTML={{ __html: settings.storyContent }}
+                dangerouslySetInnerHTML={{
+                  __html: settings.storyContent || ''
+                }}
               />
             </motion.div>
 
