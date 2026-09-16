@@ -728,14 +728,12 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             // Update local storage cache to match authoritative Firestore data
             saveOfflineCMS(collectionName, items);
           } else {
-            setter(fallback);
-            saveOfflineCMS(collectionName, fallback);
+            setter([]);
           }
           markListenerLoaded(collectionName);
         },
         (error) => {
-          console.error(`Real-time fetch failed for ${collectionName}, using fallback:`, error);
-          setter(fallback);
+          console.error(`Real-time fetch failed for ${collectionName}:`, error);
           markListenerLoaded(collectionName);
         }
       );

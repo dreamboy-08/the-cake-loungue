@@ -121,7 +121,8 @@ const OurStoryAdmin = () => {
 
   useEffect(() => {
     if (aboutSettings) {
-      setLocalSettings(JSON.parse(JSON.stringify(aboutSettings)));
+      const cloned = JSON.parse(JSON.stringify(aboutSettings));
+      setLocalSettings(cloned);
     }
   }, [aboutSettings]);
 

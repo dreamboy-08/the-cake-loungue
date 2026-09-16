@@ -49,7 +49,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== "your_api_key";
 
     if (!isFirebaseConfigured) {
-      loadOfflineProducts();
+      loadOfflineProducts(true);
       return;
     }
 
@@ -63,11 +63,12 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         })) as unknown as Product[];
         setProducts(fetched);
       } else {
-        setProducts(staticProducts);
+        setProducts([]);
       }
     } catch (err) {
-      console.error("Failed to refresh products from Firestore, falling back to offline/static:", err);
-      loadOfflineProducts();
+      console.error("Failed to refresh products from Firestore:", err);
+      // In live mode with Firebase configured, do not fall back to seed data
+      loadOfflineProducts(false);
     } finally {
       setLoading(false);
     }
@@ -123,23 +124,22 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             } catch (e) {}
           }
         } else {
-          console.warn("Firestore products collection is empty. Falling back to static products.");
-          setProducts(staticProducts);
+          console.warn("Firestore products collection is empty.");
+          setProducts([]);
         }
         setLoading(false);
       },
       (error) => {
-        console.error("Firestore onSnapshot subscription failed, falling back to getDocs or static:", error);
-        // Fallback to manual load as backup
-        loadOfflineProducts(true);
-        refreshProducts();
+        console.error("Firestore onSnapshot subscription failed:", error);
+        loadOfflineProducts(false);
+        setLoading(false);
       }
     );
 
     return () => {
       unsubscribe();
     };
-  }, [loadOfflineProducts, refreshProducts]);
+  }, [loadOfflineProducts]);
 
   return (
     <ProductsContext.Provider value={{ products, loading, refreshProducts }}>
