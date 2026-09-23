@@ -229,6 +229,12 @@ export interface CMSWhatsAppSettings {
   id: string; // 'whatsapp_cms_config'
   customerConfirmation: CMSWhatsAppMessageSlot;
   adminNewOrderAlert: CMSWhatsAppMessageSlot;
+  quickBroadcastTemplate?: {
+    messageTemplate: string;
+    useMetaTemplate?: boolean;
+    templateName?: string;
+    languageCode?: string;
+  };
   updatedAt?: string;
 }
 

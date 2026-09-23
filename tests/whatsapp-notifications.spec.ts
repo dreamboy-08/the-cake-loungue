@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import {
   sanitizePhoneNumber,
+  maskPhoneNumber,
   formatCustomerOrderMessage,
   formatAdminOrderMessage,
   sendOrderNotifications,
+  sendWhatsAppMessage,
   mockWhatsAppLogs,
   memorySentNotifications,
 } from '../backend/whatsappService';
@@ -22,6 +24,12 @@ test.describe('WhatsApp Order Notification System Unit & Integration Tests', () 
     expect(sanitizePhoneNumber('919876543210')).toBe('919876543210');
     expect(sanitizePhoneNumber('  +91 (888) 123-4567 ')).toBe('918881234567');
     expect(sanitizePhoneNumber('')).toBe('');
+  });
+
+  test('Mask phone numbers correctly for privacy', () => {
+    expect(maskPhoneNumber('+91 98765 43210')).toBe('9198*****210');
+    expect(maskPhoneNumber('9811122233')).toBe('9198*****233');
+    expect(maskPhoneNumber('')).toBe('');
   });
 
   test('Format Customer Order Confirmation Message correctly', () => {
@@ -150,6 +158,22 @@ test.describe('WhatsApp Order Notification System Unit & Integration Tests', () 
     const message = formatCustomerOrderMessage(order, customTemplate);
 
     expect(message).toBe('Hello Siddharth Rao! Order order_custom_123 confirmed. Total: ₹800. Items:\n• Mango Mousse Cake — ₹750');
+  });
+
+  test('Send Quick Broadcast message correctly using mock provider', async () => {
+    const broadcastMsg = '🎉 Special Weekend Offer! Get 20% OFF on all chocolate cakes! 🎂';
+
+    const result = await sendWhatsAppMessage('9876543210', broadcastMsg, 'quick_broadcast');
+
+    expect(result.success).toBe(true);
+    expect(result.type).toBe('quick_broadcast');
+    expect(result.to).toBe('919876543210');
+    expect(result.messageId).toContain('mock_msg_');
+
+    expect(mockWhatsAppLogs.length).toBe(1);
+    expect(mockWhatsAppLogs[0].type).toBe('quick_broadcast');
+    expect(mockWhatsAppLogs[0].to).toBe('919876543210');
+    expect(mockWhatsAppLogs[0].message).toBe(broadcastMsg);
   });
 
 });

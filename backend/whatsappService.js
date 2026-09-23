@@ -19,6 +19,13 @@ function sanitizePhoneNumber(phone) {
   return cleaned;
 }
 
+function maskPhoneNumber(phone) {
+  if (!phone) return '';
+  const sanitized = sanitizePhoneNumber(phone);
+  if (sanitized.length < 7) return '****';
+  return sanitized.slice(0, 4) + '*****' + sanitized.slice(-3);
+}
+
 function resolveOrderVariables(order) {
   const customerName = order.customerName || order.customer?.name || 'Valued Customer';
   const customerEmail = order.customerEmail || order.customer?.email || 'N/A';
@@ -164,7 +171,7 @@ Please check the admin panel for complete order details.
 — *The Cake Lounge*`;
 }
 
-async function sendWhatsAppMessage(recipientPhone, messageText, type) {
+async function sendWhatsAppMessage(recipientPhone, messageText, type, templateOptions = null) {
   const sanitizedTo = sanitizePhoneNumber(recipientPhone);
 
   if (!sanitizedTo) {
@@ -183,6 +190,28 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
 
   if (provider === 'meta' && token && phoneNumberId) {
     try {
+      const payload = {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: sanitizedTo,
+      };
+
+      if (templateOptions?.useMetaTemplate && templateOptions?.templateName) {
+        payload.type = 'template';
+        payload.template = {
+          name: templateOptions.templateName,
+          language: {
+            code: templateOptions.languageCode || 'en',
+          },
+        };
+      } else {
+        payload.type = 'text';
+        payload.text = {
+          preview_url: false,
+          body: messageText,
+        };
+      }
+
       const response = await fetch(
         `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
         {
@@ -191,16 +220,7 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            recipient_type: 'individual',
-            to: sanitizedTo,
-            type: 'text',
-            text: {
-              preview_url: false,
-              body: messageText,
-            },
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
@@ -208,7 +228,7 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
 
       if (response.ok && data.messages?.[0]?.id) {
         const msgId = data.messages[0].id;
-        console.log(`[WhatsApp Service - Meta] Sent ${type} to ${sanitizedTo}. Message ID: ${msgId}`);
+        console.log(`[WhatsApp Service - Meta] Sent ${type} to ${maskPhoneNumber(sanitizedTo)}. Message ID: ${msgId}`);
         return {
           success: true,
           type,
@@ -217,7 +237,7 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
         };
       } else {
         const errMsg = data.error?.message || JSON.stringify(data);
-        console.error(`[WhatsApp Service - Meta] Response missing message ID:`, data);
+        console.error(`[WhatsApp Service - Meta] Response missing message ID for ${maskPhoneNumber(sanitizedTo)}:`, data);
         return {
           success: false,
           type,
@@ -226,7 +246,7 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
         };
       }
     } catch (error) {
-      console.error(`[WhatsApp Service - Meta] Error sending ${type} to ${sanitizedTo}:`, error.message);
+      console.error(`[WhatsApp Service - Meta] Error sending ${type} to ${maskPhoneNumber(sanitizedTo)}:`, error.message);
       return {
         success: false,
         type,
@@ -243,7 +263,7 @@ async function sendWhatsAppMessage(recipientPhone, messageText, type) {
       timestamp: new Date().toISOString(),
     };
     mockWhatsAppLogs.push(mockLog);
-    console.log(`[MOCK WHATSAPP] Message sent successfully to ${sanitizedTo} (${type}):\n${messageText}\n-------------------------------------------`);
+    console.log(`[MOCK WHATSAPP] Message sent successfully to ${maskPhoneNumber(sanitizedTo)} (${type})`);
     return {
       success: true,
       type,
@@ -413,6 +433,7 @@ async function sendOrderNotifications(orderDetails, db, websiteSettings = null) 
 
 module.exports = {
   sanitizePhoneNumber,
+  maskPhoneNumber,
   formatCustomerOrderMessage,
   formatAdminOrderMessage,
   sendWhatsAppMessage,

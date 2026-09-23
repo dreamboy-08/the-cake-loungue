@@ -1,4 +1,4 @@
-export type WhatsAppNotificationType = 'customer_order_confirmation' | 'admin_new_order';
+export type WhatsAppNotificationType = 'customer_order_confirmation' | 'admin_new_order' | 'quick_broadcast';
 
 export interface WhatsAppOrderItem {
   name: string;
@@ -44,4 +44,26 @@ export interface WhatsAppSendResult {
   messageId?: string;
   error?: string;
   alreadySent?: boolean;
+}
+
+export interface WhatsAppBroadcastRecipient {
+  phone: string;
+  maskedPhone: string;
+  status: 'sent' | 'failed';
+  error?: string;
+  messageId?: string;
+}
+
+export interface WhatsAppBroadcastRecord {
+  id: string;
+  message: string;
+  createdAt: string;
+  totalRecipients: number;
+  sentCount: number;
+  failedCount: number;
+  status: 'in_progress' | 'completed' | 'failed';
+  useMetaTemplate?: boolean;
+  templateName?: string;
+  languageCode?: string;
+  recipients?: WhatsAppBroadcastRecipient[];
 }
