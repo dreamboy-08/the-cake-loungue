@@ -249,3 +249,103 @@ test.describe('CMS Delivery Charges & Fee Settings Lifecycle', () => {
     await expect(page.locator('text=Add ₹300 more to unlock FREE Delivery.')).toBeVisible();
   });
 });
+
+test.describe('Server-side CMS Delivery Calculation & Tamper Protection', () => {
+  const futureDate = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    return d.toISOString().split('T')[0];
+  };
+
+  test('Server calculates exact expected amounts matching CMS configurations', async ({ request }) => {
+    const { calculateExpectedAmount } = require('../backend/server');
+
+    // TEST 1: Fee ₹50, Threshold ₹499, Subtotal ₹1 -> Delivery ₹50, Total ₹51
+    const config1 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config1)).toBe(51);
+
+    // TEST 2: Fee ₹80, Threshold ₹499, Subtotal ₹1 -> Delivery ₹80, Total ₹81
+    const config2 = { deliveryCharges: 80, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config2)).toBe(81);
+
+    // TEST 3: Fee ₹50, Threshold ₹499, Subtotal ₹499 -> Delivery FREE, Total ₹499
+    const config3 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 499, quantity: 1 }], '10:00 AM – 12:00 PM', config3)).toBe(499);
+
+    // TEST 4: Fee ₹50, Threshold ₹499, Subtotal ₹500 -> Delivery FREE, Total ₹500
+    const config4 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 500, quantity: 1 }], '10:00 AM – 12:00 PM', config4)).toBe(500);
+
+    // TEST 5: Delivery disabled, Subtotal ₹1 -> Delivery FREE, Total ₹1
+    const config5 = { deliveryCharges: 50, deliveryChargesEnabled: false, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config5)).toBe(1);
+
+    // TEST 6: Delivery fee = ₹0, Subtotal ₹1 -> Delivery FREE, Total ₹1
+    const config6 = { deliveryCharges: 0, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
+    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config6)).toBe(1);
+  });
+
+  test('Order creation endpoint succeeds when total matches CMS calculation and rejects tampered total', async ({ request }) => {
+    const generalSettings = {
+      deliveryCharges: 50,
+      deliveryChargesEnabled: true,
+      freeDeliveryThreshold: 499,
+      freeDeliveryThresholdEnabled: true,
+    };
+
+    // 1. Valid request where totalAmount matches expected total (Subtotal 1 + Shipping 50 = 51)
+    const validRes = await request.post('http://localhost:5000/api/orders', {
+      data: {
+        totalAmount: 51,
+        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
+        customerName: 'Test Customer',
+        customerEmail: 'test@example.com',
+        customerPhone: '9876543210',
+        deliveryDate: futureDate(),
+        deliveryTimeSlot: '10:00 AM – 12:00 PM',
+        generalSettings,
+      }
+    });
+
+    expect(validRes.status()).toBe(200);
+    const validBody = await validRes.json();
+    expect(validBody.order).toBeDefined();
+
+    // 2. Tampered request where expected total is 51, but client sends 1
+    const tamperedRes1 = await request.post('http://localhost:5000/api/orders', {
+      data: {
+        totalAmount: 1,
+        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
+        customerName: 'Test Customer',
+        customerEmail: 'test@example.com',
+        customerPhone: '9876543210',
+        deliveryDate: futureDate(),
+        deliveryTimeSlot: '10:00 AM – 12:00 PM',
+        generalSettings,
+      }
+    });
+
+    expect(tamperedRes1.status()).toBe(400);
+    const tamperedBody1 = await tamperedRes1.json();
+    expect(tamperedBody1.error).toContain('Mismatched order total amount. Expected ₹51, got ₹1.');
+
+    // 3. Tampered request where expected total is 1 (delivery disabled), but client sends 51
+    const disabledSettings = { ...generalSettings, deliveryChargesEnabled: false };
+    const tamperedRes2 = await request.post('http://localhost:5000/api/orders', {
+      data: {
+        totalAmount: 51,
+        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
+        customerName: 'Test Customer',
+        customerEmail: 'test@example.com',
+        customerPhone: '9876543210',
+        deliveryDate: futureDate(),
+        deliveryTimeSlot: '10:00 AM – 12:00 PM',
+        generalSettings: disabledSettings,
+      }
+    });
+
+    expect(tamperedRes2.status()).toBe(400);
+    const tamperedBody2 = await tamperedRes2.json();
+    expect(tamperedBody2.error).toContain('Mismatched order total amount. Expected ₹1, got ₹51.');
+  });
+});

@@ -129,15 +129,60 @@ function validateDeliveryDate(dateStr, items = []) {
   return { valid: true };
 }
 
-function calculateExpectedAmount(items, deliveryTimeSlot) {
+const DEFAULT_GENERAL_SETTINGS = {
+  deliveryCharges: 50,
+  deliveryChargesEnabled: true,
+  freeDeliveryThreshold: 499,
+  freeDeliveryThresholdEnabled: true,
+};
+
+async function fetchGeneralSettings(db, reqSettings = null) {
+  if (db) {
+    try {
+      const docSnap = await db.collection('settings').doc('general_cms_config').get();
+      if (docSnap.exists) {
+        return {
+          ...DEFAULT_GENERAL_SETTINGS,
+          ...docSnap.data()
+        };
+      }
+    } catch (err) {
+      console.warn('[Server] Could not fetch general_cms_config from Firestore:', err.message);
+    }
+  }
+  if (reqSettings && typeof reqSettings === 'object') {
+    return {
+      ...DEFAULT_GENERAL_SETTINGS,
+      ...reqSettings
+    };
+  }
+  return DEFAULT_GENERAL_SETTINGS;
+}
+
+function calculateExpectedAmount(items, deliveryTimeSlot, generalSettings = DEFAULT_GENERAL_SETTINGS) {
   let subtotal = 0;
-  for (const item of items) {
+  for (const item of (items || [])) {
     const price = Number(item.price);
     const qty = Number(item.quantity) || 1;
     subtotal += price * qty;
   }
 
-  const shippingFee = subtotal >= 499 ? 0 : 50;
+  const rawFee = generalSettings?.deliveryCharges ?? DEFAULT_GENERAL_SETTINGS.deliveryCharges;
+  const deliveryChargesEnabled = generalSettings?.deliveryChargesEnabled ?? DEFAULT_GENERAL_SETTINGS.deliveryChargesEnabled ?? true;
+  const rawThreshold = generalSettings?.freeDeliveryThreshold ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThreshold;
+  const freeDeliveryThresholdEnabled = generalSettings?.freeDeliveryThresholdEnabled ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThresholdEnabled ?? true;
+
+  const deliveryCharges = isNaN(Number(rawFee)) || Number(rawFee) < 0 ? 0 : Math.round(Number(rawFee));
+  const freeDeliveryThreshold = isNaN(Number(rawThreshold)) || Number(rawThreshold) < 0 ? 0 : Math.round(Number(rawThreshold));
+
+  let shippingFee = deliveryCharges;
+
+  if (!deliveryChargesEnabled || deliveryCharges === 0) {
+    shippingFee = 0;
+  } else if (freeDeliveryThresholdEnabled && subtotal >= freeDeliveryThreshold) {
+    shippingFee = 0;
+  }
+
   const midnightCharge = (deliveryTimeSlot === "10:00 PM – 12:00 AM (Midnight Delivery)") ? 150 : 0;
 
   return subtotal + shippingFee + midnightCharge;
@@ -155,7 +200,7 @@ app.get('/', (req, res) => {
 // Create Order for Razorpay
 app.post('/api/orders', async (req, res) => {
   try {
-    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot } = req.body;
+    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot, generalSettings: reqGeneralSettings } = req.body;
 
     if (!totalAmount || !items || !items.length) {
       return res.status(400).json({ error: 'Missing order details: amount and items are required' });
@@ -172,14 +217,16 @@ app.post('/api/orders', async (req, res) => {
       return res.status(400).json({ error: 'Invalid or missing delivery time slot.' });
     }
 
-    // 3. Verify totalAmount matches recalculation
-    const expectedAmount = calculateExpectedAmount(items, deliveryTimeSlot);
+    // 3. Verify totalAmount matches recalculation with CMS generalSettings
+    const generalSettings = await fetchGeneralSettings(db, reqGeneralSettings);
+    const expectedAmount = calculateExpectedAmount(items, deliveryTimeSlot, generalSettings);
     if (Math.round(totalAmount) !== Math.round(expectedAmount)) {
       return res.status(400).json({ error: `Mismatched order total amount. Expected ₹${expectedAmount}, got ₹${totalAmount}. Request may be manipulated.` });
     }
 
     if (!razorpay) {
-      if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+      const currentEnv = process.env.NODE_ENV || 'development';
+      if (currentEnv === 'test' || currentEnv === 'development') {
         console.log('Razorpay missing, but in test/dev mode. Simulating order creation.');
         return res.json({
           order: {
@@ -263,7 +310,8 @@ app.post('/api/verify-payment', async (req, res) => {
           return res.status(400).json({ success: false, error: 'Invalid or missing delivery time slot.' });
         }
 
-        const expectedAmount = calculateExpectedAmount(orderDetails.items, orderDetails.deliveryTimeSlot);
+        const generalSettings = await fetchGeneralSettings(db, orderDetails.generalSettings);
+        const expectedAmount = calculateExpectedAmount(orderDetails.items, orderDetails.deliveryTimeSlot, generalSettings);
         if (Math.round(orderDetails.totalAmount) !== Math.round(expectedAmount)) {
           return res.status(400).json({ success: false, error: `Mismatched order details total amount. Expected ₹${expectedAmount}, got ₹${orderDetails.totalAmount}.` });
         }
@@ -503,6 +551,15 @@ process.on('unhandledRejection', (error) => {
   console.error('Unhandled rejection:', error);
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server listening on http://${HOST}:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, HOST, () => {
+    console.log(`Server listening on http://${HOST}:${PORT}`);
+  });
+}
+
+module.exports = {
+  app,
+  calculateExpectedAmount,
+  fetchGeneralSettings,
+  DEFAULT_GENERAL_SETTINGS
+};
