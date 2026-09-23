@@ -15,16 +15,24 @@ export const mockWhatsAppLogs: Array<{
 export function sanitizePhoneNumber(phone: string): string {
   if (!phone) return '';
   let cleaned = phone.replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('0') && cleaned.length === 11) {
+    cleaned = cleaned.substring(1);
+  }
+  if (cleaned.startsWith('910') && cleaned.length === 13) {
+    cleaned = '91' + cleaned.substring(3);
+  }
   if (cleaned.length === 10) {
     cleaned = '91' + cleaned;
   }
   return cleaned;
 }
 
-export function formatCustomerOrderMessage(order: WhatsAppOrderDetails): string {
+export function resolveOrderVariables(order: WhatsAppOrderDetails): Record<string, string | number> {
   const customerName = order.customerName || 'Valued Customer';
-  const orderId = order.orderId;
-  const totalAmount = order.totalAmount;
+  const customerEmail = order.customerEmail || 'N/A';
+  const customerPhone = order.customerPhone || 'N/A';
+  const orderId = order.orderId || 'N/A';
+  const totalAmount = order.totalAmount ?? 0;
   const deliveryDate = order.deliveryDate || 'N/A';
   const deliveryTime = order.deliveryTimeSlot || order.deliveryTime || 'N/A';
 
@@ -59,11 +67,39 @@ export function formatCustomerOrderMessage(order: WhatsAppOrderDetails): string 
     })
     .join('\n');
 
+  return {
+    '{customerName}': customerName,
+    '{customerPhone}': customerPhone,
+    '{customerEmail}': customerEmail,
+    '{orderId}': orderId,
+    '{items}': itemsList,
+    '{totalAmount}': totalAmount,
+    '{deliveryDate}': deliveryDate,
+    '{deliveryTime}': deliveryTime,
+    '{deliveryAddress}': deliveryAddress,
+    '{specialRequests}': specialRequests,
+  };
+}
+
+export function renderTemplateMessage(templateStr: string, variablesMap: Record<string, string | number>): string {
+  let result = templateStr || '';
+  Object.keys(variablesMap).forEach((key) => {
+    result = result.split(key).join(String(variablesMap[key]));
+  });
+  return result;
+}
+
+export function formatCustomerOrderMessage(order: WhatsAppOrderDetails, customTemplate?: string | null): string {
+  const vars = resolveOrderVariables(order);
+  if (customTemplate) {
+    return renderTemplateMessage(customTemplate, vars);
+  }
+
   return `🎂 *THE CAKE LOUNGE*
 
 ✨ *ORDER CONFIRMED*
 
-Hi *${customerName}*,
+Hi *${vars['{customerName}']}*,
 
 Thank you for ordering from *The Cake Lounge*! 💛
 
@@ -71,20 +107,20 @@ Your payment has been successfully received and your order is now confirmed.
 
 *ORDER DETAILS*
 ━━━━━━━━━━━━━━
-🧾 Order ID: \`${orderId}\`
+🧾 Order ID: \`${vars['{orderId}']}\`
 
 🍰 *Items:*
-${itemsList}
+${vars['{items}']}
 
-💰 *Total Paid: ₹${totalAmount}*
+💰 *Total Paid: ₹${vars['{totalAmount}']}*
 
-📅 *Delivery Date:* ${deliveryDate}
-🕓 *Delivery Time:* ${deliveryTime}
+📅 *Delivery Date:* ${vars['{deliveryDate}']}
+🕓 *Delivery Time:* ${vars['{deliveryTime}']}
 
 📍 *Delivery Address:*
-${deliveryAddress}
+${vars['{deliveryAddress}']}
 
-📝 *Special Requests:* ${specialRequests}
+📝 *Special Requests:* ${vars['{specialRequests}']}
 
 ━━━━━━━━━━━━━━
 💳 Payment: *Successful*
@@ -96,45 +132,11 @@ For any assistance regarding your order, simply reply to this message.
 — *The Cake Lounge* 🎂`;
 }
 
-export function formatAdminOrderMessage(order: WhatsAppOrderDetails): string {
-  const customerName = order.customerName || 'N/A';
-  const customerEmail = order.customerEmail || 'N/A';
-  const customerPhone = order.customerPhone || 'N/A';
-  const orderId = order.orderId;
-  const totalAmount = order.totalAmount;
-  const deliveryDate = order.deliveryDate || 'N/A';
-  const deliveryTime = order.deliveryTimeSlot || order.deliveryTime || 'N/A';
-
-  let deliveryAddress = order.shippingAddress;
-  if (!deliveryAddress && order.address) {
-    const parts = [
-      order.address.houseNumber,
-      order.address.street,
-      order.address.landmark && order.address.landmark !== 'None' ? `Near ${order.address.landmark}` : null,
-      order.address.area,
-      order.address.city,
-      order.address.state,
-      order.address.pincode || order.address.zipCode,
-    ].filter(Boolean);
-    deliveryAddress = parts.join(', ');
+export function formatAdminOrderMessage(order: WhatsAppOrderDetails, customTemplate?: string | null): string {
+  const vars = resolveOrderVariables(order);
+  if (customTemplate) {
+    return renderTemplateMessage(customTemplate, vars);
   }
-  if (!deliveryAddress) deliveryAddress = 'N/A';
-
-  const rawInstructions = order.deliveryInstructions || order.specialRequests;
-  const specialRequests =
-    rawInstructions && rawInstructions.trim() && rawInstructions.trim() !== 'None'
-      ? rawInstructions.trim()
-      : 'None';
-
-  const itemsList = (order.items || [])
-    .map((item) => {
-      const qty = Number(item.quantity) || 1;
-      const price = Number(item.price) || 0;
-      const lineTotal = price * qty;
-      const qtyText = qty > 1 ? ` (x${qty})` : '';
-      return `• ${item.name}${qtyText} — ₹${lineTotal}`;
-    })
-    .join('\n');
 
   return `🚨 *THE CAKE LOUNGE — NEW ORDER*
 
@@ -142,24 +144,24 @@ A new order has been successfully placed.
 
 *ORDER INFORMATION*
 ━━━━━━━━━━━━━━
-🧾 Order ID: \`${orderId}\`
+🧾 Order ID: \`${vars['{orderId}']}\`
 
-👤 *Customer:* ${customerName}
-📧 *Email:* ${customerEmail}
-📱 *Phone:* ${customerPhone}
+👤 *Customer:* ${vars['{customerName}']}
+📧 *Email:* ${vars['{customerEmail}']}
+📱 *Phone:* ${vars['{customerPhone}']}
 
 🍰 *Items:*
-${itemsList}
+${vars['{items}']}
 
-💰 *Order Total:* ₹${totalAmount}
+💰 *Order Total:* ₹${vars['{totalAmount}']}
 
-📅 *Delivery Date:* ${deliveryDate}
-🕓 *Delivery Time:* ${deliveryTime}
+📅 *Delivery Date:* ${vars['{deliveryDate}']}
+🕓 *Delivery Time:* ${vars['{deliveryTime}']}
 
 📍 *Delivery Address:*
-${deliveryAddress}
+${vars['{deliveryAddress}']}
 
-📝 *Special Requests:* ${specialRequests}
+📝 *Special Requests:* ${vars['{specialRequests}']}
 
 ━━━━━━━━━━━━━━
 📦 *Order Status:* New Order

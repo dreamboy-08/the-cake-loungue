@@ -228,6 +228,8 @@ const CheckoutPage = () => {
 
     try {
       console.log('Initiating checkout for amount:', finalTotal);
+      const resolvedCustomerPhone = selectedAddress.phone || (userData as any)?.phone || user?.phoneNumber || '';
+
       // Step 1: Create order on backend
       const orderResponse = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
@@ -237,7 +239,7 @@ const CheckoutPage = () => {
           items: checkoutItems,
           customerName: selectedAddress.name,
           customerEmail: user?.email || 'guest@example.com',
-          customerPhone: selectedAddress.phone,
+          customerPhone: resolvedCustomerPhone,
           deliveryDate,
           deliveryTimeSlot,
           generalSettings,
@@ -272,14 +274,19 @@ const CheckoutPage = () => {
           try {
             console.log('Razorpay payment successful, verifying...', response.razorpay_payment_id);
 
+            const resolvedCustomerPhone = selectedAddress.phone || (userData as any)?.phone || user?.phoneNumber || '';
+
             const orderDetails = {
               userId: user?.uid || 'guest',
               isGuest: !user,
               customer: {
                 name: selectedAddress.name,
                 email: user?.email || 'guest@example.com',
-                phone: selectedAddress.phone,
+                phone: resolvedCustomerPhone,
               },
+              customerPhone: resolvedCustomerPhone,
+              customerName: selectedAddress.name,
+              customerEmail: user?.email || 'guest@example.com',
               address: {
                 houseNumber: selectedAddress.houseNumber,
                 street: selectedAddress.street,

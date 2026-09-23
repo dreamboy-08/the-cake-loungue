@@ -132,4 +132,24 @@ test.describe('WhatsApp Order Notification System Unit & Integration Tests', () 
     await expect(sendOrderNotifications(invalidOrder, null, null)).resolves.not.toThrow();
   });
 
+  test('Support custom templates and variable substitution', () => {
+    const order = {
+      orderId: 'order_custom_123',
+      customerName: 'Siddharth Rao',
+      customerEmail: 'sid@example.com',
+      customerPhone: '9811122233',
+      items: [{ name: 'Mango Mousse Cake', price: 750, quantity: 1 }],
+      totalAmount: 800,
+      deliveryDate: '2025-07-10',
+      deliveryTimeSlot: '10:00 AM – 12:00 PM',
+      shippingAddress: 'Sector 56, Gurugram',
+      specialRequests: 'Eggless please',
+    };
+
+    const customTemplate = 'Hello {customerName}! Order {orderId} confirmed. Total: ₹{totalAmount}. Items:\n{items}';
+    const message = formatCustomerOrderMessage(order, customTemplate);
+
+    expect(message).toBe('Hello Siddharth Rao! Order order_custom_123 confirmed. Total: ₹800. Items:\n• Mango Mousse Cake — ₹750');
+  });
+
 });
