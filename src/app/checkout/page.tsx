@@ -240,6 +240,7 @@ const CheckoutPage = () => {
           customerPhone: selectedAddress.phone,
           deliveryDate,
           deliveryTimeSlot,
+          generalSettings,
         }),
       });
 
@@ -310,6 +311,7 @@ const CheckoutPage = () => {
               deliveryTimeSlot,
               deliveryInstructions,
               deliveryType,
+              generalSettings,
             };
 
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {

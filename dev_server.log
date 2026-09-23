@@ -6,86 +6,87 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1770ms
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 1831ms
  ○ Compiling / ...
- ✓ Compiled / in 10.7s (1677 modules)
+ ✓ Compiled / in 15.9s (1677 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- HEAD / 200 in 11524ms
- ✓ Compiled in 1281ms (760 modules)
- ○ Compiling /admin/decorations ...
- ✓ Compiled /admin/decorations in 2.8s (1702 modules)
+ GET / 200 in 17087ms
+ ✓ Compiled in 1775ms (760 modules)
+ GET / 200 in 153ms
+ GET / 200 in 108ms
+ ○ Compiling /checkout ...
+ ✓ Compiled /checkout in 5.7s (2326 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/decorations?bypass=true 200 in 3109ms
- GET /admin/decorations?bypass=true 200 in 3269ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 1161ms (1738 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /shop/dec_1 200 in 2633ms
- GET /shop/1 200 in 140ms
- ✓ Compiled in 2.4s (1673 modules)
- ✓ Compiled in 758ms (804 modules)
- ✓ Compiled in 3.4s (1673 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/decorations?bypass=true 200 in 736ms
- GET /admin/decorations?bypass=true 200 in 770ms
- ○ Compiling /shop/[id] ...
- ✓ Compiled /shop/[id] in 2.4s (892 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /shop/dec_1 200 in 3200ms
- GET /shop/1 200 in 112ms
- GET /shop/1 200 in 118ms
- ✓ Compiled / in 481ms (948 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 873ms
- GET /shop/1 200 in 259ms
- GET /shop/1 200 in 259ms
- GET /shop/1 200 in 162ms
- GET /shop/1 200 in 163ms
- ○ Compiling /menu ...
- ✓ Compiled /menu in 2.4s (1746 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /menu 200 in 3110ms
- GET /admin/decorations?bypass=true 200 in 3096ms
- GET /admin/decorations?bypass=true 200 in 185ms
- GET /shop/dec_1 200 in 180ms
- GET /shop/1 200 in 90ms
- GET /menu 200 in 95ms
- GET /menu 200 in 67ms
- GET /admin/decorations?bypass=true 200 in 68ms
- GET /admin/decorations?bypass=true 200 in 76ms
- GET /shop/dec_1 200 in 163ms
- GET /shop/1 200 in 103ms
- GET /shop/1 200 in 80ms
- GET /shop/1 200 in 74ms
- GET / 200 in 152ms
- ○ Compiling /admin/categories ...
- ✓ Compiled /admin/categories in 3.3s (1760 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/categories?bypass=true 200 in 3909ms
- GET / 200 in 165ms
- ○ Compiling /_not-found ...
- ✓ Compiled /_not-found in 1263ms (1763 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /images/categories/Milestone Treat.jpg 404 in 1988ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Treat.jpg received null
- GET /admin/categories?bypass=true 200 in 257ms
- GET / 200 in 196ms
- GET /images/categories/Milestone Deluxe.jpg 404 in 61ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
- GET /admin/categories?bypass=true 200 in 61ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /checkout 200 in 6535ms
+ GET /checkout 200 in 6554ms
+ GET / 200 in 393ms
+ GET / 200 in 341ms
+ GET /checkout 200 in 124ms
+ GET /checkout 200 in 202ms
+ GET / 200 in 75ms
+ GET / 200 in 153ms
+ GET /checkout 200 in 88ms
+ GET /checkout 200 in 183ms
+ GET /checkout 200 in 86ms
+ GET / 200 in 108ms
+ GET /checkout 200 in 59ms
+ GET /checkout 200 in 127ms
+ GET /checkout 200 in 78ms
+ GET / 200 in 129ms
+ GET / 200 in 129ms
+ GET /checkout 200 in 73ms
+ GET /checkout 200 in 220ms
+ GET / 200 in 107ms
+ GET / 200 in 163ms
+ GET /checkout 200 in 83ms
+ GET /checkout 200 in 160ms
+ GET / 200 in 99ms
+ GET / 200 in 101ms
+ GET /checkout 200 in 73ms
+ GET /checkout 200 in 205ms
+ GET /checkout 200 in 72ms
+ GET / 200 in 79ms
+ GET /checkout 200 in 36ms
+ GET /checkout 200 in 115ms
+ GET /checkout 200 in 60ms
+ GET / 200 in 164ms
+ GET / 200 in 216ms
+ GET /checkout 200 in 99ms
+ GET /checkout 200 in 211ms
+ GET / 200 in 87ms
+ GET / 200 in 158ms
+ GET /checkout 200 in 87ms
+ GET /checkout 200 in 161ms
  GET / 200 in 90ms
- GET /images/categories/Milestone Deluxe.jpg 404 in 110ms
- ⨯ The requested resource isn't a valid image for /images/categories/Milestone Deluxe.jpg received null
- GET /admin/categories?bypass=true 200 in 149ms
- GET / 200 in 89ms
- GET /admin/categories?bypass=true 200 in 136ms
- GET / 200 in 81ms
- GET /shop/1 200 in 206ms
- GET /shop/1 200 in 345ms
- GET /admin/decorations?bypass=true 200 in 162ms
- GET /admin/decorations?bypass=true 200 in 196ms
- GET /shop/dec_1 200 in 491ms
- GET /shop/1 200 in 212ms
- GET /shop/1 200 in 108ms
- GET /shop/1 200 in 228ms
- GET /shop/1 200 in 214ms
+ GET / 200 in 135ms
+ GET /checkout 200 in 75ms
+ GET /checkout 200 in 157ms
+ GET /checkout 200 in 55ms
+ GET / 200 in 54ms
+ GET /checkout 200 in 212ms
+ GET /checkout 200 in 91ms
+ GET /checkout 200 in 56ms
+ GET / 200 in 138ms
+ GET / 200 in 169ms
+ GET /checkout 200 in 94ms
+ GET /checkout 200 in 206ms
+ GET / 200 in 113ms
+ GET / 200 in 138ms
+ GET /checkout 200 in 78ms
+ GET /checkout 200 in 136ms
+ GET / 200 in 55ms
+ GET / 200 in 140ms
+ GET /checkout 200 in 79ms
+ GET /checkout 200 in 145ms
+ GET /checkout 200 in 49ms
+ GET / 200 in 221ms
+ GET /checkout 200 in 71ms
+ GET /checkout 200 in 133ms
+ GET /checkout 200 in 76ms
