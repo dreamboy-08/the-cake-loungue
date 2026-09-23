@@ -11,82 +11,9 @@ This information is used to shape Next.js' roadmap and prioritize features.
 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
 https://nextjs.org/telemetry
 
- ✓ Ready in 1831ms
- ○ Compiling / ...
- ✓ Compiled / in 15.9s (1677 modules)
+ ✓ Ready in 1800ms
+ ○ Compiling /admin/whatsapp ...
+ ✓ Compiled /admin/whatsapp in 14.8s (1636 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 17087ms
- ✓ Compiled in 1775ms (760 modules)
- GET / 200 in 153ms
- GET / 200 in 108ms
- ○ Compiling /checkout ...
- ✓ Compiled /checkout in 5.7s (2326 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET /checkout 200 in 6535ms
- GET /checkout 200 in 6554ms
- GET / 200 in 393ms
- GET / 200 in 341ms
- GET /checkout 200 in 124ms
- GET /checkout 200 in 202ms
- GET / 200 in 75ms
- GET / 200 in 153ms
- GET /checkout 200 in 88ms
- GET /checkout 200 in 183ms
- GET /checkout 200 in 86ms
- GET / 200 in 108ms
- GET /checkout 200 in 59ms
- GET /checkout 200 in 127ms
- GET /checkout 200 in 78ms
- GET / 200 in 129ms
- GET / 200 in 129ms
- GET /checkout 200 in 73ms
- GET /checkout 200 in 220ms
- GET / 200 in 107ms
- GET / 200 in 163ms
- GET /checkout 200 in 83ms
- GET /checkout 200 in 160ms
- GET / 200 in 99ms
- GET / 200 in 101ms
- GET /checkout 200 in 73ms
- GET /checkout 200 in 205ms
- GET /checkout 200 in 72ms
- GET / 200 in 79ms
- GET /checkout 200 in 36ms
- GET /checkout 200 in 115ms
- GET /checkout 200 in 60ms
- GET / 200 in 164ms
- GET / 200 in 216ms
- GET /checkout 200 in 99ms
- GET /checkout 200 in 211ms
- GET / 200 in 87ms
- GET / 200 in 158ms
- GET /checkout 200 in 87ms
- GET /checkout 200 in 161ms
- GET / 200 in 90ms
- GET / 200 in 135ms
- GET /checkout 200 in 75ms
- GET /checkout 200 in 157ms
- GET /checkout 200 in 55ms
- GET / 200 in 54ms
- GET /checkout 200 in 212ms
- GET /checkout 200 in 91ms
- GET /checkout 200 in 56ms
- GET / 200 in 138ms
- GET / 200 in 169ms
- GET /checkout 200 in 94ms
- GET /checkout 200 in 206ms
- GET / 200 in 113ms
- GET / 200 in 138ms
- GET /checkout 200 in 78ms
- GET /checkout 200 in 136ms
- GET / 200 in 55ms
- GET / 200 in 140ms
- GET /checkout 200 in 79ms
- GET /checkout 200 in 145ms
- GET /checkout 200 in 49ms
- GET / 200 in 221ms
- GET /checkout 200 in 71ms
- GET /checkout 200 in 133ms
- GET /checkout 200 in 76ms
+ GET /admin/whatsapp?bypass=true 200 in 16630ms
+ ✓ Compiled in 1793ms (748 modules)

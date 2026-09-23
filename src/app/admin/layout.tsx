@@ -21,6 +21,7 @@ import {
   Layout,
   Star,
   Settings,
+  MessageSquare,
   Image as ImageIcon
 } from 'lucide-react';
 import { Suspense } from 'react';
@@ -104,6 +105,7 @@ const AdminLayoutContent = ({ children }: { children: React.ReactNode }) => {
     { label: 'Navigation', href: '/admin/navigation', icon: <Menu size={20} /> },
     { label: 'Mega Menu', href: '/admin/megamenu', icon: <Grid size={20} /> },
     { label: 'Announcements', href: '/admin/announcements', icon: <Megaphone size={20} /> },
+    { label: 'WhatsApp Messages', href: '/admin/whatsapp', icon: <MessageSquare size={20} /> },
     { label: 'Testimonials', href: '/admin/testimonials', icon: <Star size={20} /> },
     { label: 'Gallery', href: '/admin/gallery', icon: <ImageIcon size={20} /> },
     { label: 'Decorative Items', href: '/admin/decorations', icon: <Tags size={20} /> },

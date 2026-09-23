@@ -7,16 +7,24 @@ const mockWhatsAppLogs = [];
 function sanitizePhoneNumber(phone) {
   if (!phone) return '';
   let cleaned = String(phone).replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('0') && cleaned.length === 11) {
+    cleaned = cleaned.substring(1);
+  }
+  if (cleaned.startsWith('910') && cleaned.length === 13) {
+    cleaned = '91' + cleaned.substring(3);
+  }
   if (cleaned.length === 10) {
     cleaned = '91' + cleaned;
   }
   return cleaned;
 }
 
-function formatCustomerOrderMessage(order) {
+function resolveOrderVariables(order) {
   const customerName = order.customerName || order.customer?.name || 'Valued Customer';
-  const orderId = order.orderId || order.razorpayOrderId;
-  const totalAmount = order.totalAmount;
+  const customerEmail = order.customerEmail || order.customer?.email || 'N/A';
+  const customerPhone = order.customerPhone || order.customer?.phone || 'N/A';
+  const orderId = order.orderId || order.razorpayOrderId || 'N/A';
+  const totalAmount = order.totalAmount ?? 0;
   const deliveryDate = order.deliveryDate || 'N/A';
   const deliveryTime = order.deliveryTimeSlot || order.deliveryTime || 'N/A';
 
@@ -52,11 +60,39 @@ function formatCustomerOrderMessage(order) {
     })
     .join('\n');
 
+  return {
+    '{customerName}': customerName,
+    '{customerPhone}': customerPhone,
+    '{customerEmail}': customerEmail,
+    '{orderId}': orderId,
+    '{items}': itemsList,
+    '{totalAmount}': totalAmount,
+    '{deliveryDate}': deliveryDate,
+    '{deliveryTime}': deliveryTime,
+    '{deliveryAddress}': deliveryAddress,
+    '{specialRequests}': specialRequests,
+  };
+}
+
+function renderTemplateMessage(templateStr, variablesMap) {
+  let result = templateStr || '';
+  Object.keys(variablesMap).forEach((key) => {
+    result = result.split(key).join(variablesMap[key]);
+  });
+  return result;
+}
+
+function formatCustomerOrderMessage(order, customTemplate = null) {
+  const vars = resolveOrderVariables(order);
+  if (customTemplate) {
+    return renderTemplateMessage(customTemplate, vars);
+  }
+
   return `🎂 *THE CAKE LOUNGE*
 
 ✨ *ORDER CONFIRMED*
 
-Hi *${customerName}*,
+Hi *${vars['{customerName}']}*,
 
 Thank you for ordering from *The Cake Lounge*! 💛
 
@@ -64,20 +100,20 @@ Your payment has been successfully received and your order is now confirmed.
 
 *ORDER DETAILS*
 ━━━━━━━━━━━━━━
-🧾 Order ID: \`${orderId}\`
+🧾 Order ID: \`${vars['{orderId}']}\`
 
 🍰 *Items:*
-${itemsList}
+${vars['{items}']}
 
-💰 *Total Paid: ₹${totalAmount}*
+💰 *Total Paid: ₹${vars['{totalAmount}']}*
 
-📅 *Delivery Date:* ${deliveryDate}
-🕓 *Delivery Time:* ${deliveryTime}
+📅 *Delivery Date:* ${vars['{deliveryDate}']}
+🕓 *Delivery Time:* ${vars['{deliveryTime}']}
 
 📍 *Delivery Address:*
-${deliveryAddress}
+${vars['{deliveryAddress}']}
 
-📝 *Special Requests:* ${specialRequests}
+📝 *Special Requests:* ${vars['{specialRequests}']}
 
 ━━━━━━━━━━━━━━
 💳 Payment: *Successful*
@@ -89,46 +125,11 @@ For any assistance regarding your order, simply reply to this message.
 — *The Cake Lounge* 🎂`;
 }
 
-function formatAdminOrderMessage(order) {
-  const customerName = order.customerName || order.customer?.name || 'N/A';
-  const customerEmail = order.customerEmail || order.customer?.email || 'N/A';
-  const customerPhone = order.customerPhone || order.customer?.phone || 'N/A';
-  const orderId = order.orderId || order.razorpayOrderId;
-  const totalAmount = order.totalAmount;
-  const deliveryDate = order.deliveryDate || 'N/A';
-  const deliveryTime = order.deliveryTimeSlot || order.deliveryTime || 'N/A';
-
-  let deliveryAddress = order.shippingAddress;
-  if (!deliveryAddress && order.address) {
-    const parts = [
-      order.address.houseNumber,
-      order.address.street,
-      order.address.landmark && order.address.landmark !== 'None' ? `Near ${order.address.landmark}` : null,
-      order.address.area,
-      order.address.city,
-      order.address.state,
-      order.address.pincode || order.address.zipCode,
-    ].filter(Boolean);
-    deliveryAddress = parts.join(', ');
+function formatAdminOrderMessage(order, customTemplate = null) {
+  const vars = resolveOrderVariables(order);
+  if (customTemplate) {
+    return renderTemplateMessage(customTemplate, vars);
   }
-  if (!deliveryAddress) deliveryAddress = 'N/A';
-
-  const rawInstructions = order.deliveryInstructions || order.specialRequests;
-  const specialRequests =
-    rawInstructions && String(rawInstructions).trim() && String(rawInstructions).trim() !== 'None'
-      ? String(rawInstructions).trim()
-      : 'None';
-
-  const items = order.items || [];
-  const itemsList = items
-    .map((item) => {
-      const qty = Number(item.quantity) || 1;
-      const price = Number(item.price || item.unitPrice) || 0;
-      const lineTotal = price * qty;
-      const qtyText = qty > 1 ? ` (x${qty})` : '';
-      return `• ${item.name}${qtyText} — ₹${lineTotal}`;
-    })
-    .join('\n');
 
   return `🚨 *THE CAKE LOUNGE — NEW ORDER*
 
@@ -136,24 +137,24 @@ A new order has been successfully placed.
 
 *ORDER INFORMATION*
 ━━━━━━━━━━━━━━
-🧾 Order ID: \`${orderId}\`
+🧾 Order ID: \`${vars['{orderId}']}\`
 
-👤 *Customer:* ${customerName}
-📧 *Email:* ${customerEmail}
-📱 *Phone:* ${customerPhone}
+👤 *Customer:* ${vars['{customerName}']}
+📧 *Email:* ${vars['{customerEmail}']}
+📱 *Phone:* ${vars['{customerPhone}']}
 
 🍰 *Items:*
-${itemsList}
+${vars['{items}']}
 
-💰 *Order Total:* ₹${totalAmount}
+💰 *Order Total:* ₹${vars['{totalAmount}']}
 
-📅 *Delivery Date:* ${deliveryDate}
-🕓 *Delivery Time:* ${deliveryTime}
+📅 *Delivery Date:* ${vars['{deliveryDate}']}
+🕓 *Delivery Time:* ${vars['{deliveryTime}']}
 
 📍 *Delivery Address:*
-${deliveryAddress}
+${vars['{deliveryAddress}']}
 
-📝 *Special Requests:* ${specialRequests}
+📝 *Special Requests:* ${vars['{specialRequests}']}
 
 ━━━━━━━━━━━━━━
 📦 *Order Status:* New Order
@@ -273,6 +274,19 @@ async function sendOrderNotifications(orderDetails, db, websiteSettings = null) 
     adminPhone = '+91 77038 70170'; // fallback production default
   }
 
+  // 1b. Attempt to fetch active WhatsApp CMS config from Firestore
+  let whatsappCmsConfig = null;
+  if (db) {
+    try {
+      const waConfigDoc = await db.collection('settings').doc('whatsapp_cms_config').get();
+      if (waConfigDoc.exists) {
+        whatsappCmsConfig = waConfigDoc.data();
+      }
+    } catch (cfgErr) {
+      console.warn('[WhatsApp Service] Could not fetch whatsapp_cms_config from Firestore:', cfgErr.message);
+    }
+  }
+
   let customerResult = null;
   let adminResult = null;
 
@@ -346,18 +360,26 @@ async function sendOrderNotifications(orderDetails, db, websiteSettings = null) 
 
   // --- CUSTOMER NOTIFICATION ---
   try {
-    const customerLock = await checkAndLockNotification('customer_order_confirmation');
-    if (customerLock.canSend) {
-      if (customerPhone) {
-        const customerMsg = formatCustomerOrderMessage(orderDetails);
-        customerResult = await sendWhatsAppMessage(customerPhone, customerMsg, 'customer_order_confirmation');
-        await recordNotificationResult('customer_order_confirmation', customerResult);
-      } else {
-        console.warn(`[WhatsApp Service] Customer phone number missing for order ${orderId}. Skipping customer notification.`);
-      }
+    const custConfig = whatsappCmsConfig?.customerConfirmation;
+    const isCustEnabled = custConfig?.enabled ?? true;
+
+    if (!isCustEnabled) {
+      console.log(`[WhatsApp Service] Customer notification disabled via Admin CMS for order ${orderId}.`);
+      customerResult = { success: false, disabled: true, type: 'customer_order_confirmation' };
     } else {
-      console.log(`[WhatsApp Service] Skipping customer notification for order ${orderId}: ${customerLock.reason}`);
-      customerResult = { success: true, alreadySent: true, type: 'customer_order_confirmation' };
+      const customerLock = await checkAndLockNotification('customer_order_confirmation');
+      if (customerLock.canSend) {
+        if (customerPhone) {
+          const customerMsg = formatCustomerOrderMessage(orderDetails, custConfig?.messageTemplate);
+          customerResult = await sendWhatsAppMessage(customerPhone, customerMsg, 'customer_order_confirmation');
+          await recordNotificationResult('customer_order_confirmation', customerResult);
+        } else {
+          console.warn(`[WhatsApp Service] Customer phone number missing for order ${orderId}. Skipping customer notification.`);
+        }
+      } else {
+        console.log(`[WhatsApp Service] Skipping customer notification for order ${orderId}: ${customerLock.reason}`);
+        customerResult = { success: true, alreadySent: true, type: 'customer_order_confirmation' };
+      }
     }
   } catch (err) {
     console.error(`[WhatsApp Service] Error processing customer notification for order ${orderId}:`, err.message);
@@ -365,14 +387,22 @@ async function sendOrderNotifications(orderDetails, db, websiteSettings = null) 
 
   // --- ADMIN NOTIFICATION ---
   try {
-    const adminLock = await checkAndLockNotification('admin_new_order');
-    if (adminLock.canSend) {
-      const adminMsg = formatAdminOrderMessage(orderDetails);
-      adminResult = await sendWhatsAppMessage(adminPhone, adminMsg, 'admin_new_order');
-      await recordNotificationResult('admin_new_order', adminResult);
+    const adminConfig = whatsappCmsConfig?.adminNewOrderAlert;
+    const isAdminEnabled = adminConfig?.enabled ?? true;
+
+    if (!isAdminEnabled) {
+      console.log(`[WhatsApp Service] Admin notification disabled via Admin CMS for order ${orderId}.`);
+      adminResult = { success: false, disabled: true, type: 'admin_new_order' };
     } else {
-      console.log(`[WhatsApp Service] Skipping admin notification for order ${orderId}: ${adminLock.reason}`);
-      adminResult = { success: true, alreadySent: true, type: 'admin_new_order' };
+      const adminLock = await checkAndLockNotification('admin_new_order');
+      if (adminLock.canSend) {
+        const adminMsg = formatAdminOrderMessage(orderDetails, adminConfig?.messageTemplate);
+        adminResult = await sendWhatsAppMessage(adminPhone, adminMsg, 'admin_new_order');
+        await recordNotificationResult('admin_new_order', adminResult);
+      } else {
+        console.log(`[WhatsApp Service] Skipping admin notification for order ${orderId}: ${adminLock.reason}`);
+        adminResult = { success: true, alreadySent: true, type: 'admin_new_order' };
+      }
     }
   } catch (err) {
     console.error(`[WhatsApp Service] Error processing admin notification for order ${orderId}:`, err.message);
