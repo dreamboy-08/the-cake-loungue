@@ -716,8 +716,10 @@ export const DEFAULT_SEO_METADATA: CMSSEOMetadata[] = [
 
 export const DEFAULT_GENERAL_SETTINGS: CMSGeneralSettings = {
   id: 'general_cms_config',
-  deliveryCharges: 100,
+  deliveryCharges: 50,
+  deliveryChargesEnabled: true,
   freeDeliveryThreshold: 499,
+  freeDeliveryThresholdEnabled: true,
   minimumOrder: 299,
   serviceableZipCodes: [
     '122001', '122002', '122003', '122004', '122005', '122006', '122007', '122008', '122009', '122010',

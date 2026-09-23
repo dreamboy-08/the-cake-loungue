@@ -1783,38 +1783,124 @@ const AdminCMS = () => {
       {/* --- TAB 9: GENERAL SETTINGS --- */}
       {activeTab === 'general' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Delivery Charges CMS Card */}
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div>
+                <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                  <Globe size={22} className="text-rose-deep" /> Delivery Charges & Thresholds
+                </h2>
+                <p className="text-xs text-gray-400 mt-1">Configure standard shipping rates and free delivery qualification thresholds.</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Toggle 1: Enable Delivery Charges */}
+              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-bold text-chocolate">Enable Delivery Charges</span>
+                    <p className="text-xs text-gray-500">When disabled, all deliveries on storefront are 100% FREE.</p>
+                  </div>
+                  <button
+                    onClick={() => updateGeneralSettings({
+                      ...generalSettings,
+                      deliveryChargesEnabled: !(generalSettings.deliveryChargesEnabled ?? true)
+                    })}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                      (generalSettings.deliveryChargesEnabled ?? true)
+                        ? 'bg-green-500 text-white shadow-sm'
+                        : 'bg-gray-200 text-gray-600'
+                    }`}
+                  >
+                    {(generalSettings.deliveryChargesEnabled ?? true) ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+
+                {/* Delivery Fee Amount Input */}
+                <div className="space-y-1 pt-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Delivery Fee (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-chocolate text-sm">₹</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={generalSettings.deliveryCharges ?? 50}
+                      onChange={(e) => {
+                        const val = Math.max(0, Number(e.target.value));
+                        updateGeneralSettings({ ...generalSettings, deliveryCharges: isNaN(val) ? 0 : val });
+                      }}
+                      disabled={!(generalSettings.deliveryChargesEnabled ?? true)}
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-bold text-chocolate disabled:opacity-50 disabled:bg-gray-100"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400">Standard delivery fee charged to orders when threshold is not met.</p>
+                </div>
+              </div>
+
+              {/* Toggle 2: Free Delivery Threshold */}
+              <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-bold text-chocolate">Free Delivery Threshold</span>
+                    <p className="text-xs text-gray-500">Offer free shipping when cart subtotal reaches this target amount.</p>
+                  </div>
+                  <button
+                    onClick={() => updateGeneralSettings({
+                      ...generalSettings,
+                      freeDeliveryThresholdEnabled: !(generalSettings.freeDeliveryThresholdEnabled ?? true)
+                    })}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                      (generalSettings.freeDeliveryThresholdEnabled ?? true)
+                        ? 'bg-green-500 text-white shadow-sm'
+                        : 'bg-gray-200 text-gray-600'
+                    }`}
+                  >
+                    {(generalSettings.freeDeliveryThresholdEnabled ?? true) ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+
+                {/* Free Delivery Threshold Amount Input */}
+                <div className="space-y-1 pt-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Free Delivery Threshold (₹)</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-chocolate text-sm">₹</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={generalSettings.freeDeliveryThreshold ?? 499}
+                      onChange={(e) => {
+                        const val = Math.max(0, Number(e.target.value));
+                        updateGeneralSettings({ ...generalSettings, freeDeliveryThreshold: isNaN(val) ? 0 : val });
+                      }}
+                      disabled={!(generalSettings.freeDeliveryThresholdEnabled ?? true)}
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-1 focus:ring-rose-deep text-sm font-bold text-chocolate disabled:opacity-50 disabled:bg-gray-100"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400">Cart subtotal equal to or exceeding this unlocks FREE Delivery.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <h2 className="text-xl font-bold text-chocolate flex items-center gap-2 border-b border-gray-100 pb-3">
-              <Globe size={22} className="text-rose-deep" /> Checkout & Service Configurations
+              <Globe size={22} className="text-rose-deep" /> Service & Operations
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Standard Delivery Charge (₹)</label>
-                <input
-                  type="number"
-                  value={generalSettings.deliveryCharges}
-                  onChange={(e) => updateGeneralSettings({ ...generalSettings, deliveryCharges: Number(e.target.value) })}
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Free Shipping Threshold (₹)</label>
-                <input
-                  type="number"
-                  value={generalSettings.freeDeliveryThreshold}
-                  onChange={(e) => updateGeneralSettings({ ...generalSettings, freeDeliveryThreshold: Number(e.target.value) })}
-                  className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
-                />
-              </div>
-
-              <div className="space-y-1">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Minimum Allowed Cart Order (₹)</label>
                 <input
                   type="number"
+                  min="0"
                   value={generalSettings.minimumOrder}
-                  onChange={(e) => updateGeneralSettings({ ...generalSettings, minimumOrder: Number(e.target.value) })}
+                  onChange={(e) => {
+                    const val = Math.max(0, Number(e.target.value));
+                    updateGeneralSettings({ ...generalSettings, minimumOrder: isNaN(val) ? 0 : val });
+                  }}
                   className="w-full px-3 py-2 rounded-xl bg-gray-50 border border-gray-100 focus:outline-none text-sm font-semibold"
                 />
               </div>

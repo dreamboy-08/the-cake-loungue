@@ -136,7 +136,9 @@ export interface CMSSEOMetadata {
 export interface CMSGeneralSettings {
   id: string;
   deliveryCharges: number;
+  deliveryChargesEnabled: boolean;
   freeDeliveryThreshold: number;
+  freeDeliveryThresholdEnabled: boolean;
   minimumOrder: number;
   serviceableZipCodes: string[];
   businessHolidays: string[]; // dates like 'YYYY-MM-DD'
