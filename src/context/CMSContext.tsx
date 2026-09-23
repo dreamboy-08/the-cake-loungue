@@ -18,8 +18,7 @@ import {
   FeaturedProductsSettings,
   CMSTestimonial,
   CMSGalleryItem,
-  CMSDecorationItem,
-  CMSWhatsAppSettings
+  CMSDecorationItem
 } from '@/types/cms';
 import {
   DEFAULT_NAVIGATION,
@@ -36,8 +35,7 @@ import {
   DEFAULT_FEATURED_PRODUCTS_SETTINGS,
   DEFAULT_TESTIMONIALS,
   DEFAULT_GALLERY,
-  DEFAULT_DECORATIONS,
-  DEFAULT_WHATSAPP_SETTINGS
+  DEFAULT_DECORATIONS
 } from '@/constants/cmsDefaults';
 
 interface CMSContextType {
@@ -56,11 +54,9 @@ interface CMSContextType {
   testimonials: CMSTestimonial[];
   galleryItems: CMSGalleryItem[];
   decorations: CMSDecorationItem[];
-  whatsappSettings: CMSWhatsAppSettings;
   loading: boolean;
 
   // Setters
-  updateWhatsAppSettings: (settings: CMSWhatsAppSettings, saveHistory?: boolean) => Promise<void>;
   updateNavigation: (items: NavigationItem[], saveHistory?: boolean) => Promise<void>;
   updateMegaMenus: (sections: MegaMenuSection[], saveHistory?: boolean) => Promise<void>;
   updateHomepageSections: (sections: HomepageSection[], saveHistory?: boolean) => Promise<void>;
@@ -104,7 +100,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [testimonials, setTestimonials] = useState<CMSTestimonial[]>([]);
   const [galleryItems, setGalleryItems] = useState<CMSGalleryItem[]>([]);
   const [decorations, setDecorations] = useState<CMSDecorationItem[]>([]);
-  const [whatsappSettings, setWhatsappSettings] = useState<CMSWhatsAppSettings>(DEFAULT_WHATSAPP_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   // Deep state snapshot history tracking via previousStates mapping
@@ -192,9 +187,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const storedDecorations = getStored<CMSDecorationItem[]>('decorations', fallbackToDefaults ? DEFAULT_DECORATIONS : null);
       if (storedDecorations !== null) setDecorations(storedDecorations);
 
-      const storedWhatsApp = getStored<CMSWhatsAppSettings>('whatsappSettings', fallbackToDefaults ? DEFAULT_WHATSAPP_SETTINGS : null);
-      if (storedWhatsApp !== null) setWhatsappSettings(storedWhatsApp);
-
     } catch (e) {
       console.error("Failed to parse stored offline CMS config:", e);
       if (fallbackToDefaults) {
@@ -213,7 +205,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setTestimonials(DEFAULT_TESTIMONIALS);
         setGalleryItems(DEFAULT_GALLERY);
         setDecorations(DEFAULT_DECORATIONS);
-        setWhatsappSettings(DEFAULT_WHATSAPP_SETTINGS);
       }
     }
   }, []);
@@ -527,21 +518,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const updateWhatsAppSettings = async (settings: CMSWhatsAppSettings, saveHistory = true) => {
-    if (saveHistory) saveStateHistory('whatsappSettings', whatsappSettings);
-    setWhatsappSettings(settings);
-    if (!isFirebaseConfigured) {
-      saveOfflineCMS('whatsappSettings', settings);
-      return;
-    }
-    try {
-      await setDoc(doc(db, 'settings', 'whatsapp_cms_config'), settings);
-    } catch (err) {
-      console.error("Failed to update whatsappSettings in Firestore:", err);
-      saveOfflineCMS('whatsappSettings', settings);
-    }
-  };
-
   // --- CMS Safety / Recovery Actions ---
   const hasUndo = useCallback((key: string) => {
     const normalizedKey = key === 'hero' ? 'homepageSections' : key;
@@ -598,9 +574,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         break;
       case 'decorations':
         await updateDecorations(prevState, false);
-        break;
-      case 'whatsappSettings':
-        await updateWhatsAppSettings(prevState, false);
         break;
     }
 
@@ -675,9 +648,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         break;
       case 'decorations':
         await updateDecorations(DEFAULT_DECORATIONS);
-        break;
-      case 'whatsappSettings':
-        await updateWhatsAppSettings(DEFAULT_WHATSAPP_SETTINGS);
         break;
     }
   }, [
@@ -854,23 +824,6 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
     unsubs.push(unsubFeatured);
 
-    const unsubWhatsApp = onSnapshot(doc(db, 'settings', 'whatsapp_cms_config'), (snap) => {
-      if (snap.exists()) {
-        const data = snap.data() as CMSWhatsAppSettings;
-        setWhatsappSettings(data);
-        saveOfflineCMS('whatsappSettings', data);
-      } else {
-        setWhatsappSettings(DEFAULT_WHATSAPP_SETTINGS);
-        saveOfflineCMS('whatsappSettings', DEFAULT_WHATSAPP_SETTINGS);
-      }
-      markListenerLoaded('whatsapp_cms_config');
-    }, (error) => {
-      console.error("Failed to read whatsapp settings, using default:", error);
-      setWhatsappSettings(DEFAULT_WHATSAPP_SETTINGS);
-      markListenerLoaded('whatsapp_cms_config');
-    });
-    unsubs.push(unsubWhatsApp);
-
     return () => {
       unsubs.forEach(unsub => unsub());
     };
@@ -893,11 +846,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       testimonials,
       galleryItems,
       decorations,
-      whatsappSettings,
       loading,
 
       updateNavigation,
-      updateWhatsAppSettings,
       updateMegaMenus,
       updateHomepageSections,
       updateAnnouncements,
