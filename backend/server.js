@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const Razorpay = require('razorpay');
 const { initializeApp, cert, getApps, applicationDefault } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
+const { sendOrderNotifications } = require('./whatsappService');
 
 dotenv.config();
 
@@ -303,16 +304,40 @@ app.post('/api/verify-payment', async (req, res) => {
               console.log(`Order stored in user collection for UID: ${orderDetails.userId}`);
             }
 
-            // SIMULATED OWNER NOTIFICATION
-            console.log('-------------------------------------------');
-            console.log('NEW ORDER RECEIVED - OWNER NOTIFICATION');
-            console.log('Order ID:', razorpay_order_id);
-            console.log('Customer:', orderDetails.customer?.name);
-            console.log('Phone:', orderDetails.customer?.phone);
-            console.log('Total Amount: ₹', orderDetails.totalAmount);
-            console.log('Items:', orderDetails.items?.map(i => `${i.name} (x${i.quantity})`).join(', '));
-            console.log('Address:', orderDetails.shippingAddress);
-            console.log('-------------------------------------------');
+            // Trigger WhatsApp Notifications (Customer Confirmation + Admin Alert)
+            let websiteSettings = null;
+            try {
+              const settingsDoc = await db.collection('settings').doc('websiteSettings').get();
+              if (settingsDoc.exists) {
+                websiteSettings = settingsDoc.data();
+              }
+            } catch (settingsErr) {
+              console.warn('[Server] Could not fetch websiteSettings from Firestore:', settingsErr.message);
+            }
+
+            const notificationOrderPayload = {
+              ...orderDetails,
+              orderId: razorpay_order_id,
+              razorpayOrderId: razorpay_order_id,
+              customerName: orderDetails.customer?.name,
+              customerEmail: orderDetails.customer?.email,
+              customerPhone: orderDetails.customer?.phone,
+            };
+
+            await sendOrderNotifications(notificationOrderPayload, db, websiteSettings);
+          } else {
+            console.log('Master doc already exists in Firestore for order:', razorpay_order_id);
+            // Even if doc exists (e.g. retry), attempt idempotent notification send
+            const notificationOrderPayload = {
+              ...masterDoc.data(),
+              ...orderDetails,
+              orderId: razorpay_order_id,
+              razorpayOrderId: razorpay_order_id,
+              customerName: orderDetails.customer?.name || masterDoc.data().customer?.name,
+              customerEmail: orderDetails.customer?.email || masterDoc.data().customer?.email,
+              customerPhone: orderDetails.customer?.phone || masterDoc.data().customer?.phone,
+            };
+            await sendOrderNotifications(notificationOrderPayload, db, null);
           }
         } catch (dbError) {
           console.error('Error storing order in Firestore:', dbError);
@@ -323,10 +348,19 @@ app.post('/api/verify-payment', async (req, res) => {
         }
       } else if (!db) {
         if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
-          console.log('Firestore not initialized, but in test/dev mode. Simulating success.');
+          console.log('Firestore not initialized, but in test/dev mode. Triggering notifications in mock mode.');
+          const notificationOrderPayload = {
+            ...orderDetails,
+            orderId: razorpay_order_id,
+            razorpayOrderId: razorpay_order_id,
+            customerName: orderDetails?.customer?.name,
+            customerEmail: orderDetails?.customer?.email,
+            customerPhone: orderDetails?.customer?.phone,
+          };
+          await sendOrderNotifications(notificationOrderPayload, null, null);
           return res.json({
             success: true,
-            message: 'Simulated: Payment verified but order not stored due to missing Firestore'
+            message: 'Simulated: Payment verified, order processed, and notifications dispatched'
           });
         }
         console.error('Firestore not initialized, cannot store order');
