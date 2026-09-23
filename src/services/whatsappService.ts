@@ -14,7 +14,7 @@ export const mockWhatsAppLogs: Array<{
 
 export function sanitizePhoneNumber(phone: string): string {
   if (!phone) return '';
-  let cleaned = phone.replace(/[^0-9]/g, '');
+  let cleaned = String(phone).replace(/[^0-9]/g, '');
   if (cleaned.startsWith('0') && cleaned.length === 11) {
     cleaned = cleaned.substring(1);
   }
@@ -25,6 +25,13 @@ export function sanitizePhoneNumber(phone: string): string {
     cleaned = '91' + cleaned;
   }
   return cleaned;
+}
+
+export function maskPhoneNumber(phone: string): string {
+  if (!phone) return '';
+  const sanitized = sanitizePhoneNumber(phone);
+  if (sanitized.length < 7) return '****';
+  return sanitized.slice(0, 4) + '*****' + sanitized.slice(-3);
 }
 
 export function resolveOrderVariables(order: WhatsAppOrderDetails): Record<string, string | number> {
@@ -171,10 +178,17 @@ Please check the admin panel for complete order details.
 — *The Cake Lounge*`;
 }
 
+export interface WhatsAppMetaTemplateOptions {
+  useMetaTemplate?: boolean;
+  templateName?: string;
+  languageCode?: string;
+}
+
 export async function sendWhatsAppMessage(
   recipientPhone: string,
   messageText: string,
-  type: WhatsAppNotificationType
+  type: WhatsAppNotificationType,
+  templateOptions?: WhatsAppMetaTemplateOptions
 ): Promise<WhatsAppSendResult> {
   const sanitizedTo = sanitizePhoneNumber(recipientPhone);
 
@@ -194,6 +208,28 @@ export async function sendWhatsAppMessage(
 
   if (provider === 'meta' && token && phoneNumberId) {
     try {
+      const payload: any = {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: sanitizedTo,
+      };
+
+      if (templateOptions?.useMetaTemplate && templateOptions?.templateName) {
+        payload.type = 'template';
+        payload.template = {
+          name: templateOptions.templateName,
+          language: {
+            code: templateOptions.languageCode || 'en',
+          },
+        };
+      } else {
+        payload.type = 'text';
+        payload.text = {
+          preview_url: false,
+          body: messageText,
+        };
+      }
+
       const response = await fetch(
         `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
         {
@@ -202,23 +238,13 @@ export async function sendWhatsAppMessage(
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            recipient_type: 'individual',
-            to: sanitizedTo,
-            type: 'text',
-            text: {
-              preview_url: false,
-              body: messageText,
-            },
-          }),
+          body: JSON.stringify(payload),
         }
       );
-
       const data = await response.json();
 
       if (response.ok && data.messages?.[0]?.id) {
-        console.log(`[WhatsApp Service - Meta] Sent ${type} to ${sanitizedTo}. Message ID: ${data.messages[0].id}`);
+        console.log(`[WhatsApp Service - Meta] Sent ${type} to ${maskPhoneNumber(sanitizedTo)}. Message ID: ${data.messages[0].id}`);
         return {
           success: true,
           type,
@@ -227,7 +253,7 @@ export async function sendWhatsAppMessage(
         };
       } else {
         const errMsg = data.error?.message || JSON.stringify(data);
-        console.error(`[WhatsApp Service - Meta] Failed to send ${type} to ${sanitizedTo}:`, errMsg);
+        console.error(`[WhatsApp Service - Meta] Failed to send ${type} to ${maskPhoneNumber(sanitizedTo)}:`, errMsg);
         return {
           success: false,
           type,
@@ -236,7 +262,7 @@ export async function sendWhatsAppMessage(
         };
       }
     } catch (error: any) {
-      console.error(`[WhatsApp Service - Meta] Network/API Exception for ${type}:`, error.message || error);
+      console.error(`[WhatsApp Service - Meta] Exception for ${type} to ${maskPhoneNumber(sanitizedTo)}:`, error.message || error);
       return {
         success: false,
         type,
@@ -253,7 +279,7 @@ export async function sendWhatsAppMessage(
       timestamp: new Date().toISOString(),
     };
     mockWhatsAppLogs.push(mockLog);
-    console.log(`[MOCK WHATSAPP] Message sent successfully to ${sanitizedTo} (${type}):\n${messageText}\n-------------------------------------------`);
+    console.log(`[MOCK WHATSAPP] Message sent successfully to ${maskPhoneNumber(sanitizedTo)} (${type})`);
     return {
       success: true,
       type,
