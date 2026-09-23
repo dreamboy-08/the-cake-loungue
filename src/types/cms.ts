@@ -217,29 +217,6 @@ export interface CMSCategory {
   updatedAt?: string;
 }
 
-export interface CMSWhatsAppMessageSlot {
-  id: 'customer_order_confirmation' | 'admin_new_order';
-  title: string;
-  enabled: boolean;
-  messageTemplate: string;
-  useMetaTemplate?: boolean;
-  templateName?: string;
-  languageCode?: string;
-}
-
-export interface CMSWhatsAppSettings {
-  id: string; // 'whatsapp_cms_config'
-  customerConfirmation: CMSWhatsAppMessageSlot;
-  adminNewOrderAlert: CMSWhatsAppMessageSlot;
-  quickBroadcastTemplate?: {
-    messageTemplate: string;
-    useMetaTemplate?: boolean;
-    templateName?: string;
-    languageCode?: string;
-  };
-  updatedAt?: string;
-}
-
 export interface CMSDecorationItem {
   id: string;
   name: string;

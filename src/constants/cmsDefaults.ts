@@ -14,8 +14,7 @@ import {
   FeaturedProductsSettings,
   CMSTestimonial,
   CMSGalleryItem,
-  CMSDecorationItem,
-  CMSWhatsAppSettings
+  CMSDecorationItem
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -944,92 +943,6 @@ export const DEFAULT_GALLERY: CMSGalleryItem[] = [
     link: '/shop/7'
   }
 ];
-
-export const DEFAULT_WHATSAPP_SETTINGS: CMSWhatsAppSettings = {
-  id: 'whatsapp_cms_config',
-  customerConfirmation: {
-    id: 'customer_order_confirmation',
-    title: 'Customer Order Confirmation',
-    enabled: true,
-    messageTemplate: `🎂 *THE CAKE LOUNGE*
-
-✨ *ORDER CONFIRMED*
-
-Hi *{customerName}*,
-
-Thank you for ordering from *The Cake Lounge*! 💛
-
-Your payment has been successfully received and your order is now confirmed.
-
-*ORDER DETAILS*
-━━━━━━━━━━━━━━
-🧾 Order ID: \`{orderId}\`
-
-🍰 *Items:*
-{items}
-
-💰 *Total Paid: ₹{totalAmount}*
-
-📅 *Delivery Date:* {deliveryDate}
-🕓 *Delivery Time:* {deliveryTime}
-
-📍 *Delivery Address:*
-{deliveryAddress}
-
-📝 *Special Requests:* {specialRequests}
-
-━━━━━━━━━━━━━━
-💳 Payment: *Successful*
-
-Thank you for choosing *The Cake Lounge*. We look forward to making your celebration extra special! 🎉
-
-For any assistance regarding your order, simply reply to this message.
-
-— *The Cake Lounge* 🎂`,
-    useMetaTemplate: false,
-    templateName: '',
-    languageCode: 'en',
-  },
-  adminNewOrderAlert: {
-    id: 'admin_new_order',
-    title: 'Admin New Order Alert',
-    enabled: true,
-    messageTemplate: `🚨 *THE CAKE LOUNGE — NEW ORDER*
-
-A new order has been successfully placed.
-
-*ORDER INFORMATION*
-━━━━━━━━━━━━━━
-🧾 Order ID: \`{orderId}\`
-
-👤 *Customer:* {customerName}
-📧 *Email:* {customerEmail}
-📱 *Phone:* {customerPhone}
-
-🍰 *Items:*
-{items}
-
-💰 *Order Total:* ₹{totalAmount}
-
-📅 *Delivery Date:* {deliveryDate}
-🕓 *Delivery Time:* {deliveryTime}
-
-📍 *Delivery Address:*
-{deliveryAddress}
-
-📝 *Special Requests:* {specialRequests}
-
-━━━━━━━━━━━━━━
-📦 *Order Status:* New Order
-
-Please check the admin panel for complete order details.
-
-— *The Cake Lounge*`,
-    useMetaTemplate: false,
-    templateName: '',
-    languageCode: 'en',
-  },
-};
 
 export const DEFAULT_DECORATIONS: CMSDecorationItem[] = [
   {
