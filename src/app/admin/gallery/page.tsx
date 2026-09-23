@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useCMS } from '@/context/CMSContext';
+import { useProducts } from '@/context/ProductsContext';
 import { CMSGalleryItem } from '@/types/cms';
 import {
   Plus,
@@ -12,7 +13,8 @@ import {
   Eye,
   EyeOff,
   CheckCircle2,
-  Image as ImageIcon
+  Image as ImageIcon,
+  PackageX
 } from 'lucide-react';
 import GalleryItemForm from '@/components/admin/GalleryItemForm';
 import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
@@ -20,7 +22,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
 const AdminGallery = () => {
-  const { galleryItems, updateGalleryItems, deleteGalleryItemFromDB, loading } = useCMS();
+  const { galleryItems, updateGalleryItems, deleteGalleryItemFromDB, loading: cmsLoading } = useCMS();
+  const { products, loading: productsLoading } = useProducts();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CMSGalleryItem | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
@@ -74,6 +77,8 @@ const AdminGallery = () => {
   // Sort gallery items by displayOrder
   const sortedGallery = [...(galleryItems || [])].sort((a, b) => a.displayOrder - b.displayOrder);
 
+  const loading = cmsLoading || productsLoading;
+
   return (
     <div className="px-4 sm:px-6 md:px-8 py-6 space-y-6 sm:space-y-8 animate-fade-up pb-24 max-w-[1600px] mx-auto">
       <AnimatePresence>
@@ -94,8 +99,8 @@ const AdminGallery = () => {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Gallery CMS</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage dynamic portfolio and creation showcase displayed on the storefront.</p>
+          <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Product Gallery CMS</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage product showcase and portfolio displayed in the storefront &quot;Our Creations&quot; section.</p>
         </div>
         <button
           onClick={() => {
@@ -122,22 +127,46 @@ const AdminGallery = () => {
           </div>
         ) : (
           sortedGallery.map((item) => {
+            // Resolve product from catalog
+            const product = item.productId
+              ? products.find(p => p.id.toString() === item.productId?.toString())
+              : null;
+
+            const isUnlinkable = item.productId && !product;
+            const isLegacy = !item.productId;
+
+            const imageSrc = product?.img || item.src || '/images/products/placeholder.jpg';
+            const displayTitle = product?.name || item.label || 'Gallery Product';
+            const displayCategory = product?.category || item.categoryId || 'Catalog Item';
+            const displayLink = product ? `/shop/${product.id}` : (item.link || '/menu');
+
             return (
               <div
                 key={item.id}
-                className={`bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group overflow-hidden flex flex-col ${
+                className={`bg-white rounded-[28px] sm:rounded-[32px] shadow-sm border ${
+                  isUnlinkable ? 'border-red-200 bg-red-50/20' : 'border-gray-100'
+                } hover:shadow-xl transition-all group overflow-hidden flex flex-col ${
                   item.enabled === false ? 'opacity-60' : ''
                 }`}
               >
                 {/* Image Showcase Box */}
                 <div className="relative w-full aspect-[4/5] bg-gray-50 overflow-hidden">
-                  <Image
-                    src={item.src}
-                    alt={item.label}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {!isUnlinkable ? (
+                    <Image
+                      src={imageSrc}
+                      alt={displayTitle}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-red-400 p-6 text-center bg-red-50/50">
+                      <PackageX size={48} className="mb-2" />
+                      <span className="text-xs font-bold uppercase tracking-wider">Unavailable Product</span>
+                      <span className="text-[10px] text-gray-400 mt-1">ID: {item.productId}</span>
+                    </div>
+                  )}
+
                   <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10 pointer-events-none">
                     <span className="px-3 py-1.5 bg-chocolate/85 backdrop-blur-md text-white text-[10px] font-black rounded-full shadow-md pointer-events-auto">
                       Priority #{item.displayOrder + 1}
@@ -155,14 +184,22 @@ const AdminGallery = () => {
                 {/* Details Footer */}
                 <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 className="text-sm font-bold text-chocolate truncate" title={item.label}>
-                      {item.label}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[9px] font-black uppercase text-gold-dark tracking-wider">
+                        {displayCategory}
+                      </span>
+                      {isLegacy && (
+                        <span className="text-[8px] font-extrabold uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                          Legacy Entry
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-sm font-bold text-chocolate truncate" title={displayTitle}>
+                      {displayTitle}
                     </h3>
-                    {item.link && (
-                      <p className="text-[10px] text-gray-400 font-semibold truncate mt-1">
-                        Link: <span className="font-mono">{item.link}</span>
-                      </p>
-                    )}
+                    <p className="text-[10px] text-gray-400 font-semibold truncate mt-1">
+                      Route: <span className="font-mono">{displayLink}</span>
+                    </p>
                   </div>
 
                   <div className="pt-4 border-t border-gray-50 flex items-center justify-between">

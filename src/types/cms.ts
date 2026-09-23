@@ -32,11 +32,13 @@ export interface MegaMenuItem {
 
 export interface CMSGalleryItem {
   id: string;
-  src: string;
-  label: string; // Alt text / title / caption
+  productId?: string;
+  categoryId?: string;
+  src?: string; // Legacy fallback
+  label?: string; // Legacy fallback / explicit title if present
   displayOrder: number;
   enabled: boolean;
-  link?: string;
+  link?: string; // Legacy fallback
 }
 
 export interface MegaMenuSection {
