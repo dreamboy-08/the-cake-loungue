@@ -16,6 +16,7 @@ import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } 
 import { getContactInfo } from '@/utils/adminService';
 import { isSlotValid, getMinSelectableDate } from '@/utils/deliveryValidation';
 import { useCMS } from '@/context/CMSContext';
+import { calculateDeliveryFee } from '@/utils/deliveryFee';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -39,7 +40,7 @@ const CheckoutPage = () => {
   const [deliveryTimeSlot, setDeliveryTimeSlot] = useState<string>('');
   const [deliveryInstructions, setDeliveryInstructions] = useState<string>('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'verifying' | 'success' | 'error'>('idle');
-  const { websiteSettings } = useCMS();
+  const { websiteSettings, generalSettings } = useCMS();
   const rawWhatsapp = websiteSettings?.whatsapp || "+91 77038 70170";
   const contactWhatsapp = rawWhatsapp.replace(/[^0-9]/g, '');
 
@@ -196,7 +197,11 @@ const CheckoutPage = () => {
     return isMidnightSlot ? 150 : 0;
   }, [isMidnightSlot]);
 
-  const shippingFee = useMemo(() => checkoutTotal >= 499 ? 0 : 50, [checkoutTotal]);
+  const deliveryCalculation = useMemo(() => {
+    return calculateDeliveryFee(checkoutTotal, generalSettings);
+  }, [checkoutTotal, generalSettings]);
+
+  const shippingFee = deliveryCalculation.fee;
   const finalTotal = useMemo(() => checkoutTotal + shippingFee + midnightCharge, [checkoutTotal, shippingFee, midnightCharge]);
 
   const handleCheckout = async () => {
@@ -750,17 +755,17 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Delivery Fee</span>
-                  <span className="font-bold">{shippingFee === 0 ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
+                  <span className="font-bold">{deliveryCalculation.isFree ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
                 </div>
-                {shippingFee === 0 ? (
+                {deliveryCalculation.isFree ? (
                   <div className="bg-green-50 p-3 rounded-xl border border-green-100">
                     <p className="text-[10px] text-green-600 font-bold italic text-center">🎉 Congratulations! You unlocked FREE Delivery.</p>
                   </div>
-                ) : (
+                ) : deliveryCalculation.message ? (
                   <div className="bg-cream-dark p-3 rounded-xl">
-                    <p className="text-[10px] text-rose-deep font-bold italic text-center">Add ₹{499 - checkoutTotal} more to unlock FREE Delivery.</p>
+                    <p className="text-[10px] text-rose-deep font-bold italic text-center">{deliveryCalculation.message}</p>
                   </div>
-                )}
+                ) : null}
                 {isMidnightSlot && (
                   <div className="flex justify-between text-text-mid bg-rose-50/50 p-3 rounded-xl border border-rose-100">
                     <span className="text-sm font-bold text-rose-deep flex items-center gap-2">
