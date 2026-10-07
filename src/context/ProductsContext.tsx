@@ -108,6 +108,12 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     console.log("Subscribing to real-time Firestore products...");
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
 
+    // Safety timeout guard: if Firestore subscription hangs, unblock loading after 5 seconds
+    const safetyTimeout = setTimeout(() => {
+      loadOfflineProducts(true);
+      setLoading(false);
+    }, 5000);
+
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
@@ -137,6 +143,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     );
 
     return () => {
+      clearTimeout(safetyTimeout);
       unsubscribe();
     };
   }, [loadOfflineProducts, refreshProducts]);
