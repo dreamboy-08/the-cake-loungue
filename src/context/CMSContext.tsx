@@ -698,12 +698,19 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const unsubs: (() => void)[] = [];
     const loadedListeners = new Set<string>();
 
+    const TOTAL_LISTENERS_COUNT = 15;
+
     const markListenerLoaded = (key: string) => {
       loadedListeners.add(key);
-      if (loadedListeners.size === 16) {
+      if (loadedListeners.size >= TOTAL_LISTENERS_COUNT) {
         setLoading(false);
       }
     };
+
+    // Safety timeout guard: if network or Firestore listener takes longer than 5s, unblock loading state
+    const safetyTimeout = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
 
     // Helper to query and order
     const registerListener = <T,>(
@@ -825,6 +832,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     unsubs.push(unsubFeatured);
 
     return () => {
+      clearTimeout(safetyTimeout);
       unsubs.forEach(unsub => unsub());
     };
   }, [isFirebaseConfigured, loadOfflineCMS, loadCachedCMS, saveOfflineCMS]);
