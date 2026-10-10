@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsCustomer } from './test-auth-helper';
 
 test.describe('Phase 7 — Homepage About Us / Our Story CMS E2E Tests', () => {
 
@@ -9,8 +10,11 @@ test.describe('Phase 7 — Homepage About Us / Our Story CMS E2E Tests', () => {
   });
 
   test('Complete Admin -> Storefront E2E Workflow', async ({ page }) => {
-    // 1. Go to the Admin Our Story page with auth bypass
-    await page.goto('/admin/our-story?bypass=true');
+    // Log in as admin
+    await loginAsAdmin(page);
+
+    // 1. Go to the Admin Our Story page
+    await page.goto('/admin/our-story');
 
     // 2. Verify the Our Story CMS management UI is visible
     await expect(page.locator('h1:has-text("About Us & Our Story CMS")')).toBeVisible();
@@ -70,7 +74,7 @@ test.describe('Phase 7 — Homepage About Us / Our Story CMS E2E Tests', () => {
     await expect(aboutImage).toHaveAttribute('src', /.*data:image\/jpeg;base64.*/);
 
     // 12. Disable About through the Admin UI
-    await page.goto('/admin/our-story?bypass=true');
+    await page.goto('/admin/our-story');
     await expect(page.locator('button:has-text("Section Enabled")')).toBeVisible();
     await page.locator('button:has-text("Section Enabled")').click();
     await expect(page.locator('button:has-text("Section Hidden")')).toBeVisible();
@@ -83,7 +87,7 @@ test.describe('Phase 7 — Homepage About Us / Our Story CMS E2E Tests', () => {
     await expect(page.locator('#about')).not.toBeVisible();
 
     // 14. Re-enable About through Admin UI
-    await page.goto('/admin/our-story?bypass=true');
+    await page.goto('/admin/our-story');
     await expect(page.locator('button:has-text("Section Hidden")')).toBeVisible();
     await page.locator('button:has-text("Section Hidden")').click();
     await expect(page.locator('button:has-text("Section Enabled")')).toBeVisible();
@@ -105,7 +109,7 @@ test.describe('Phase 7 — Homepage About Us / Our Story CMS E2E Tests', () => {
   test('Responsive verification checks on mobile', async ({ page }) => {
     // Set viewport to mobile
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await loginAsCustomer(page);
 
     // Verify main components are readable and present on mobile viewport
     await expect(page.locator('#about h2')).toBeVisible();

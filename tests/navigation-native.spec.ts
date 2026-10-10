@@ -1,10 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin } from './test-auth-helper';
 
 test.describe('Native Navigation CMS CRUD Page Flow', () => {
 
   test('should perform full CRUD on native Navigation admin section and verify on storefront', async ({ page }) => {
+    // Log in as admin using auth helper
+    await loginAsAdmin(page);
+
     // 1. Navigate to Native Admin Navigation page
-    await page.goto('http://localhost:3000/admin/navigation?bypass=true');
+    await page.goto('http://localhost:3000/admin/navigation');
 
     // Confirm heading is present
     await expect(page.locator('h1:has-text("Navigation Management")')).toBeVisible();
@@ -30,7 +34,7 @@ test.describe('Native Navigation CMS CRUD Page Flow', () => {
     await expect(page.locator('text=Test Navigation').first()).toBeVisible();
 
     // 4. Edit it to 'Test Navigation Edit'
-    await page.goto('http://localhost:3000/admin/navigation?bypass=true');
+    await page.goto('http://localhost:3000/admin/navigation');
     const card = page.locator('div[class*="bg-white"]').filter({ hasText: 'Test Navigation' }).first();
     await card.locator('button[title="Edit Link"]').click();
     await page.fill('input[placeholder="e.g. Bestsellers, Wedding Cakes"]', 'Test Navigation Edit');
@@ -44,7 +48,7 @@ test.describe('Native Navigation CMS CRUD Page Flow', () => {
     await expect(page.locator('text=Test Navigation Edit').first()).toBeVisible();
 
     // 6. Disable it
-    await page.goto('http://localhost:3000/admin/navigation?bypass=true');
+    await page.goto('http://localhost:3000/admin/navigation');
     const editCard = page.locator('div[class*="bg-white"]').filter({ hasText: 'Test Navigation Edit' }).first();
     await editCard.locator('button:has-text("Live")').click(); // Toggle status from Live to Hidden
     await expect(page.locator('text=Navigation is now Disabled')).toBeVisible();
@@ -54,7 +58,7 @@ test.describe('Native Navigation CMS CRUD Page Flow', () => {
     await expect(page.locator('text=Test Navigation Edit')).not.toBeVisible();
 
     // 8. Re-enable it
-    await page.goto('http://localhost:3000/admin/navigation?bypass=true');
+    await page.goto('http://localhost:3000/admin/navigation');
     const hiddenCard = page.locator('div[class*="bg-white"]').filter({ hasText: 'Test Navigation Edit' }).first();
     await hiddenCard.locator('button:has-text("Hidden")').click(); // Toggle status back to Live
     await expect(page.locator('text=Navigation is now Active')).toBeVisible();

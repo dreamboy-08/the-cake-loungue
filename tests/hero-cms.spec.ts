@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsCustomer } from './test-auth-helper';
 
 test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
 
@@ -9,8 +10,11 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
   });
 
   test('Complete Admin -> Storefront E2E Workflow', async ({ page }) => {
-    // 1. Go to the Admin Hero page with auth bypass
-    await page.goto('/admin/hero?bypass=true');
+    // Log in as admin
+    await loginAsAdmin(page);
+
+    // 1. Go to the Admin Hero page
+    await page.goto('/admin/hero');
 
     // 2. Verify the Hero CMS management UI is visible
     await expect(page.locator('h1:has-text("Homepage Hero CMS")')).toBeVisible();
@@ -56,7 +60,7 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
     await expect(heroImage).toHaveAttribute('src', /.*photo-1519915028121-7d3463d20b13.*/);
 
     // 12. Disable Hero through the Admin UI
-    await page.goto('/admin/hero?bypass=true');
+    await page.goto('/admin/hero');
     await expect(page.locator('button:has-text("Section Live")')).toBeVisible();
     await page.locator('button:has-text("Section Live")').click();
     await expect(page.locator('button:has-text("Section Hidden")')).toBeVisible();
@@ -69,7 +73,7 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
     await expect(page.locator('#hero')).not.toBeVisible();
 
     // 14. Re-enable Hero through Admin UI
-    await page.goto('/admin/hero?bypass=true');
+    await page.goto('/admin/hero');
     await expect(page.locator('button:has-text("Section Hidden")')).toBeVisible();
     await page.locator('button:has-text("Section Hidden")').click();
     await expect(page.locator('button:has-text("Section Live")')).toBeVisible();
@@ -82,7 +86,7 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
     await expect(page.locator('#hero')).toBeVisible();
 
     // 16. Cleanup / Restore Default configurations
-    await page.goto('/admin/hero?bypass=true');
+    await page.goto('/admin/hero');
     await page.locator('button:has-text("Reset Defaults")').click();
     await page.locator('button:has-text("Save All Settings")').click();
     await expect(page.locator('text=Homepage Hero configurations saved successfully!')).toBeVisible();
@@ -95,7 +99,7 @@ test.describe('Phase 4 — Homepage Hero CMS E2E Tests', () => {
   test('Responsive verification checks on mobile', async ({ page }) => {
     // Set viewport to mobile
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.goto('/');
+    await loginAsCustomer(page);
 
     // Verify main components are readable and present on mobile viewport
     await expect(page.locator('#hero h1')).toBeVisible();

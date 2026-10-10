@@ -1,12 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsCustomer } from './test-auth-helper';
 
 test.describe('Product-Based Gallery CMS Verification', () => {
 
   test('should support product-based gallery selection, storefront display, navigation, and CRUD', async ({ page }) => {
     test.setTimeout(90000);
 
+    // Log in as admin
+    await loginAsAdmin(page);
+
     // Navigate to admin panel gallery route
-    await page.goto('http://localhost:3000/admin/gallery?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/admin/gallery', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('h1:has-text("Product Gallery CMS")')).toBeVisible();
 
     // Wait for loading state to disappear
@@ -44,7 +48,7 @@ test.describe('Product-Based Gallery CMS Verification', () => {
     // ----------------------------------------------------
     // TEST 2: Verify Storefront Displays Selected Product & Navigates Correctly
     // ----------------------------------------------------
-    await page.goto('http://localhost:3000/?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#gallery')).toBeVisible();
 
     const storefrontCard = page.locator('#gallery').locator('a:has-text("Ivory Lace Wedding Cake")').first();
@@ -58,7 +62,7 @@ test.describe('Product-Based Gallery CMS Verification', () => {
     // ----------------------------------------------------
     // TEST 3: Disable / Hide Gallery Item
     // ----------------------------------------------------
-    await page.goto('http://localhost:3000/admin/gallery?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/admin/gallery', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('text=Loading gallery...')).not.toBeVisible({ timeout: 15000 });
 
     const card = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3:has-text("Ivory Lace Wedding Cake")') }).first();
@@ -66,13 +70,13 @@ test.describe('Product-Based Gallery CMS Verification', () => {
     await expect(page.locator('text=Gallery item is now Disabled')).toBeVisible();
 
     // Confirm hidden from storefront
-    await page.goto('http://localhost:3000/?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#gallery').locator('text=Ivory Lace Wedding Cake')).not.toBeVisible();
 
     // ----------------------------------------------------
     // TEST 4: Delete Gallery Item
     // ----------------------------------------------------
-    await page.goto('http://localhost:3000/admin/gallery?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/admin/gallery', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('text=Loading gallery...')).not.toBeVisible({ timeout: 15000 });
 
     const disabledCard = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3:has-text("Ivory Lace Wedding Cake")') }).first();
@@ -81,7 +85,7 @@ test.describe('Product-Based Gallery CMS Verification', () => {
     await expect(page.locator('text=Gallery item deleted successfully')).toBeVisible();
 
     // Confirm completely removed
-    await page.goto('http://localhost:3000/?bypass=true', { waitUntil: 'domcontentloaded' });
+    await page.goto('http://localhost:3000/', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#gallery').locator('text=Ivory Lace Wedding Cake')).not.toBeVisible();
   });
 });

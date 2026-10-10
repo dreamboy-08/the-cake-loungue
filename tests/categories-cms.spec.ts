@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin } from './test-auth-helper';
 
 test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
 
@@ -8,8 +9,11 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
   });
 
   test('Complete Category CMS Lifecycle: CRUD, Visibility, Reordering, Custom Links', async ({ page }) => {
-    // 1. Open Admin Categories Page with auth bypass
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    // Log in as admin
+    await loginAsAdmin(page);
+
+    // 1. Open Admin Categories Page
+    await page.goto('http://localhost:3000/admin/categories');
     await expect(page.locator('h1:has-text("Category Management")')).toBeVisible();
 
     // Verify some default categories exist
@@ -47,7 +51,7 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     await expect(page).toHaveURL(/.*category=milestone-treat/);
 
     // 5. Open Admin Categories Page again to Edit
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    await page.goto('http://localhost:3000/admin/categories');
     const milestoneCard = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3', { hasText: 'Milestone Treat' }) }).first();
 
     // Click the Edit button (2nd button on the card container)
@@ -69,7 +73,7 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     await expect(updatedCard.locator('div:has-text("Premium Elite")').last()).toBeVisible();
 
     // 6. Reorder categories: Move "Milestone Deluxe" to position #1
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    await page.goto('http://localhost:3000/admin/categories');
     const deluxeCard = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3', { hasText: 'Milestone Deluxe' }) }).first();
     await deluxeCard.locator('button').nth(1).click();
     await expect(page.locator('h2:has-text("Edit Category")')).toBeVisible();
@@ -84,7 +88,7 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     await expect(firstCategory).toContainText('Milestone Deluxe');
 
     // 7. Disable category
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    await page.goto('http://localhost:3000/admin/categories');
     const deluxeCardToDisable = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3', { hasText: 'Milestone Deluxe' }) }).first();
 
     // Click Live toggle overlay button (first button)
@@ -95,7 +99,7 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     await expect(page.locator('div[role="button"]').filter({ hasText: 'Milestone Deluxe' })).not.toBeVisible();
 
     // 8. Re-enable category
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    await page.goto('http://localhost:3000/admin/categories');
     const deluxeCardToEnable = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3', { hasText: 'Milestone Deluxe' }) }).first();
     await deluxeCardToEnable.locator('button').first().click();
 
@@ -104,7 +108,7 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     await expect(page.locator('div[role="button"]').filter({ hasText: 'Milestone Deluxe' })).toBeVisible();
 
     // 9. Delete test category
-    await page.goto('http://localhost:3000/admin/categories?bypass=true');
+    await page.goto('http://localhost:3000/admin/categories');
     const deluxeCardToDelete = page.locator('div[class*="bg-white"]').filter({ has: page.locator('h3', { hasText: 'Milestone Deluxe' }) }).first();
 
     // Click delete (3rd button)

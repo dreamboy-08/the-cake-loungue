@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsCustomer } from './test-auth-helper';
 
 /**
  * Admin Product CRUD & Sync Verification
@@ -39,8 +40,11 @@ test.describe('Admin Product Management & Sync', () => {
       }
     });
 
+    // Ensure logged in as admin
+    await loginAsAdmin(page);
+
     // Navigate to Admin Products
-    await page.goto('http://localhost:3000/admin/products?bypass=true');
+    await page.goto('http://localhost:3000/admin/products');
   });
 
   test('CRUD Flow: Create, Read, Update, Delete', async ({ page }) => {
