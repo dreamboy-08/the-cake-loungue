@@ -13,6 +13,7 @@ import { CMSProvider } from "@/context/CMSContext";
 import CMSStyleRoot from "@/components/CMSStyleRoot";
 import FaviconManager from "@/components/FaviconManager";
 import SEOHeadManager from "@/components/SEOHeadManager";
+import CustomerAuthGuard from "@/components/CustomerAuthGuard";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -49,10 +50,12 @@ export default function RootLayout({
               <CartProvider>
                 <FlyToCartProvider>
                   <WishlistProvider>
-                    <Navbar />
-                    <main>{children}</main>
-                    <Footer />
-                    <CartBubble />
+                    <CustomerAuthGuard>
+                      <Navbar />
+                      <main>{children}</main>
+                      <Footer />
+                      <CartBubble />
+                    </CustomerAuthGuard>
                   </WishlistProvider>
                 </FlyToCartProvider>
               </CartProvider>

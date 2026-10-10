@@ -57,8 +57,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<any>(null);
 
+  const isMockFirebase = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'your_api_key' ||
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY === 'missing';
+
   useEffect(() => {
     let unsubscribeSnapshot: (() => void) | null = null;
+
+    if (isMockFirebase) {
+      try {
+        const cachedMockUser = localStorage.getItem('cakelounge_mock_user');
+        if (cachedMockUser) {
+          const parsed = JSON.parse(cachedMockUser);
+          setUser(parsed);
+          setRole(parsed.role || 'user');
+          setIsAdmin(parsed.role === 'admin');
+          setIsStaff(parsed.role === 'staff' || parsed.role === 'admin');
+          setUserData(parsed);
+        }
+      } catch (err) {
+        console.error('Failed to parse mock user:', err);
+      }
+      setLoading(false);
+      return;
+    }
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       // Clear previous snapshot listener if it exists
@@ -121,23 +143,83 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const logout = async () => {
+    if (isMockFirebase) {
+      localStorage.removeItem('cakelounge_mock_user');
+      setUser(null);
+      setRole(null);
+      setIsAdmin(false);
+      setIsStaff(false);
+      setUserData(null);
+      return;
+    }
     await signOut(auth);
   };
 
   const signInWithGoogle = async () => {
+    if (isMockFirebase) {
+      const mockUser = {
+        uid: 'google-mock-uid-123',
+        email: 'customer@cakelounge.com',
+        displayName: 'Demo Customer',
+        role: 'user',
+        addresses: []
+      } as any;
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setRole('user');
+      setIsAdmin(false);
+      setIsStaff(false);
+      setUserData(mockUser);
+      return;
+    }
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
   };
 
   const resetPassword = async (email: string) => {
+    if (isMockFirebase) return;
     await sendPasswordResetEmail(auth, email);
   };
 
   const login = async (email: string, password: string) => {
+    if (isMockFirebase) {
+      const userRole: 'admin' | 'staff' | 'user' = email.toLowerCase().includes('admin') ? 'admin' : 'user';
+      const mockUser = {
+        uid: 'mock-user-uid-' + Date.now(),
+        email,
+        displayName: email.split('@')[0],
+        role: userRole,
+        addresses: []
+      } as any;
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setRole(userRole);
+      setIsAdmin(userRole === 'admin');
+      setIsStaff(userRole === 'admin');
+      setUserData(mockUser);
+      return;
+    }
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const signup = async (email: string, password: string, name: string) => {
+    if (isMockFirebase) {
+      const userRole: 'admin' | 'staff' | 'user' = email.toLowerCase().includes('admin') ? 'admin' : 'user';
+      const mockUser = {
+        uid: 'mock-user-uid-' + Date.now(),
+        email,
+        displayName: name,
+        role: userRole,
+        addresses: []
+      } as any;
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+      setUser(mockUser);
+      setRole(userRole);
+      setIsAdmin(userRole === 'admin');
+      setIsStaff(userRole === 'admin');
+      setUserData(mockUser);
+      return;
+    }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(userCredential.user, {
       displayName: name

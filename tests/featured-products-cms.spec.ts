@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { loginAsAdmin, loginAsCustomer } from './test-auth-helper';
 
 test.describe('Featured Products CMS End-to-End Suite', () => {
 
@@ -6,8 +7,11 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
     // Subscribe to browser console logs
     page.on('console', msg => console.log('BROWSER CONSOLE LOG:', msg.text()));
 
-    // Navigate to Admin Featured Products CMS panel with auth bypass
-    await page.goto('http://localhost:3000/admin/featured-products?bypass=true');
+    // Log in as admin
+    await loginAsAdmin(page);
+
+    // Navigate to Admin Featured Products CMS panel
+    await page.goto('http://localhost:3000/admin/featured-products');
     // Ensure the page heading is fully loaded before continuing
     await expect(page.getByRole('heading', { name: 'Homepage Featured Products CMS' })).toBeVisible();
   });
@@ -57,7 +61,7 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
 
     // 4. Test Sorting Display Order (Reordering)
     // Go back to Admin Panel
-    await page.goto('http://localhost:3000/admin/featured-products?bypass=true');
+    await page.goto('http://localhost:3000/admin/featured-products');
     await expect(page.getByRole('heading', { name: 'Homepage Featured Products CMS' })).toBeVisible();
 
     // Let's add "Eternal Love Anniversary Cake" so we have a few items to reorder
@@ -86,7 +90,7 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
     await expect(page.locator('#products h3:has-text("Eternal Love Anniversary Cake")').first()).toBeVisible();
 
     // 6. Test Removal of Featured Product
-    await page.goto('http://localhost:3000/admin/featured-products?bypass=true');
+    await page.goto('http://localhost:3000/admin/featured-products');
     await expect(page.getByRole('heading', { name: 'Homepage Featured Products CMS' })).toBeVisible();
 
     // Search or find "Eternal Love Anniversary Cake" in featured list and click Remove (Trash) icon
@@ -107,7 +111,7 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
     await expect(page.locator('h3:has-text("Eternal Love Anniversary Cake")').first()).toBeVisible();
 
     // 7. Test Disabling the Entire Section
-    await page.goto('http://localhost:3000/admin/featured-products?bypass=true');
+    await page.goto('http://localhost:3000/admin/featured-products');
     await expect(page.getByRole('heading', { name: 'Homepage Featured Products CMS' })).toBeVisible();
 
     // Click section status toggle to disable (hides from storefront)
@@ -123,7 +127,7 @@ test.describe('Featured Products CMS End-to-End Suite', () => {
     await expect(page.locator('#products')).not.toBeVisible();
 
     // 8. Test Re-enabling the Section and verify it returns with the saved products list
-    await page.goto('http://localhost:3000/admin/featured-products?bypass=true');
+    await page.goto('http://localhost:3000/admin/featured-products');
     await expect(page.getByRole('heading', { name: 'Homepage Featured Products CMS' })).toBeVisible();
 
     // Click section status toggle to re-enable (live)
