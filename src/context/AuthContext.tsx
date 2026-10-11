@@ -10,6 +10,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   updateProfile
 } from 'firebase/auth';
 import { auth, db } from '@/utils/firebase';
@@ -41,6 +42,8 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name: string) => Promise<void>;
+  resendVerificationEmail: () => Promise<void>;
+  refreshVerificationStatus: () => Promise<boolean>;
   addAddress: (address: Omit<Address, 'id'>) => Promise<void>;
   updateAddress: (id: string, address: Partial<Address>) => Promise<void>;
   deleteAddress: (id: string) => Promise<void>;
@@ -225,6 +228,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       displayName: name
     });
 
+    // Send Firebase Auth email verification
+    try {
+      await sendEmailVerification(userCredential.user);
+    } catch (verifErr) {
+      console.error("Error sending verification email on signup:", verifErr);
+    }
+
     // Create user document in Firestore
     const newUserData = {
       uid: userCredential.user.uid,
@@ -236,6 +246,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
     setUserData(newUserData);
+  };
+
+  const resendVerificationEmail = async () => {
+    if (isMockFirebase) {
+      console.log("[Mock Auth] Verification email resent to mock user.");
+      return;
+    }
+    if (auth.currentUser) {
+      await sendEmailVerification(auth.currentUser);
+    } else {
+      throw new Error("No authenticated user found to resend verification email.");
+    }
+  };
+
+  const refreshVerificationStatus = async (): Promise<boolean> => {
+    if (isMockFirebase) {
+      if (user) {
+        const updated = { ...user, emailVerified: true };
+        localStorage.setItem('cakelounge_mock_user', JSON.stringify(updated));
+        setUser(updated as any);
+      }
+      return true;
+    }
+    if (auth.currentUser) {
+      await auth.currentUser.reload();
+      const reloadedUser = auth.currentUser;
+      // Preserve prototype methods (like getIdToken) while updating state reference
+      const updatedUser = Object.assign(Object.create(Object.getPrototypeOf(reloadedUser)), reloadedUser);
+      setUser(updatedUser);
+      return reloadedUser.emailVerified;
+    }
+    return false;
   };
 
   const addAddress = async (address: Omit<Address, 'id'>) => {
@@ -348,6 +390,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       resetPassword,
       login,
       signup,
+      resendVerificationEmail,
+      refreshVerificationStatus,
       addAddress,
       updateAddress,
       deleteAddress,

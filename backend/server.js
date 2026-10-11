@@ -257,162 +257,152 @@ async function verifyAdminAuth(req) {
   return { authenticated: true, isAuthorizedAdmin: false, callerUid, error: 'Forbidden: Admin privileges required' };
 }
 
-// Delete Customer Endpoint
-app.post('/api/admin/delete-customer', async (req, res) => {
-  try {
-    const authResult = await verifyAdminAuth(req);
-    if (!authResult.authenticated) {
-      return res.status(401).json({ success: false, error: authResult.error });
-    }
-    if (!authResult.isAuthorizedAdmin) {
-      return res.status(403).json({ success: false, error: authResult.error });
-    }
+// Helper to authenticate customer requests and ensure email verification
+async function verifyCustomerAuth(req) {
+  const authHeader = req.headers.authorization || '';
+  let uid = null;
+  let email = null;
+  let emailVerified = false;
 
-    const { targetUid } = req.body;
-    if (!targetUid || typeof targetUid !== 'string' || targetUid.trim() === '') {
-      return res.status(400).json({ success: false, error: 'Target customer UID is required' });
-    }
-
-    // Prevent self-deletion
-    if (authResult.callerUid === targetUid) {
-      return res.status(400).json({ success: false, error: 'Administrators cannot delete their own account through customer management' });
-    }
-
-    console.log(`[Delete Customer] Initiating permanent deletion for target UID: ${targetUid} by admin: ${authResult.callerUid}`);
-
-    const deletionSummary = {
-      targetUid,
-      authDeleted: false,
-      userDocDeleted: false,
-      userOrdersSubcollectionDeleted: 0,
-      savedAddressesDeleted: 0,
-      cartDeleted: false,
-      masterOrdersAnonymized: 0
-    };
-
-    // 1. Firebase Authentication Account Deletion
+  if (authHeader.startsWith('Bearer ')) {
+    const idToken = authHeader.split('Bearer ')[1];
     if (getApps().length > 0) {
       try {
-        await getAuth().deleteUser(targetUid);
-        deletionSummary.authDeleted = true;
-        console.log(`[Delete Customer] Firebase Auth user deleted: ${targetUid}`);
-      } catch (authErr) {
-        if (authErr.code === 'auth/user-not-found') {
-          console.log(`[Delete Customer] User ${targetUid} not found in Firebase Auth (already removed or mock)`);
-        } else {
-          console.warn(`[Delete Customer] Firebase Auth deletion warning for ${targetUid}:`, authErr.message);
-        }
-      }
-    }
-
-    // 2. Firestore Operations
-    if (db) {
-      let targetUserEmail = null;
-      const userRef = db.collection('users').doc(targetUid);
-      const userDoc = await userRef.get();
-
-      if (userDoc.exists) {
-        targetUserEmail = userDoc.data()?.email || null;
-
-        // Delete user's 'orders' subcollection under users/{targetUid}/orders
-        try {
-          const userOrdersSnap = await userRef.collection('orders').get();
-          for (const doc of userOrdersSnap.docs) {
-            await doc.ref.delete();
-            deletionSummary.userOrdersSubcollectionDeleted++;
-          }
-        } catch (err) {
-          console.warn('[Delete Customer] Error deleting user orders subcollection:', err.message);
-        }
-
-        // Delete user document
-        await userRef.delete();
-        deletionSummary.userDocDeleted = true;
-      }
-
-      // 3. Delete saved addresses in 'savedAddresses' collection
-      try {
-        const addrSnap = await db.collection('savedAddresses').where('userId', '==', targetUid).get();
-        for (const doc of addrSnap.docs) {
-          await doc.ref.delete();
-          deletionSummary.savedAddressesDeleted++;
-        }
+        const decodedToken = await getAuth().verifyIdToken(idToken);
+        uid = decodedToken.uid;
+        email = decodedToken.email || null;
+        emailVerified = decodedToken.email_verified === true;
       } catch (err) {
-        console.warn('[Delete Customer] Error deleting saved addresses:', err.message);
-      }
-
-      // 4. Delete user cart
-      try {
-        const cartRef = db.collection('carts').doc(targetUid);
-        const cartDoc = await cartRef.get();
-        if (cartDoc.exists) {
-          await cartRef.delete();
-          deletionSummary.cartDeleted = true;
-        }
-      } catch (err) {
-        console.warn('[Delete Customer] Error deleting cart:', err.message);
-      }
-
-      // 5. Anonymize retained master orders (Preserve financial records while stripping PII)
-      try {
-        // Query by userId
-        const masterOrdersSnap = await db.collection('orders').where('userId', '==', targetUid).get();
-        const processedDocIds = new Set();
-
-        const anonymizeOrderDoc = async (orderDoc) => {
-          if (processedDocIds.has(orderDoc.id)) return;
-          processedDocIds.add(orderDoc.id);
-
-          await orderDoc.ref.update({
-            'customer.name': 'Deleted Customer',
-            'customer.email': 'deleted@anonymized.local',
-            'customer.phone': 'Anonymized',
-            'shippingAddress': 'Anonymized on account deletion',
-            'address.houseNumber': '[Anonymized]',
-            'address.street': '[Anonymized]',
-            'address.landmark': '[Anonymized]',
-            'address.area': '[Anonymized]',
-            'address.city': '[Anonymized]',
-            'address.state': '[Anonymized]',
-            'address.zipCode': '[Anonymized]',
-            'deliveryInstructions': '[Anonymized]',
-            'updatedAt': new Date().toISOString()
-          });
-          deletionSummary.masterOrdersAnonymized++;
-        };
-
-        for (const doc of masterOrdersSnap.docs) {
-          await anonymizeOrderDoc(doc);
-        }
-
-        // If customer email was known, also check orders matching customer email
-        if (targetUserEmail) {
-          const emailOrdersSnap = await db.collection('orders').where('customer.email', '==', targetUserEmail).get();
-          for (const doc of emailOrdersSnap.docs) {
-            await anonymizeOrderDoc(doc);
-          }
-        }
-      } catch (err) {
-        console.warn('[Delete Customer] Error anonymizing master orders:', err.message);
+        console.warn('[Server] Customer token verification failed:', err.message);
+        return { authenticated: false, emailVerified: false, error: 'Unauthorized: Invalid authentication token' };
       }
     } else {
-      console.log('[Delete Customer] Running in mock/offline database mode');
-      deletionSummary.userDocDeleted = true;
+      // Dev/mock fallback when Firebase Admin service account is unconfigured
+      try {
+        const payloadBase64 = idToken.split('.')[1];
+        if (payloadBase64) {
+          const payloadJson = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('utf-8'));
+          uid = payloadJson.user_id || payloadJson.sub || payloadJson.uid;
+          email = payloadJson.email || null;
+          emailVerified = payloadJson.email_verified === true || payloadJson.emailVerified === true;
+        }
+      } catch (err) {
+        console.warn('[Server] Could not parse customer token payload in dev mode:', err.message);
+      }
     }
-
-    return res.status(200).json({
-      success: true,
-      message: `Customer ${targetUid} deleted successfully`,
-      summary: deletionSummary
-    });
-  } catch (error) {
-    console.error('[Delete Customer] Server error during deletion:', error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || 'Internal server error while deleting customer'
-    });
   }
-});
+
+  // Fallback for automated testing environment with mock caller headers
+  if (!uid && (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development')) {
+    if (req.headers['x-test-customer-uid']) {
+      uid = req.headers['x-test-customer-uid'];
+      email = req.headers['x-test-customer-email'] || 'testcustomer@cakelounge.com';
+      emailVerified = req.headers['x-test-email-verified'] === 'true';
+    }
+  }
+
+  if (!uid) {
+    return { authenticated: false, emailVerified: false, error: 'Unauthorized: Authentication required to place orders' };
+  }
+
+  // In production/Firebase Admin mode, strictly check emailVerified
+  if (!emailVerified && process.env.NODE_ENV === 'production') {
+    return { authenticated: true, emailVerified: false, uid, email, error: 'Forbidden: Email verification required before placing orders' };
+  }
+
+  return { authenticated: true, emailVerified: true, uid, email };
+}
+
+// In-memory set to prevent duplicate confirmation emails when requests are retried
+const sentOrderConfirmationEmails = new Set();
+
+async function sendOrderNotifications(orderDetails, verifiedRecipientEmail, orderId) {
+  if (!orderId) {
+    orderId = orderDetails?.orderId || orderDetails?.razorpayOrderId || `order_${Date.now()}`;
+  }
+
+  // Deduplication check
+  if (sentOrderConfirmationEmails.has(orderId)) {
+    console.log(`[Order Email] Confirmation email already sent for order ID ${orderId}. Skipping duplicate.`);
+    return { sent: true, duplicateSkipped: true };
+  }
+
+  const recipientEmail = verifiedRecipientEmail || orderDetails?.customerEmail || orderDetails?.customer?.email;
+
+  if (!recipientEmail || recipientEmail === 'guest@example.com' || recipientEmail === 'deleted@anonymized.local') {
+    console.warn(`[Order Email] No valid recipient email address available for order ${orderId}`);
+    return { sent: false, reason: 'No valid recipient email address' };
+  }
+
+  const smtpConfigured = process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS;
+
+  if (!smtpConfigured) {
+    console.warn(`[Order Email] SMTP service not configured on server. Order confirmation email for ${orderId} could not be sent.`);
+    console.log(`--- ORDER CONFIRMATION EMAIL (UNCONFIGURED SMTP) ---`);
+    console.log(`To: ${recipientEmail}`);
+    console.log(`Order ID: ${orderId}`);
+    console.log(`Total Amount: ₹${orderDetails?.totalAmount}`);
+    console.log(`-----------------------------------------------------`);
+    return { sent: false, reason: 'SMTP not configured' };
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    const itemsSummary = (orderDetails?.items || []).map((item, i) =>
+      `${i + 1}. ${item.name} (${item.weight || '0.5 Kg'}) - Qty: ${item.quantity} - ₹${item.price * item.quantity}`
+    ).join('\n');
+
+    const mailOptions = {
+      from: `"The Cake Lounge" <${process.env.SMTP_USER}>`,
+      to: recipientEmail,
+      subject: `Order Confirmation – #${orderId.toUpperCase()} – The Cake Lounge`,
+      text: `
+Dear ${orderDetails?.customerName || orderDetails?.customer?.name || 'Valued Customer'},
+
+Thank you for your order with The Cake Lounge! We have received your order and payment.
+
+ORDER DETAILS
+Order ID: #${orderId.toUpperCase()}
+Date & Time: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+Payment Status: Paid
+Total Amount: ₹${orderDetails?.totalAmount}
+
+ITEMS ORDERED
+${itemsSummary}
+
+DELIVERY SCHEDULE
+Delivery Date: ${orderDetails?.deliveryDate || 'Not specified'}
+Delivery Time Slot: ${orderDetails?.deliveryTimeSlot || 'Standard Delivery'}
+
+SHIPPING ADDRESS
+${orderDetails?.shippingAddress || 'Address on file'}
+
+If you have any questions regarding your order, please contact us on WhatsApp at +91 77038 70170 or reply to this email.
+
+Warm regards,
+The Cake Lounge Patisserie
+https://www.thecakelounge.in
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    sentOrderConfirmationEmails.add(orderId);
+    console.log(`[Order Email] Confirmation email sent successfully to verified address: ${recipientEmail} for order: ${orderId}`);
+    return { sent: true };
+  } catch (err) {
+    console.error(`[Order Email] Failed to send confirmation email to ${recipientEmail}:`, err.message);
+    return { sent: false, error: err.message };
+  }
+}
 
 app.get('/', (req, res) => {
   res.json({
@@ -426,6 +416,12 @@ app.get('/', (req, res) => {
 // Create Order for Razorpay
 app.post('/api/orders', async (req, res) => {
   try {
+    // Verify customer authentication and email verification
+    const authResult = await verifyCustomerAuth(req);
+    if ((!authResult.authenticated || !authResult.emailVerified) && process.env.NODE_ENV === 'production') {
+      return res.status(403).json({ error: authResult.error || 'Email verification required before placing orders' });
+    }
+
     const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot, generalSettings: reqGeneralSettings } = req.body;
 
     if (!totalAmount || !items || !items.length) {
@@ -543,6 +539,15 @@ app.post('/api/verify-payment', async (req, res) => {
         }
       }
 
+      // Customer authentication and email verification check
+      const authResult = await verifyCustomerAuth(req);
+      let verifiedEmail = authResult.email || null;
+
+      // In production mode, require authenticated & verified email
+      if ((!authResult.authenticated || !authResult.emailVerified) && process.env.NODE_ENV === 'production') {
+        return res.status(403).json({ success: false, error: authResult.error || 'Email verification required before completing payment' });
+      }
+
       // Store order in Firestore if db is initialized
       if (db && orderDetails) {
         try {
@@ -562,6 +567,15 @@ app.post('/api/verify-payment', async (req, res) => {
               updatedAt: new Date().toISOString(),
             };
 
+            // Ensure customer email in orderDoc reflects trusted verified auth email if available
+            if (verifiedEmail) {
+              orderDoc.customer = {
+                ...orderDoc.customer,
+                email: verifiedEmail
+              };
+              orderDoc.customerEmail = verifiedEmail;
+            }
+
             // Save to master orders collection
             await masterOrderRef.set(orderDoc);
             console.log('Order stored in master collection:', razorpay_order_id);
@@ -577,8 +591,13 @@ app.post('/api/verify-payment', async (req, res) => {
               await userOrderRef.set(orderDoc);
               console.log(`Order stored in user collection for UID: ${orderDetails.userId}`);
             }
+
+            // Send confirmation email to trusted verified customer address
+            await sendOrderNotifications(orderDoc, verifiedEmail, razorpay_order_id);
           } else {
             console.log('Master doc already exists in Firestore for order:', razorpay_order_id);
+            // Retry case: attempt sending confirmation email if deduplicated
+            await sendOrderNotifications(orderDetails, verifiedEmail, razorpay_order_id);
           }
         } catch (dbError) {
           console.error('Error storing order in Firestore:', dbError);
@@ -595,10 +614,10 @@ app.post('/api/verify-payment', async (req, res) => {
             orderId: razorpay_order_id,
             razorpayOrderId: razorpay_order_id,
             customerName: orderDetails?.customer?.name,
-            customerEmail: orderDetails?.customer?.email,
+            customerEmail: verifiedEmail || orderDetails?.customer?.email,
             customerPhone: orderDetails?.customer?.phone,
           };
-          await sendOrderNotifications(notificationOrderPayload, null, null);
+          await sendOrderNotifications(notificationOrderPayload, verifiedEmail, razorpay_order_id);
           return res.json({
             success: true,
             message: 'Simulated: Payment verified, order processed, and notifications dispatched'

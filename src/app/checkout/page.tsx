@@ -230,10 +230,27 @@ const CheckoutPage = () => {
       console.log('Initiating checkout for amount:', finalTotal);
       const resolvedCustomerPhone = selectedAddress.phone || (userData as any)?.phone || user?.phoneNumber || '';
 
+      // Obtain Firebase Auth ID token if available
+      let idToken = '';
+      if (user && typeof (user as any).getIdToken === 'function') {
+        try {
+          idToken = await (user as any).getIdToken();
+        } catch (tokenErr) {
+          console.warn('Could not get ID token:', tokenErr);
+        }
+      }
+
+      const reqHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (idToken) {
+        reqHeaders['Authorization'] = `Bearer ${idToken}`;
+      }
+
       // Step 1: Create order on backend
       const orderResponse = await fetch(`${API_URL}/api/orders`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: reqHeaders,
         body: JSON.stringify({
           totalAmount: finalTotal,
           items: checkoutItems,
@@ -323,7 +340,7 @@ const CheckoutPage = () => {
 
             const verifyResponse = await fetch(`${API_URL}/api/verify-payment`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: reqHeaders,
               body: JSON.stringify({
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

@@ -3,10 +3,10 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock, User, LogIn, UserPlus, Chrome, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, User, LogIn, UserPlus, Chrome, ShieldCheck, RefreshCw, Send, LogOut, CheckCircle2, AlertCircle } from 'lucide-react';
 
 function CustomerAuthGuardContent({ children }: { children: React.ReactNode }) {
-  const { user, loading, login, signup, signInWithGoogle } = useAuth();
+  const { user, role, loading, login, signup, signInWithGoogle, logout, resendVerificationEmail, refreshVerificationStatus } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -16,6 +16,19 @@ function CustomerAuthGuardContent({ children }: { children: React.ReactNode }) {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [authSubmitting, setAuthSubmitting] = useState(false);
+
+  // Email verification screen state
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [verifMessage, setVerifMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [checkingVerif, setCheckingVerif] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(prev => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   // Check if current route is public/exempt from mandatory auth gate
   const isExemptRoute =
@@ -96,14 +109,128 @@ function CustomerAuthGuardContent({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleResendVerif = async () => {
+    if (resendCooldown > 0) return;
+    setVerifMessage(null);
+    try {
+      await resendVerificationEmail();
+      setVerifMessage({ type: 'success', text: 'Verification email sent! Please check your inbox and spam folder.' });
+      setResendCooldown(60);
+    } catch (err: any) {
+      setVerifMessage({ type: 'error', text: err.message || 'Failed to resend verification email. Please try again later.' });
+    }
+  };
+
+  const handleRefreshVerif = async () => {
+    setCheckingVerif(true);
+    setVerifMessage(null);
+    try {
+      const isVerified = await refreshVerificationStatus();
+      if (isVerified) {
+        setVerifMessage({ type: 'success', text: 'Email verified successfully! You can now proceed.' });
+        handleRedirectAfterAuth();
+      } else {
+        setVerifMessage({ type: 'info', text: 'Email is not verified yet. Please click the link sent to your inbox.' });
+      }
+    } catch (err: any) {
+      setVerifMessage({ type: 'error', text: err.message || 'Failed to check status.' });
+    } finally {
+      setCheckingVerif(false);
+    }
+  };
+
   // 1. While auth state is initializing, allow children or loading spinner
   if (loading) {
     return <>{children}</>;
   }
 
-  // 2. If user is authenticated OR on an exempt route, render children normally
-  if (user || isExemptRoute) {
+  // Exempt routes allow rendering without gate
+  if (isExemptRoute) {
     return <>{children}</>;
+  }
+
+  // Admins & Staff bypass customer email verification
+  if (user && (role === 'admin' || role === 'staff')) {
+    return <>{children}</>;
+  }
+
+  // Authenticated customer with verified email
+  if (user && user.emailVerified) {
+    return <>{children}</>;
+  }
+
+  // Authenticated customer with UNVERIFIED email -> Render Dedicated Email Verification Screen
+  if (user && !user.emailVerified) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-chocolate/95 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div className="max-w-md w-full bg-cream rounded-[36px] shadow-2xl border border-cream-dark overflow-hidden my-auto animate-fade-up">
+          <div className="bg-rose-deep py-8 px-8 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-deep via-rose to-gold" />
+            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 text-white border border-white/20">
+              <Mail size={26} />
+            </div>
+            <h1 className="font-playfair text-2xl sm:text-3xl font-bold text-white leading-tight">
+              Verify Your Email
+            </h1>
+            <p className="text-white/80 text-xs sm:text-sm mt-1.5 font-medium">
+              We&apos;ve sent a verification link to your email address.
+            </p>
+          </div>
+
+          <div className="p-6 sm:p-8 space-y-6">
+            <div className="bg-white p-4 rounded-2xl border border-cream-dark text-center">
+              <p className="text-xs text-text-soft font-bold uppercase tracking-wider mb-1">Signed in as</p>
+              <p className="text-sm font-bold text-chocolate truncate">{user.email}</p>
+            </div>
+
+            {verifMessage && (
+              <div className={`p-4 rounded-2xl border text-xs sm:text-sm font-medium flex items-start gap-2.5 ${
+                verifMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' :
+                verifMessage.type === 'error' ? 'bg-red-50 border-red-200 text-red-600' :
+                'bg-blue-50 border-blue-200 text-blue-700'
+              }`}>
+                {verifMessage.type === 'success' ? <CheckCircle2 size={18} className="shrink-0 mt-0.5" /> : <AlertCircle size={18} className="shrink-0 mt-0.5" />}
+                <span>{verifMessage.text}</span>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={handleRefreshVerif}
+                disabled={checkingVerif}
+                className="w-full bg-rose-deep hover:bg-brown text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 text-sm shadow-md cursor-pointer"
+              >
+                <RefreshCw size={18} className={checkingVerif ? "animate-spin" : ""} />
+                {checkingVerif ? "Checking Status..." : "I've Verified My Email"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResendVerif}
+                disabled={resendCooldown > 0}
+                className="w-full bg-white border border-cream-dark hover:bg-cream-dark text-chocolate py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 text-xs sm:text-sm cursor-pointer shadow-sm"
+              >
+                <Send size={16} className="text-rose-deep" />
+                {resendCooldown > 0 ? `Resend Email (${resendCooldown}s)` : "Resend Verification Email"}
+              </button>
+            </div>
+
+            <div className="pt-4 border-t border-cream-dark flex justify-between items-center text-xs font-bold text-text-mid">
+              <span>Not your account?</span>
+              <button
+                type="button"
+                onClick={() => logout()}
+                className="text-rose-deep hover:underline flex items-center gap-1"
+              >
+                <LogOut size={14} />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // 3. Otherwise, render the FULL SCREEN NON-DISMISSIBLE AUTH GATE overlay

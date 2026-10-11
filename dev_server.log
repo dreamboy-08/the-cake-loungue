@@ -1,45 +1,12 @@
 
-> cake-lounge-frontend@0.1.0 dev
-> next dev
+> cake-lounge-frontend@0.1.0 start
+> next start
 
   ▲ Next.js 14.2.35
   - Local:        http://localhost:3000
 
  ✓ Starting...
- ✓ Ready in 1779ms
- ○ Compiling / ...
- ✓ Compiled / in 15.5s (1688 modules)
+ ✓ Ready in 435ms
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 17626ms
- ✓ Compiled in 2.2s (765 modules)
- GET / 200 in 223ms
- ○ Compiling /admin/customers ...
- ✓ Compiled /admin/customers in 3.6s (1701 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/customers 200 in 4272ms
- ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
- GET / 200 in 174ms
- GET / 200 in 102ms
- GET /admin/customers 200 in 92ms
- ✓ Compiled in 1233ms (1715 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 231ms
- GET / 200 in 92ms
- GET /admin/customers 200 in 112ms
- ✓ Compiled in 1087ms (1715 modules)
-Firebase configuration is missing or invalid. Please check your environment variables.
- GET / 200 in 208ms
- GET / 200 in 98ms
- GET /admin/customers 200 in 165ms
- GET / 200 in 128ms
- GET / 200 in 115ms
- GET /admin/customers 200 in 97ms
- GET / 200 in 104ms
- GET / 200 in 244ms
- GET /admin/customers 200 in 78ms
- GET / 200 in 73ms
- GET / 200 in 119ms
- GET /admin/customers 200 in 131ms
- GET / 200 in 180ms
- GET / 200 in 94ms
- GET /admin/customers 200 in 74ms
+ ⚠ For production Image Optimization with Next.js, the optional 'sharp' package is strongly recommended. Run 'npm i sharp', and Next.js will use it automatically for Image Optimization.
+Read more: https://nextjs.org/docs/messages/sharp-missing-in-production
