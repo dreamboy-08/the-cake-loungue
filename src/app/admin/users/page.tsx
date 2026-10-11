@@ -28,8 +28,6 @@ import {
   XCircle,
   RefreshCcw,
   Search as SearchIcon,
-  Trash2,
-  AlertTriangle,
   ArrowRight
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -53,9 +51,6 @@ const AdminUsers = () => {
 
   // Modal states for Team Roles confirmations
   const [pendingRoleChange, setPendingRoleChange] = useState<{ user: any; newRole: string } | null>(null);
-  const [pendingUserDelete, setPendingUserDelete] = useState<any | null>(null);
-  const [isDeletingUser, setIsDeletingUser] = useState(false);
-  const [userDeleteError, setUserDeleteError] = useState<string | null>(null);
 
   // Mobile check
   const [isMobile, setIsMobile] = useState(false);
@@ -172,58 +167,6 @@ const AdminUsers = () => {
     } finally {
       setUpdatingId(null);
       setPendingRoleChange(null);
-    }
-  };
-
-  const confirmDeleteUser = async () => {
-    if (!pendingUserDelete) return;
-    setIsDeletingUser(true);
-    setUserDeleteError(null);
-
-    try {
-      let idToken = '';
-      if (currentUser && typeof (currentUser as any).getIdToken === 'function') {
-        idToken = await (currentUser as any).getIdToken();
-      }
-
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-      if (idToken) {
-        headers['Authorization'] = `Bearer ${idToken}`;
-      }
-
-      const res = await fetch('/api/admin/delete-customer', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ targetUid: pendingUserDelete.id })
-      });
-
-      let data: any = null;
-      const contentType = res.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) {
-        try {
-          data = await res.json();
-        } catch (jsonErr) {
-          throw new Error(`Invalid JSON response received from server (Status ${res.status})`);
-        }
-      } else {
-        const text = await res.text();
-        throw new Error(text || `Server returned non-JSON response with status ${res.status}`);
-      }
-
-      if (!res.ok || !data || !data.success) {
-        throw new Error(data?.error || data?.message || 'Failed to delete user');
-      }
-
-      setUsers(prev => prev.filter(u => u.id !== pendingUserDelete.id));
-      showToast(`User ${pendingUserDelete.displayName || pendingUserDelete.email} permanently deleted.`);
-      setPendingUserDelete(null);
-    } catch (err: any) {
-      console.error("Error deleting user:", err);
-      setUserDeleteError(err.message || "Failed to delete user account.");
-    } finally {
-      setIsDeletingUser(false);
     }
   };
 
@@ -367,31 +310,16 @@ const AdminUsers = () => {
                           {updatingId === u.id ? (
                             <Loader2 className="animate-spin text-rose-deep" size={20} />
                           ) : (
-                            <>
-                              <select
-                                disabled={!isAdmin || u.id === currentUser?.uid}
-                                value={u.role || 'user'}
-                                onChange={(e) => requestRoleChange(u, e.target.value)}
-                                className="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed h-11 min-h-[44px]"
-                              >
-                                {ROLES.map(r => (
-                                  <option key={r.value} value={r.value}>{r.label}</option>
-                                ))}
-                              </select>
-                              {isAdmin && u.id !== currentUser?.uid && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setUserDeleteError(null);
-                                    setPendingUserDelete(u);
-                                  }}
-                                  title="Delete User"
-                                  className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl flex items-center justify-center h-10 w-10"
-                                >
-                                  <Trash2 size={18} />
-                                </button>
-                              )}
-                            </>
+                            <select
+                              disabled={!isAdmin || u.id === currentUser?.uid}
+                              value={u.role || 'user'}
+                              onChange={(e) => requestRoleChange(u, e.target.value)}
+                              className="px-4 py-2 rounded-xl bg-gray-50 border border-gray-100 text-xs font-bold text-chocolate outline-none cursor-pointer hover:border-rose-deep/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed h-11 min-h-[44px]"
+                            >
+                              {ROLES.map(r => (
+                                <option key={r.value} value={r.value}>{r.label}</option>
+                              ))}
+                            </select>
                           )}
                         </div>
                       </td>
@@ -461,19 +389,6 @@ const AdminUsers = () => {
                       </select>
                     )}
                   </div>
-                  {isAdmin && u.id !== currentUser?.uid && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserDeleteError(null);
-                        setPendingUserDelete(u);
-                      }}
-                      title="Delete User"
-                      className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl flex items-center justify-center h-11 w-11 mt-4"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  )}
                 </div>
               </div>
             ))
@@ -521,52 +436,6 @@ const AdminUsers = () => {
         )}
       </AdminConfirmationModal>
 
-      {/* Delete User Confirmation Modal */}
-      <AdminConfirmationModal
-        isOpen={!!pendingUserDelete}
-        onClose={() => {
-          if (!isDeletingUser) {
-            setPendingUserDelete(null);
-            setUserDeleteError(null);
-          }
-        }}
-        onConfirm={confirmDeleteUser}
-        title="Permanently Delete User?"
-        message="Are you sure you want to delete this user account? This action cannot be undone."
-        confirmText={isDeletingUser ? "Deleting..." : "Permanently Delete"}
-        cancelText="Cancel"
-        type="danger"
-        isLoading={isDeletingUser}
-      >
-        {pendingUserDelete && (
-          <div className="space-y-4 pt-1">
-            <div className="bg-red-50/60 p-4 rounded-2xl border border-red-100 text-left space-y-1.5">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-gray-500">Name:</span>
-                <span className="font-bold text-chocolate">{pendingUserDelete.displayName || 'Guest User'}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-gray-500">Email:</span>
-                <span className="font-bold text-chocolate truncate max-w-[200px]">{pendingUserDelete.email}</span>
-              </div>
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-gray-500">UID:</span>
-                <span className="font-mono text-[10px] text-gray-400">{pendingUserDelete.id}</span>
-              </div>
-            </div>
-
-            <div className="p-3 bg-amber-50 border border-amber-200/60 rounded-xl text-left text-[11px] text-amber-800 leading-relaxed font-medium">
-              ⚠️ Deleting this team member will permanently revoke their login and profile.
-            </div>
-
-            {userDeleteError && (
-              <div className="p-3 bg-red-100 border border-red-300 text-red-800 rounded-xl text-xs font-bold text-left">
-                {userDeleteError}
-              </div>
-            )}
-          </div>
-        )}
-      </AdminConfirmationModal>
 
       <div className="bg-cream-dark/30 p-6 sm:p-8 rounded-[28px] sm:rounded-[40px] border border-rose/10 flex flex-col md:flex-row items-center gap-6 mt-8">
         <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center text-rose-deep shadow-sm shrink-0">
