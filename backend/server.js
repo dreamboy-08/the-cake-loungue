@@ -204,6 +204,18 @@ async function verifyAdminAuth(req) {
       } catch (err) {
         console.warn('[Server] Token verification failed:', err.message);
       }
+    } else {
+      // In dev mode when Firebase Admin service account is not initialized, safely parse JWT payload
+      try {
+        const payloadBase64 = idToken.split('.')[1];
+        if (payloadBase64) {
+          const payloadJson = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('utf-8'));
+          callerUid = payloadJson.user_id || payloadJson.sub || payloadJson.uid;
+          callerEmail = payloadJson.email;
+        }
+      } catch (err) {
+        console.warn('[Server] Could not parse token payload in dev mode:', err.message);
+      }
     }
   }
 
@@ -237,8 +249,8 @@ async function verifyAdminAuth(req) {
   }
 
   // Fallback in mock/test mode without Firestore connection
-  const isMockAdmin = (callerEmail && callerEmail.toLowerCase().includes('admin')) || callerUid.includes('admin');
-  if (isMockAdmin || process.env.NODE_ENV === 'test') {
+  const isMockAdmin = (callerEmail && callerEmail.toLowerCase().includes('admin')) || callerUid.toLowerCase().includes('admin');
+  if (isMockAdmin) {
     return { authenticated: true, isAuthorizedAdmin: true, callerUid, callerEmail };
   }
 
@@ -718,10 +730,15 @@ https://www.thecakelounge.in
   }
 });
 
+// Fallback for unmatched API routes
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ success: false, error: `API route ${req.originalUrl} not found` });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled Error:', err);
-  res.status(500).json({ error: 'Internal Server Error' });
+  res.status(500).json({ success: false, error: err.message || 'Internal Server Error' });
 });
 
 process.on('uncaughtException', (error) => {
