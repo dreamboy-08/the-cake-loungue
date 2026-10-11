@@ -6,14 +6,40 @@
   - Local:        http://localhost:3000
 
  ✓ Starting...
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
-This information is used to shape Next.js' roadmap and prioritize features.
-You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-https://nextjs.org/telemetry
-
- ✓ Ready in 1800ms
- ○ Compiling /admin/whatsapp ...
- ✓ Compiled /admin/whatsapp in 14.8s (1636 modules)
+ ✓ Ready in 1779ms
+ ○ Compiling / ...
+ ✓ Compiled / in 15.5s (1688 modules)
 Firebase configuration is missing or invalid. Please check your environment variables.
- GET /admin/whatsapp?bypass=true 200 in 16630ms
- ✓ Compiled in 1793ms (748 modules)
+ GET / 200 in 17626ms
+ ✓ Compiled in 2.2s (765 modules)
+ GET / 200 in 223ms
+ ○ Compiling /admin/customers ...
+ ✓ Compiled /admin/customers in 3.6s (1701 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET /admin/customers 200 in 4272ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET / 200 in 174ms
+ GET / 200 in 102ms
+ GET /admin/customers 200 in 92ms
+ ✓ Compiled in 1233ms (1715 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 231ms
+ GET / 200 in 92ms
+ GET /admin/customers 200 in 112ms
+ ✓ Compiled in 1087ms (1715 modules)
+Firebase configuration is missing or invalid. Please check your environment variables.
+ GET / 200 in 208ms
+ GET / 200 in 98ms
+ GET /admin/customers 200 in 165ms
+ GET / 200 in 128ms
+ GET / 200 in 115ms
+ GET /admin/customers 200 in 97ms
+ GET / 200 in 104ms
+ GET / 200 in 244ms
+ GET /admin/customers 200 in 78ms
+ GET / 200 in 73ms
+ GET / 200 in 119ms
+ GET /admin/customers 200 in 131ms
+ GET / 200 in 180ms
+ GET / 200 in 94ms
+ GET /admin/customers 200 in 74ms
