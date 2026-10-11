@@ -208,13 +208,28 @@ const AdminCustomers = () => {
         body: JSON.stringify({ targetUid: customerToDelete.id })
       });
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to delete customer');
+      let data: any = null;
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          throw new Error(`Invalid JSON response received from server (Status ${res.status})`);
+        }
+      } else {
+        const text = await res.text();
+        throw new Error(
+          text && text.length < 150
+            ? text
+            : `Server returned non-JSON response with status ${res.status}`
+        );
       }
 
-      setDeleteSuccess(`Customer ${customerToDelete.displayName || customerToDelete.email} permanently deleted.`);
+      if (!res.ok || !data || !data.success) {
+        throw new Error(data?.error || data?.message || `Deletion failed with status ${res.status}`);
+      }
+
+      setDeleteSuccess(`Customer ${customerToDelete.displayName || customerToDelete.email || customerToDelete.id} permanently deleted.`);
 
       // Update local state and refresh list
       setUsers(prev => prev.filter(u => u.id !== customerToDelete.id));
@@ -868,25 +883,15 @@ const AdminCustomers = () => {
           }
         }}
         onConfirm={handleDeleteCustomer}
-        title="Delete Customer Account?"
+        title="Permanently Delete Customer?"
+        message="Are you sure you want to delete this customer account? This action is permanent and cannot be undone."
         confirmText={isDeleting ? "Deleting..." : "Permanently Delete"}
         cancelText="Cancel"
         type="danger"
         isLoading={isDeleting}
       >
         {customerToDelete && (
-          <div className="space-y-6 text-center">
-            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
-              <AlertTriangle size={32} />
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-2xl font-bold font-playfair text-chocolate">Permanently Delete Customer?</h3>
-              <p className="text-xs text-gray-500 font-medium">
-                Are you sure you want to delete this customer account? This action is permanent and cannot be undone.
-              </p>
-            </div>
-
+          <div className="space-y-4 pt-1">
             <div className="bg-red-50/60 p-4 rounded-2xl border border-red-100 text-left space-y-1.5">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-gray-500">Name:</span>
@@ -911,29 +916,6 @@ const AdminCustomers = () => {
                 {deleteError}
               </div>
             )}
-
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setCustomerToDelete(null);
-                  setDeleteError(null);
-                }}
-                disabled={isDeleting}
-                className="flex-1 px-4 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 bg-gray-50 border border-gray-200 transition-all text-xs h-11 min-h-[44px] flex items-center justify-center disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteCustomer}
-                disabled={isDeleting}
-                className="flex-1 px-4 py-3 rounded-2xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition-all text-xs h-11 min-h-[44px] flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {isDeleting && <Loader2 size={16} className="animate-spin" />}
-                {isDeleting ? "Deleting..." : "Permanently Delete"}
-              </button>
-            </div>
           </div>
         )}
       </AdminConfirmationModal>

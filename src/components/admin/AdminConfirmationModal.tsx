@@ -120,17 +120,19 @@ const AdminConfirmationModal = ({
           transition={{ type: 'spring', damping: 25, stiffness: 350 }}
           className={className || "relative bg-white rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 max-w-md w-full shadow-2xl text-center space-y-6 overflow-hidden z-10"}
         >
-          {children ? children : (
-            <>
-              {/* Close button */}
-              <button
-                onClick={onClose}
-                disabled={isLoading}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-chocolate hover:bg-gray-50 rounded-full transition-all disabled:opacity-50"
-              >
-                <X size={20} />
-              </button>
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-chocolate hover:bg-gray-50 rounded-full transition-all disabled:opacity-50"
+            aria-label="Close modal"
+            type="button"
+          >
+            <X size={20} />
+          </button>
 
+          {title ? (
+            <>
               {/* Icon */}
               <div className={`w-20 h-20 ${styles.iconBg} rounded-full flex items-center justify-center mx-auto shadow-inner`}>
                 <AlertCircle size={40} />
@@ -139,12 +141,16 @@ const AdminConfirmationModal = ({
               {/* Content */}
               <div className="space-y-2">
                 <h3 className="text-2xl font-bold font-playfair text-chocolate">{title}</h3>
-                <p className="text-gray-500 text-sm font-medium leading-relaxed">{message}</p>
+                {message && <p className="text-gray-500 text-sm font-medium leading-relaxed">{message}</p>}
               </div>
+
+              {/* Additional body details if provided */}
+              {children && <div className="text-left space-y-3">{children}</div>}
 
               {/* Action buttons */}
               <div className="flex gap-4 pt-2">
                 <button
+                  type="button"
                   onClick={onClose}
                   disabled={isLoading}
                   className="flex-1 px-6 py-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 bg-white border border-gray-200 transition-all text-sm h-11 min-h-[44px] flex items-center justify-center active:scale-[0.98] disabled:opacity-50"
@@ -152,6 +158,7 @@ const AdminConfirmationModal = ({
                   {cancelText}
                 </button>
                 <button
+                  type="button"
                   onClick={onConfirm}
                   disabled={isLoading}
                   className={`flex-1 px-6 py-4 rounded-2xl font-bold shadow-xl transition-all text-sm h-11 min-h-[44px] flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 ${styles.confirmBg}`}
@@ -161,6 +168,8 @@ const AdminConfirmationModal = ({
                 </button>
               </div>
             </>
+          ) : (
+            children
           )}
         </motion.div>
       </div>
