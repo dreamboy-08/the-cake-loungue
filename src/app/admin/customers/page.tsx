@@ -29,12 +29,27 @@ import {
   Clock,
   ArrowRight,
   CheckCircle2,
-  ShieldCheck
+  ShieldCheck,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import Image from 'next/image';
+import { useAuth } from '@/context/AuthContext';
+import AdminConfirmationModal from '@/components/admin/AdminConfirmationModal';
+
+type CustomerRecord = {
+  id: string;
+  displayName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  createdAt?: string | number | Date;
+  [key: string]: unknown;
+};
 
 const AdminCustomers = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const { user: currentUser } = useAuth();
+  const [users, setUsers] = useState<CustomerRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -53,23 +68,32 @@ const AdminCustomers = () => {
     setMounted(true);
   }, []);
 
+  // Deletion state
+  const [customerToDelete, setCustomerToDelete] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteSuccess, setDeleteSuccess] = useState<string | null>(null);
+
   // Lock body scroll when any modal is open
   useEffect(() => {
     if (!mounted) return;
-    if (selectedCustomer || selectedOrder) {
+    if (selectedCustomer || selectedOrder || customerToDelete) {
       const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
-        document.body.style.overflow = originalOverflow || 'unset';
+        document.body.style.overflow = originalOverflow;
       };
     }
-  }, [mounted, selectedCustomer, selectedOrder]);
+  }, [mounted, selectedCustomer, selectedOrder, customerToDelete]);
 
   // Handle Escape key closure
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (selectedOrder) {
+      if (e.key === 'Escape' && !isDeleting) {
+        if (customerToDelete) {
+          setCustomerToDelete(null);
+          setDeleteError(null);
+        } else if (selectedOrder) {
           setSelectedOrder(null);
         } else if (selectedCustomer) {
           setSelectedCustomer(null);
@@ -78,7 +102,7 @@ const AdminCustomers = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCustomer, selectedOrder]);
+  }, [customerToDelete, isDeleting, selectedCustomer, selectedOrder]);
 
   // Mobile check
   const [isMobile, setIsMobile] = useState(false);
@@ -105,8 +129,11 @@ const AdminCustomers = () => {
         setTimeout(() => reject(new Error('Firestore timeout')), 3000)
       );
 
-      const snapshot: any = await Promise.race([getDocs(q), timeoutPromise]);
-      const newUsers = snapshot.docs.map((doc: any) => ({ ...doc.data(), id: doc.id }));
+      const snapshot = await Promise.race([getDocs(q), timeoutPromise]);
+      const newUsers: CustomerRecord[] = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      } as CustomerRecord));
 
       if (isNext) {
         setUsers(prev => {
@@ -148,6 +175,65 @@ const AdminCustomers = () => {
       setLoading(false);
     }
   }, [lastDoc]);
+
+  const handleDeleteCustomer = async () => {
+    if (!customerToDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    setDeleteSuccess(null);
+
+    try {
+      let idToken = '';
+      if (currentUser && typeof (currentUser as any).getIdToken === 'function') {
+        idToken = await (currentUser as any).getIdToken();
+      }
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      if (idToken) {
+        headers['Authorization'] = `Bearer ${idToken}`;
+      }
+      if (currentUser?.uid) {
+        headers['x-admin-caller-uid'] = currentUser.uid;
+      }
+      if (currentUser?.email) {
+        headers['x-admin-caller-email'] = currentUser.email;
+      }
+
+      const res = await fetch('/api/admin/delete-customer', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ targetUid: customerToDelete.id })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to delete customer');
+      }
+
+      setDeleteSuccess(`Customer ${customerToDelete.displayName || customerToDelete.email} permanently deleted.`);
+
+      // Update local state and refresh list
+      setUsers(prev => prev.filter(u => u.id !== customerToDelete.id));
+
+      if (selectedCustomer?.id === customerToDelete.id) {
+        setSelectedCustomer(null);
+      }
+
+      setCustomerToDelete(null);
+      setTimeout(() => {
+        setDeleteSuccess(null);
+      }, 5000);
+    } catch (err: any) {
+      console.error("Error deleting customer:", err);
+      setDeleteError(err.message || "Failed to delete customer. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -231,6 +317,29 @@ const AdminCustomers = () => {
           <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-chocolate">Customer Management</h1>
           <p className="text-gray-500 text-sm mt-1">View and manage your customer relationships.</p>
         </div>
+      </header>
+
+      {deleteSuccess && (
+        <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-2xl flex items-center justify-between animate-fade-in text-sm font-bold">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={18} className="text-green-600" />
+            <span>{deleteSuccess}</span>
+          </div>
+          <button onClick={() => setDeleteSuccess(null)} className="text-green-500 hover:text-green-800 text-xs font-black uppercase">Dismiss</button>
+        </div>
+      )}
+
+      {deleteError && (
+        <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl flex items-center justify-between animate-fade-in text-sm font-bold">
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={18} className="text-red-600" />
+            <span>{deleteError}</span>
+          </div>
+          <button onClick={() => setDeleteError(null)} className="text-red-500 hover:text-red-800 text-xs font-black uppercase">Dismiss</button>
+        </div>
+      )}
+
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 flex-1 max-w-md w-full">
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -297,9 +406,24 @@ const AdminCustomers = () => {
                         </span>
                       </td>
                       <td className="px-8 py-4 text-right">
-                        <button className="p-2.5 text-gray-300 group-hover:text-rose-deep transition-colors h-11 w-11 flex items-center justify-center rounded-xl hover:bg-gray-50">
-                          <ChevronRight size={20} />
-                        </button>
+                        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={() => {
+                              setDeleteError(null);
+                              setCustomerToDelete(customer);
+                            }}
+                            title="Delete Customer"
+                            className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl flex items-center justify-center h-10 w-10"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                          <button
+                            onClick={() => fetchCustomerHistory(customer)}
+                            className="p-2.5 text-gray-300 group-hover:text-rose-deep transition-colors h-10 w-10 flex items-center justify-center rounded-xl hover:bg-gray-50"
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -343,7 +467,19 @@ const AdminCustomers = () => {
                       </span>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-gray-300 self-center" />
+                  <div className="flex items-center gap-1 self-center" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => {
+                        setDeleteError(null);
+                        setCustomerToDelete(customer);
+                      }}
+                      title="Delete Customer"
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors rounded-xl flex items-center justify-center"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                    <ChevronRight size={20} className="text-gray-300" />
+                  </div>
                 </div>
               </div>
             ))
@@ -371,13 +507,27 @@ const AdminCustomers = () => {
                     </p>
                  </div>
               </div>
-              <button
-                onClick={() => setSelectedCustomer(null)}
-                className="p-2.5 hover:bg-gray-100 text-gray-400 hover:text-chocolate rounded-full transition-colors"
-                aria-label="Close modal"
-              >
-                <XCircle size={28} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setDeleteError(null);
+                    setCustomerToDelete(selectedCustomer);
+                  }}
+                  className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-2xl text-xs font-bold transition-all flex items-center gap-2"
+                  type="button"
+                >
+                  <Trash2 size={16} />
+                  Delete Customer
+                </button>
+                <button
+                  onClick={() => setSelectedCustomer(null)}
+                  className="p-2.5 hover:bg-gray-100 text-gray-400 hover:text-chocolate rounded-full transition-colors"
+                  aria-label="Close modal"
+                  type="button"
+                >
+                  <XCircle size={28} />
+                </button>
+              </div>
             </div>
 
             {/* Modal Body */}
@@ -707,6 +857,86 @@ const AdminCustomers = () => {
           </button>
         </div>
       )}
+
+      {/* Delete Customer Confirmation Modal */}
+      <AdminConfirmationModal
+        isOpen={!!customerToDelete}
+        onClose={() => {
+          if (!isDeleting) {
+            setCustomerToDelete(null);
+            setDeleteError(null);
+          }
+        }}
+        onConfirm={handleDeleteCustomer}
+        title="Delete Customer Account?"
+        confirmText={isDeleting ? "Deleting..." : "Permanently Delete"}
+        cancelText="Cancel"
+        type="danger"
+        isLoading={isDeleting}
+      >
+        {customerToDelete && (
+          <div className="space-y-6 text-center">
+            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+              <AlertTriangle size={32} />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold font-playfair text-chocolate">Permanently Delete Customer?</h3>
+              <p className="text-xs text-gray-500 font-medium">
+                Are you sure you want to delete this customer account? This action is permanent and cannot be undone.
+              </p>
+            </div>
+
+            <div className="bg-red-50/60 p-4 rounded-2xl border border-red-100 text-left space-y-1.5">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-gray-500">Name:</span>
+                <span className="font-bold text-chocolate">{customerToDelete.displayName || 'Guest User'}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-gray-500">Email:</span>
+                <span className="font-bold text-chocolate truncate max-w-[200px]">{customerToDelete.email}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-bold text-gray-500">UID:</span>
+                <span className="font-mono text-[10px] text-gray-400">{customerToDelete.id}</span>
+              </div>
+            </div>
+
+            <div className="p-3 bg-amber-50 border border-amber-200/60 rounded-xl text-left text-[11px] text-amber-800 leading-relaxed font-medium">
+              ⚠️ Deleting this account will permanently remove their Auth account, profile, saved addresses, and cart. Historical order amounts and store metrics will be retained with anonymized customer data.
+            </div>
+
+            {deleteError && (
+              <div className="p-3 bg-red-100 border border-red-300 text-red-800 rounded-xl text-xs font-bold text-left">
+                {deleteError}
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomerToDelete(null);
+                  setDeleteError(null);
+                }}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-2xl font-bold text-gray-500 hover:bg-gray-100 bg-gray-50 border border-gray-200 transition-all text-xs h-11 min-h-[44px] flex items-center justify-center disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteCustomer}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-3 rounded-2xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition-all text-xs h-11 min-h-[44px] flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isDeleting && <Loader2 size={16} className="animate-spin" />}
+                {isDeleting ? "Deleting..." : "Permanently Delete"}
+              </button>
+            </div>
+          </div>
+        )}
+      </AdminConfirmationModal>
     </div>
   );
 };

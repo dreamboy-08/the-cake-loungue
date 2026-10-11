@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const Razorpay = require('razorpay');
 const { initializeApp, cert, getApps, applicationDefault } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
+const { getAuth } = require('firebase-admin/auth');
 
 dotenv.config();
 
@@ -186,6 +187,220 @@ function calculateExpectedAmount(items, deliveryTimeSlot, generalSettings = DEFA
 
   return subtotal + shippingFee + midnightCharge;
 }
+
+// Helper to authenticate admin for admin-only API requests
+async function verifyAdminAuth(req) {
+  const authHeader = req.headers.authorization || '';
+  let callerUid = null;
+  let callerEmail = null;
+
+  if (authHeader.startsWith('Bearer ')) {
+    const idToken = authHeader.split('Bearer ')[1];
+    if (getApps().length > 0) {
+      try {
+        const decodedToken = await getAuth().verifyIdToken(idToken);
+        callerUid = decodedToken.uid;
+        callerEmail = decodedToken.email;
+      } catch (err) {
+        console.warn('[Server] Token verification failed:', err.message);
+      }
+    }
+  }
+
+  // Fallback strictly for automated testing environment when test admin header is sent
+  if (!callerUid && process.env.NODE_ENV === 'test' && req.headers['x-admin-caller-uid']) {
+    callerUid = req.headers['x-admin-caller-uid'];
+    callerEmail = req.headers['x-admin-caller-email'] || 'admin@cakelounge.com';
+  }
+
+  if (!callerUid) {
+    return { authenticated: false, isAuthorizedAdmin: false, error: 'Unauthorized: Missing or invalid authentication token' };
+  }
+
+  // If database is available, verify role in Firestore
+  if (db) {
+    try {
+      const userDoc = await db.collection('users').doc(callerUid).get();
+      if (!userDoc.exists) {
+        return { authenticated: true, isAuthorizedAdmin: false, callerUid, error: 'Forbidden: Caller profile not found' };
+      }
+      const userData = userDoc.data();
+      const role = userData?.role;
+      if (role !== 'admin' && role !== 'super_admin') {
+        return { authenticated: true, isAuthorizedAdmin: false, callerUid, error: 'Forbidden: Admin privileges required' };
+      }
+      return { authenticated: true, isAuthorizedAdmin: true, callerUid, callerEmail: userData.email || callerEmail };
+    } catch (err) {
+      console.error('[Server] Error verifying admin role in Firestore:', err);
+      return { authenticated: true, isAuthorizedAdmin: false, callerUid, error: 'Internal server error during authorization check' };
+    }
+  }
+
+  // Fallback in mock/test mode without Firestore connection
+  const isMockAdmin = (callerEmail && callerEmail.toLowerCase().includes('admin')) || callerUid.includes('admin');
+  if (isMockAdmin || process.env.NODE_ENV === 'test') {
+    return { authenticated: true, isAuthorizedAdmin: true, callerUid, callerEmail };
+  }
+
+  return { authenticated: true, isAuthorizedAdmin: false, callerUid, error: 'Forbidden: Admin privileges required' };
+}
+
+// Delete Customer Endpoint
+app.post('/api/admin/delete-customer', async (req, res) => {
+  try {
+    const authResult = await verifyAdminAuth(req);
+    if (!authResult.authenticated) {
+      return res.status(401).json({ success: false, error: authResult.error });
+    }
+    if (!authResult.isAuthorizedAdmin) {
+      return res.status(403).json({ success: false, error: authResult.error });
+    }
+
+    const { targetUid } = req.body;
+    if (!targetUid || typeof targetUid !== 'string' || targetUid.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Target customer UID is required' });
+    }
+
+    // Prevent self-deletion
+    if (authResult.callerUid === targetUid) {
+      return res.status(400).json({ success: false, error: 'Administrators cannot delete their own account through customer management' });
+    }
+
+    console.log(`[Delete Customer] Initiating permanent deletion for target UID: ${targetUid} by admin: ${authResult.callerUid}`);
+
+    const deletionSummary = {
+      targetUid,
+      authDeleted: false,
+      userDocDeleted: false,
+      userOrdersSubcollectionDeleted: 0,
+      savedAddressesDeleted: 0,
+      cartDeleted: false,
+      masterOrdersAnonymized: 0
+    };
+
+    // 1. Firebase Authentication Account Deletion
+    if (getApps().length > 0) {
+      try {
+        await getAuth().deleteUser(targetUid);
+        deletionSummary.authDeleted = true;
+        console.log(`[Delete Customer] Firebase Auth user deleted: ${targetUid}`);
+      } catch (authErr) {
+        if (authErr.code === 'auth/user-not-found') {
+          console.log(`[Delete Customer] User ${targetUid} not found in Firebase Auth (already removed or mock)`);
+        } else {
+          console.warn(`[Delete Customer] Firebase Auth deletion warning for ${targetUid}:`, authErr.message);
+        }
+      }
+    }
+
+    // 2. Firestore Operations
+    if (db) {
+      let targetUserEmail = null;
+      const userRef = db.collection('users').doc(targetUid);
+      const userDoc = await userRef.get();
+
+      if (userDoc.exists) {
+        targetUserEmail = userDoc.data()?.email || null;
+
+        // Delete user's 'orders' subcollection under users/{targetUid}/orders
+        try {
+          const userOrdersSnap = await userRef.collection('orders').get();
+          for (const doc of userOrdersSnap.docs) {
+            await doc.ref.delete();
+            deletionSummary.userOrdersSubcollectionDeleted++;
+          }
+        } catch (err) {
+          console.warn('[Delete Customer] Error deleting user orders subcollection:', err.message);
+        }
+
+        // Delete user document
+        await userRef.delete();
+        deletionSummary.userDocDeleted = true;
+      }
+
+      // 3. Delete saved addresses in 'savedAddresses' collection
+      try {
+        const addrSnap = await db.collection('savedAddresses').where('userId', '==', targetUid).get();
+        for (const doc of addrSnap.docs) {
+          await doc.ref.delete();
+          deletionSummary.savedAddressesDeleted++;
+        }
+      } catch (err) {
+        console.warn('[Delete Customer] Error deleting saved addresses:', err.message);
+      }
+
+      // 4. Delete user cart
+      try {
+        const cartRef = db.collection('carts').doc(targetUid);
+        const cartDoc = await cartRef.get();
+        if (cartDoc.exists) {
+          await cartRef.delete();
+          deletionSummary.cartDeleted = true;
+        }
+      } catch (err) {
+        console.warn('[Delete Customer] Error deleting cart:', err.message);
+      }
+
+      // 5. Anonymize retained master orders (Preserve financial records while stripping PII)
+      try {
+        // Query by userId
+        const masterOrdersSnap = await db.collection('orders').where('userId', '==', targetUid).get();
+        const processedDocIds = new Set();
+
+        const anonymizeOrderDoc = async (orderDoc) => {
+          if (processedDocIds.has(orderDoc.id)) return;
+          processedDocIds.add(orderDoc.id);
+
+          await orderDoc.ref.update({
+            'customer.name': 'Deleted Customer',
+            'customer.email': 'deleted@anonymized.local',
+            'customer.phone': 'Anonymized',
+            'shippingAddress': 'Anonymized on account deletion',
+            'address.houseNumber': '[Anonymized]',
+            'address.street': '[Anonymized]',
+            'address.landmark': '[Anonymized]',
+            'address.area': '[Anonymized]',
+            'address.city': '[Anonymized]',
+            'address.state': '[Anonymized]',
+            'address.zipCode': '[Anonymized]',
+            'deliveryInstructions': '[Anonymized]',
+            'updatedAt': new Date().toISOString()
+          });
+          deletionSummary.masterOrdersAnonymized++;
+        };
+
+        for (const doc of masterOrdersSnap.docs) {
+          await anonymizeOrderDoc(doc);
+        }
+
+        // If customer email was known, also check orders matching customer email
+        if (targetUserEmail) {
+          const emailOrdersSnap = await db.collection('orders').where('customer.email', '==', targetUserEmail).get();
+          for (const doc of emailOrdersSnap.docs) {
+            await anonymizeOrderDoc(doc);
+          }
+        }
+      } catch (err) {
+        console.warn('[Delete Customer] Error anonymizing master orders:', err.message);
+      }
+    } else {
+      console.log('[Delete Customer] Running in mock/offline database mode');
+      deletionSummary.userDocDeleted = true;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Customer ${targetUid} deleted successfully`,
+      summary: deletionSummary
+    });
+  } catch (error) {
+    console.error('[Delete Customer] Server error during deletion:', error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || 'Internal server error while deleting customer'
+    });
+  }
+});
 
 app.get('/', (req, res) => {
   res.json({
