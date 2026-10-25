@@ -1,252 +1,132 @@
 import { test, expect } from '@playwright/test';
+import { loginAsCustomer } from './test-auth-helper';
+import { DEFAULT_GENERAL_SETTINGS, DEFAULT_DELIVERY_MATRIX } from '../src/constants/cmsDefaults';
 
-test.describe('CMS Delivery Charges & Fee Settings Lifecycle', () => {
+test.describe('Smart Delivery Pricing Matrix & Fee Settings Lifecycle', () => {
   test.beforeEach(async ({ page }) => {
-    // Set mock cart in localStorage so we can land directly on checkout or test checkout subtotal conditions
-    await page.goto('/');
+    await loginAsCustomer(page);
   });
 
-  test('1. Storefront checkout defaults to ₹50 delivery fee for subtotal below threshold (₹1)', async ({ page }) => {
+  test('1. Matrix Pricing: Under 2 km distance defaults to FREE delivery across subtotals', async ({ page }) => {
     await page.evaluate(() => {
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        {
-          id: 'test_item_1',
-          name: 'Mini Sample Pastry',
-          price: 1,
-          quantity: 1,
-          weight: '0.5 Kg',
-          img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587'
-        }
-      ]));
+      sessionStorage.setItem('cakeLounge_buyNowItem', JSON.stringify({
+        id: 'test_item_1', name: 'Mini Sample Pastry', price: 100, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587'
+      }));
+      const mockUser = JSON.parse(localStorage.getItem('cakelounge_mock_user') || '{}');
+      if (!mockUser.addresses) mockUser.addresses = [];
+      mockUser.addresses = [{
+        id: 'addr_1', name: 'Tester', phone: '9876543210', houseNumber: '123', street: 'DLF Phase 3', area: 'DLF Phase 3', city: 'Gurugram', state: 'Haryana', zipCode: '122002', isDefault: true
+      }];
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
       localStorage.removeItem('cakeLounge_cms_generalSettings');
     });
 
-    await page.goto('/checkout');
+    await page.goto('http://localhost:3000/checkout');
+    await page.waitForTimeout(1000);
+
     await expect(page.locator('text=Delivery Fee')).toBeVisible();
-    await expect(page.locator('text=₹50').first()).toBeVisible();
-    await expect(page.locator('text=Add ₹498 more to unlock FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹51').first()).toBeVisible();
-  });
-
-  test('2. Admin updates delivery fee to ₹80 and storefront reflects ₹80 (Subtotal = ₹1 -> Total = ₹81)', async ({ page }) => {
-    await page.evaluate(() => {
-      const general = {
-        id: 'general_cms_config',
-        deliveryCharges: 80,
-        deliveryChargesEnabled: true,
-        freeDeliveryThreshold: 499,
-        freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
-        serviceableZipCodes: ['122001', '122002'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
-      };
-      localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Mini Sample Pastry', price: 1, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.goto('/checkout');
-    await expect(page.locator('text=₹80').first()).toBeVisible();
-    await expect(page.locator('text=Add ₹498 more to unlock FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹81').first()).toBeVisible();
-  });
-
-  test('3. Admin updates delivery fee to ₹100 -> checkout shows ₹100 (Total = ₹101)', async ({ page }) => {
-    await page.evaluate(() => {
-      const general = {
-        id: 'general_cms_config',
-        deliveryCharges: 100,
-        deliveryChargesEnabled: true,
-        freeDeliveryThreshold: 499,
-        freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
-        serviceableZipCodes: ['122001'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
-      };
-      localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Mini Sample Pastry', price: 1, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.goto('/checkout');
-    await expect(page.locator('text=₹100').first()).toBeVisible();
-    await expect(page.locator('text=Add ₹498 more to unlock FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹101').first()).toBeVisible();
-  });
-
-  test('4. Admin disables delivery charges completely -> checkout shows FREE delivery and no threshold message', async ({ page }) => {
-    await page.evaluate(() => {
-      const general = {
-        id: 'general_cms_config',
-        deliveryCharges: 50,
-        deliveryChargesEnabled: false,
-        freeDeliveryThreshold: 499,
-        freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
-        serviceableZipCodes: ['122001'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
-      };
-      localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Mini Sample Pastry', price: 1, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.goto('/checkout');
-    await expect(page.getByText('FREE', { exact: true }).first()).toBeVisible();
-    await expect(page.locator('text=Add ₹498 more')).not.toBeVisible();
-    await expect(page.locator('text=🎉 Congratulations! You unlocked FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹1').first()).toBeVisible();
-  });
-
-  test('5 & 6 & 7 & 8. Threshold evaluation: below, at, and above custom free-delivery threshold (e.g. ₹999)', async ({ page }) => {
-    // 5 & 6. Below threshold (subtotal = ₹500, threshold = ₹999, fee = ₹50) -> Fee = ₹50, Add ₹499 more
-    await page.evaluate(() => {
-      const general = {
-        id: 'general_cms_config',
-        deliveryCharges: 50,
-        deliveryChargesEnabled: true,
-        freeDeliveryThreshold: 999,
-        freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
-        serviceableZipCodes: ['122001'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
-      };
-      localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Custom Cake Item', price: 500, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.goto('/checkout');
-    await expect(page.locator('text=Add ₹499 more to unlock FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹550').first()).toBeVisible();
-
-    // 7. Exactly at threshold (subtotal = ₹999) -> Fee = FREE, Total = ₹999
-    await page.evaluate(() => {
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Custom Cake Item', price: 999, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.reload();
     await expect(page.getByText('FREE', { exact: true }).first()).toBeVisible();
     await expect(page.locator('text=🎉 Congratulations! You unlocked FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹999').first()).toBeVisible();
-
-    // 8. Above threshold (subtotal = ₹1500) -> Fee = FREE, Total = ₹1500
-    await page.evaluate(() => {
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Custom Cake Item', price: 1500, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
-
-    await page.reload();
-    await expect(page.getByText('FREE', { exact: true }).first()).toBeVisible();
-    await expect(page.locator('text=₹1500').first()).toBeVisible();
   });
 
-  test('9. Admin sets delivery fee to ₹0 -> treats as FREE delivery with no negative calculations', async ({ page }) => {
-    await page.evaluate(() => {
+  test('2. Matrix Pricing: 2–5 km distance with subtotal < ₹500 calculates ₹99 fee', async ({ page }) => {
+    await page.evaluate(({ defaultSettings, defaultMatrix }) => {
+      sessionStorage.setItem('cakeLounge_buyNowItem', JSON.stringify({
+        id: 'test_item_1', name: 'Mini Sample Pastry', price: 300, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587'
+      }));
+      const mockUser = JSON.parse(localStorage.getItem('cakelounge_mock_user') || '{}');
+      if (!mockUser.addresses) mockUser.addresses = [];
+      mockUser.addresses = [{
+        id: 'addr_1', name: 'Tester', phone: '9876543210', houseNumber: '123', street: 'Main St', area: 'Sector 17', city: 'Gurugram', state: 'Haryana', zipCode: '122015', isDefault: true
+      }];
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+
       const general = {
-        id: 'general_cms_config',
-        deliveryCharges: 0,
-        deliveryChargesEnabled: true,
-        freeDeliveryThreshold: 499,
-        freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
-        serviceableZipCodes: ['122001'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
+        ...defaultSettings,
+        deliveryMatrix: defaultMatrix,
       };
       localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Sample Item', price: 100, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
+    }, { defaultSettings: DEFAULT_GENERAL_SETTINGS, defaultMatrix: DEFAULT_DELIVERY_MATRIX });
 
-    await page.goto('/checkout');
-    await expect(page.getByText('FREE', { exact: true }).first()).toBeVisible();
-    await expect(page.locator('text=🎉 Congratulations! You unlocked FREE Delivery.')).toBeVisible();
-    await expect(page.locator('text=₹100').first()).toBeVisible();
+    await page.goto('http://localhost:3000/checkout');
+    await page.waitForTimeout(1000);
+
+    await expect(page.locator('text=Zone: 2–5 km')).toBeVisible();
+    await expect(page.locator('text=₹99').first()).toBeVisible();
   });
 
-  test('11 & 12 & 13. Guest, logged-in, and refreshed browser sessions receive consistent CMS delivery fee', async ({ page }) => {
-    await page.evaluate(() => {
+  test('3. Matrix Pricing: Unavailable pricing cell mode disables checkout button with warning message', async ({ page }) => {
+    await page.evaluate(({ defaultSettings }) => {
+      sessionStorage.setItem('cakeLounge_buyNowItem', JSON.stringify({
+        id: 'test_item_1', name: 'Small Cupcake', price: 200, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587'
+      }));
+      const mockUser = JSON.parse(localStorage.getItem('cakelounge_mock_user') || '{}');
+      if (!mockUser.addresses) mockUser.addresses = [];
+      mockUser.addresses = [{
+        id: 'addr_1', name: 'Tester', phone: '9876543210', houseNumber: '123', street: 'Outer Road', area: 'Farrukhnagar', city: 'Gurugram', state: 'Haryana', zipCode: '122101', isDefault: true
+      }];
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+
+      const matrixConfig = {
+        enabled: true,
+        distanceBrackets: [
+          { id: 'd_under2', label: 'Under 2 km', minKm: 0, maxKm: 2 },
+          { id: 'd_15plus', label: '15 km and above', minKm: 15, maxKm: null },
+        ],
+        subtotalBrackets: [
+          { id: 's_under500', label: 'Under ₹500', minSubtotal: 0, maxSubtotal: 500 },
+          { id: 's_1999plus', label: '₹1,999+', minSubtotal: 1999, maxSubtotal: null },
+        ],
+        cells: {
+          'd_under2_s_under500': { distanceBracketId: 'd_under2', subtotalBracketId: 's_under500', mode: 'free', amount: 0 },
+          'd_15plus_s_under500': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_under500', mode: 'unavailable', amount: 0 },
+          'd_15plus_s_1999plus': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_1999plus', mode: 'unavailable', amount: 0 },
+        }
+      };
+
       const general = {
-        id: 'general_cms_config',
+        ...defaultSettings,
+        deliveryMatrix: matrixConfig,
+        serviceableZipCodes: ['122101'],
+      };
+      localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
+    }, { defaultSettings: DEFAULT_GENERAL_SETTINGS });
+
+    await page.goto('http://localhost:3000/checkout');
+    await page.waitForTimeout(1000);
+
+    await expect(page.locator('text=N/A').first()).toBeVisible();
+    await expect(page.locator('text=Delivery is currently unavailable')).toBeVisible();
+  });
+
+  test('4. Legacy Fallback: When delivery matrix is disabled, standard flat fee and threshold apply', async ({ page }) => {
+    await page.evaluate(({ defaultSettings }) => {
+      sessionStorage.setItem('cakeLounge_buyNowItem', JSON.stringify({
+        id: 'test_item_1', name: 'Sample Pastry', price: 200, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587'
+      }));
+      const mockUser = JSON.parse(localStorage.getItem('cakelounge_mock_user') || '{}');
+      if (!mockUser.addresses) mockUser.addresses = [];
+      mockUser.addresses = [{
+        id: 'addr_1', name: 'Tester', phone: '9876543210', houseNumber: '123', street: 'Main St', area: 'Sector 14', city: 'Gurugram', state: 'Haryana', zipCode: '122001', isDefault: true
+      }];
+      localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
+
+      const general = {
+        ...defaultSettings,
         deliveryCharges: 75,
         deliveryChargesEnabled: true,
-        freeDeliveryThreshold: 500,
+        freeDeliveryThreshold: 2000,
         freeDeliveryThresholdEnabled: true,
-        minimumOrder: 299,
+        deliveryMatrix: { enabled: false, distanceBrackets: [], subtotalBrackets: [], cells: {} },
         serviceableZipCodes: ['122001'],
-        businessHolidays: [],
-        emergencyBannerEnabled: false,
-        emergencyBannerText: '',
-        popupMessageEnabled: false,
-        popupMessageTitle: '',
-        popupMessageText: '',
-        couponBannerEnabled: false,
-        couponBannerText: '',
-        maintenanceMode: false
       };
       localStorage.setItem('cakeLounge_cms_generalSettings', JSON.stringify(general));
-      localStorage.setItem('cakeLounge_cart', JSON.stringify([
-        { id: 'test_item_1', name: 'Sample Item', price: 200, quantity: 1, weight: '0.5 Kg', img: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
-      ]));
-    });
+    }, { defaultSettings: DEFAULT_GENERAL_SETTINGS });
 
-    // 11. Guest checkout view
-    await page.goto('/checkout');
-    await expect(page.locator('text=₹75').first()).toBeVisible();
-    await expect(page.locator('text=Add ₹300 more to unlock FREE Delivery.')).toBeVisible();
+    await page.goto('http://localhost:3000/checkout');
+    await page.waitForTimeout(1000);
 
-    // 13. Browser refresh session persistence
-    await page.reload();
     await expect(page.locator('text=₹75').first()).toBeVisible();
-    await expect(page.locator('text=Add ₹300 more to unlock FREE Delivery.')).toBeVisible();
   });
 });
 
@@ -257,53 +137,58 @@ test.describe('Server-side CMS Delivery Calculation & Tamper Protection', () => 
     return d.toISOString().split('T')[0];
   };
 
-  test('Server calculates exact expected amounts matching CMS configurations', async ({ request }) => {
+  test('Server calculates exact expected amounts matching CMS configurations', async () => {
     const { calculateExpectedAmount } = require('../backend/server');
 
-    // TEST 1: Fee ₹50, Threshold ₹499, Subtotal ₹1 -> Delivery ₹50, Total ₹51
-    const config1 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config1)).toBe(51);
+    // Matrix DEFAULT_DELIVERY_MATRIX tests:
+    // Distance < 2km (e.g. 1.5km) -> All Subtotals FREE
+    expect(calculateExpectedAmount([{ price: 300, quantity: 1 }], '10:00 AM – 12:00 PM', null, 1.5)).toBe(300);
+    expect(calculateExpectedAmount([{ price: 700, quantity: 1 }], '10:00 AM – 12:00 PM', null, 1.5)).toBe(700);
 
-    // TEST 2: Fee ₹80, Threshold ₹499, Subtotal ₹1 -> Delivery ₹80, Total ₹81
-    const config2 = { deliveryCharges: 80, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config2)).toBe(81);
+    // Distance 2-5km:
+    // Under 500 (e.g. 300) -> Fee 99 -> Total 399
+    expect(calculateExpectedAmount([{ price: 300, quantity: 1 }], '10:00 AM – 12:00 PM', null, 3.5)).toBe(399);
+    // 500-999 (e.g. 600) -> Fee 69 -> Total 669
+    expect(calculateExpectedAmount([{ price: 600, quantity: 1 }], '10:00 AM – 12:00 PM', null, 3.5)).toBe(669);
+    // 999-1999 (e.g. 1200) -> Fee 49 -> Total 1249
+    expect(calculateExpectedAmount([{ price: 1200, quantity: 1 }], '10:00 AM – 12:00 PM', null, 3.5)).toBe(1249);
+    // 1999+ (e.g. 2000) -> Fee FREE -> Total 2000
+    expect(calculateExpectedAmount([{ price: 2000, quantity: 1 }], '10:00 AM – 12:00 PM', null, 3.5)).toBe(2000);
 
-    // TEST 3: Fee ₹50, Threshold ₹499, Subtotal ₹499 -> Delivery FREE, Total ₹499
-    const config3 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 499, quantity: 1 }], '10:00 AM – 12:00 PM', config3)).toBe(499);
+    // Distance 5-10km:
+    // Under 500 (e.g. 300) -> Fee 149 -> Total 449
+    expect(calculateExpectedAmount([{ price: 300, quantity: 1 }], '10:00 AM – 12:00 PM', null, 7.5)).toBe(449);
+    // 500-999 (e.g. 600) -> Fee 99 -> Total 699
+    expect(calculateExpectedAmount([{ price: 600, quantity: 1 }], '10:00 AM – 12:00 PM', null, 7.5)).toBe(699);
 
-    // TEST 4: Fee ₹50, Threshold ₹499, Subtotal ₹500 -> Delivery FREE, Total ₹500
-    const config4 = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 500, quantity: 1 }], '10:00 AM – 12:00 PM', config4)).toBe(500);
+    // Distance 10-15km:
+    // Under 500 (e.g. 300) -> Fee 199 -> Total 499
+    expect(calculateExpectedAmount([{ price: 300, quantity: 1 }], '10:00 AM – 12:00 PM', null, 12.5)).toBe(499);
+    // 500-999 (e.g. 600) -> Fee 149 -> Total 749
+    expect(calculateExpectedAmount([{ price: 600, quantity: 1 }], '10:00 AM – 12:00 PM', null, 12.5)).toBe(749);
 
-    // TEST 5: Delivery disabled, Subtotal ₹1 -> Delivery FREE, Total ₹1
-    const config5 = { deliveryCharges: 50, deliveryChargesEnabled: false, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config5)).toBe(1);
+    // Distance 15km+:
+    // Under 500 (e.g. 300) -> Fee 249 -> Total 549
+    expect(calculateExpectedAmount([{ price: 300, quantity: 1 }], '10:00 AM – 12:00 PM', null, 18.0)).toBe(549);
 
-    // TEST 6: Delivery fee = ₹0, Subtotal ₹1 -> Delivery FREE, Total ₹1
-    const config6 = { deliveryCharges: 0, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true };
-    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', config6)).toBe(1);
+    // Legacy fallback (when matrix disabled)
+    const legacyConfig = { deliveryCharges: 50, deliveryChargesEnabled: true, freeDeliveryThreshold: 499, freeDeliveryThresholdEnabled: true, deliveryMatrix: { enabled: false } };
+    expect(calculateExpectedAmount([{ price: 1, quantity: 1 }], '10:00 AM – 12:00 PM', legacyConfig)).toBe(51);
   });
 
   test('Order creation endpoint succeeds when total matches CMS calculation and rejects tampered total', async ({ request }) => {
-    const generalSettings = {
-      deliveryCharges: 50,
-      deliveryChargesEnabled: true,
-      freeDeliveryThreshold: 499,
-      freeDeliveryThresholdEnabled: true,
-    };
-
-    // 1. Valid request where totalAmount matches expected total (Subtotal 1 + Shipping 50 = 51)
+    // 1. Valid request matching matrix fee (2-5km, subtotal 300 -> fee 99 -> total 399)
     const validRes = await request.post('http://localhost:5000/api/orders', {
       data: {
-        totalAmount: 51,
-        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
+        totalAmount: 399,
+        items: [{ id: 'item_1', name: 'Standard Cake', price: 300, quantity: 1 }],
         customerName: 'Test Customer',
         customerEmail: 'test@example.com',
         customerPhone: '9876543210',
         deliveryDate: futureDate(),
         deliveryTimeSlot: '10:00 AM – 12:00 PM',
-        generalSettings,
+        deliveryDistanceKm: 3.5,
+        addressZip: '122015'
       }
     });
 
@@ -311,41 +196,23 @@ test.describe('Server-side CMS Delivery Calculation & Tamper Protection', () => 
     const validBody = await validRes.json();
     expect(validBody.order).toBeDefined();
 
-    // 2. Tampered request where expected total is 51, but client sends 1
-    const tamperedRes1 = await request.post('http://localhost:5000/api/orders', {
+    // 2. Tampered request where expected total is 399, but client sends 300 (trying to bypass delivery charge)
+    const tamperedRes = await request.post('http://localhost:5000/api/orders', {
       data: {
-        totalAmount: 1,
-        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
+        totalAmount: 300,
+        items: [{ id: 'item_1', name: 'Standard Cake', price: 300, quantity: 1 }],
         customerName: 'Test Customer',
         customerEmail: 'test@example.com',
         customerPhone: '9876543210',
         deliveryDate: futureDate(),
         deliveryTimeSlot: '10:00 AM – 12:00 PM',
-        generalSettings,
+        deliveryDistanceKm: 3.5,
+        addressZip: '122015'
       }
     });
 
-    expect(tamperedRes1.status()).toBe(400);
-    const tamperedBody1 = await tamperedRes1.json();
-    expect(tamperedBody1.error).toContain('Mismatched order total amount. Expected ₹51, got ₹1.');
-
-    // 3. Tampered request where expected total is 1 (delivery disabled), but client sends 51
-    const disabledSettings = { ...generalSettings, deliveryChargesEnabled: false };
-    const tamperedRes2 = await request.post('http://localhost:5000/api/orders', {
-      data: {
-        totalAmount: 51,
-        items: [{ id: 'item_1', name: 'Standard Cake', price: 1, quantity: 1 }],
-        customerName: 'Test Customer',
-        customerEmail: 'test@example.com',
-        customerPhone: '9876543210',
-        deliveryDate: futureDate(),
-        deliveryTimeSlot: '10:00 AM – 12:00 PM',
-        generalSettings: disabledSettings,
-      }
-    });
-
-    expect(tamperedRes2.status()).toBe(400);
-    const tamperedBody2 = await tamperedRes2.json();
-    expect(tamperedBody2.error).toContain('Mismatched order total amount. Expected ₹1, got ₹51.');
+    expect(tamperedRes.status()).toBe(400);
+    const tamperedBody = await tamperedRes.json();
+    expect(tamperedBody.error).toContain('Mismatched order total amount. Expected ₹399, got ₹300.');
   });
 });

@@ -14,7 +14,8 @@ import {
   FeaturedProductsSettings,
   CMSTestimonial,
   CMSGalleryItem,
-  CMSDecorationItem
+  CMSDecorationItem,
+  DeliveryMatrixConfig
 } from '@/types/cms';
 
 export const DEFAULT_NAVIGATION: NavigationItem[] = [
@@ -714,12 +715,61 @@ export const DEFAULT_SEO_METADATA: CMSSEOMetadata[] = [
   }
 ];
 
+export const DEFAULT_DELIVERY_MATRIX: DeliveryMatrixConfig = {
+  enabled: true,
+  distanceBrackets: [
+    { id: 'd_under2', label: 'Under 2 km', minKm: 0, maxKm: 2 },
+    { id: 'd_2to5', label: '2–5 km', minKm: 2, maxKm: 5 },
+    { id: 'd_5to10', label: '5–10 km', minKm: 5, maxKm: 10 },
+    { id: 'd_10to15', label: '10–15 km', minKm: 10, maxKm: 15 },
+    { id: 'd_15plus', label: '15 km and above', minKm: 15, maxKm: null },
+  ],
+  subtotalBrackets: [
+    { id: 's_under500', label: 'Under ₹500', minSubtotal: 0, maxSubtotal: 500 },
+    { id: 's_500to999', label: '₹500–₹999', minSubtotal: 500, maxSubtotal: 999 },
+    { id: 's_999to1999', label: '₹999–₹1,999', minSubtotal: 999, maxSubtotal: 1999 },
+    { id: 's_1999plus', label: '₹1,999+', minSubtotal: 1999, maxSubtotal: null },
+  ],
+  cells: {
+    // Under 2 km
+    'd_under2_s_under500': { distanceBracketId: 'd_under2', subtotalBracketId: 's_under500', mode: 'free', amount: 0 },
+    'd_under2_s_500to999': { distanceBracketId: 'd_under2', subtotalBracketId: 's_500to999', mode: 'free', amount: 0 },
+    'd_under2_s_999to1999': { distanceBracketId: 'd_under2', subtotalBracketId: 's_999to1999', mode: 'free', amount: 0 },
+    'd_under2_s_1999plus': { distanceBracketId: 'd_under2', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    // 2-5 km
+    'd_2to5_s_under500': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_under500', mode: 'amount', amount: 99 },
+    'd_2to5_s_500to999': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_500to999', mode: 'amount', amount: 69 },
+    'd_2to5_s_999to1999': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 49 },
+    'd_2to5_s_1999plus': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    // 5-10 km
+    'd_5to10_s_under500': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_under500', mode: 'amount', amount: 149 },
+    'd_5to10_s_500to999': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_500to999', mode: 'amount', amount: 99 },
+    'd_5to10_s_999to1999': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 99 },
+    'd_5to10_s_1999plus': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    // 10-15 km
+    'd_10to15_s_under500': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_under500', mode: 'amount', amount: 199 },
+    'd_10to15_s_500to999': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_500to999', mode: 'amount', amount: 149 },
+    'd_10to15_s_999to1999': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 149 },
+    'd_10to15_s_1999plus': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    // 15 km and above
+    'd_15plus_s_under500': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_under500', mode: 'amount', amount: 249 },
+    'd_15plus_s_500to999': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_500to999', mode: 'amount', amount: 249 },
+    'd_15plus_s_999to1999': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 249 },
+    'd_15plus_s_1999plus': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+  }
+};
+
 export const DEFAULT_GENERAL_SETTINGS: CMSGeneralSettings = {
   id: 'general_cms_config',
   deliveryCharges: 50,
   deliveryChargesEnabled: true,
   freeDeliveryThreshold: 499,
   freeDeliveryThresholdEnabled: true,
+  deliveryMatrix: DEFAULT_DELIVERY_MATRIX,
   minimumOrder: 299,
   serviceableZipCodes: [
     '122001', '122002', '122003', '122004', '122005', '122006', '122007', '122008', '122009', '122010',
