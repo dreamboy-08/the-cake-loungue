@@ -165,6 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: 'customer@cakelounge.com',
         displayName: 'Demo Customer',
         role: 'user',
+        emailVerified: true,
         addresses: []
       } as any;
       localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
@@ -192,6 +193,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         displayName: email.split('@')[0],
         role: userRole,
+        emailVerified: true,
         addresses: []
       } as any;
       localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));
@@ -213,6 +215,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         displayName: name,
         role: userRole,
+        emailVerified: true,
         addresses: []
       } as any;
       localStorage.setItem('cakelounge_mock_user', JSON.stringify(mockUser));

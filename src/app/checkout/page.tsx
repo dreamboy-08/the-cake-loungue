@@ -16,7 +16,7 @@ import { DELIVERY_SLOTS, MIDNIGHT_SLOT, MIDNIGHT_CHARGE, isServiceableZipCode } 
 import { getContactInfo } from '@/utils/adminService';
 import { isSlotValid, getMinSelectableDate } from '@/utils/deliveryValidation';
 import { useCMS } from '@/context/CMSContext';
-import { calculateDeliveryFee } from '@/utils/deliveryFee';
+import { calculateDeliveryFee, getEstimatedDistanceKm } from '@/utils/deliveryFee';
 
 const AddressManager = dynamic(() => import('@/components/shop/AddressManager'), {
   ssr: false,
@@ -197,9 +197,13 @@ const CheckoutPage = () => {
     return isMidnightSlot ? 150 : 0;
   }, [isMidnightSlot]);
 
+  const distanceKm = useMemo(() => {
+    return getEstimatedDistanceKm(selectedAddress?.zipCode);
+  }, [selectedAddress?.zipCode]);
+
   const deliveryCalculation = useMemo(() => {
-    return calculateDeliveryFee(checkoutTotal, generalSettings);
-  }, [checkoutTotal, generalSettings]);
+    return calculateDeliveryFee(checkoutTotal, generalSettings, distanceKm);
+  }, [checkoutTotal, generalSettings, distanceKm]);
 
   const shippingFee = deliveryCalculation.fee;
   const finalTotal = useMemo(() => checkoutTotal + shippingFee + midnightCharge, [checkoutTotal, shippingFee, midnightCharge]);
@@ -259,6 +263,8 @@ const CheckoutPage = () => {
           customerPhone: resolvedCustomerPhone,
           deliveryDate,
           deliveryTimeSlot,
+          deliveryDistanceKm: distanceKm,
+          addressZip: selectedAddress.zipCode,
           generalSettings,
         }),
       });
@@ -335,6 +341,8 @@ const CheckoutPage = () => {
               deliveryTimeSlot,
               deliveryInstructions,
               deliveryType,
+              deliveryDistanceKm: distanceKm,
+              deliveryZone: deliveryCalculation.distanceZone,
               generalSettings,
             };
 
@@ -779,11 +787,29 @@ const CheckoutPage = () => {
                   <span className="text-sm">Subtotal</span>
                   <span className="font-bold text-chocolate">₹{checkoutTotal}</span>
                 </div>
+                {deliveryCalculation.distanceZone && (
+                  <div className="flex justify-between text-text-mid">
+                    <span className="text-xs text-text-soft font-semibold">Delivery Zone</span>
+                    <span className="text-xs font-bold text-chocolate">Zone: {deliveryCalculation.distanceZone}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-text-mid">
                   <span className="text-sm">Delivery Fee</span>
-                  <span className="font-bold">{deliveryCalculation.isFree ? <span className="text-green-600">FREE</span> : `₹${shippingFee}`}</span>
+                  <span className="font-bold">
+                    {deliveryCalculation.isUnavailable ? (
+                      <span className="text-red-500 font-extrabold">N/A</span>
+                    ) : deliveryCalculation.isFree ? (
+                      <span className="text-green-600 font-extrabold">FREE</span>
+                    ) : (
+                      `₹${shippingFee}`
+                    )}
+                  </span>
                 </div>
-                {deliveryCalculation.isFree ? (
+                {deliveryCalculation.isUnavailable ? (
+                  <div className="bg-red-50 p-3 rounded-xl border border-red-200">
+                    <p className="text-xs text-red-600 font-bold text-center">⚠️ Delivery is currently unavailable for this location / order value.</p>
+                  </div>
+                ) : deliveryCalculation.isFree ? (
                   <div className="bg-green-50 p-3 rounded-xl border border-green-100">
                     <p className="text-[10px] text-green-600 font-bold italic text-center">🎉 Congratulations! You unlocked FREE Delivery.</p>
                   </div>
@@ -826,7 +852,7 @@ const CheckoutPage = () => {
 
               <button
                 onClick={handleCheckout}
-                disabled={loading || checkoutItems.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot}
+                disabled={loading || checkoutItems.length === 0 || !selectedAddress || !isServiceableZipCode(selectedAddress.zipCode) || !deliveryDate || !deliveryTimeSlot || deliveryCalculation.isUnavailable}
                 className="w-full mt-8 py-5 bg-chocolate text-white rounded-[22px] font-bold text-xl shadow-xl hover:bg-brown hover:-translate-y-1 transition-all disabled:bg-text-soft disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-3"
               >
                 {loading ? (

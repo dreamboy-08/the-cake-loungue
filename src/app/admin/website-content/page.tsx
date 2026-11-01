@@ -47,8 +47,10 @@ import {
   Grid,
   Copy,
   Check,
-  Youtube
+  Youtube,
+  RefreshCw
 } from 'lucide-react';
+import { DEFAULT_DELIVERY_MATRIX } from '@/constants/cmsDefaults';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminCMS = () => {
@@ -1783,14 +1785,186 @@ const AdminCMS = () => {
       {/* --- TAB 9: GENERAL SETTINGS --- */}
       {activeTab === 'general' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Delivery Charges CMS Card */}
+          {/* Smart Delivery Matrix CMS Section */}
+          <div className="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+              <div>
+                <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
+                  <Globe size={22} className="text-rose-deep" /> Smart Delivery Pricing Matrix
+                </h2>
+                <p className="text-xs text-gray-400 mt-1">Configure multi-tier delivery fees based on customer distance in km and order subtotal before shipping.</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => {
+                    const currentMatrix = generalSettings.deliveryMatrix || DEFAULT_DELIVERY_MATRIX;
+                    updateGeneralSettings({
+                      ...generalSettings,
+                      deliveryMatrix: {
+                        ...currentMatrix,
+                        enabled: !currentMatrix.enabled
+                      }
+                    });
+                    showToast(`Smart Pricing Matrix ${!currentMatrix.enabled ? 'Enabled' : 'Disabled'}`);
+                  }}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-2 ${
+                    (generalSettings.deliveryMatrix?.enabled ?? true)
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  <span>Matrix System: {(generalSettings.deliveryMatrix?.enabled ?? true) ? 'ACTIVE' : 'DISABLED'}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (confirm("Restore default delivery matrix configuration? Unsaved modifications will be overwritten.")) {
+                      updateGeneralSettings({
+                        ...generalSettings,
+                        deliveryMatrix: DEFAULT_DELIVERY_MATRIX
+                      });
+                      showToast("Restored default delivery matrix.");
+                    }
+                  }}
+                  className="px-3 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 text-xs font-bold transition-all flex items-center gap-1.5"
+                >
+                  <RefreshCw size={14} /> Restore Matrix Defaults
+                </button>
+              </div>
+            </div>
+
+            {/* Matrix Table Editor */}
+            {(() => {
+              const matrix = generalSettings.deliveryMatrix || DEFAULT_DELIVERY_MATRIX;
+              return (
+                <div className="space-y-4">
+                  <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                      <thead>
+                        <tr className="bg-chocolate text-white text-xs font-bold">
+                          <th className="p-4 border-b border-chocolate/20 w-44">Distance Bracket</th>
+                          {matrix.subtotalBrackets.map((subBracket) => (
+                            <th key={subBracket.id} className="p-4 border-b border-chocolate/20 text-center">
+                              <div>{subBracket.label}</div>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 bg-white text-xs">
+                        {matrix.distanceBrackets.map((distBracket) => (
+                          <tr key={distBracket.id} className="hover:bg-gray-50/80 transition-colors">
+                            <td className="p-4 font-bold text-chocolate bg-gray-50/50 border-r border-gray-100">
+                              {distBracket.label}
+                            </td>
+                            {matrix.subtotalBrackets.map((subBracket) => {
+                              const cellKey = `${distBracket.id}_${subBracket.id}`;
+                              const cell = matrix.cells?.[cellKey] || {
+                                distanceBracketId: distBracket.id,
+                                subtotalBracketId: subBracket.id,
+                                mode: 'free',
+                                amount: 0
+                              };
+
+                              return (
+                                <td key={subBracket.id} className="p-3 border-r border-gray-100 last:border-r-0 text-center">
+                                  <div className="flex flex-col items-center space-y-2">
+                                    <select
+                                      value={cell.mode}
+                                      onChange={(e) => {
+                                        const newMode = e.target.value as 'amount' | 'free' | 'unavailable';
+                                        const updatedCells = {
+                                          ...matrix.cells,
+                                          [cellKey]: {
+                                            ...cell,
+                                            mode: newMode,
+                                            amount: newMode === 'free' || newMode === 'unavailable' ? 0 : (cell.amount || 50)
+                                          }
+                                        };
+                                        updateGeneralSettings({
+                                          ...generalSettings,
+                                          deliveryMatrix: {
+                                            ...matrix,
+                                            cells: updatedCells
+                                          }
+                                        });
+                                      }}
+                                      className={`px-2 py-1 rounded-lg text-xs font-bold border focus:outline-none focus:ring-1 focus:ring-rose-deep ${
+                                        cell.mode === 'free'
+                                          ? 'bg-green-50 text-green-700 border-green-200'
+                                          : cell.mode === 'unavailable'
+                                          ? 'bg-red-50 text-red-700 border-red-200'
+                                          : 'bg-blue-50 text-blue-700 border-blue-200'
+                                      }`}
+                                    >
+                                      <option value="free">FREE</option>
+                                      <option value="amount">Rate (₹)</option>
+                                      <option value="unavailable">Unavailable (N/A)</option>
+                                    </select>
+
+                                    {cell.mode === 'amount' && (
+                                      <div className="relative w-24">
+                                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-chocolate font-bold text-xs">₹</span>
+                                        <input
+                                          type="number"
+                                          min="0"
+                                          step="1"
+                                          value={cell.amount}
+                                          onChange={(e) => {
+                                            const val = Math.max(0, Number(e.target.value));
+                                            const updatedCells = {
+                                              ...matrix.cells,
+                                              [cellKey]: {
+                                                ...cell,
+                                                amount: isNaN(val) ? 0 : val
+                                              }
+                                            };
+                                            updateGeneralSettings({
+                                              ...generalSettings,
+                                              deliveryMatrix: {
+                                                ...matrix,
+                                                cells: updatedCells
+                                              }
+                                            });
+                                          }}
+                                          className="w-full pl-5 pr-2 py-1 rounded-lg border border-gray-200 text-center font-bold text-chocolate focus:ring-1 focus:ring-rose-deep text-xs"
+                                        />
+                                      </div>
+                                    )}
+
+                                    {cell.mode === 'free' && (
+                                      <span className="text-[11px] font-extrabold text-green-600 bg-green-50 px-2 py-0.5 rounded-md">Free Delivery</span>
+                                    )}
+
+                                    {cell.mode === 'unavailable' && (
+                                      <span className="text-[11px] font-extrabold text-red-500 bg-red-50 px-2 py-0.5 rounded-md">— Disabled —</span>
+                                    )}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <p className="text-xs text-gray-400 italic">
+                    Note: Customers will receive real-time rate quotes according to this matrix at checkout. If the matrix system is toggled off, legacy flat-rate delivery rules apply below.
+                  </p>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Legacy Delivery Charges & Thresholds Card */}
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 space-y-6">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
               <div>
                 <h2 className="text-xl font-bold text-chocolate flex items-center gap-2">
-                  <Globe size={22} className="text-rose-deep" /> Delivery Charges & Thresholds
+                  <Globe size={22} className="text-rose-deep" /> Legacy Flat-Rate Fallbacks
                 </h2>
-                <p className="text-xs text-gray-400 mt-1">Configure standard shipping rates and free delivery qualification thresholds.</p>
+                <p className="text-xs text-gray-400 mt-1">Fallback flat shipping fees applied when Smart Matrix System is disabled.</p>
               </div>
             </div>
 
@@ -1819,7 +1993,7 @@ const AdminCMS = () => {
 
                 {/* Delivery Fee Amount Input */}
                 <div className="space-y-1 pt-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Delivery Fee (₹)</label>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Flat Delivery Fee (₹)</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-chocolate text-sm">₹</span>
                     <input

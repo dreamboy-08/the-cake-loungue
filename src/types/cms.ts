@@ -135,12 +135,43 @@ export interface CMSSEOMetadata {
   indexPage: boolean; // Index or NoIndex
 }
 
+export type DeliveryCellMode = 'amount' | 'free' | 'unavailable';
+
+export interface DeliveryDistanceBracket {
+  id: string;
+  label: string;
+  minKm: number;
+  maxKm: number | null; // null represents '15 km and above'
+}
+
+export interface DeliverySubtotalBracket {
+  id: string;
+  label: string;
+  minSubtotal: number;
+  maxSubtotal: number | null; // null represents '₹1,999+'
+}
+
+export interface DeliveryMatrixCell {
+  distanceBracketId: string;
+  subtotalBracketId: string;
+  mode: DeliveryCellMode;
+  amount: number;
+}
+
+export interface DeliveryMatrixConfig {
+  enabled: boolean;
+  distanceBrackets: DeliveryDistanceBracket[];
+  subtotalBrackets: DeliverySubtotalBracket[];
+  cells: Record<string, DeliveryMatrixCell>; // Key format: `${distanceBracketId}_${subtotalBracketId}`
+}
+
 export interface CMSGeneralSettings {
   id: string;
   deliveryCharges: number;
   deliveryChargesEnabled: boolean;
   freeDeliveryThreshold: number;
   freeDeliveryThresholdEnabled: boolean;
+  deliveryMatrix?: DeliveryMatrixConfig;
   minimumOrder: number;
   serviceableZipCodes: string[];
   businessHolidays: string[]; // dates like 'YYYY-MM-DD'

@@ -129,11 +129,55 @@ function validateDeliveryDate(dateStr, items = []) {
   return { valid: true };
 }
 
+const DEFAULT_DELIVERY_MATRIX = {
+  enabled: true,
+  distanceBrackets: [
+    { id: 'd_under2', label: 'Under 2 km', minKm: 0, maxKm: 2 },
+    { id: 'd_2to5', label: '2–5 km', minKm: 2, maxKm: 5 },
+    { id: 'd_5to10', label: '5–10 km', minKm: 5, maxKm: 10 },
+    { id: 'd_10to15', label: '10–15 km', minKm: 10, maxKm: 15 },
+    { id: 'd_15plus', label: '15 km and above', minKm: 15, maxKm: null },
+  ],
+  subtotalBrackets: [
+    { id: 's_under500', label: 'Under ₹500', minSubtotal: 0, maxSubtotal: 500 },
+    { id: 's_500to999', label: '₹500–₹999', minSubtotal: 500, maxSubtotal: 999 },
+    { id: 's_999to1999', label: '₹999–₹1,999', minSubtotal: 999, maxSubtotal: 1999 },
+    { id: 's_1999plus', label: '₹1,999+', minSubtotal: 1999, maxSubtotal: null },
+  ],
+  cells: {
+    'd_under2_s_under500': { distanceBracketId: 'd_under2', subtotalBracketId: 's_under500', mode: 'free', amount: 0 },
+    'd_under2_s_500to999': { distanceBracketId: 'd_under2', subtotalBracketId: 's_500to999', mode: 'free', amount: 0 },
+    'd_under2_s_999to1999': { distanceBracketId: 'd_under2', subtotalBracketId: 's_999to1999', mode: 'free', amount: 0 },
+    'd_under2_s_1999plus': { distanceBracketId: 'd_under2', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    'd_2to5_s_under500': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_under500', mode: 'amount', amount: 99 },
+    'd_2to5_s_500to999': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_500to999', mode: 'amount', amount: 69 },
+    'd_2to5_s_999to1999': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 49 },
+    'd_2to5_s_1999plus': { distanceBracketId: 'd_2to5', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    'd_5to10_s_under500': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_under500', mode: 'amount', amount: 149 },
+    'd_5to10_s_500to999': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_500to999', mode: 'amount', amount: 99 },
+    'd_5to10_s_999to1999': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 99 },
+    'd_5to10_s_1999plus': { distanceBracketId: 'd_5to10', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    'd_10to15_s_under500': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_under500', mode: 'amount', amount: 199 },
+    'd_10to15_s_500to999': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_500to999', mode: 'amount', amount: 149 },
+    'd_10to15_s_999to1999': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 149 },
+    'd_10to15_s_1999plus': { distanceBracketId: 'd_10to15', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+
+    'd_15plus_s_under500': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_under500', mode: 'amount', amount: 249 },
+    'd_15plus_s_500to999': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_500to999', mode: 'amount', amount: 249 },
+    'd_15plus_s_999to1999': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_999to1999', mode: 'amount', amount: 249 },
+    'd_15plus_s_1999plus': { distanceBracketId: 'd_15plus', subtotalBracketId: 's_1999plus', mode: 'free', amount: 0 },
+  }
+};
+
 const DEFAULT_GENERAL_SETTINGS = {
   deliveryCharges: 50,
   deliveryChargesEnabled: true,
   freeDeliveryThreshold: 499,
   freeDeliveryThresholdEnabled: true,
+  deliveryMatrix: DEFAULT_DELIVERY_MATRIX
 };
 
 async function fetchGeneralSettings(db, reqSettings = null) {
@@ -159,7 +203,7 @@ async function fetchGeneralSettings(db, reqSettings = null) {
   return DEFAULT_GENERAL_SETTINGS;
 }
 
-function calculateExpectedAmount(items, deliveryTimeSlot, generalSettings = DEFAULT_GENERAL_SETTINGS) {
+function calculateExpectedAmount(items, deliveryTimeSlot, generalSettings = DEFAULT_GENERAL_SETTINGS, distanceKmInput = 1.5) {
   let subtotal = 0;
   for (const item of (items || [])) {
     const price = Number(item.price);
@@ -167,20 +211,59 @@ function calculateExpectedAmount(items, deliveryTimeSlot, generalSettings = DEFA
     subtotal += price * qty;
   }
 
-  const rawFee = generalSettings?.deliveryCharges ?? DEFAULT_GENERAL_SETTINGS.deliveryCharges;
   const deliveryChargesEnabled = generalSettings?.deliveryChargesEnabled ?? DEFAULT_GENERAL_SETTINGS.deliveryChargesEnabled ?? true;
-  const rawThreshold = generalSettings?.freeDeliveryThreshold ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThreshold;
-  const freeDeliveryThresholdEnabled = generalSettings?.freeDeliveryThresholdEnabled ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThresholdEnabled ?? true;
+  const matrixConfig = generalSettings?.deliveryMatrix || DEFAULT_DELIVERY_MATRIX;
 
-  const deliveryCharges = isNaN(Number(rawFee)) || Number(rawFee) < 0 ? 0 : Math.round(Number(rawFee));
-  const freeDeliveryThreshold = isNaN(Number(rawThreshold)) || Number(rawThreshold) < 0 ? 0 : Math.round(Number(rawThreshold));
+  let shippingFee = 0;
 
-  let shippingFee = deliveryCharges;
-
-  if (!deliveryChargesEnabled || deliveryCharges === 0) {
+  if (!deliveryChargesEnabled) {
     shippingFee = 0;
-  } else if (freeDeliveryThresholdEnabled && subtotal >= freeDeliveryThreshold) {
-    shippingFee = 0;
+  } else if (matrixConfig && matrixConfig.enabled && matrixConfig.distanceBrackets?.length && matrixConfig.subtotalBrackets?.length) {
+    const distanceKm = Number(distanceKmInput) || 1.5;
+
+    let matchedDistanceBracket = matrixConfig.distanceBrackets.find(b => {
+      if (b.maxKm === null) return distanceKm >= b.minKm;
+      return distanceKm >= b.minKm && distanceKm < b.maxKm;
+    });
+    if (!matchedDistanceBracket) {
+      matchedDistanceBracket = distanceKm < 0 ? matrixConfig.distanceBrackets[0] : matrixConfig.distanceBrackets[matrixConfig.distanceBrackets.length - 1];
+    }
+
+    let matchedSubtotalBracket = matrixConfig.subtotalBrackets.find(b => {
+      if (b.maxSubtotal === null) return subtotal >= b.minSubtotal;
+      return subtotal >= b.minSubtotal && subtotal < b.maxSubtotal;
+    });
+    if (!matchedSubtotalBracket) {
+      matchedSubtotalBracket = subtotal < 0 ? matrixConfig.subtotalBrackets[0] : matrixConfig.subtotalBrackets[matrixConfig.subtotalBrackets.length - 1];
+    }
+
+    const cellKey = `${matchedDistanceBracket.id}_${matchedSubtotalBracket.id}`;
+    const cell = matrixConfig.cells?.[cellKey];
+
+    if (cell) {
+      if (cell.mode === 'unavailable') {
+        throw new Error('Delivery is unavailable for this distance/subtotal combination.');
+      } else if (cell.mode === 'free') {
+        shippingFee = 0;
+      } else {
+        shippingFee = Math.round(Number(cell.amount) || 0);
+      }
+    } else {
+      shippingFee = 50;
+    }
+  } else {
+    // Legacy fallback
+    const rawFee = generalSettings?.deliveryCharges ?? DEFAULT_GENERAL_SETTINGS.deliveryCharges;
+    const rawThreshold = generalSettings?.freeDeliveryThreshold ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThreshold;
+    const freeDeliveryThresholdEnabled = generalSettings?.freeDeliveryThresholdEnabled ?? DEFAULT_GENERAL_SETTINGS.freeDeliveryThresholdEnabled ?? true;
+
+    const deliveryCharges = isNaN(Number(rawFee)) || Number(rawFee) < 0 ? 0 : Math.round(Number(rawFee));
+    const freeDeliveryThreshold = isNaN(Number(rawThreshold)) || Number(rawThreshold) < 0 ? 0 : Math.round(Number(rawThreshold));
+
+    shippingFee = deliveryCharges;
+    if (freeDeliveryThresholdEnabled && subtotal >= freeDeliveryThreshold) {
+      shippingFee = 0;
+    }
   }
 
   const midnightCharge = (deliveryTimeSlot === "10:00 PM – 12:00 AM (Midnight Delivery)") ? 150 : 0;
@@ -422,7 +505,7 @@ app.post('/api/orders', async (req, res) => {
       return res.status(403).json({ error: authResult.error || 'Email verification required before placing orders' });
     }
 
-    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot, generalSettings: reqGeneralSettings } = req.body;
+    const { totalAmount, items, customerName, customerEmail, customerPhone, deliveryDate, deliveryTimeSlot, deliveryDistanceKm, generalSettings: reqGeneralSettings } = req.body;
 
     if (!totalAmount || !items || !items.length) {
       return res.status(400).json({ error: 'Missing order details: amount and items are required' });
@@ -441,7 +524,7 @@ app.post('/api/orders', async (req, res) => {
 
     // 3. Verify totalAmount matches recalculation with CMS generalSettings
     const generalSettings = await fetchGeneralSettings(db, reqGeneralSettings);
-    const expectedAmount = calculateExpectedAmount(items, deliveryTimeSlot, generalSettings);
+    const expectedAmount = calculateExpectedAmount(items, deliveryTimeSlot, generalSettings, deliveryDistanceKm);
     if (Math.round(totalAmount) !== Math.round(expectedAmount)) {
       return res.status(400).json({ error: `Mismatched order total amount. Expected ₹${expectedAmount}, got ₹${totalAmount}. Request may be manipulated.` });
     }
@@ -533,7 +616,7 @@ app.post('/api/verify-payment', async (req, res) => {
         }
 
         const generalSettings = await fetchGeneralSettings(db, orderDetails.generalSettings);
-        const expectedAmount = calculateExpectedAmount(orderDetails.items, orderDetails.deliveryTimeSlot, generalSettings);
+        const expectedAmount = calculateExpectedAmount(orderDetails.items, orderDetails.deliveryTimeSlot, generalSettings, orderDetails.deliveryDistanceKm);
         if (Math.round(orderDetails.totalAmount) !== Math.round(expectedAmount)) {
           return res.status(400).json({ success: false, error: `Mismatched order details total amount. Expected ₹${expectedAmount}, got ₹${orderDetails.totalAmount}.` });
         }
