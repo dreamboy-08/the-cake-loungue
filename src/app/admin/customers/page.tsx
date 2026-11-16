@@ -10,7 +10,8 @@ import {
   limit,
   startAfter,
   getDocs,
-  where
+  where,
+  QueryDocumentSnapshot
 } from 'firebase/firestore';
 import {
   Users,
@@ -32,6 +33,8 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 
+const PAGE_SIZE = 10;
+
 type CustomerRecord = {
   id: string;
   displayName?: string;
@@ -45,9 +48,8 @@ type CustomerRecord = {
 const AdminCustomers = () => {
   const [users, setUsers] = useState<CustomerRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [lastDoc, setLastDoc] = useState<any>(null);
+  const lastDoc = React.useRef<QueryDocumentSnapshot | undefined>(undefined);
   const [hasMore, setHasMore] = useState(true);
-  const PAGE_SIZE = 10;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [customerOrders, setCustomerOrders] = useState<any[]>([]);
@@ -106,8 +108,8 @@ const AdminCustomers = () => {
     try {
       let q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE));
 
-      if (isNext && lastDoc) {
-        q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(PAGE_SIZE));
+      if (isNext && lastDoc.current) {
+        q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), startAfter(lastDoc.current), limit(PAGE_SIZE));
       }
 
       const timeoutPromise = new Promise<never>((_, reject) =>
@@ -130,7 +132,7 @@ const AdminCustomers = () => {
         setUsers(newUsers);
       }
 
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      lastDoc.current = snapshot.docs[snapshot.docs.length - 1];
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -159,7 +161,7 @@ const AdminCustomers = () => {
     } finally {
       setLoading(false);
     }
-  }, [lastDoc]);
+  }, []);
 
   useEffect(() => {
     fetchUsers();
