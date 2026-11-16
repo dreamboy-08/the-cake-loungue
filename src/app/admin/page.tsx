@@ -18,7 +18,6 @@ import {
   Package,
   Tags,
   ShoppingBag,
-  Users,
   Clock,
   CheckCircle2,
   Truck,
@@ -27,7 +26,6 @@ import {
   IndianRupee,
   Calendar,
   ArrowRight,
-  ChevronRight,
   Loader2
 } from 'lucide-react';
 import Link from 'next/link';
@@ -39,7 +37,6 @@ const AdminDashboard = () => {
     totalProducts: 0,
     totalCategories: 0,
     totalOrders: 0,
-    totalCustomers: 0,
     todayOrders: 0,
     pendingOrders: 0,
     confirmedOrders: 0,
@@ -52,21 +49,18 @@ const AdminDashboard = () => {
   });
 
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
-  const [recentCustomers, setRecentCustomers] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchInitialStats = async () => {
       try {
         const productsCount = await getCountFromServer(collection(db, 'products'));
         const categoriesCount = await getCountFromServer(collection(db, 'categories'));
-        const usersCount = await getCountFromServer(collection(db, 'users'));
         const ordersCount = await getCountFromServer(collection(db, 'orders'));
 
         setStats(prev => ({
           ...prev,
           totalProducts: productsCount.data().count,
           totalCategories: categoriesCount.data().count,
-          totalCustomers: usersCount.data().count,
           totalOrders: ordersCount.data().count,
         }));
 
@@ -180,14 +174,8 @@ const AdminDashboard = () => {
       }));
     });
 
-    const qRecentUsers = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(5));
-    const unsubRecentUsers = onSnapshot(qRecentUsers, (snapshot) => {
-      setRecentCustomers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
-    });
-
     return () => {
       unsubOrders();
-      unsubRecentUsers();
     };
   }, []);
 
@@ -195,7 +183,6 @@ const AdminDashboard = () => {
     { label: 'Total Products', value: stats.totalProducts, icon: <Package size={24} />, color: 'text-blue-600', bg: 'bg-blue-50', link: '/admin/products' },
     { label: 'Total Categories', value: stats.totalCategories, icon: <Tags size={24} />, color: 'text-purple-600', bg: 'bg-purple-50', link: '/admin/categories' },
     { label: 'Total Orders', value: stats.totalOrders, icon: <ShoppingBag size={24} />, color: 'text-orange-600', bg: 'bg-orange-50', link: '/admin/orders' },
-    { label: 'Total Customers', value: stats.totalCustomers, icon: <Users size={24} />, color: 'text-green-600', bg: 'bg-green-50', link: '/admin/customers' },
   ];
 
   const orderStats = [
@@ -245,7 +232,7 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {statCards.map((stat, i) => (
           <div
             key={i}
@@ -396,38 +383,6 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white p-5 sm:p-8 rounded-[28px] sm:rounded-[40px] shadow-sm border border-gray-100">
-            <h2 className="text-lg sm:text-xl font-bold text-chocolate mb-6 flex items-center gap-2">
-              <Users size={22} className="text-rose-deep" />
-              New Customers
-            </h2>
-            <div className="space-y-4">
-              {recentCustomers.length === 0 ? (
-                <p className="text-center text-gray-400 py-8 font-bold uppercase tracking-widest text-[10px]">No customers yet.</p>
-              ) : (
-                recentCustomers.map((customer) => (
-                  <div key={customer.id} className="flex items-center justify-between group cursor-pointer min-h-[44px]" onClick={() => router.push('/admin/customers')}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-cream-dark border border-rose/10 flex items-center justify-center text-rose-deep font-bold">
-                        {customer.displayName?.[0] || customer.email?.[0] || 'U'}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-xs sm:text-sm font-bold text-chocolate group-hover:text-rose-deep transition-colors leading-tight">{customer.displayName || 'Guest'}</span>
-                        <span className="text-[10px] text-gray-400 mt-0.5">{new Date(customer.createdAt).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <ChevronRight size={16} className="text-gray-300 group-hover:text-chocolate transition-colors" />
-                  </div>
-                ))
-              )}
-            </div>
-            <button
-              onClick={() => router.push('/admin/customers')}
-              className="w-full mt-6 sm:mt-8 py-3 rounded-2xl bg-gray-50 text-gray-400 text-[10px] font-black uppercase tracking-widest hover:bg-chocolate hover:text-white transition-all shadow-sm border border-gray-100 min-h-[44px]"
-            >
-              View All Customers
-            </button>
-          </div>
         </div>
       </div>
     </div>
