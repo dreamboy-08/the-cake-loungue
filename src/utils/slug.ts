@@ -1,6 +1,5 @@
 /**
  * Converts a string into a URL-friendly slug.
- * Logic matches the one used in seedCategories.ts for consistency.
  *
  * @param name The string to slugify
  * @returns The slugified string
