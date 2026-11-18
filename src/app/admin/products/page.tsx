@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '@/utils/firebase';
 import {
   collection,
-  getDocs,
+  getDocsFromServer,
   deleteDoc,
   doc,
   query,
@@ -21,11 +21,9 @@ import {
   Package,
   Loader2,
   AlertCircle,
-  RefreshCcw,
   Star,
   TrendingUp,
-  Sparkles,
-  ChevronDown
+  Sparkles
 } from 'lucide-react';
 import Image from 'next/image';
 import ProductForm from '@/components/admin/ProductForm';
@@ -47,10 +45,8 @@ const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
   const [allProducts, setAllProducts] = useState<any[] | null>(null);
   const [isSearchingAll, setIsSearchingAll] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Client-side viewport check to dynamically render card/table views and prevent DOM pollution/test flakiness
   const [isMobile, setIsMobile] = useState(false);
@@ -92,7 +88,7 @@ const AdminProducts = () => {
         q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), startAfter(lastDoc), limit(PAGE_SIZE));
       }
 
-      const snapshot = await getDocs(q);
+      const snapshot = await getDocsFromServer(q);
       const newProducts = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
 
       if (isNext) {
@@ -110,17 +106,8 @@ const AdminProducts = () => {
       setLastDoc(lastVisible);
       setHasMore(snapshot.docs.length === PAGE_SIZE);
     } catch (error) {
-      console.error("Error fetching products, falling back to static/cached:", error);
-      if (typeof window !== 'undefined') {
-        try {
-          const stored = localStorage.getItem('cakeLounge_cms_products');
-          const currentList = stored ? JSON.parse(stored) : staticProducts;
-          setProducts(currentList);
-        } catch {
-          setProducts(staticProducts);
-        }
-        setHasMore(false);
-      }
+      console.error("Error fetching products from Firestore:", error);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
@@ -161,7 +148,7 @@ const AdminProducts = () => {
         setIsSearchingAll(true);
         try {
           const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-          const snapshot = await getDocs(q);
+          const snapshot = await getDocsFromServer(q);
           const allFetched = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
           setAllProducts(allFetched);
         } catch (error) {
@@ -174,60 +161,6 @@ const AdminProducts = () => {
 
     fetchAllForFilter();
   }, [searchTerm, categoryFilter, statusFilter, allProducts, hasMore]);
-
-  const handleSyncCatalog = async () => {
-    if (!confirm("This will restore the entire product catalog from static constants. Continue?")) return;
-    setIsSyncing(true);
-    setAllProducts(null);
-    try {
-      const { recoverCatalog } = await import("@/utils/recoverCatalog");
-      const success = await recoverCatalog();
-      if (success) {
-        alert("Catalog restored successfully!");
-        await refreshProducts();
-        fetchProducts();
-      }
-    } catch (error) {
-      console.error("Sync error:", error);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const handleSeedCategories = async () => {
-    if (!confirm("This will populate categories from the static products list. Continue?")) return;
-    setIsSyncing(true);
-    setAllProducts(null);
-    try {
-      const { seedCategories } = await import("@/utils/seedCategories");
-      const success = await seedCategories();
-      if (success) alert("Categories seeded successfully!");
-    } catch (error) {
-      console.error("Seeding error:", error);
-      alert("Failed to seed categories.");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const handleMigrateWeights = async () => {
-    if (!confirm("This will add MULTIPLE weight options (0.5 Kg, 1 Kg, 2 Kg) to all products in Firestore. Continue?")) return;
-    setIsSyncing(true);
-    setAllProducts(null);
-    try {
-      const { migrateWeights } = await import("@/utils/migrateWeights");
-      const success = await migrateWeights();
-      if (success) {
-        alert("Weights migrated successfully!");
-        await refreshProducts();
-        fetchProducts();
-      }
-    } catch (error) {
-      console.error("Migration error:", error);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
@@ -257,23 +190,8 @@ const AdminProducts = () => {
       await refreshProducts();
       fetchProducts();
     } catch (error) {
-      console.error("Error deleting product, attempting local fallback:", error);
-      if (typeof window !== 'undefined') {
-        let currentList = staticProducts;
-        try {
-          const stored = localStorage.getItem('cakeLounge_cms_products');
-          if (stored) currentList = JSON.parse(stored);
-        } catch (e) {}
-
-        const updatedList = currentList.filter((p: any) => p.id !== id && p.id.toString() !== id);
-        try {
-          localStorage.setItem('cakeLounge_cms_products', JSON.stringify(updatedList));
-        } catch (e) {}
-        window.dispatchEvent(new Event('admin_products_updated'));
-      }
-      setShowDeleteConfirm(null);
-      await refreshProducts();
-      fetchProducts();
+      console.error("Error deleting product from Firestore:", error);
+      alert("Failed to delete product. The Firestore record was not removed.");
     }
   };
 
@@ -307,58 +225,6 @@ const AdminProducts = () => {
           <p className="text-gray-500 text-sm mt-1">Manage your bakery inventory and catalog.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          {/* Dropdown for More Actions */}
-          <div className="relative w-full sm:w-auto z-30">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-center gap-2 bg-white border border-gray-200 text-chocolate px-4 py-3 rounded-2xl font-bold shadow-sm hover:bg-gray-50 transition-all text-xs h-11 min-h-[44px] w-full sm:w-auto"
-            >
-              <span>More Actions</span>
-              <ChevronDown size={16} className={`transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {isDropdownOpen && (
-              <>
-                <div className="fixed inset-0" onClick={() => setIsDropdownOpen(false)} />
-                <div className="absolute left-0 sm:left-auto sm:right-0 mt-2 w-full sm:w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-40 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      handleSeedCategories();
-                    }}
-                    disabled={isSyncing}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-xs font-bold text-chocolate transition-colors disabled:opacity-50 h-11"
-                  >
-                    <RefreshCcw size={16} className="text-indigo-500 shrink-0" />
-                    <span>Set Up Categories</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      handleMigrateWeights();
-                    }}
-                    disabled={isSyncing}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-xs font-bold text-chocolate transition-colors disabled:opacity-50 h-11"
-                  >
-                    <RefreshCcw size={16} className="text-blue-500 shrink-0" />
-                    <span>Configure Weight System</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsDropdownOpen(false);
-                      handleSyncCatalog();
-                    }}
-                    disabled={isSyncing}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 text-xs font-bold text-chocolate transition-colors disabled:opacity-50 h-11"
-                  >
-                    <Package size={16} className="text-amber-500 shrink-0" />
-                    <span>Sync Default Catalog</span>
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-
           {/* Add New Product CTA */}
           <button
             onClick={() => {

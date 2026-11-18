@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { db } from '@/utils/firebase';
-import { collection, onSnapshot, query, orderBy, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, getDocsFromServer } from 'firebase/firestore';
 import { products as staticProducts, Product } from '@/constants/products';
 
 interface ProductsContextType {
@@ -23,7 +23,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const stored = localStorage.getItem('cakeLounge_cms_products');
         if (stored) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             setProducts(parsed);
             if (fallbackToStatic) setLoading(false);
             return true;
@@ -55,19 +55,21 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     try {
       const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        const fetched = snapshot.docs.map(doc => ({
-          ...doc.data(),
-          id: doc.id
-        })) as unknown as Product[];
-        setProducts(fetched);
-      } else {
-        setProducts(staticProducts);
+      const snapshot = await getDocsFromServer(q);
+      const fetched = snapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id
+      })) as unknown as Product[];
+      setProducts(fetched);
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('cakeLounge_cms_products', JSON.stringify(fetched));
+        } catch (error) {
+          console.error('Failed to cache Firestore products locally:', error);
+        }
       }
     } catch (err) {
-      console.error("Failed to refresh products from Firestore, falling back to offline/static:", err);
-      loadOfflineProducts();
+      console.error("Failed to refresh products from Firestore:", err);
     } finally {
       setLoading(false);
     }
@@ -102,43 +104,37 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       };
     }
 
-    // Try loading cached products optimistically if present in localStorage (without falling back to staticDefaults yet)
-    loadOfflineProducts(false);
-
     console.log("Subscribing to real-time Firestore products...");
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
 
-    // Safety timeout guard: if Firestore subscription hangs, unblock loading after 5 seconds
+    // Unblock the storefront if Firestore cannot establish a subscription.
     const safetyTimeout = setTimeout(() => {
-      loadOfflineProducts(true);
       setLoading(false);
     }, 5000);
 
     const unsubscribe = onSnapshot(
       q,
+      { includeMetadataChanges: true },
       (snapshot) => {
-        if (!snapshot.empty) {
-          const fetched = snapshot.docs.map(doc => ({
-            ...doc.data(),
-            id: doc.id
-          })) as unknown as Product[];
-          setProducts(fetched);
-          if (typeof window !== 'undefined') {
-            try {
-              localStorage.setItem('cakeLounge_cms_products', JSON.stringify(fetched));
-            } catch (e) {}
+        if (snapshot.metadata.fromCache) return;
+
+        const fetched = snapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        })) as unknown as Product[];
+        setProducts(fetched);
+        if (typeof window !== 'undefined') {
+          try {
+            localStorage.setItem('cakeLounge_cms_products', JSON.stringify(fetched));
+          } catch (error) {
+            console.error('Failed to cache Firestore products locally:', error);
           }
-        } else {
-          console.warn("Firestore products collection is empty. Falling back to static products.");
-          setProducts(staticProducts);
         }
         setLoading(false);
       },
       (error) => {
-        console.error("Firestore onSnapshot subscription failed, falling back to getDocs or static:", error);
-        // Fallback to manual load as backup
-        loadOfflineProducts(true);
-        refreshProducts();
+        console.error("Firestore onSnapshot subscription failed:", error);
+        setLoading(false);
       }
     );
 

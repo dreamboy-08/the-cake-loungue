@@ -45,6 +45,8 @@ test.describe('Admin Product Management & Sync', () => {
 
     // Navigate to Admin Products
     await page.goto('http://localhost:3000/admin/products');
+    await expect(page.getByRole('button', { name: 'More Actions' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Add New Product' })).toBeVisible();
   });
 
   test('CRUD Flow: Create, Read, Update, Delete', async ({ page }) => {
@@ -200,7 +202,7 @@ test.describe('Admin Product Management & Sync', () => {
     await expect(page.locator('h3:has-text("Royal Raspberry Birthday Cake")').first()).toBeVisible();
 
     // 3. Check Product Detail Page
-    await page.goto('http://localhost:3000/shop/1');
+    await page.goto('http://localhost:3000/shop/1', { waitUntil: 'domcontentloaded' });
     await expect(page.url()).toContain('/shop/1');
     await expect(page.locator('h1')).toContainText('Royal Raspberry Birthday Cake');
     await expect(page.locator('text=Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.')).toBeVisible();
