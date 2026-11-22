@@ -8,12 +8,32 @@ import SearchBar from '@/components/shop/SearchBar';
 import BackButton from '@/components/BackButton';
 import { filterProducts } from '@/utils/filterProducts';
 import { db } from '@/utils/firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toSlug } from '@/utils/slug';
 import PageWrapper from '@/components/PageWrapper';
 import { sortCategories } from '@/utils/categorySorting';
 import { useProducts } from '@/context/ProductsContext';
+import { useCMS } from '@/context/CMSContext';
+
+type MenuCategory = {
+  name: string;
+  slug: string;
+  displayOrder?: number;
+};
+
+const getProductCategories = (products: Product[]): MenuCategory[] =>
+  Array.from(new Set(products.map(product => product.category)))
+    .map(name => ({ name, slug: toSlug(name) }));
+
+const getCmsCategories = (
+  categories: { name: string; slug?: string; displayOrder?: number }[]
+): MenuCategory[] =>
+  sortCategories(categories.map(category => ({
+    name: category.name,
+    slug: category.slug || toSlug(category.name),
+    displayOrder: category.displayOrder
+  })));
 
 const MenuContent = () => {
   const router = useRouter();
@@ -21,49 +41,62 @@ const MenuContent = () => {
   const categoryParam = searchParams.get('category');
 
   const { products, loading: productsLoading } = useProducts();
+  const { categories: cmsCategories, loading: cmsLoading } = useCMS();
 
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
+  const [dynamicCategories, setDynamicCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If Firebase is not configured (common in dev/test), fallback immediately to static
+    // If Firebase is not configured, use the locally cached CMS categories.
     if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_api_key") {
-      console.warn("Firebase not configured, falling back to static categories.");
-      setDynamicCategories(Array.from(new Set(products.map(p => p.category))));
+      console.warn("Firebase not configured, using cached CMS categories.");
+      if (cmsLoading) return;
+      const localCategories = getCmsCategories(cmsCategories);
+      setDynamicCategories(
+        localCategories.length > 0
+          ? localCategories
+          : getProductCategories(products)
+      );
       setLoading(false);
       return;
     }
 
-    const q = query(
-      collection(db, 'categories'),
-      where('active', '==', true)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      let cats: string[] = [];
+    const unsubscribe = onSnapshot(collection(db, 'categories'), (snapshot) => {
+      let cats: MenuCategory[] = [];
       if (snapshot.empty) {
         // Fallback to static if Firestore is empty
-        cats = Array.from(new Set(products.map(p => p.category)));
+        cats = getProductCategories(products);
       } else {
-        const fetchedCats = snapshot.docs.map(doc => ({
-          name: doc.data().name,
-          displayOrder: doc.data().displayOrder
-        }));
-        cats = sortCategories(fetchedCats).map(c => c.name);
+        const fetchedCats = snapshot.docs.reduce<MenuCategory[]>((categories, categoryDoc) => {
+          const data = categoryDoc.data();
+          if (typeof data.name !== 'string' || !data.name.trim()) return categories;
+          categories.push({
+            name: data.name,
+            slug: typeof data.slug === 'string' && data.slug.trim()
+              ? data.slug
+              : toSlug(data.name),
+            displayOrder: typeof data.displayOrder === 'number' ? data.displayOrder : undefined
+          });
+          return categories;
+        }, []);
+        cats = sortCategories(fetchedCats);
       }
       setDynamicCategories(cats);
       setLoading(false);
     }, (err) => {
       console.error("Error fetching menu categories:", err);
-      const cats = Array.from(new Set(products.map(p => p.category)));
+      const cachedCategories = getCmsCategories(cmsCategories);
+      const cats = cachedCategories.length > 0
+        ? cachedCategories
+        : getProductCategories(products);
       setDynamicCategories(cats);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [products]);
+  }, [products, cmsCategories, cmsLoading]);
 
   // Update active category based on URL parameter
   useEffect(() => {
@@ -78,9 +111,11 @@ const MenuContent = () => {
       if (!categoryParam) {
         setActiveCategory('All');
       } else {
-        const matchedCategory = dynamicCategories.find(cat => toSlug(cat) === categoryParam);
+        const matchedCategory = dynamicCategories.find(
+          cat => toSlug(cat.slug) === toSlug(categoryParam) || toSlug(cat.name) === toSlug(categoryParam)
+        );
         if (matchedCategory) {
-          setActiveCategory(matchedCategory);
+          setActiveCategory(matchedCategory.name);
         } else {
           // If no match found for the slug, set to a non-existent state to show empty results
           setActiveCategory(`INVALID_${categoryParam}`);
@@ -95,11 +130,12 @@ const MenuContent = () => {
     } else if (toSlug(cat) === 'custom-cakes') {
       router.push('/custom-cake');
     } else {
-      router.push(`/menu?category=${toSlug(cat)}`);
+      const selectedCategory = dynamicCategories.find(category => category.name === cat);
+      router.push(`/menu?category=${toSlug(selectedCategory?.slug || cat)}`);
     }
   };
 
-  const categories = ['All', ...dynamicCategories];
+  const categories = ['All', ...dynamicCategories.map(category => category.name)];
 
   const filteredProducts = useMemo(() => {
     if (activeCategory.startsWith('INVALID_')) {
