@@ -15,6 +15,7 @@ export interface CartItem {
   quantity: number;
   flavor?: string;
   weight?: string;
+  pieces?: string;   // e.g. "6 Pieces" — set when product is sold by pieces
   message?: string;
   serves?: string;
 }
@@ -139,7 +140,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cart, isLoading]);
 
   const addToCart = (item: Omit<CartItem, 'quantity' | 'cartItemId'>, quantityToAdd = 1) => {
-    const cartItemId = `${item.id}-${item.flavor || ''}-${item.weight || ''}-${item.message || ''}`;
+    const cartItemId = `${item.id}-${item.flavor || ''}-${item.weight || ''}-${item.pieces || ''}-${item.message || ''}`;
 
     setCart((prevCart) => {
       const existingItem = prevCart.find((i) => i.cartItemId === cartItemId);
