@@ -65,6 +65,7 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       ? String(product.discountPrice)
       : '',
     weights: product?.weights || [{ label: '0.5 Kg', price: product?.price || '' }],
+    pieces: product?.pieces || [],
     category: product?.category || '',
     flavor: product?.flavor || '',
     flavors: existingFlavors,
@@ -120,6 +121,28 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     } else {
       setFormData(prev => ({ ...prev, weights: newWeights }));
     }
+  };
+
+  const supportedPieces = ['1 Piece', '2 Pieces', '4 Pieces', '6 Pieces', '12 Pieces', '24 Pieces'];
+
+  const handleAddPieces = () => {
+    setFormData(prev => ({
+      ...prev,
+      pieces: [...prev.pieces, { label: '1 Piece', price: '' }]
+    }));
+  };
+
+  const handleRemovePieces = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      pieces: prev.pieces.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handlePiecesChange = (index: number, field: string, value: string | number) => {
+    const newPieces = [...formData.pieces];
+    newPieces[index] = { ...newPieces[index], [field]: value };
+    setFormData(prev => ({ ...prev, pieces: newPieces }));
   };
 
   const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -200,7 +223,8 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     )) return "Discount price must be greater than zero and lower than the base price.";
     if (imageItems.length === 0) return "At least one product image is required.";
     if (formData.weights.length === 0) return "At least one weight variant is required.";
-    if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All variants must have a valid price.";
+    if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All weight variants must have a valid price.";
+    if (formData.pieces.length > 0 && formData.pieces.some((p: any) => !p.price || Number(p.price) <= 0)) return "All pieces variants must have a valid price.";
     if (!formData.description.trim()) return "Product description is required.";
     if (!formData.flavor.trim()) return "Flavor information is required.";
     // inStock and active are booleans, usually have defaults
@@ -269,6 +293,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
           label: w.label,
           price: Number(w.price)
         })),
+        pieces: formData.pieces.length > 0
+          ? formData.pieces.map((p: any) => ({ label: p.label, price: Number(p.price) }))
+          : [],
         img: finalImages[0],
         images: finalImages.slice(1),
         updatedAt: new Date().toISOString(),
@@ -586,6 +613,45 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Pieces section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">
+                    Pieces Variants <span className="text-text-soft normal-case font-normal">(optional)</span>
+                  </label>
+                  <button type="button" onClick={handleAddPieces} className="text-[10px] font-black text-rose-deep uppercase flex items-center gap-1">
+                    <Plus size={12} /> Add Pieces Option
+                  </button>
+                </div>
+                {formData.pieces.length === 0 ? (
+                  <p className="text-[11px] text-text-soft italic">No pieces variants. Click &ldquo;Add Pieces Option&rdquo; to allow selling by pieces (e.g. 1 Piece, 6 Pieces).</p>
+                ) : (
+                  <div className="space-y-3">
+                    {formData.pieces.map((p: any, idx: number) => (
+                      <div key={idx} className="flex gap-3 items-center">
+                        <select
+                          value={p.label}
+                          onChange={(e) => handlePiecesChange(idx, 'label', e.target.value)}
+                          className="flex-1 px-3 py-2 rounded-xl border border-gray-100 text-xs font-bold bg-white"
+                        >
+                          {supportedPieces.map(sp => <option key={sp} value={sp}>{sp}</option>)}
+                        </select>
+                        <input
+                          type="number"
+                          value={p.price}
+                          onChange={(e) => handlePiecesChange(idx, 'price', e.target.value)}
+                          placeholder="Price"
+                          className="w-24 px-3 py-2 rounded-xl border border-gray-100 text-xs font-bold"
+                        />
+                        <button type="button" onClick={() => handleRemovePieces(idx)} className="p-2 text-gray-300 hover:text-red-500 transition-colors">
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">

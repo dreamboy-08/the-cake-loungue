@@ -37,6 +37,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
+  const [selectedPieces, setSelectedPieces] = useState('');
   const [selectedFlavor, setSelectedFlavor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [buyNowLoading, setBuyNowLoading] = useState(false);
@@ -96,6 +97,13 @@ const ProductDetail = () => {
             : availableWeights[0].label
         );
       }
+      // Initialise pieces selection when product has pieces
+      const availablePieces = foundProduct.pieces;
+      if (availablePieces && availablePieces.length > 0) {
+        setSelectedPieces(availablePieces[0].label);
+      } else {
+        setSelectedPieces('');
+      }
     } else {
       setError('Product not found in our catalog');
     }
@@ -123,8 +131,17 @@ const ProductDetail = () => {
     );
   }
 
+  // Determine active option (weight takes priority; fall back to pieces if no weights)
+  const hasPieces = Array.isArray(product.pieces) && product.pieces.length > 0;
+  const activePiecesOption = hasPieces
+    ? (product.pieces!.find(p => p.label === selectedPieces) ?? product.pieces![0])
+    : null;
+
   const activeWeightOption = (product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price, serves: getServingsForWeight(selectedWeight) }) as any;
-  const currentPrice = activeWeightOption.price;
+  // If the product only has pieces (no weights), price from pieces; otherwise from weight
+  const currentPrice = (product.weights && product.weights.length > 0)
+    ? activeWeightOption.price
+    : (activePiecesOption ? activePiecesOption.price : product.price);
   const pricing = getProductPricing(product, currentPrice);
   const configuredFlavors = Array.isArray(product.flavors)
     ? product.flavors.filter((flavor): flavor is string => typeof flavor === 'string' && flavor.trim().length > 0)
@@ -134,6 +151,7 @@ const ProductDetail = () => {
   const isGloballyAdded = cart.some(item =>
     item.id === product.id &&
     item.weight === selectedWeight &&
+    (item.pieces || '') === (selectedPieces || '') &&
     (item.flavor || '') === (selectedFlavor || '') &&
     (item.message || '') === (cakeMessage || '')
   );
@@ -150,7 +168,8 @@ const ProductDetail = () => {
       price: pricing.price,
       originalPrice: pricing.originalPrice,
       img: product.img,
-      weight: selectedWeight,
+      weight: (product.weights && product.weights.length > 0) ? selectedWeight : undefined,
+      pieces: (hasPieces && (!product.weights || product.weights.length === 0)) ? selectedPieces || undefined : undefined,
       serves: activeServes,
       message: cakeMessage,
       flavor: selectedFlavor || undefined,
@@ -178,7 +197,8 @@ const ProductDetail = () => {
         price: pricing.price,
         originalPrice: pricing.originalPrice,
         img: product.img,
-        weight: selectedWeight,
+        weight: (product.weights && product.weights.length > 0) ? selectedWeight : undefined,
+        pieces: (hasPieces && (!product.weights || product.weights.length === 0)) ? selectedPieces || undefined : undefined,
         serves: activeServes,
         message: cakeMessage,
         quantity: quantity,
@@ -303,6 +323,28 @@ const ProductDetail = () => {
                       }`}
                     >
                       {w.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Pieces Selector — shown when product has pieces and no weights */}
+            {hasPieces && (!product.weights || product.weights.length === 0) && (
+              <div className="mb-8">
+                <label className="block text-xs font-bold text-chocolate uppercase tracking-widest mb-4">Select Quantity</label>
+                <div className="flex flex-wrap gap-3">
+                  {product.pieces!.map((p) => (
+                    <button
+                      key={p.label}
+                      onClick={() => setSelectedPieces(p.label)}
+                      className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border-2 ${
+                        selectedPieces === p.label
+                          ? 'border-rose-deep bg-rose-deep text-white shadow-md'
+                          : 'border-cream bg-white text-chocolate hover:border-rose-deep/30'
+                      }`}
+                    >
+                      {p.label}
                     </button>
                   ))}
                 </div>

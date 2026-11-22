@@ -33,11 +33,17 @@ export interface ProductWeight {
   price: number;
 }
 
+export interface ProductPieces {
+  label: string;  // e.g. "1 Piece", "6 Pieces"
+  price: number;
+}
+
 export interface Product {
   id?: string;
   name: string;
   price: number;
   weights?: ProductWeight[];
+  pieces?: ProductPieces[];
   discountPrice?: number | null;
   flavors?: string[];
   description: string;
