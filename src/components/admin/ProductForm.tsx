@@ -64,7 +64,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     discountPrice: product?.discountPrice !== undefined && product?.discountPrice !== null
       ? String(product.discountPrice)
       : '',
-    weights: product?.weights || [{ label: '0.5 Kg', price: product?.price || '' }],
+    weights: Array.isArray(product?.weights)
+      ? product.weights  // respect whatever the existing product has (including [])
+      : [{ label: '0.5 Kg', price: product?.price || '' }],
     pieces: product?.pieces || [],
     category: product?.category || '',
     flavor: product?.flavor || '',
@@ -222,13 +224,14 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
       Number(formData.discountPrice) >= Number(formData.price)
     )) return "Discount price must be greater than zero and lower than the base price.";
     if (imageItems.length === 0) return "At least one product image is required.";
-    if (formData.weights.length === 0) return "At least one weight variant is required.";
-    if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All weight variants must have a valid price.";
-    if (formData.pieces.length > 0 && formData.pieces.some((p: any) => !p.price || Number(p.price) <= 0)) return "All pieces variants must have a valid price.";
+    // Weight and Pieces are independently optional — but at least one must be present
+    const hasWeights = formData.weights.length > 0;
+    const hasPieces = formData.pieces.length > 0;
+    if (!hasWeights && !hasPieces) return "Please add at least one Weight or Pieces variant.";
+    if (hasWeights && formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All weight variants must have a valid price.";
+    if (hasPieces && formData.pieces.some((p: any) => !p.price || Number(p.price) <= 0)) return "All pieces variants must have a valid price.";
     if (!formData.description.trim()) return "Product description is required.";
     if (!formData.flavor.trim()) return "Flavor information is required.";
-    // inStock and active are booleans, usually have defaults
-    // Promotional badges (isFeatured, etc.) are optional by nature, but we check if at least one variant is present
     return null;
   };
 
