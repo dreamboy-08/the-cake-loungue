@@ -21,8 +21,10 @@ export interface Product {
   id: number;
   name: string;
   flavor: string;
+  flavors?: string[];
   category: string;
   price: number;
+  discountPrice?: number | null;
   weights?: ProductWeight[];
   oldPrice: number;
   rating: number;

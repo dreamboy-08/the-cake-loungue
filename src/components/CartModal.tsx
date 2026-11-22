@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import BackButton from './BackButton';
 import { useProducts } from '@/context/ProductsContext';
 import { useCMS } from '@/context/CMSContext';
+import { getProductPricing } from '@/utils/productPricing';
 
 interface CartModalProps {
   isOpen: boolean;
@@ -222,7 +223,17 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                               onClick={(e) => e.stopPropagation()}
                               className="flex justify-between items-center mt-2"
                             >
-                              <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
+                              <div>
+                                <div className="text-rose-deep font-bold">₹{item.price * item.quantity}</div>
+                                {item.originalPrice !== undefined && item.originalPrice > item.price && (
+                                  <div className="flex items-center gap-1">
+                                    <span className="text-[10px] text-text-soft line-through">₹{item.originalPrice * item.quantity}</span>
+                                    <span className="text-[10px] font-bold text-green-700">
+                                      {Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}% OFF
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
 
                               <div className="flex items-center gap-3 bg-cream rounded-full px-2 py-1 border border-cream">
                                 <button
@@ -260,7 +271,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                             Cakes
                           </h5>
                           <div className="grid grid-cols-1 gap-4">
-                            {recommendationsCakes.map((prod) => (
+                            {recommendationsCakes.map((prod) => {
+                              const pricing = getProductPricing(prod, prod.weights?.[0]?.price || prod.price);
+                              const flavors = Array.isArray(prod.flavors)
+                                ? prod.flavors.filter((flavor: unknown): flavor is string => typeof flavor === 'string' && flavor.trim().length > 0)
+                                : [];
+
+                              return (
                               <div
                                 key={prod.id}
                                 className="bg-white rounded-[20px] p-3 flex gap-3 shadow-sm border border-cream/50 hover:shadow-md transition-all"
@@ -288,25 +305,41 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                   </div>
 
                                   <div className="flex justify-between items-center mt-1">
-                                    <span className="text-sm font-bold text-rose-deep">₹{prod.price}</span>
+                                    <div>
+                                      <span className="text-sm font-bold text-rose-deep">₹{pricing.price}</span>
+                                      {pricing.originalPrice !== undefined && (
+                                        <div className="flex items-center gap-1">
+                                          <span className="text-[10px] text-text-soft line-through">₹{pricing.originalPrice}</span>
+                                          <span className="text-[9px] font-bold text-green-700">{pricing.discountPercent}% OFF</span>
+                                        </div>
+                                      )}
+                                    </div>
                                     <button
                                       onClick={() => {
+                                        if (flavors.length > 1) {
+                                          onClose();
+                                          router.push(`/shop/${prod.id}`);
+                                          return;
+                                        }
                                         addToCart({
                                           id: prod.id,
                                           name: prod.name,
-                                          price: prod.price,
+                                          price: pricing.price,
+                                          originalPrice: pricing.originalPrice,
                                           img: prod.img,
                                           weight: prod.weights?.[0]?.label || '0.5 Kg',
+                                          flavor: flavors[0],
                                         });
                                       }}
                                       className="px-3 py-1 bg-rose-deep hover:bg-brown text-white rounded-full text-[10px] font-bold transition-all hover:scale-105 active:scale-95"
                                     >
-                                      Add to Cart
+                                      {flavors.length > 1 ? 'Choose' : 'Add to Cart'}
                                     </button>
                                   </div>
                                 </div>
                               </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                       )}

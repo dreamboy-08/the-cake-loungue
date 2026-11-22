@@ -56,12 +56,17 @@ test.describe('Admin Product Management & Sync', () => {
 
     // Fill the variant price (which auto-synchronizes and updates the base price)
     await page.locator('input[placeholder="Price"]').first().fill('499');
+    await page.locator('label:has-text("Discount Price") + input').fill('399');
 
     // For Category, wait for loading to finish and select option
     await page.waitForSelector('select:not([disabled])');
     await page.locator('label:has-text("Category") + select').selectOption({ label: 'Birthday Cakes' });
 
     await page.locator('label:has-text("Flavor") + input').fill('Vanilla');
+    await page.getByRole('button', { name: 'Add Flavour' }).click();
+    await page.getByRole('textbox', { name: 'Flavour 1' }).fill('Chocolate Truffle');
+    await page.getByRole('button', { name: 'Add Flavour' }).click();
+    await page.getByRole('textbox', { name: 'Flavour 2' }).fill('Black Forest');
     await page.locator('label:has-text("Description") + textarea').fill('This is a delicious verification cake.');
 
     // Upload an image
@@ -75,8 +80,10 @@ test.describe('Admin Product Management & Sync', () => {
     });
 
     // Mock successful creation
+    let createdFields: Record<string, any> | undefined;
     await page.route('**/firestore.googleapis.com/**/products', async route => {
       if (route.request().method() === 'POST') {
+        createdFields = route.request().postDataJSON().fields;
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
@@ -99,7 +106,9 @@ test.describe('Admin Product Management & Sync', () => {
                 price: { integerValue: '499' },
                 category: { stringValue: 'Birthday Cakes' },
                 img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
-                flavor: { stringValue: 'Vanilla' }
+                flavor: { stringValue: 'Vanilla' },
+                discountPrice: { integerValue: '399' },
+                flavors: { arrayValue: { values: [{ stringValue: 'Chocolate Truffle' }, { stringValue: 'Black Forest' }] } }
               },
               createTime: new Date().toISOString(),
               updateTime: new Date().toISOString()
@@ -111,6 +120,16 @@ test.describe('Admin Product Management & Sync', () => {
 
     await page.click('button:has-text("Create Product")');
 
+    const storedCreatedProduct = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('cakeLounge_cms_products') || '[]');
+      return saved.find((item: any) => item.name === 'Verification Cake');
+    });
+    expect(Number(createdFields?.discountPrice?.integerValue || storedCreatedProduct?.discountPrice)).toBe(399);
+    expect(
+      createdFields?.flavors?.arrayValue?.values?.map((value: any) => value.stringValue) ||
+      storedCreatedProduct?.flavors
+    ).toEqual(['Chocolate Truffle', 'Black Forest']);
+
     // Verify visibility in list
     await expect(page.locator('tbody tr').filter({ hasText: 'Verification Cake' })).toBeVisible();
     await expect(page.locator('tbody tr').filter({ hasText: 'Verification Cake' }).locator('text=₹499')).toBeVisible();
@@ -120,10 +139,14 @@ test.describe('Admin Product Management & Sync', () => {
     await row.locator('button').first().click(); // Click Edit button in the row
     await page.locator('label:has-text("Product Name") + input').fill('Updated Verification Cake');
     await page.locator('input[placeholder="Price"]').first().fill('1299');
+    await page.getByRole('textbox', { name: 'Flavour 1' }).fill('Vanilla');
+    await page.getByRole('button', { name: 'Remove flavour 2' }).click();
 
     // Mock successful update
+    let updatedFields: Record<string, any> | undefined;
     await page.route('**/firestore.googleapis.com/**/products/new-id-123', async route => {
       if (route.request().method() === 'PATCH') {
+        updatedFields = route.request().postDataJSON().fields;
         await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
       }
     });
@@ -141,7 +164,8 @@ test.describe('Admin Product Management & Sync', () => {
                 name: { stringValue: 'Updated Verification Cake' },
                 price: { integerValue: '1299' },
                 category: { stringValue: 'Birthday Cakes' },
-                img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' }
+                img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
+                flavors: { arrayValue: { values: [{ stringValue: 'Vanilla' }] } }
               }
             }]
           })
@@ -150,6 +174,14 @@ test.describe('Admin Product Management & Sync', () => {
     });
 
     await page.click('button:has-text("Update Product")');
+    const storedUpdatedProduct = await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('cakeLounge_cms_products') || '[]');
+      return saved.find((item: any) => item.name === 'Updated Verification Cake');
+    });
+    expect(
+      updatedFields?.flavors?.arrayValue?.values?.map((value: any) => value.stringValue) ||
+      storedUpdatedProduct?.flavors
+    ).toEqual(['Vanilla']);
     await expect(page.locator('tbody tr').filter({ hasText: 'Updated Verification Cake' })).toBeVisible();
     await expect(page.locator('tbody tr').filter({ hasText: 'Updated Verification Cake' }).locator('text=₹1299')).toBeVisible();
 
@@ -184,7 +216,8 @@ test.describe('Admin Product Management & Sync', () => {
         category: { stringValue: 'Birthday Cakes' },
         img: { stringValue: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587' },
         description: { stringValue: 'Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.' },
-        flavor: { stringValue: 'Chocolate' }
+        flavor: { stringValue: 'Chocolate' },
+        discountPrice: { integerValue: '0' }
       }
     };
 
@@ -194,6 +227,25 @@ test.describe('Admin Product Management & Sync', () => {
         contentType: 'application/json',
         body: JSON.stringify({ documents: [mockProduct] })
       });
+    });
+    await page.evaluate(() => {
+      const products = [{
+        id: 1,
+        name: 'Royal Raspberry Birthday Cake',
+        price: 750,
+        discountPrice: 0,
+        oldPrice: 0,
+        category: 'Birthday Cakes',
+        img: '/images/products/Royal Raspberry Birthday Cake.jpg',
+        description: 'Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.',
+        flavor: 'Chocolate',
+        flavors: [],
+        rating: 5,
+        reviews: 0,
+        tag: '',
+      }];
+      localStorage.setItem('cakeLounge_cms_products', JSON.stringify(products));
+      window.dispatchEvent(new Event('admin_products_updated'));
     });
 
     // 2. Check Customer Menu
@@ -206,6 +258,70 @@ test.describe('Admin Product Management & Sync', () => {
     await expect(page.url()).toContain('/shop/1');
     await expect(page.locator('h1')).toContainText('Royal Raspberry Birthday Cake');
     await expect(page.locator('text=Royal Raspberry Birthday Cake crafted with mixed berry ganache, premium toppings and a modern bakery finish for a luxurious celebration.')).toBeVisible();
+    await expect(page.locator('#product-flavor')).toHaveCount(0);
+    await expect(page.locator('text=0% OFF')).toHaveCount(0);
+    await expect(page.locator('text=₹0')).toHaveCount(0);
+  });
+
+  test('Configured flavours and discounts persist through cart and checkout', async ({ page }) => {
+    await page.evaluate(() => {
+      const products = [{
+        id: 'discounted-cake',
+        name: 'Flavoured Discount Cake',
+        price: 1000,
+        discountPrice: 800,
+        category: 'Birthday Cakes',
+        img: '/images/products/Royal Raspberry Birthday Cake.jpg',
+        description: 'A cake with selectable flavours.',
+        flavor: 'Classic',
+        flavors: ['Chocolate Truffle', 'Black Forest'],
+        weights: [{ label: '0.5 Kg', price: 1000 }, { label: '1 Kg', price: 2000 }],
+        oldPrice: 0,
+        rating: 5,
+        reviews: 0,
+        tag: '',
+      }];
+      localStorage.setItem('cakeLounge_cms_products', JSON.stringify(products));
+      window.dispatchEvent(new Event('admin_products_updated'));
+    });
+
+    await page.goto('http://localhost:3000/menu');
+    const discountProductCard = page.locator('a[href="/shop/discounted-cake"]');
+    await expect(discountProductCard.getByText('₹800', { exact: true })).toBeVisible();
+    await expect(discountProductCard.getByText('₹1000', { exact: true })).toBeVisible();
+    await expect(discountProductCard.getByText('20% OFF')).toBeVisible();
+    await discountProductCard.getByRole('button', { name: 'Choose' }).click();
+    await expect(page).toHaveURL(/\/shop\/discounted-cake/);
+    await expect(page.locator('h1')).toHaveText('Flavoured Discount Cake');
+    await expect(page.locator('text=₹800')).toBeVisible();
+    await expect(page.locator('text=₹1000')).toBeVisible();
+    await expect(page.locator('text=20% OFF')).toBeVisible();
+
+    await page.getByRole('button', { name: '1 Kg' }).click();
+    await expect(page.getByText('₹1600', { exact: true }).first()).toBeVisible();
+    await expect(page.locator('text=₹2000')).toBeVisible();
+    await page.locator('#product-flavor').selectOption('Black Forest');
+    await page.getByRole('button', { name: 'Add to Cart' }).click();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.getByRole('button', { name: 'View Cart' }).click();
+    await expect(page.locator('#cart-drawer-overlay p').filter({ hasText: 'Black Forest' })).toBeVisible();
+    await expect(page.locator('#cart-drawer-overlay').getByText('₹1600', { exact: true }).first()).toBeVisible();
+
+    await page.goto('http://localhost:3000/checkout');
+    await expect(page).toHaveURL(/\/checkout/);
+    await expect(page.getByRole('heading', { name: 'Order Summary' })).toBeVisible();
+    await expect(page.getByText('Black Forest', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('₹1600', { exact: true }).first()).toBeVisible();
+
+    await page.evaluate(() => {
+      const saved = JSON.parse(localStorage.getItem('cakeLounge_cms_products') || '[]');
+      saved[0].flavors = ['Vanilla'];
+      localStorage.setItem('cakeLounge_cms_products', JSON.stringify(saved));
+      window.dispatchEvent(new Event('admin_products_updated'));
+    });
+    await page.goto('http://localhost:3000/shop/discounted-cake');
+    await expect(page.locator('#product-flavor')).toHaveCount(0);
+    await expect(page.getByRole('main').getByText('Vanilla', { exact: true })).toBeVisible();
   });
 
   test('Image Handling: URL and Upload Preview UI', async ({ page }) => {

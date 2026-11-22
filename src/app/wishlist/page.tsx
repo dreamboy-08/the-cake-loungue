@@ -10,11 +10,14 @@ import { useFlyToCart } from '@/context/FlyToCartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageWrapper from '@/components/PageWrapper';
 import BackButton from '@/components/BackButton';
+import { getProductPricing } from '@/utils/productPricing';
+import { useRouter } from 'next/navigation';
 
 const WishlistPage = () => {
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
   const { flyToCart } = useFlyToCart();
+  const router = useRouter();
 
   React.useEffect(() => {
     document.title = "My Favourites | The Cake Lounge";
@@ -24,20 +27,30 @@ const WishlistPage = () => {
     e.preventDefault();
     e.stopPropagation();
 
+    const flavors = Array.isArray(product.flavors)
+      ? product.flavors.filter((flavor: unknown): flavor is string => typeof flavor === 'string' && flavor.trim().length > 0)
+      : [];
+    if (flavors.length > 1) {
+      router.push(`/shop/${product.id}`);
+      return;
+    }
+
     // Trigger fly-to-cart animation
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
     const defaultWeight = product.weights?.[0]?.label || '0.5 Kg';
-    const defaultPrice = product.weights?.[0]?.price || product.price;
+    const pricing = getProductPricing(product, product.weights?.[0]?.price || product.price);
 
     // Add to cart
     addToCart({
       id: product.id,
       name: product.name,
-      price: defaultPrice,
+      price: pricing.price,
+      originalPrice: pricing.originalPrice,
       img: product.img,
       weight: defaultWeight,
+      flavor: flavors[0],
     });
   };
 
@@ -96,7 +109,7 @@ const WishlistPage = () => {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {wishlist.map((product) => {
-                const startingPrice = product.weights?.[0]?.price || product.price;
+                const pricing = getProductPricing(product, product.weights?.[0]?.price || product.price);
 
                 return (
                   <motion.div
@@ -163,8 +176,14 @@ const WishlistPage = () => {
                             Price
                           </span>
                           <span className="font-playfair text-xl font-bold text-rose-deep">
-                            ₹{startingPrice}
+                            ₹{pricing.price}
                           </span>
+                          {pricing.originalPrice !== undefined && (
+                            <>
+                              <span className="text-xs text-text-soft line-through">₹{pricing.originalPrice}</span>
+                              <span className="text-[10px] font-bold text-green-700">{pricing.discountPercent}% OFF</span>
+                            </>
+                          )}
                         </div>
 
                         <div className="flex gap-2">
@@ -180,7 +199,7 @@ const WishlistPage = () => {
                             className="bg-rose-deep text-white hover:bg-brown hover:scale-105 active:scale-95 px-4 rounded-full font-semibold text-xs flex items-center gap-1.5 transition-all shadow-sm"
                           >
                             <ShoppingCart size={14} />
-                            <span>Add to Cart</span>
+                            <span>{Array.isArray(product.flavors) && product.flavors.filter((flavor: unknown) => typeof flavor === 'string' && flavor.trim().length > 0).length > 1 ? 'Choose' : 'Add to Cart'}</span>
                           </button>
                         </div>
                       </div>
