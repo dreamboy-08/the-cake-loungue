@@ -720,7 +720,7 @@ const CheckoutPage = () => {
 
               <div className="max-h-[300px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scrollbar">
                 {checkoutItems.map((item) => (
-                  <div key={item.id} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
+                  <div key={item.cartItemId || `${item.id}-${item.flavor || ''}-${item.weight || ''}`} className="flex gap-4 p-2 hover:bg-cream rounded-[22px] transition-colors">
                     <div
                       onClick={() => router.push(`/shop/${item.id}`)}
                       className="relative w-20 h-20 rounded-[22px] bg-cream overflow-hidden flex-shrink-0 border border-cream cursor-pointer hover:opacity-90 transition-opacity"
@@ -765,7 +765,17 @@ const CheckoutPage = () => {
                       )}
 
                       <p className="text-xs text-text-soft mt-2 font-medium">Quantity: {item.quantity}</p>
-                      <p className="text-sm font-bold text-rose-deep mt-1">₹{item.price * item.quantity}</p>
+                      <div className="mt-1 flex items-center gap-2">
+                        <p className="text-sm font-bold text-rose-deep">₹{item.price * item.quantity}</p>
+                        {item.originalPrice !== undefined && item.originalPrice > item.price && (
+                          <>
+                            <span className="text-xs text-text-soft line-through">₹{item.originalPrice * item.quantity}</span>
+                            <span className="text-[10px] font-bold text-green-700">
+                              {Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}% OFF
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

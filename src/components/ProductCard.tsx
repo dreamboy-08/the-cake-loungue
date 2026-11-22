@@ -9,6 +9,8 @@ import { useCart } from '@/context/CartContext';
 import { useFlyToCart } from '@/context/FlyToCartContext';
 import { useWishlist } from '@/context/WishlistContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { getProductPricing } from '@/utils/productPricing';
 
 interface ProductCardProps {
   product: Product;
@@ -19,7 +21,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
   const { cart, addToCart } = useCart();
   const { flyToCart } = useFlyToCart();
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const router = useRouter();
   const [localAdded, setLocalAdded] = useState(false);
+  const configuredFlavors = Array.isArray(product.flavors)
+    ? product.flavors.filter((flavor): flavor is string => typeof flavor === 'string' && flavor.trim().length > 0)
+    : [];
+  const startingPrice = product.weights?.[0]?.price || product.price;
+  const pricing = getProductPricing(product, startingPrice);
 
   const isWishlisted = isInWishlist(product.id);
 
@@ -31,18 +39,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
     e.preventDefault();
     e.stopPropagation();
 
+    if (configuredFlavors.length > 1) {
+      router.push(`/shop/${product.id}`);
+      return;
+    }
+
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     flyToCart(rect, product.img);
 
     const defaultWeight = product.weights?.[0]?.label || '0.5 Kg';
-    const defaultPrice = product.weights?.[0]?.price || product.price;
 
     addToCart({
       id: product.id,
       name: product.name,
-      price: defaultPrice,
+      price: pricing.price,
+      originalPrice: pricing.originalPrice,
       img: product.img,
       weight: defaultWeight,
+      flavor: configuredFlavors[0],
     });
 
     setLocalAdded(true);
@@ -107,11 +121,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
           <div>
             <div className="flex flex-col">
               <span className="text-[10px] text-text-soft font-bold uppercase tracking-wider leading-none mb-1">Starting from</span>
-              <span className="font-playfair text-lg font-bold text-rose-deep">₹{product.weights?.[0]?.price || product.price}</span>
+              <span className="font-playfair text-lg font-bold text-rose-deep">₹{pricing.price}</span>
             </div>
-            {product.oldPrice > 0 && (
+            {pricing.originalPrice !== undefined ? (
+              <div className="flex items-center gap-1">
+                <span className="text-[0.78rem] text-text-soft line-through">₹{pricing.originalPrice}</span>
+                <span className="text-[10px] font-bold text-green-700">{pricing.discountPercent}% OFF</span>
+              </div>
+            ) : product.oldPrice > 0 ? (
               <span className="text-[0.78rem] text-text-soft line-through ml-1">₹{product.oldPrice}</span>
-            )}
+            ) : null}
           </div>
           <button
             onClick={handleAddToCart}
@@ -138,7 +157,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, priority = false }) 
                   exit={{ scale: 0 }}
                   className="flex items-center gap-1.5"
                 >
-                  <Plus size={14} /> Add
+                  <Plus size={14} /> {configuredFlavors.length > 1 ? 'Choose' : 'Add'}
                 </motion.div>
               )}
             </AnimatePresence>

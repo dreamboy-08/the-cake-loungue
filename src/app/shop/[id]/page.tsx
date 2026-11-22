@@ -19,6 +19,7 @@ import ProductRecommendations from '@/components/ProductRecommendations';
 import CakeMessageInput from '@/components/shop/CakeMessageInput';
 import { getServingsForWeight } from '@/utils/servingHelper';
 import { useCMS } from '@/context/CMSContext';
+import { getProductPricing } from '@/utils/productPricing';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -36,6 +37,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState('0.5 Kg');
+  const [selectedFlavor, setSelectedFlavor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [buyNowLoading, setBuyNowLoading] = useState(false);
   const [cakeMessage, setCakeMessage] = useState('');
@@ -81,11 +83,18 @@ const ProductDetail = () => {
 
     if (foundProduct) {
       setProduct(foundProduct);
-      if (foundProduct.weights && foundProduct.weights.length > 0) {
-        const currentOptionExists = foundProduct.weights.some(w => w.label === selectedWeight);
-        if (!currentOptionExists) {
-          setSelectedWeight(foundProduct.weights[0].label);
-        }
+      setSelectedFlavor(
+        Array.isArray(foundProduct.flavors)
+          ? foundProduct.flavors.find(flavor => typeof flavor === 'string' && flavor.trim().length > 0) || ''
+          : ''
+      );
+      const availableWeights = foundProduct.weights;
+      if (availableWeights && availableWeights.length > 0) {
+        setSelectedWeight(currentWeight =>
+          availableWeights.some(weight => weight.label === currentWeight)
+            ? currentWeight
+            : availableWeights[0].label
+        );
       }
     } else {
       setError('Product not found in our catalog');
@@ -116,9 +125,18 @@ const ProductDetail = () => {
 
   const activeWeightOption = (product.weights?.find(w => w.label === selectedWeight) || { label: selectedWeight, price: product.price, serves: getServingsForWeight(selectedWeight) }) as any;
   const currentPrice = activeWeightOption.price;
+  const pricing = getProductPricing(product, currentPrice);
+  const configuredFlavors = Array.isArray(product.flavors)
+    ? product.flavors.filter((flavor): flavor is string => typeof flavor === 'string' && flavor.trim().length > 0)
+    : [];
   const activeServes = activeWeightOption.serves || getServingsForWeight(selectedWeight);
 
-  const isGloballyAdded = cart.some(item => item.id === product.id && item.weight === selectedWeight && (item.message || '') === (cakeMessage || ''));
+  const isGloballyAdded = cart.some(item =>
+    item.id === product.id &&
+    item.weight === selectedWeight &&
+    (item.flavor || '') === (selectedFlavor || '') &&
+    (item.message || '') === (cakeMessage || '')
+  );
   const isAdded = isGloballyAdded || localAdded;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -129,11 +147,13 @@ const ProductDetail = () => {
     addToCart({
       id: product.id,
       name: product.name,
-      price: currentPrice,
+      price: pricing.price,
+      originalPrice: pricing.originalPrice,
       img: product.img,
       weight: selectedWeight,
       serves: activeServes,
       message: cakeMessage,
+      flavor: selectedFlavor || undefined,
     }, quantity);
     setLocalAdded(true);
     setTimeout(() => setLocalAdded(false), 2000);
@@ -155,13 +175,14 @@ const ProductDetail = () => {
       const buyNowItem = {
         id: product.id,
         name: product.name,
-        price: currentPrice,
+        price: pricing.price,
+        originalPrice: pricing.originalPrice,
         img: product.img,
         weight: selectedWeight,
         serves: activeServes,
         message: cakeMessage,
         quantity: quantity,
-        flavor: product.flavor || 'Standard',
+        flavor: selectedFlavor || undefined,
         preparationTime: product.preparationTime || 16,
         category: product.category,
       };
@@ -229,11 +250,16 @@ const ProductDetail = () => {
 
             <div className="mb-8">
               <div className="flex flex-wrap items-center gap-3 mb-2">
-                <span className="text-3xl font-bold text-rose-deep">₹{currentPrice}</span>
+                <span className="text-3xl font-bold text-rose-deep">₹{pricing.price}</span>
                 <GSTBadge />
-                {product.oldPrice > 0 && selectedWeight === (product.weights?.[0]?.label || '0.5 Kg') && (
+                {pricing.originalPrice !== undefined ? (
+                  <>
+                    <span className="text-xl text-text-soft line-through font-medium">₹{pricing.originalPrice}</span>
+                    <span className="text-xs font-bold text-green-700">{pricing.discountPercent}% OFF</span>
+                  </>
+                ) : product.oldPrice > 0 && selectedWeight === (product.weights?.[0]?.label || '0.5 Kg') ? (
                   <span className="text-xl text-text-soft line-through font-medium">₹{product.oldPrice}</span>
-                )}
+                ) : null}
               </div>
               <p className="text-text-mid leading-relaxed">
                 {product.description}
@@ -280,6 +306,30 @@ const ProductDetail = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {configuredFlavors.length === 1 && (
+              <div className="mb-8">
+                <span className="block text-xs font-bold text-chocolate uppercase tracking-widest mb-2">Flavour</span>
+                <p className="text-sm font-medium text-text-mid">{configuredFlavors[0]}</p>
+              </div>
+            )}
+            {configuredFlavors.length > 1 && (
+              <div className="mb-8">
+                <label htmlFor="product-flavor" className="block text-xs font-bold text-chocolate uppercase tracking-widest mb-3">
+                  Select Flavours
+                </label>
+                <select
+                  id="product-flavor"
+                  value={selectedFlavor}
+                  onChange={(e) => setSelectedFlavor(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 border-cream-dark bg-white text-sm font-bold text-chocolate focus:border-rose-deep outline-none"
+                >
+                  {configuredFlavors.map(flavor => (
+                    <option key={flavor} value={flavor}>{flavor}</option>
+                  ))}
+                </select>
               </div>
             )}
 

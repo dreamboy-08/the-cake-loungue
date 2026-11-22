@@ -9,6 +9,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  deleteField,
   getDocs,
   query,
   orderBy,
@@ -44,6 +45,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
   const { refreshProducts } = useProducts();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const existingFlavors: string[] = Array.isArray(product?.flavors)
+    ? product.flavors.filter((flavor: unknown): flavor is string => typeof flavor === 'string')
+    : [];
   const [imageItems, setImageItems] = useState<Array<{ file: File | null; preview: string; isExisting: boolean }>>(() => {
     const existingImages: string[] = [product?.img, ...(product?.images || [])].filter(Boolean);
     return existingImages.map(url => ({ file: null, preview: url, isExisting: true }));
@@ -57,10 +61,13 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     name: product?.name || '',
     description: product?.description || '',
     price: product?.price || '',
-    oldPrice: product?.oldPrice || '',
+    discountPrice: product?.discountPrice !== undefined && product?.discountPrice !== null
+      ? String(product.discountPrice)
+      : '',
     weights: product?.weights || [{ label: '0.5 Kg', price: product?.price || '' }],
     category: product?.category || '',
     flavor: product?.flavor || '',
+    flavors: existingFlavors,
     tag: product?.tag || '',
     isFeatured: product?.isFeatured || false,
     isBestSeller: product?.isBestSeller || false,
@@ -83,6 +90,24 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     setFormData(prev => ({
       ...prev,
       weights: prev.weights.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleAddFlavor = () => {
+    setFormData(prev => ({ ...prev, flavors: [...prev.flavors, ''] }));
+  };
+
+  const handleFlavorChange = (index: number, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      flavors: prev.flavors.map((flavor, currentIndex) => currentIndex === index ? value : flavor)
+    }));
+  };
+
+  const handleRemoveFlavor = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      flavors: prev.flavors.filter((_, currentIndex) => currentIndex !== index)
     }));
   };
 
@@ -168,6 +193,11 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
     if (!formData.name.trim()) return "Product name is required.";
     if (!formData.category) return "Please select a category.";
     if (!formData.price || Number(formData.price) <= 0) return "Base price must be greater than zero.";
+    if (formData.discountPrice.trim() && (
+      !Number.isFinite(Number(formData.discountPrice)) ||
+      Number(formData.discountPrice) <= 0 ||
+      Number(formData.discountPrice) >= Number(formData.price)
+    )) return "Discount price must be greater than zero and lower than the base price.";
     if (imageItems.length === 0) return "At least one product image is required.";
     if (formData.weights.length === 0) return "At least one weight variant is required.";
     if (formData.weights.some((w: any) => !w.price || Number(w.price) <= 0)) return "All variants must have a valid price.";
@@ -224,9 +254,10 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
         name: formData.name,
         description: formData.description,
         price: Number(formData.price),
-        oldPrice: Number(formData.oldPrice),
+        discountPrice: formData.discountPrice.trim() ? Number(formData.discountPrice) : null,
         category: formData.category,
         flavor: formData.flavor,
+        flavors: formData.flavors.map(flavor => flavor.trim()).filter(Boolean),
         tag: formData.tag,
         isFeatured: formData.isFeatured,
         isBestSeller: formData.isBestSeller,
@@ -292,6 +323,14 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
 
           const newVal = productData[key];
           const oldVal = product[key];
+
+          if (key === 'discountPrice' && newVal === null) {
+            if (oldVal !== undefined && oldVal !== null) {
+              updates[key] = deleteField();
+              hasChanges = true;
+            }
+            return;
+          }
 
           // Arrays (weights, images) comparison
           if (Array.isArray(newVal)) {
@@ -509,8 +548,9 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Discount Price (₹)</label>
                   <input
                     type="number"
-                    value={formData.oldPrice}
-                    onChange={(e) => setFormData({ ...formData, oldPrice: e.target.value })}
+                    min="0"
+                    value={formData.discountPrice}
+                    onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
                   />
                 </div>
@@ -558,6 +598,35 @@ const ProductForm = ({ product, onClose, onSuccess }: ProductFormProps) => {
                   className="w-full px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
                   placeholder="e.g. Vanilla, Chocolate, Red Velvet"
                 />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[10px] font-black text-chocolate/40 uppercase tracking-widest">Flavours</label>
+                  <button type="button" onClick={handleAddFlavor} className="text-[10px] font-black text-rose-deep uppercase flex items-center gap-1">
+                    <Plus size={12} /> Add Flavour
+                  </button>
+                </div>
+                {formData.flavors.map((flavor, index) => (
+                  <div key={index} className="flex gap-3 items-center">
+                    <input
+                      type="text"
+                      value={flavor}
+                      onChange={(e) => handleFlavorChange(index, e.target.value)}
+                      className="flex-1 px-4 py-3 rounded-xl border border-gray-100 focus:border-rose-deep outline-none text-sm font-bold"
+                      placeholder="Enter a flavour"
+                      aria-label={`Flavour ${index + 1}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFlavor(index)}
+                      className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                      aria-label={`Remove flavour ${index + 1}`}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-2">

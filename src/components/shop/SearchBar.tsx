@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { filterProducts } from '@/utils/filterProducts';
 import { useProducts } from '@/context/ProductsContext';
+import { getProductPricing } from '@/utils/productPricing';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -114,7 +115,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, placeholder = "Search f
                 <div className="text-right shrink-0">
                   <p className="text-[9px] text-text-soft font-bold uppercase tracking-wider leading-none mb-0.5">From</p>
                   <div className="text-rose-deep font-bold text-sm">
-                    ₹{product.weights?.[0]?.price || product.price}
+                    ₹{getProductPricing(product, product.weights?.[0]?.price || product.price).price}
                   </div>
                 </div>
               </div>

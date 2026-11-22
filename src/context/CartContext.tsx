@@ -10,6 +10,7 @@ export interface CartItem {
   cartItemId: string; // Unique identifier for items with different options
   name: string;
   price: number;
+  originalPrice?: number;
   img: string;
   quantity: number;
   flavor?: string;
@@ -35,6 +36,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const isFirebaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'your_api_key' &&
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY !== 'missing'
+  );
 
   const isInitialMount = useRef(true);
   const isUpdatingFromServer = useRef(false);
@@ -42,7 +48,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Persistence helper
   const persistCart = async (newCart: CartItem[]) => {
-    if (!user) {
+    if (!user || !isFirebaseConfigured) {
       localStorage.setItem('cakeLounge_cart', JSON.stringify(newCart));
       return;
     }
@@ -63,7 +69,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const syncCart = async () => {
       setIsLoading(true);
-      if (user) {
+      if (user && isFirebaseConfigured) {
         const cartRef = doc(db, 'carts', user.uid);
         unsubscribe = onSnapshot(cartRef, { includeMetadataChanges: true }, (docSnap) => {
           // If the change came from our own local write, ignore it to prevent loops
@@ -113,7 +119,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       if (unsubscribe) unsubscribe();
     };
-  }, [user]);
+  }, [user, isFirebaseConfigured]);
 
   // Handle persistence whenever cart changes, but avoid feedback loops
   useEffect(() => {

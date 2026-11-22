@@ -9,6 +9,7 @@ import { useWishlist } from '@/context/WishlistContext';
 import { getEarliestAvailableDateAndSlot } from '@/utils/deliveryValidation';
 import { motion } from 'framer-motion';
 import GSTBadge from './GSTBadge';
+import { getProductPricing } from '@/utils/productPricing';
 
 interface RecommendationCardProps {
   product: Product;
@@ -28,6 +29,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ product }) => {
   }, [product]);
 
   const defaultPrice = product.weights?.[0]?.price || product.price;
+  const pricing = getProductPricing(product, defaultPrice);
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -106,8 +108,14 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({ product }) => {
         <div className="flex flex-wrap items-center gap-2 mt-auto">
           <div className="flex items-baseline gap-1.5">
             <span className="text-[10px] text-text-soft font-bold uppercase tracking-wider leading-none">Starting from</span>
-            <span className="font-playfair text-base font-bold text-rose-deep">₹{defaultPrice}</span>
+            <span className="font-playfair text-base font-bold text-rose-deep">₹{pricing.price}</span>
           </div>
+          {pricing.originalPrice !== undefined && (
+            <>
+              <span className="text-xs text-text-soft line-through">₹{pricing.originalPrice}</span>
+              <span className="text-[10px] font-bold text-green-700">{pricing.discountPercent}% OFF</span>
+            </>
+          )}
           <GSTBadge />
         </div>
 

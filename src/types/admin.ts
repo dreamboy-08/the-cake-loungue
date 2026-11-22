@@ -38,7 +38,8 @@ export interface Product {
   name: string;
   price: number;
   weights?: ProductWeight[];
-  discountPrice?: number;
+  discountPrice?: number | null;
+  flavors?: string[];
   description: string;
   category: string;
   flavor: string;
