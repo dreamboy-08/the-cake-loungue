@@ -9,6 +9,8 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
   });
 
   test('Complete Category CMS Lifecycle: CRUD, Visibility, Reordering, Custom Links', async ({ page }) => {
+    test.setTimeout(90_000);
+
     // Log in as admin
     await loginAsAdmin(page);
 
@@ -49,6 +51,9 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     // 4. Click the Category Card and verify the custom destination/link works
     await newCategoryCard.click();
     await expect(page).toHaveURL(/.*category=milestone-treat/);
+    await expect(page.getByRole('button', { name: /Milestone Treat/ })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('button', { name: /Milestone Treat/ })).toBeVisible();
 
     // 5. Open Admin Categories Page again to Edit
     await page.goto('http://localhost:3000/admin/categories');
@@ -71,6 +76,9 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     const updatedCard = page.locator('div[role="button"]').filter({ hasText: 'Milestone Deluxe' });
     await expect(updatedCard).toBeVisible();
     await expect(updatedCard.locator('div:has-text("Premium Elite")').last()).toBeVisible();
+    await updatedCard.click();
+    await expect(page).toHaveURL(/.*category=milestone-treat/);
+    await expect(page.getByRole('button', { name: /Milestone Deluxe/ })).toBeVisible();
 
     // 6. Reorder categories: Move "Milestone Deluxe" to position #1
     await page.goto('http://localhost:3000/admin/categories');
@@ -97,6 +105,10 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     // Verify homepage hides disabled category
     await page.goto('http://localhost:3000/');
     await expect(page.locator('div[role="button"]').filter({ hasText: 'Milestone Deluxe' })).not.toBeVisible();
+    await page.goto('http://localhost:3000/menu?category=milestone-treat');
+    await expect(page.getByRole('button', { name: /Milestone Deluxe/ })).toBeVisible();
+    await page.reload();
+    await expect(page.getByRole('button', { name: /Milestone Deluxe/ })).toBeVisible();
 
     // 8. Re-enable category
     await page.goto('http://localhost:3000/admin/categories');
@@ -128,6 +140,34 @@ test.describe('Categories CMS Storefront & Admin E2E Validation', () => {
     // Verify homepage doesn't show deleted category
     await page.goto('http://localhost:3000/');
     await expect(page.locator('div[role="button"]').filter({ hasText: 'Milestone Deluxe' })).not.toBeVisible();
+  });
+
+  test('Category without a destination uses its generated slug', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('http://localhost:3000/menu?category=birthday-cakes');
+    await expect(page.getByRole('button', { name: /Birthday Cakes/ })).toBeVisible();
+    await expect(page.locator('a[href^="/shop/"]').first()).toBeVisible();
+
+    await page.goto('http://localhost:3000/admin/categories');
+    await page.click('button:has-text("Add New Category")');
+    await page.fill('label:has-text("Category Name") + input', 'Automatic Route Test');
+    await page.click('button[type="submit"]');
+
+    await expect(page.locator('h3:has-text("Automatic Route Test")')).toBeVisible();
+    await page.goto('http://localhost:3000/');
+    const categoryCard = page.locator('div[role="button"]').filter({ hasText: 'Automatic Route Test' });
+    await categoryCard.click();
+    await expect(page).toHaveURL(/.*category=automatic-route-test/);
+    await expect(page.getByRole('button', { name: /Automatic Route Test/ })).toBeVisible();
+
+    await page.goto('http://localhost:3000/admin/categories');
+    const category = page.locator('div[class*="bg-white"]').filter({
+      has: page.locator('h3', { hasText: 'Automatic Route Test' })
+    }).first();
+    await category.locator('button').nth(2).click();
+    await expect(page.locator('h3:has-text("Delete Category?")')).toBeVisible();
+    await page.click('button:has-text("Confirm Delete")');
+    await expect(page.locator('h3:has-text("Automatic Route Test")')).not.toBeVisible();
   });
 
 });

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { db } from '@/utils/firebase';
 import { uploadToCloudinary } from '@/utils/cloudinary';
+import { toSlug } from '@/utils/slug';
 import { getReorderBatch } from '@/utils/categoryOrdering';
 import { X, Loader2, Upload, Trash2, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
@@ -75,14 +76,15 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
         }
       }
 
+      const categorySlug = category?.slug || toSlug(formData.name);
       const categoryData: any = {
         name: formData.name,
         description: formData.description,
         active: formData.active,
         image: finalImageUrl,
-        slug: formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        slug: categorySlug,
         displayOrder: formData.displayOrder,
-        link: formData.link || `/menu?category=${formData.name.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
+        link: formData.link.trim() || `/menu?category=${categorySlug}`,
         tag: formData.tag || null,
         designs: formData.designs || null,
       };
@@ -265,7 +267,7 @@ const CategoryForm = ({ category, allCategories, onClose, onSuccess }: CategoryF
                 />
                 <div className="flex flex-col">
                   <span className="text-sm font-bold text-chocolate">Active Status</span>
-                  <span className="text-[10px] text-gray-400 uppercase tracking-widest">Visible in shop menu</span>
+                  <span className="text-[10px] text-gray-400 uppercase tracking-widest">Visible on homepage</span>
                 </div>
             </label>
           </div>
